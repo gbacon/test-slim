@@ -9,6 +9,7 @@ my $builder = Module::Build->new(
     dist_version_from   => 'lib/Test/Slim.pm',
     build_requires => {
         'Test::More' => 0,
+        'Text::CharWidth' => 0,
     },
     add_to_cleanup      => [ 'test-slim-*' ],
     create_makefile_pl => 'traditional',
