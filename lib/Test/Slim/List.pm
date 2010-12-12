@@ -9,12 +9,50 @@ use Text::CharWidth qw/ mbswidth /;
 sub new {
   my($this,$l) = @_;
   my $class = ref($this) || $this;
-  bless { LIST => [ @$l ] } => $class;
+  if (ref $l) {
+    return bless { LIST => [ @$l ] } => $class;
+  }
+  else {
+    return bless { RAW => $l } => $class;
+  }
 }
 
 sub list {
   my($self) = @_;
-  @{ $self->{LIST} };
+  return @{ $self->{LIST} } if $self->{LIST};
+
+  local $_ = $self->{RAW};
+  die "cannot deserialize undefined value" unless defined $_;
+  die "cannot deserialize empty string"    unless length $_;
+  defined eval { $_ = decode "UTF-8", $_, 1 unless is_utf8 $_ }
+    or die "cannot deserialize non-UTF-8 encoding";
+  die "syntax error: missing open bracket ($_)"
+    unless s/^\[//;
+  die "syntax error: missing close bracket ($_)"
+    unless s/\]$//;
+
+  die "syntax error: missing list-length ($_)"
+    unless s/^(\d{6})://;
+
+  my @l;
+  for (my $length = $1; $length > 0; --$length) {
+    die "syntax error: missing item-length ($_)"
+      unless s/^(\d{6})://;
+
+    (my $length = $1) =~ s/^0+//;
+    my $item = qr/(.{$length}):/;
+    die "syntax error: no item of length $length ($_)"
+      unless s/^$item//;
+
+    $item = $1;
+    unless (defined eval { push @l, [ $self->new($item)->list ] }) {
+      push @l, $item;
+    }
+  }
+
+  die "syntax error: trailing ($_)" if $_ ne "";
+
+  @{ $self->{LIST} = \@l };
 }
 
 sub length_string {
@@ -24,6 +62,7 @@ sub length_string {
 
 sub serialize {
   my($self) = @_;
+  return $self->{RAW} if $self->{RAW};
   my @l = $self->list;
 
   my $result = "[" . $self->length_string(scalar @l);
@@ -38,7 +77,7 @@ sub serialize {
       }
       elsif (is_utf8($_) || defined eval { $_ = decode("UTF-8", $_, 1) }) {
         $length = mbswidth $_;
-        $item = encode "UTF-8", $_;
+        $item = encode "UTF-8", $_, 1;
       }
       else {
         use bytes;
@@ -54,6 +93,8 @@ sub serialize {
     $result .= $self->length_string($length) . $item . ":";
   }
   $result .= "]";
+
+  $self->{RAW} = $result;
 }
 
 1;
