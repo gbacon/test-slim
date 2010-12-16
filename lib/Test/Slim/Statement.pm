@@ -3,6 +3,9 @@ package Test::Slim::Statement;
 use strict;
 use warnings;
 
+our $EXCEPTION_TAG;
+*EXCEPTION_TAG = \"__EXCEPTION__:";
+
 sub new {
   my($class) = @_;
   bless {} => $class;

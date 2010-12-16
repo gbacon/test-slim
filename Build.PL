@@ -8,6 +8,7 @@ my $builder = Module::Build->new(
     dist_author         => q{Greg Bacon <gbacon@dbresearch.net>},
     dist_version_from   => 'lib/Test/Slim.pm',
     build_requires => {
+        'Module::Build' => '>= 0.20',
         'Test::More' => 0,
         'Text::CharWidth' => 0,
     },
