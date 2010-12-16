@@ -16,7 +16,7 @@ BEGIN {
 }
 
 SKIP: {
-  skip "Test::Exception not installed", 4 unless $have_test_exception;
+  skip "Test::Exception not installed", 5 unless $have_test_exception;
 
   throws_ok { Test::Slim::List->new(undef)->list }
     qr/cannot deserialize undefined value/, "can't deserialize undefined value";
