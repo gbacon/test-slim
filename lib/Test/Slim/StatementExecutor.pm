@@ -88,6 +88,7 @@ sub replace_table_with_hash {
       my @cols = map $_->content_list, $row->look_down(_tag => "td");
       die "bad columns"
         unless @cols == 2 && grep(!ref($_), @cols);
+      s/^\s+//, s/\s+$// for @cols;
       $result{ $cols[0] } = $cols[1];
     }
 
