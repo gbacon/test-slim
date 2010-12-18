@@ -8,12 +8,14 @@ my $builder = Module::Build->new(
     dist_author         => q{Greg Bacon <gbacon@dbresearch.net>},
     dist_version_from   => 'lib/Test/Slim.pm',
     build_requires => {
-        'Module::Build' => '>= 0.20',
-        'Test::More' => 0,
-        'Text::CharWidth' => 0,
+        'perl'              => '5.10.0',
+        'HTML::TreeBuilder' => 0,
+        'Module::Build'     => '>= 0.20',
+        'Test::More'        => 0,
+        'Text::CharWidth'   => 0,
     },
     add_to_cleanup      => [ 'test-slim-*' ],
-    create_makefile_pl => 'traditional',
+    create_makefile_pl  => 'traditional',
 );
 
 $builder->create_build_script();

@@ -21,6 +21,6 @@ BEGIN {
 for (@cases) {
   my($method,$arg,$expected) = @$_;
 
-  my $statement = Test::Slim::Statement->new("");
+  my $statement = Test::Slim::Statement->new;
   is($statement->$method($arg), $expected, "$arg -> $expected");
 }
