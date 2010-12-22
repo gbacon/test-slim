@@ -1,62 +1,46 @@
 #! perl -T
 
 use strict;
-use threads;
-use threads::shared;
 use utf8;
 use warnings;
 
-use Test::More tests => 2;
+use Encode qw/ is_utf8 /;
 
-use Socket;
-use Time::HiRes qw/ usleep /;
+use Test::More tests => 9;
 
 BEGIN {
   use_ok "Test::Slim::SocketService"
     or BAIL_OUT "cannot use Test::Slim::SocketService";
 }
 
-my $port;
 my $ss;
-my $connections : shared;
-
-sub test(&) {
-  my($block)= @_;
-
-  $port = 1024 + int rand 64_000;
+sub test (&) {
+  my($block) = @_;
   $ss = Test::Slim::SocketService->new;
-  $connections = 0;
-
   $block->();
 }
 
-sub talk {
-  my($port) = @_;
+sub check_round_trip {
+  my($original,$expected_bytes) = @_;
 
-  socket my $s, PF_INET, SOCK_STREAM, getprotobyname "tcp"
-    or die "$0: socket: $!";
+  my $encoded = $ss->utf8_encode($original);
 
-  connect $s, sockaddr_in $port, inet_aton "localhost"
-    or die "$0: connect: $!";
+  { use bytes;
+    ok $encoded eq $expected_bytes, "$original: encode";
+  }
+  ok !is_utf8($encoded), "$original: UTF8 flag should be off after encoding";
 
-  usleep 100_000;
-
-  close $s
-    or die "$0: close: $!";
+  my $decoded = $ss->utf8_decode($encoded);
+  is $decoded, $original, "$original: encode/decode round trip";
+  ok is_utf8($decoded), "$original: UTF8 flag should be on after decoding";
 }
 
 test {
-  $ss->serve($port, sub { ++$connections });
-  talk $port;
-  $ss->close;
-  is($connections, 1, "single connection");
+  check_round_trip "[000001:000004:Köln:]" =>
+                   "[000001:000004:K\303\266ln:]";
 };
 
 test {
-  $ss->serve($port, sub { ++$connections });
-  #talk $port for 1 .. 10;
-  #talk $port;
-  talk $port;
-  $ss->close;
-  is($connections, 10, "ten connections");
-}
+  check_round_trip "[000001:000007:Español:]" =>
+                   "[000001:000007:Espa\303\261ol:]";
+};
