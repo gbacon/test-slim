@@ -37,7 +37,7 @@ sub list {
   my @l;
   for (my $length = $1; $length > 0; --$length) {
     die "syntax error: missing item-length ($_)"
-      unless s/^(\d{6})://;
+      unless s/^(\d{6})://s;
 
     (my $length = $1) =~ s/^0+//;
     my $item = qr/(.{$length}):/;
@@ -75,8 +75,9 @@ sub serialize {
         $item = $self->new($_)->serialize;
         $length = length $item;
       }
-      elsif (is_utf8($_) || defined eval { $_ = decode("UTF-8", $_, 1) }) {
-        $length = mbswidth $_;
+      elsif (is_utf8($_) || defined eval { $_ = decode("utf8", $_, 1) }) {
+        # work around weirdness in mbswidth with respect to TAB, CR, and NL
+        $length = mbswidth($_) + 2 * tr/\r\n\t//;
         $item = encode "UTF-8", $_, 1;
       }
       else {

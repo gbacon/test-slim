@@ -46,6 +46,11 @@ BEGIN {
       ["Espa\303\261ol"],
       "[000001:000007:Espa\303\261ol:]",
     ],
+
+    [ "serialize a string with a trailing newline",
+      ["foo\n"],
+      "[000001:000004:foo\n:]",
+    ],
   );
 }
 

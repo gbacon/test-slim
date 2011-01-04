@@ -4,6 +4,7 @@ use strict;
 use warnings;
 
 use Test::Slim::Statement;
+use Test::Slim::StatementExecutor;
 
 sub new {
   my($class) = @_;
