@@ -93,8 +93,10 @@ sub execute {
 sub run {
   my($self,$port) = @_;
 
-  my $lsn = IO::Socket::INET->new(Listen => 1, LocalPort => $port)
-    or die "$0: create listen socket failed: $@\n";
+  my $lsn = IO::Socket::INET->new(ReuseAddr => 1,
+                                  Listen    => 1,
+                                  LocalPort => $port)
+    or die "$0: create listen socket on port $port failed: $@\n";
 
   my $sel = IO::Select->new($lsn);
   while (my @ready = $sel->can_read) {
