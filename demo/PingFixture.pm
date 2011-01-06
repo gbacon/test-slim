@@ -14,20 +14,18 @@ sub canPing {
   return "no" unless defined $host && length $host;
 
   my $pid = open my $fh, "-|";
-  if (!defined $pid) {
-    die "open: $!";
-  }
-  else {
+  if (defined $pid) {
     if ($pid == 0) {
       open STDERR, ">&=", \*STDOUT or print("open: $!"), exit 1;
       exec "ping", "-c", 1, "-q", $host;
     }
     else {
-      local $/;
-      (my $output = <$fh>);# =~ s/\s+$//;
-      return "no: $output" unless close $fh;
-      return "yes";
+      my $output = join "", <$fh>;
+      close $fh ? "yes" : "no: $output";
     }
+  }
+  else {
+    die "fork: $!";
   }
 }
 
