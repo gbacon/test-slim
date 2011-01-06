@@ -22,7 +22,8 @@ sub require {
   my($self,$class) = @_;
   eval { require $self->path_to_class($class) };
   return $class unless $@;
-  die "message:<<COULD_NOT_INVOKE_CONSTRUCTOR $class $@>>";
+  chomp $@;
+  die "message:<<COULD_NOT_INVOKE_CONSTRUCTOR $class $@>>\n";
 }
 
 sub create {
@@ -34,6 +35,7 @@ sub create {
   };
   return "OK" unless $@;
 
+  chomp $@;
   $Test::Slim::Statement::EXCEPTION_TAG . $@;
 }
 
@@ -47,6 +49,7 @@ sub construct_instance {
   };
   return $self->{instance}{$id} unless $@;
 
+  chomp $@;
   my $n = @$args;
   die "message:<<COULD_NOT_INVOKE_CONSTRUCTOR $class\[$n]: $@>>";
 }
@@ -133,8 +136,12 @@ sub call {
       $self->replace_tables_with_hashes($self->replace_symbols(@args))
     );
   };
-  return $result unless $@;
+  unless ($@) {
+    $result =~ s/\s+$// if defined $result;
+    return $result
+  }
 
+  chomp $@;
   $Test::Slim::Statement::EXCEPTION_TAG
     . "message:<<exception in ${class}::$method\[$n]: $@>>"
 }

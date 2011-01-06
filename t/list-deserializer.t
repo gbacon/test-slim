@@ -6,7 +6,7 @@ use warnings;
 
 use Encode qw/ decode is_utf8 /;
 
-use Test::More tests => 13;
+use Test::More tests => 15;
 
 my $have_test_exception;
 BEGIN {
@@ -62,3 +62,19 @@ check_round_trip ["Kö"],
 
 check_round_trip ["123456789012345", "Espa\303\261ol"],
   "deserialize list with UTF-8";
+
+my $raw = "000305:[000003:000085:[000004:000015:scriptTable_0_0:000004:make:000016:scriptTableActor:000009:MyFixture:]:000091:[000005:000015:scriptTable_0_1:000004:call:000016:scriptTableActor:000003:foo:000004:K\303\266ln:]:000094:[000005:000015:scriptTable_0_2:000004:call:000016:scriptTableActor:000003:bar:000007:Espa\303\261ol:]:]";
+
+# good news: the length prefix is the number of bytes
+# in the UTF-8 encoded list, not the number of characters
+# as with list elements
+is length($raw), 6 + 1 + 305;
+
+my $lst = [ Test::Slim::List->new(substr $raw, 7)->list ];
+my $expect = [
+  [ qw/ scriptTable_0_0 make scriptTableActor MyFixture / ],
+  [ qw/ scriptTable_0_1 call scriptTableActor foo Köln / ],
+  [ qw/ scriptTable_0_2 call scriptTableActor bar Español / ],
+];
+
+is_deeply $lst, $expect, "actual list transmitted by fitnesse";
