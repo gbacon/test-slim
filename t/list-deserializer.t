@@ -6,7 +6,7 @@ use warnings;
 
 use Encode qw/ decode is_utf8 /;
 
-use Test::More tests => 15;
+use Test::More tests => 16;
 
 my $have_test_exception;
 BEGIN {
@@ -78,3 +78,6 @@ my $expect = [
 ];
 
 is_deeply $lst, $expect, "actual list transmitted by fitnesse";
+
+is_deeply [ Test::Slim::List->new("[000001:000000::]")->list ], [""],
+          "deserialize list with empty string";

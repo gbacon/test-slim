@@ -39,7 +39,7 @@ sub list {
     die "syntax error: missing item-length ($_)"
       unless s/^(\d{6})://;
 
-    (my $length = $1) =~ s/^0+//;
+    (my $length = $1) =~ s/^0{1,5}//;
     my $item = qr/(.{$length}):/s;
     die "syntax error: no item of length $length ($_)"
       unless s/^$item//;
