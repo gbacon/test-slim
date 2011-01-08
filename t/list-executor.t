@@ -4,7 +4,7 @@ use strict;
 use utf8;
 use warnings;
 
-use Test::More tests => 36;
+use Test::More tests => 40;
 
 BEGIN {
   use_ok "Test::Slim::ListExecutor"
@@ -90,7 +90,7 @@ test {
 
   my $invalid =
     expect_exception 'INVALID_STATEMENT: ' .
-                     '\["inv1", "invalidOperation"]>>';
+                     '\["inv1", "invalidOperation"]:.*>>$';
 
   check_results "inv1", $invalid, "can't execute an invalid operation";
 };
@@ -231,3 +231,34 @@ test {
   check_results "id", \&has_slim_exception, "survive a call to die",
                 "id", $call_target_found,   "make sure we find die_inside";
 };
+
+test {
+  my $no_meth = sub {
+    my($result,undef,$test_name) = @_;
+    like($result, qr/NO_METHOD_IN_CLASS/, $test_name);
+  };
+
+  add_statement "id", "call", "test_slim", "does_not_exist";
+  check_results "id", $no_meth, "should throw NO_METHOD_IN_CLASS";
+};
+
+sub no_invoke {
+  my($result,undef,$test_name) = @_;
+  like($result, qr/COULD_NOT_INVOKE_CONSTRUCTOR/, $test_name);
+}
+
+test {
+  add_statement "id", "make", "my_inst", "testModule.TestSlim.Undef";
+  check_results "id", \&no_invoke, "undefined result should throw exception";
+};
+
+test {
+  my $correct_location = sub {
+    my($result,undef,$test_name) = @_;
+    like($result, qr/\bat t\/lib\/TestModule\/TestSlim\/Die\.pm line 3\./, $test_name);
+  };
+
+  add_statement "id", "make", "my_inst", "testModule.TestSlim.Die";
+  check_results "id", \&no_invoke, "die in new should throw exception";
+  check_results "id", $correct_location, "die in new should throw exception";
+}

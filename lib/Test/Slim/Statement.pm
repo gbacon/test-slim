@@ -31,9 +31,10 @@ sub exec {
   my $result = eval { $self->$meth($executor, $id, @args) };
   return $result if $@ eq "";
 
+  chomp $@;
   my $list = join ", ", map qq["$_"], $id, $instr, @args;
   [ $id => $Test::Slim::Statement::EXCEPTION_TAG
-             . "message:<<INVALID_STATEMENT: [$list]>>" ];
+             . "message:<<INVALID_STATEMENT: [$list]: $@>>" ];
 }
 
 sub statement { @{ $_[0]->{STATEMENT} } }

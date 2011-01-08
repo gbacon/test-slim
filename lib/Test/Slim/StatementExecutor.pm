@@ -42,16 +42,19 @@ sub create {
 sub construct_instance {
   my($self,$id,$class,$args) = @_;
 
+  my $inst;
   eval {
-    $self->{instance}{$id} = $class->new(
+    $inst = $class->new(
       $self->replace_tables_with_hashes($self->replace_symbols(@$args))
     );
   };
-  return $self->{instance}{$id} unless $@;
+  return $self->{instance}{$id} = $inst
+    if $inst && !$@;
 
   chomp $@;
   my $n = @$args;
-  die "message:<<COULD_NOT_INVOKE_CONSTRUCTOR $class\[$n]: $@>>";
+  my $extra = $@ ? ": $@" : "";
+  die "message:<<COULD_NOT_INVOKE_CONSTRUCTOR $class\[$n]$extra>>\n";
 }
 
 sub replace_symbols {
@@ -84,12 +87,12 @@ sub replace_table_with_hash {
   my $hash = eval {
     my $p = HTML::TreeBuilder->new_from_content($arg);
     my $table = $p->guts->look_down(_tag => "table");
-    die "no table" unless $table;
+    die "no table\n" unless $table;
 
     my %result;
     foreach my $row ($table->look_down(_tag => "tr")) {
       my @cols = map $_->content_list, $row->look_down(_tag => "td");
-      die "bad columns"
+      die "bad columns\n"
         unless @cols == 2 && grep(!ref($_), @cols);
       s/^\s+//, s/\s+$// for @cols;
       $result{ $cols[0] } = $cols[1];
