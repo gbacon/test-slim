@@ -9,16 +9,19 @@ use Test::Slim::List;
 use Test::Slim::ListExecutor;
 
 sub new {
-  my($class) = @_;
+  my($class,%arg) = @_;
 
   my $self = bless {} => $class;
-  $self->{EXEC} = Test::Slim::ListExecutor->new;
+  $self->{EXEC}    = Test::Slim::ListExecutor->new;
+  $self->{VERBOSE} = delete $arg{Verbose};
 
   $self;
 }
 
 sub _read {
   my($self,$fh,$length) = @_;
+
+  my $expected = $length;
 
   my $result;
   while ($length > 0) {
@@ -35,15 +38,19 @@ sub _read {
     }
   }
 
-  #warn "got $result...\n";
+  warn "<<< $result\n",
+       "  (expected $expected; got ", length $result, ")\n",
+    if $self->{VERBOSE};
+
   $result;
 }
 
 sub _write {
   my($self,$fh,$buf) = @_;
 
+  warn ">>> $buf\n" if $self->{VERBOSE};
   return unless defined $buf;
-  #warn "writing $buf...\n";
+
   my $length = length $buf;
   while ($length > 0) {
     my $status = syswrite $fh, $buf;

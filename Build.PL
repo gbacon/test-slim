@@ -9,6 +9,7 @@ my $builder = Module::Build->new(
     dist_version_from   => 'lib/Test/Slim.pm',
     build_requires => {
         'perl'              => '5.10.0',
+        'Getopt::Long'      => 0,
         'HTML::TreeBuilder' => 0,
         'Module::Build'     => '>= 0.20',
         'Test::More'        => 0,

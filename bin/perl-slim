@@ -3,11 +3,27 @@
 use strict;
 use warnings;
 
+use Getopt::Long;
 use Test::Slim::Server;
 
-sub usage { "Usage: $0 port\n" }
+sub usage { "Usage: $0 [--help | --verbose] port\n" }
+
+$0 =~ s!^.*/!!;
+
+my($verbose,$help) = (0,0);
+{ local $SIG{__WARN__} = sub { warn "$0: ", @_ };
+  GetOptions "help|h|?"  => \$help,
+             "verbose|v" => \$verbose,
+    or die "\n" . usage;
+}
+
+if ($help) {
+  warn usage;
+  exit 1;
+}
 
 die usage unless @ARGV == 1;
 my $port = shift;
 
-Test::Slim::Server->new->run($port);
+warn "$0: running in verbose mode" if $verbose;
+Test::Slim::Server->new(Verbose => $verbose)->run($port);
