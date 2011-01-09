@@ -1,9 +1,10 @@
-#! perl -T
+#! perl
 
 use strict;
 use utf8;
 use warnings;
 
+use File::Spec::Functions qw/ rel2abs /;
 use Test::More tests => 40;
 
 BEGIN {
@@ -27,7 +28,7 @@ sub test(&) {
   $executor = Test::Slim::ListExecutor->new;
   @statements = ();
   $table = "<table><tr><td>name</td><td>bob</td></tr><tr><td>addr</td><td>here</td></tr></table>";
-  add_statement "i1", "import", "t/lib";
+  add_statement "i1", "import", rel2abs "t/lib";
   add_statement "m1", "make", "test_slim", "TestModule::TestSlim";
 
   $block->();
@@ -255,7 +256,7 @@ test {
 test {
   my $correct_location = sub {
     my($result,undef,$test_name) = @_;
-    like($result, qr/\bat t\/lib\/TestModule\/TestSlim\/Die\.pm line 3\./, $test_name);
+    like($result, qr/\bt\/lib\/TestModule\/TestSlim\/Die\.pm line 3\./, $test_name);
   };
 
   add_statement "id", "make", "my_inst", "testModule.TestSlim.Die";

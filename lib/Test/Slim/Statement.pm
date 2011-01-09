@@ -3,6 +3,8 @@ package Test::Slim::Statement;
 use strict;
 use warnings;
 
+use File::Spec::Functions;
+
 our $EXCEPTION_TAG;
 *EXCEPTION_TAG = \"__EXCEPTION__:";
 
@@ -53,8 +55,19 @@ sub slim_to_perl_method {
 sub do_import {
   my($self,undef,$id,$path) = @_;
 
-  unshift @INC, $path
-    unless grep $_ eq $path, @INC;
+  $path = catfile split /\./, $path;
+
+  if (file_name_is_absolute $path) {
+    unshift @INC, $path
+      unless grep $_ eq $path, @INC;
+  }
+  else {
+    foreach my $inc (@INC) {
+      my $added = catdir $inc, $path;
+      unshift @INC, $added
+        if -d $added && !grep $_ eq $added, @INC;
+    }
+  }
 
   [ $id => "OK" ];
 }

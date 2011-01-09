@@ -9,7 +9,7 @@ use Test::Slim::Statement;
 
 sub new {
   my($class) = @_;
-  bless {} => $class;
+  bless { LIBRARIES => [] } => $class;
 }
 
 sub path_to_class {
@@ -31,7 +31,9 @@ sub create {
 
   eval {
     $self->require($class);
-    $self->construct_instance($id,$class,$args);
+    my $instance = $self->construct_instance($id,$class,$args);
+    $self->add_library($instance)
+      if $id =~ /^library/;
   };
   return "OK" unless $@;
 
@@ -55,6 +57,16 @@ sub construct_instance {
   my $n = @$args;
   my $extra = $@ ? ": $@" : "";
   die "message:<<COULD_NOT_INVOKE_CONSTRUCTOR $class\[$n]$extra>>\n";
+}
+
+sub add_library {
+  my($self,$instance) = @_;
+  unshift @{ $self->{LIBRARIES} }, $instance;
+}
+
+sub libraries {
+  my($self) = @_;
+  @{ $self->{LIBRARIES} };
 }
 
 sub replace_symbols {
@@ -122,31 +134,43 @@ sub get_symbol {
 sub call {
   my($self,$instance,$method,@args) = @_;
 
-  return $Test::Slim::Statement::EXCEPTION_TAG
-           . "message:<<NO_INSTANCE $instance>>"
-    unless exists $self->{instance}{$instance};
-
-  my $obj = $self->{instance}{$instance};
-  my $n = @args;
+  my $obj = $self->instance($instance);
   my $class = ref $obj;
-  return $Test::Slim::Statement::EXCEPTION_TAG
-           . "message:<<NO_METHOD_IN_CLASS $method\[$n] $class>>"
-    unless $obj->can($method);
+  my $n = @args;
 
-  my $result;
-  eval {
-    $result = $obj->$method(
-      $self->replace_tables_with_hashes($self->replace_symbols(@args))
-    );
+  my $result = eval {
+    if ($obj && $obj->can($method)) {
+      return $self->send_message_to_instance($obj, $method, @args);
+    }
+    elsif ($obj && $obj->can("sut") && $obj->sut && $obj->sut->can($method)) {
+      return $self->send_message_to_instance($obj->sut, $method, @args);
+    }
+    else {
+      foreach my $library ($self->libraries) {
+        return $self->send_message_to_instance($library, $method, @args)
+          if $library->can($method);
+      }
+
+      return $Test::Slim::Statement::EXCEPTION_TAG
+               . "message:<<NO_INSTANCE $instance>>"
+        unless $obj;
+
+      return $Test::Slim::Statement::EXCEPTION_TAG
+               . "message:<<NO_METHOD_IN_CLASS $method\[$n] $class>>";
+    }
   };
-  unless ($@) {
-    $result =~ s/\s+$// if defined $result;
-    return $result
-  }
+  return $result if $@ eq "";
 
   chomp $@;
   $Test::Slim::Statement::EXCEPTION_TAG
     . "message:<<exception in ${class}::$method\[$n]: $@>>"
+}
+
+sub send_message_to_instance {
+  my($self,$obj,$method,@args) = @_;
+  $obj->$method(
+    $self->replace_tables_with_hashes($self->replace_symbols(@args))
+  );
 }
 
 1;

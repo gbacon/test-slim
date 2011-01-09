@@ -8,7 +8,7 @@ use Text::CharWidth qw/ mbswidth /;
 sub new {
   my($this,$l) = @_;
   my $class = ref($this) || $this;
-  if (ref $l) {
+  if (ref $l eq "ARRAY") {
     return bless { LIST => [ @$l ] } => $class;
   }
   else {
@@ -56,7 +56,7 @@ sub length_string {
   my($self,$what) = @_;
 
   my $length;
-  if (ref $what) {
+  if (ref $what eq "ARRAY") {
     $length = scalar @$what;
   }
   else {
@@ -77,7 +77,7 @@ sub serialize {
   for (@l) {
     my $item;
     if (defined $_) {
-      if (ref $_) {
+      if (ref $_ eq "ARRAY") {
         $item = $self->new($_)->serialize;
       }
       else {

@@ -5,25 +5,25 @@ use warnings;
 
 use lib 't/lib';
 
-use Test::More tests => 11;
+use Test::More tests => 16;
 
 BEGIN {
   use_ok "Test::Slim::StatementExecutor"
-    or BAIL_OUT "Cannnot use Test::Slim::StatementExecutor!";
+    or BAIL_OUT "Cannot use Test::Slim::StatementExecutor!";
 
   use_ok "Test::Slim::Statement"
-    or BAIL_OUT "Cannnot use Test::Slim::Statement!";
+    or BAIL_OUT "Cannot use Test::Slim::Statement!";
 }
 
 my $executor;
-my $test_slim;
 
 sub test(&) {
   my($block) = @_;
 
   $executor = Test::Slim::StatementExecutor->new;
-  $executor->create("test_slim", "TestModule::TestSlim", []);
-  $test_slim = $executor->instance("test_slim");
+  $executor->create("test_slim",   "TestModule::TestSlim",   []);
+  $executor->create("library_old", "TestModule::LibraryOld", []);
+  $executor->create("library_new", "TestModule::LibraryNew", []);
 
   $block->();
 }
@@ -83,62 +83,31 @@ test {
     "can replace symbol expressions with their values");
 };
 
-__END__
-    it "can call a method on the @sut" do
-      @test_slim.sut.should_receive(:sut_method).with()
-      @executor.call("test_slim", "sut_method")
-    end
-  end
+test {
+  is($executor->call("test_slim", "sut_method"), "hi from the sut",
+     "can call a method on the system under test");
+};
 
-  context "Method invocations using fixture with no sut" do
-    before do
-      @executor.create("test_slim", "TestModule::TestSlimWithNoSut", []);
-      @test_slim = @executor.instance("test_slim")
-    end
+test {
+  is($executor->call("test_slim", "method_on_library_old"),
+     "library_old method",
+     "call a specific method on library_old");
+};
 
-    it "can't call method that doesn't exist if no 'sut' exists" do
-      result = @executor.call("test_slim", "no_such_method")
-      result.should include(Statement::EXCEPTION_TAG + "message:<<NO_METHOD_IN_CLASS no_such_method[0] TestModule::TestSlimWithNoSut.>>")
-    end
-  end
+test {
+  is($executor->call("test_slim", "method_on_library_new"),
+     "library_new method",
+     "call a specific method on library_new");
+};
 
-  context "Method invocations when library instances have been created." do
-    before do
-      @executor.create("library_old", "TestModule::LibraryOld", [])
-      @executor.create("library_new", "TestModule::LibraryNew", [])
-      @library_old = @executor.instance("library_old")
-      @library_new = @executor.instance("library_new")
-      @executor.create("test_slim", "TestModule::TestSlim", [])
-      @test_slim = @executor.instance("test_slim")
-    end
+test {
+  is($executor->call("test_slim", "a_method"),
+     "a_method in library_new",
+     "prefer methods in library_new");
+};
 
-    it "should throw normal exception if no such method is found." do
-      result = @executor.call("test_slim", "no_such_method")
-      result.should include(Statement::EXCEPTION_TAG + "message:<<NO_METHOD_IN_CLASS no_such_method[0] TestModule::TestSlim.>>")
-    end
-
-    it "should still call normal methods in fixture" do
-      @test_slim.should_receive(:no_args).with()
-      @executor.call("test_slim", "no_args")
-    end
-
-    it "should still call methods on the sut" do
-      @test_slim.sut.should_receive(:sut_method).with()
-      @executor.call("test_slim", "sut_method")
-    end
-
-    it "should call a specific method on library_old" do
-      @library_old.should_receive(:method_on_library_old).with()
-      @executor.call("test_slim", "method_on_library_old")
-    end
-
-    it "should call a specific method on library_new" do
-      @library_new.should_receive(:method_on_library_new).with()
-      @executor.call("test_slim", "method_on_library_new")
-    end
-
-    it "should call method on library_new but not on library_old" do
-      @library_new.should_receive(:a_method).with()
-      @library_old.should_not_receive(:a_method).with()
-      @executor.call("test_slim", "a_method")
-    end
+test {
+  is($executor->call("bogus_instance", "a_method"),
+     "a_method in library_new",
+     "can call library method with null instance");
+};

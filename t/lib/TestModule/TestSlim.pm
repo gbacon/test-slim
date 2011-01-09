@@ -4,11 +4,15 @@ use strict;
 use utf8;
 use warnings;
 
+use SystemUnderTest;
+
 sub new {
   die "no arguments allowed" if @_ > 1;
   my($class) = @_;
-  bless {} => $class;
+  bless { SUT => SystemUnderTest->new } => $class;
 }
+
+sub sut { $_[0]->{SUT} }
 
 sub return_value { "arg" }
 

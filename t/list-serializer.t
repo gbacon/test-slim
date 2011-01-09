@@ -59,7 +59,7 @@ BEGIN {
   );
 }
 
-use Test::More tests => @tests + 1;
+use Test::More tests => @tests + 2;
 
 BEGIN { use_ok("Test::Slim::List") || BAIL_OUT("Cannot use Test::Slim::List!") }
 
@@ -67,4 +67,8 @@ for (@tests) {
   use bytes;
   my($test_name,$input,$expected) = @$_;
   ok(Test::Slim::List->new($input)->serialize eq $expected, $test_name);
+}
+
+{ my $serialized = Test::Slim::List->new([ { foo => "bar" } ])->serialize;
+  like $serialized, qr/^\[000001:\d+:HASH\(.+\):\]$/, "serialize nested hashref";
 }
