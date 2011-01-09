@@ -72,15 +72,24 @@ sub libraries {
 sub replace_symbols {
   my($self,@args) = @_;
 
+  my $sympat = qr/ (?<orig> \$ (?<sym> \w+ ) ) /x;
+
   my @result;
   for (@args) {
     if (ref $_ eq "ARRAY") {
       push @result, [ $self->replace_symbols(@$_) ];
     }
+    elsif (/^$sympat$/) {
+      push @result, $self->symbol_exists($+{sym})
+                      ? $self->get_symbol($+{sym})
+                      : $+{orig};
+    }
     else {
-      s{ (?<orig> \$ (?<sym> \w+ ) ) } [
-        $self->get_symbol($+{sym}) // $+{orig}
-      ]gex;
+      s/$sympat/
+        $self->symbol_exists($+{sym})
+          ? $self->get_symbol($+{sym})
+          : $+{orig};
+      /gex;
       push @result, $_;
     }
   }
@@ -97,6 +106,7 @@ sub replace_table_with_hash {
   my($self,$arg) = @_;
 
   my $hash = eval {
+    return unless defined $arg;
     my $p = HTML::TreeBuilder->new_from_content($arg);
     my $table = $p->guts->look_down(_tag => "table");
     die "no table\n" unless $table;
@@ -127,8 +137,13 @@ sub set_symbol {
 }
 
 sub get_symbol {
-  my($self,$symbol,$value) = @_;
+  my($self,$symbol) = @_;
   $self->{symbol}{$symbol};
+}
+
+sub symbol_exists {
+  my($self,$symbol) = @_;
+  exists $self->{symbol}{$symbol};
 }
 
 sub call {

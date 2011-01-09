@@ -5,7 +5,7 @@ use warnings;
 
 use lib 't/lib';
 
-use Test::More tests => 16;
+use Test::More tests => 17;
 
 BEGIN {
   use_ok "Test::Slim::StatementExecutor"
@@ -81,6 +81,12 @@ test {
   $executor->set_symbol("v", "bob");
   is($executor->call("test_slim", "echo", 'hi $v.'), "hi bob.",
     "can replace symbol expressions with their values");
+};
+
+test {
+  $executor->set_symbol("null", undef);
+  is($executor->call("test_slim", "echo", '$null'), undef,
+    "symbols can hold undefined value");
 };
 
 test {
