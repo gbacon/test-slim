@@ -18,4 +18,14 @@ sub returnConstructorArg {
   $self->{ARG};
 }
 
+sub setString {
+  my($self,$string) = @_;
+  $self->{STRING} = $string;
+}
+
+sub getStringArg {
+  my($self,$string) = @_;
+  $self->{STRING};
+}
+
 1;

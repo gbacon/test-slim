@@ -3,6 +3,7 @@ package Test::Slim::Server;
 use strict;
 use warnings;
 
+use Encode qw/ encode decode /;
 use IO::Select;
 use IO::Socket::INET;
 use Test::Slim::List;
@@ -38,18 +39,33 @@ sub _read {
     }
   }
 
-  warn "<<< $result\n",
-       "  (expected $expected; got ", length $result, ")\n",
-    if $self->{VERBOSE};
+  unless (defined eval { $result = decode "utf8", $result, 1 }) {
+    die "$0: failed to decode input: $@";
+  }
+
+  { use bytes;
+    warn "<<< $result\n",
+         "  (expected $expected; got ", length $result, ")\n",
+      if $self->{VERBOSE};
+  }
 
   $result;
 }
 
 sub _write {
   my($self,$fh,$buf) = @_;
+  return unless defined $buf;
+
+  use bytes;
+
+  unless ($buf =~ /^Slim -- V\d/) {
+    die "$0: failed to encode input: $@"
+      unless defined eval { $buf = encode "utf8", $buf, 1 };
+
+    $buf = sprintf "%06d:%s", length $buf, $buf;
+  }
 
   warn ">>> $buf\n" if $self->{VERBOSE};
-  return unless defined $buf;
 
   my $length = length $buf;
   while ($length > 0) {
@@ -87,7 +103,7 @@ sub process {
       my @instructions = Test::Slim::List->new($command)->list;
       my @results = $self->execute(@instructions);
       my $response = Test::Slim::List->new(\@results)->serialize;
-      $self->_write($fh, sprintf "%06d:%s", length $response, $response);
+      $self->_write($fh, $response);
     }
   }
 }

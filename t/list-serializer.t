@@ -51,6 +51,11 @@ BEGIN {
       ["foo\n"],
       "[000001:000004:foo\n:]",
     ],
+
+    [ "nested list with multibyte characters",
+      [[qw/ decisionTable_28_9 Köln /]],
+      "[000001:000047:[000002:000018:decisionTable_28_9:000004:Köln:]:]",
+    ],
   );
 }
 

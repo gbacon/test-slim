@@ -6,7 +6,7 @@ use warnings;
 
 use Encode qw/ decode is_utf8 /;
 
-use Test::More tests => 16;
+use Test::More tests => 15;
 
 my $have_test_exception;
 BEGIN {
@@ -31,12 +31,6 @@ SKIP: {
   throws_ok { Test::Slim::List->new("[000000:")->list }
     qr/syntax error\b.*missing close bracket/,
     "can't deserialize string that doesn't end with a bracket";
-
-  throws_ok { Test::Slim::List->new(<<EOF)->list }
-[000002:000119:[000006:000015:scriptTable_3_0:000004:call:000016:scriptTableActor:000005:setTo:000015:System\\Language:000007:Espa\361ol:]:000033:[000002:000005:hello:000003:bob:]:]
-EOF
-    qr/cannot deserialize non-UTF-8 encoding/,
-    "bad Unicode character";
 }
 
 sub check_round_trip {
@@ -70,7 +64,8 @@ my $raw = "000305:[000003:000085:[000004:000015:scriptTable_0_0:000004:make:0000
 # as with list elements
 is length($raw), 6 + 1 + 305;
 
-my $lst = [ Test::Slim::List->new(substr $raw, 7)->list ];
+my $decoded = decode "utf8", substr $raw, 7;
+my $lst = [ Test::Slim::List->new($decoded)->list ];
 my $expect = [
   [ qw/ scriptTable_0_0 make scriptTableActor MyFixture / ],
   [ qw/ scriptTable_0_1 call scriptTableActor foo Köln / ],

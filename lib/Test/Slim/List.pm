@@ -3,7 +3,6 @@ package Test::Slim::List;
 use strict;
 use warnings;
 
-use Encode qw/ is_utf8 encode decode /;
 use Text::CharWidth qw/ mbswidth /;
 
 sub new {
@@ -24,8 +23,6 @@ sub list {
   local $_ = $self->{RAW};
   die "cannot deserialize undefined value" unless defined $_;
   die "cannot deserialize empty string"    unless length $_;
-  defined eval { $_ = decode "UTF-8", $_, 1 unless is_utf8 $_ }
-    or die "cannot deserialize non-UTF-8 encoding";
   die "syntax error: missing open bracket ($_)"
     unless s/^\[//;
   die "syntax error: missing close bracket ($_)"
@@ -56,7 +53,18 @@ sub list {
 }
 
 sub length_string {
-  my($self,$length) = @_;
+  my($self,$what) = @_;
+
+  my $length;
+  if (ref $what) {
+    $length = scalar @$what;
+  }
+  else {
+    # work around weirdness in mbswidth with respect to TAB, CR, and NL
+    my $n = $what =~ tr/\r\n\t//;
+    $length = mbswidth($what) + 2 * $n;
+  }
+
   sprintf "%06d:", $length;
 }
 
@@ -65,36 +73,26 @@ sub serialize {
   return $self->{RAW} if $self->{RAW};
   my @l = $self->list;
 
-  my $result = "[" . $self->length_string(scalar @l);
+  my $result = "[" . $self->length_string(\@l);
   for (@l) {
     my $item;
-    my $length;
     if (defined $_) {
       if (ref $_) {
-        use bytes;
         $item = $self->new($_)->serialize;
-        $length = length $item;
-      }
-      elsif (is_utf8($_) || defined eval { $_ = decode("utf8", $_, 1) }) {
-        # work around weirdness in mbswidth with respect to TAB, CR, and NL
-        $length = mbswidth($_) + 2 * tr/\r\n\t//;
-        $item = encode "UTF-8", $_, 1;
       }
       else {
-        use bytes;
-        $length = length $_;
         $item = $_;
       }
     }
     else {
       $item = "null";
-      $length = length $item;
     }
 
-    $result .= $self->length_string($length) . $item . ":";
+    $result .= $self->length_string($item) . $item . ":";
   }
   $result .= "]";
 
+  #warn "serialized: $result\n";
   $self->{RAW} = $result;
 }
 
