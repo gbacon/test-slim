@@ -28,4 +28,9 @@ sub getStringArg {
   $self->{STRING};
 }
 
+sub echoString {
+  my($self,$string) = @_;
+  $string;
+}
+
 1;
