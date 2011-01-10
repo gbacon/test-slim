@@ -72,7 +72,7 @@ sub libraries {
 sub replace_symbols {
   my($self,@args) = @_;
 
-  my $sympat = qr/ (?<orig> \$ (?<sym> \w+ ) ) /x;
+  my $sympat = qr/ (?<orig> (?<!\$)\$ (?<sym> \w+ ) ) /x;
 
   my @result;
   for (@args) {
@@ -92,6 +92,10 @@ sub replace_symbols {
       /gex;
       push @result, $_;
     }
+  }
+
+  for (@result) {
+    s/\$\$/\$/ if defined $_;
   }
 
   @result;
