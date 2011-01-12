@@ -129,9 +129,9 @@ test {
 };
 
 test {
-  add_statement "id", "call", "test_slim", "utf8";
+  add_statement "id", "call", "test_slim", "return_unicode_value";
   check_results "m1" => "OK",      "make instance before utf8 call",
-                "id" => "Español", "utf8-encoded result"
+                "id" => "Español", "Unicode result"
 };
 
 test {

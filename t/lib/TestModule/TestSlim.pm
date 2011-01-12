@@ -27,7 +27,7 @@ sub echo { @_[1 .. $#_] }
 sub return_string { "string" }
 *returnString = \&return_string;
 
-sub utf8 { "Español" }
+sub return_unicode_value { "Español" }
 
 sub add { shift; join "", @_ }
 

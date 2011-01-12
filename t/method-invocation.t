@@ -1,6 +1,7 @@
 #! perl
 
 use strict;
+use utf8;
 use warnings;
 
 use lib 't/lib';
@@ -46,16 +47,10 @@ test {
   is($executor->call("test_slim", "return_value"), "arg", "can call a method that returns a value");
 };
 
-TODO: {
-  local $TODO = "FIXME";
-
-  test {
-    my $val = $executor->call("test_slim", "return_unicode_value");
-    { use bytes;
-      ok($val eq "Espa\357\277\275ol", "can call a method that returns a Unicode value");
-    }
-  };
-}
+test {
+  my $val = $executor->call("test_slim", "return_unicode_value");
+  is($val, "Español", "can call a method that returns a Unicode value");
+};
 
 test {
   eval { $executor->call("test_slim", "one_arg", "arg") };
