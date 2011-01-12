@@ -9,6 +9,9 @@ use IO::Socket::INET;
 use Test::Slim::List;
 use Test::Slim::ListExecutor;
 
+our $PROTOCOL_VERSION;
+*PROTOCOL_VERSION = \'0.3';
+
 sub new {
   my($class,%arg) = @_;
 
@@ -85,7 +88,7 @@ sub _write {
 sub process {
   my($self,$fh) = @_;
 
-  $self->_write($fh, "Slim -- V0.2\n");
+  $self->_write($fh, "Slim -- V$PROTOCOL_VERSION\n");
 
   while (1) {
     my $length = $self->_read($fh, 7);

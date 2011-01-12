@@ -42,7 +42,7 @@ test {
   $server->process($slim);
 
   my $reply = <$fitnesse>;
-  is $reply, "Slim -- V0.2\n", "proper Slim greeting";
+  is $reply, "Slim -- V0.3\n", "proper Slim greeting";
 };
 
 test {
@@ -57,7 +57,7 @@ test {
 
   my $ok = Test::Slim::List->new([qw/ import_0_0 OK /])->serialize;
   my @expected = (
-    "Slim -- V0.2\n",
+    "Slim -- V0.3\n",
     "000054:[000001:000037:[000002:000010:import_0_0:000002:OK:]:]",
     #sprintf("%06d:%s", length $ok, $ok),
   );
@@ -74,7 +74,7 @@ test {
 
   my @replies = <$fitnesse>;
 
-  is $replies[0], "Slim -- V0.2\n";
+  is $replies[0], "Slim -- V0.3\n";
 
   my @exception = Test::Slim::List->new(substr $replies[1], 7)->list;
   is   $exception[0][0], "scriptTable_1_0";
