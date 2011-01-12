@@ -43,12 +43,7 @@ sub statement { @{ $_[0]->{STATEMENT} } }
 
 sub slim_to_perl_class {
   my($self,$name) = @_;
-  join "::" => map "\u$_", split /\.|::/, $name;
-}
-
-sub slim_to_perl_method {
-  my($self,$name) = @_;
-  $name =~ s/([A-Z])/_\l$1/g;
+  $name =~ s/\./::/g;
   $name;
 }
 

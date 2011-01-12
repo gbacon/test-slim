@@ -31,6 +31,13 @@ sub create {
 
   eval {
     $self->require($class);
+
+    while ($class) {
+      no strict 'refs';
+      last if scalar keys %{$class . "::"};
+      $class =~ s/^.*?:://;
+    }
+
     my $instance = $self->construct_instance($id,$class,$args);
     $self->add_library($instance)
       if $id =~ /^library/;

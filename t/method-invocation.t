@@ -5,7 +5,7 @@ use warnings;
 
 use lib 't/lib';
 
-use Test::More tests => 18;
+use Test::More tests => 20;
 
 BEGIN {
   use_ok "Test::Slim::StatementExecutor"
@@ -122,4 +122,19 @@ test {
   is($executor->call("bogus_instance", "a_method"),
      "a_method in library_new",
      "can call library method with null instance");
+};
+
+test {
+  my $name = "fully_qual";
+
+  # dots will have already been transformed to :: in T::S::Statement
+  is($executor->create($name, "t::lib::other::MyFixture", []),
+     "OK",
+     "create fixture with a Java-like fully-qualified name");
+
+  { no strict 'refs';  # delay lookup into MyFixture package
+    is($executor->call($name, "sayHello"),
+       ${"MyFixture::Greeting"},
+       "call method on fully-qualified class");
+  }
 };

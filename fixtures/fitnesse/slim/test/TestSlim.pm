@@ -33,4 +33,9 @@ sub echoString {
   $string;
 }
 
+sub concatenateThreeArgs {
+  my($self,$a,$b,$c) = @_;
+  join " " => $a, $b, $c;
+}
+
 1;

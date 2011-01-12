@@ -259,7 +259,7 @@ test {
     like($result, qr/\bt\/lib\/TestModule\/TestSlim\/Die\.pm line 3\./, $test_name);
   };
 
-  add_statement "id", "make", "my_inst", "testModule.TestSlim.Die";
+  add_statement "id", "make", "my_inst", "TestModule.TestSlim.Die";
   check_results "id", \&no_invoke, "die in new should throw exception";
   check_results "id", $correct_location, "die in new should throw exception";
 }
