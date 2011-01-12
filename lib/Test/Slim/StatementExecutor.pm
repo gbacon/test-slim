@@ -192,4 +192,23 @@ sub send_message_to_instance {
   );
 }
 
+sub add_import {
+  my($self,$path) = @_;
+  push @{ $self->{IMPORTS} }, $path;
+}
+
+sub unqualify {
+  my($self,$class) = @_;
+
+  foreach my $import (@{ $self->{IMPORTS} }) {
+    my $prefix = $import . ".";
+    if (index($class, $prefix) == 0) {
+      substr($class, 0, length $prefix) = "";
+      last;
+    }
+  }
+
+  $class;
+}
+
 1;

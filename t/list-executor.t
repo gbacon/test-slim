@@ -5,7 +5,7 @@ use utf8;
 use warnings;
 
 use File::Spec::Functions qw/ rel2abs /;
-use Test::More tests => 40;
+use Test::More tests => 43;
 
 BEGIN {
   use_ok "Test::Slim::ListExecutor"
@@ -262,4 +262,13 @@ test {
   add_statement "id", "make", "my_inst", "testModule.TestSlim.Die";
   check_results "id", \&no_invoke, "die in new should throw exception";
   check_results "id", $correct_location, "die in new should throw exception";
-}
+};
+
+test {
+  add_statement "i2", "import", "other.namespace";
+  add_statement "m2", "make", "m2inst", "other.namespace.MyModule";
+  add_statement "c2", "call", "m2inst", "sayHi";
+  check_results "i2", "OK", "import other.namespace",
+                "m2", "OK", "create with fully qualified name",
+                "c2", "hello", "call function in qualified class";
+};

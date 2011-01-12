@@ -53,8 +53,9 @@ sub slim_to_perl_method {
 }
 
 sub do_import {
-  my($self,undef,$id,$path) = @_;
+  my($self,$executor,$id,$path) = @_;
 
+  my $orig = $path;
   $path = catfile split /\./, $path;
 
   if (file_name_is_absolute $path) {
@@ -62,6 +63,7 @@ sub do_import {
       unless grep $_ eq $path, @INC;
   }
   else {
+    $executor->add_import($orig);
     foreach my $inc (@INC) {
       my $added = catdir $inc, $path;
       unshift @INC, $added
@@ -75,6 +77,7 @@ sub do_import {
 sub do_make {
   my($self,$executor,$id,$instance,$class,@args) = @_;
 
+  $class = $executor->unqualify($class);
   [ $id => $executor->create($instance, $self->slim_to_perl_class($class), \@args) ];
 }
 
