@@ -30,22 +30,61 @@ sub create {
   my($self,$id,$class,$args) = @_;
 
   eval {
-    $self->require($class);
-
-    while ($class) {
-      no strict 'refs';
-      last if scalar keys %{$class . "::"};
-      $class =~ s/^.*?:://;
+    if ($self->has_stored_actor($class)) {
+      $self->add_to_instances_or_library($id, $self->stored_actor($class));
     }
+    else {
+      ($class) = $self->replace_symbols($class);
+      $self->require($class);
 
-    my $instance = $self->construct_instance($id,$class,$args);
-    $self->add_library($instance)
-      if $id =~ /^library/;
+      while ($class) {
+        no strict 'refs';
+        last if scalar keys %{$class . "::"};
+        $class =~ s/^.*?:://;
+      }
+
+      my $instance = $self->construct_instance($id,$class,$args);
+
+      $self->add_to_instances_or_library($id, $instance);
+    }
   };
   return "OK" unless $@;
 
   chomp $@;
   $Test::Slim::Statement::EXCEPTION_TAG . $@;
+}
+
+sub has_stored_actor {
+  my($self,$name) = @_;
+
+  return unless $name &&
+                $name =~ /^\$(\w+)/s &&
+                $self->symbol_exists($1);
+
+  my $potential_actor = $self->get_symbol($1);
+  return defined $potential_actor && ref $potential_actor;
+}
+
+sub stored_actor {
+  my($self,$id) = @_;
+  return unless $id =~ /^\$(\w+)/s;
+  $self->symbol_exists($1) ? $self->get_symbol($1) : ();
+}
+
+sub add_to_instances_or_library {
+  my($self,$id,$instance) = @_;
+
+  if ($id =~ /^library/) {
+    $self->add_library($instance);
+  }
+  else {
+    $self->set_instance($id, $instance);
+  }
+}
+
+sub set_instance {
+  my($self,$id,$instance) = @_;
+  $self->{instance}{$id} = $instance;
 }
 
 sub construct_instance {
@@ -57,8 +96,7 @@ sub construct_instance {
       $self->replace_tables_with_hashes($self->replace_symbols(@$args))
     );
   };
-  return $self->{instance}{$id} = $inst
-    if $inst && !$@;
+  return $inst if $inst && !$@;
 
   chomp $@;
   my $n = @$args;
