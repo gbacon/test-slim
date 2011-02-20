@@ -12,6 +12,7 @@ my $builder = Module::Build->new(
         'Getopt::Long'      => 0,
         'HTML::TreeBuilder' => 0,
         'Module::Build'     => '>= 0.20',
+        'Scalar::Util'      => 0,
         'Test::More'        => 0,
         'Text::CharWidth'   => 0,
     },

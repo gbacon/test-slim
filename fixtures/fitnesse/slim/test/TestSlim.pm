@@ -3,9 +3,14 @@ package TestSlim;
 use strict;
 use warnings;
 
+use Scalar::Util qw/ refaddr /;
+use overload '""' => \&toString;
+
 sub new {
-  my($class,$arg) = @_;
-  bless { ARG => $arg } => $class;
+  my($class,$arg,$other) = @_;
+  my $self = bless { ARG => $arg || 0 } => $class;
+  $self->setString($other->getStringArg) if defined $other;
+  $self;
 }
 
 sub echoInt {
@@ -36,6 +41,29 @@ sub echoString {
 sub concatenateThreeArgs {
   my($self,$a,$b,$c) = @_;
   join " " => $a, $b, $c;
+}
+
+sub createTestSlimWithString {
+  my($self,$string) = @_;
+  my $other = TestSlim->new;
+  $other->setString($string);
+  $other;
+}
+
+sub isSame {
+  my($self,$other) = @_;
+  ref $self && ref $other && refaddr($self) == refaddr($other)
+    ? "true" : "false";
+}
+
+sub getStringFromOther {
+  my($self,$other) = @_;
+  $other->getStringArg;
+}
+
+sub toString {
+  my($self) = @_;
+  "TestSlim: " . $self->returnConstructorArg . ", " . $self->getStringArg;
 }
 
 1;

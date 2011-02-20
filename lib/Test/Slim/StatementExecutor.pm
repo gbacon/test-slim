@@ -5,11 +5,23 @@ use strict;
 use warnings;
 
 use HTML::TreeBuilder;
+use Test::Slim::HelperLibrary;
 use Test::Slim::Statement;
 
 sub new {
   my($class) = @_;
-  bless { LIBRARIES => [] } => $class;
+
+  my $self = bless { LIBRARIES => [] } => $class;
+
+  my $slimHelper = Test::Slim::HelperLibrary->new($self);
+  $self->add_library($slimHelper);
+
+  $self;
+}
+
+sub DESTROY {
+  my($self) = @_;
+  $self->{LIBRARIES} = [];  # break cycle
 }
 
 sub path_to_class {
