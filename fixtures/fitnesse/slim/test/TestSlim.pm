@@ -63,7 +63,19 @@ sub getStringFromOther {
 
 sub toString {
   my($self) = @_;
-  "TestSlim: " . $self->returnConstructorArg . ", " . $self->getStringArg;
+
+  my($i,$s) = map { my $val = $self->$_();
+                    defined $val ? $val : "<undefined>" }
+              qw/ returnConstructorArg getStringArg /;
+
+  "TestSlim: $i, $s";
+}
+
+sub echoBoolean {
+  my($self,$bool) = @_;
+  die "value should be true or false"
+    unless $bool eq "true" || $bool eq "false";
+  $bool;
 }
 
 1;
