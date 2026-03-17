@@ -1,5 +1,5 @@
 {
   "name": "test-slim",
   "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
-  "postCreateCommand": "sudo apt-get update && sudo apt-get install -y cpanminus build-essential && cpanm cpanm --local-lib="$HOME/perl5" --notest --installdeps .",
+  "postCreateCommand": "sudo apt-get update && sudo apt-get install -y cpanminus build-essential && cpanm --local-lib=$HOME/perl5 --notest --installdeps .",
 }
