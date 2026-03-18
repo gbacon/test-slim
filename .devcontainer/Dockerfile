@@ -9,6 +9,7 @@ RUN apt-get update \
       perl \
       cpanminus \
       build-essential \
+      default-jre \
  && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /tmp/bootstrap
