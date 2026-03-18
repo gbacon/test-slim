@@ -9,23 +9,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - name: Install system deps
+      - name: Build CI image
         run: |
-          sudo apt-get update
-          sudo apt-get install -y perl cpanminus build-essential
+          docker build -f .devcontainer/Dockerfile -t test-slim-ci .
 
-      - name: Install Perl dependencies
+      - name: Run developer tests in container
         run: |
-          cpanm --notest --verbose --installdeps --cpanfile cpanfile .
-
-      - name: Sanity check modules
-        run: |
-            perl -MHTML::TreeBuilder -e 1
-            perl -MText::CharWidth -e 1
-
-      - name: Run developer tests
-        run: |
-          chmod +x bin/test-dev
-          bin/test-dev
+          docker run --rm -v "$PWD":/workspaces/test-slim -w /workspaces/test-slim test-slim-ci bin/test-dev
