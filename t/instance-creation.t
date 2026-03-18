@@ -20,7 +20,7 @@ BEGIN {
   my $caller = Test::Slim::StatementExecutor->new;
 
   my $response = $caller->create("x", "TestModule::TestSlim", []);
-  is($response, "OK", "create an instance");
+  is($response, "OK", "create an instance: $response ($@)");
 
   my $x = $caller->instance("x");
   is(ref($x), "TestModule::TestSlim");
@@ -58,6 +58,6 @@ BEGIN {
   my $caller = Test::Slim::StatementExecutor->new;
 
   my $result = $caller->create("x", "TestModule::NoSuchClass", []);
-  like($result, qr/\Q${Test::Slim::Statement::EXCEPTION_TAG}\Emessage:<<COULD_NOT_INVOKE_CONSTRUCTOR TestModule::NoSuchClass\b/,
-    "can't create an instance if there is no class");
+  like($result, qr/\Q${Test::Slim::Statement::EXCEPTION_TAG}\Emessage:<<NO_CLASS TestModule::NoSuchClass\b/,
+    "can't create an instance if there is no class:\n$result");
 }

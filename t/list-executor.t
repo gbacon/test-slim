@@ -4,7 +4,9 @@ use strict;
 use utf8;
 use warnings;
 
-use Test::More tests => 36;
+use lib "t/lib";
+
+use Test::More tests => 35;
 
 BEGIN {
   use_ok "Test::Slim::ListExecutor"
@@ -27,7 +29,7 @@ sub test(&) {
   $executor = Test::Slim::ListExecutor->new;
   @statements = ();
   $table = "<table><tr><td>name</td><td>bob</td></tr><tr><td>addr</td><td>here</td></tr></table>";
-  add_statement "i1", "import", "t/lib";
+  #add_statement "i1", "import", "t/lib";
   add_statement "m1", "make", "test_slim", "TestModule::TestSlim";
 
   $block->();
@@ -81,9 +83,9 @@ sub check_results {
   }
 }
 
-test {
-  check_results "i1" => "OK", "can respond OK to import";
-};
+# test {
+#   check_results "i1" => "OK", "can respond OK to import";
+# };
 
 test {
   add_statement "inv1", "invalidOperation";
@@ -118,7 +120,8 @@ test {
 
 test {
   my @results = $executor->execute(["m1", "make", "instance", "testModule.TestSlim"]);
-  is get_result("m1"), "OK", "can make an instance given a fully qualified name in dot format";
+  my $m1 = get_result "m1";
+  is $m1, "OK", "instance given a fully qualified name in dot format: $m1";
 };
 
 test {

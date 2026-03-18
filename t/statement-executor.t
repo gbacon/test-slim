@@ -3,7 +3,17 @@
 use strict;
 use warnings;
 
-use Test::More tests => 3;
+my @cases;
+BEGIN {
+  @cases = (
+    [ qw/ slim_to_perl_class   myPackage.MyClass   MyPackage::MyClass / ],
+    [ qw/ slim_to_perl_class   this.that::theOther This::That::TheOther / ],
+    [ qw/ slim_to_perl_class   testModule.testSlim TestModule::TestSlim / ],
+    [ qw/ slim_to_perl_method  myMethod            my_method / ],
+  );
+}
+
+use Test::More tests => 2 + @cases;
 
 my $have_test_exception;
 BEGIN {
@@ -23,4 +33,11 @@ SKIP: {
   throws_ok { $executor->require("Foo::Bar::Baz") }
     qr/message:<<COULD_NOT_INVOKE_CONSTRUCTOR Foo::Bar::Baz\b/,
     "require a class";
+}
+
+for (@cases) {
+  my($method,$arg,$expected) = @$_;
+
+  my $statement = Test::Slim::StatementExecutor->new;
+  is($statement->$method($arg), $expected, "$arg -> $expected");
 }

@@ -9,7 +9,12 @@ use Test::Slim::Statement;
 
 sub new {
   my($class) = @_;
-  bless {} => $class;
+  bless { IMPORTS => [] } => $class;
+}
+
+sub add_import {
+    my($self, $prefix) = @_;
+    push @{ $self->{IMPORTS} }, $prefix;
 }
 
 sub path_to_class {
@@ -26,11 +31,36 @@ sub require {
   die "message:<<COULD_NOT_INVOKE_CONSTRUCTOR $class $@>>\n";
 }
 
+sub slim_to_perl_class {
+  my($self,$name) = @_;
+  join "::" => map "\u$_", split /\.|::/, $name;
+}
+
+sub resolve_class {
+  my($self, $name) = @_;
+
+  my $class = $self->slim_to_perl_class($name);
+
+  my @candidates = (
+      map("${_}::${class}", @{ $self->{IMPORTS} }),
+      $class,
+  );
+
+  for my $candidate (@candidates) {
+      my $path = $self->path_to_class($candidate);
+      return $candidate if eval { require $path; 1 };
+      warn "require failed: $path\n$@";
+  }
+
+  die "message:<<NO_CLASS $class>>";
+}
+
 sub create {
   my($self,$id,$class,$args) = @_;
 
   eval {
-    $self->require($class);
+    $class = $self->resolve_class($class);
+    #$self->require($class);
     $self->construct_instance($id,$class,$args);
   };
   return "OK" unless $@;

@@ -62,7 +62,7 @@ sub _write {
 sub process {
   my($self,$fh) = @_;
 
-  $self->_write($fh, "Slim -- V0.2\n");
+  $self->_write($fh, "Slim -- V0.3\n");
 
   while (1) {
     my $length = $self->_read($fh, 7);

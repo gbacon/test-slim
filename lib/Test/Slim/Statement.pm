@@ -26,7 +26,7 @@ sub exec {
   my($self,$executor) = @_;
 
   my($id,$instr,@args) = $self->statement;
-
+  { local $" = "]["; warn "exec: [$id][$instr][@args]]\n" }
   my $meth = "do_" . $instr;
   my $result = eval { $self->$meth($executor, $id, @args) };
   return $result if $@ eq "";
@@ -38,11 +38,6 @@ sub exec {
 
 sub statement { @{ $_[0]->{STATEMENT} } }
 
-sub slim_to_perl_class {
-  my($self,$name) = @_;
-  join "::" => map "\u$_", split /\.|::/, $name;
-}
-
 sub slim_to_perl_method {
   my($self,$name) = @_;
   $name =~ s/([A-Z])/_\l$1/g;
@@ -50,10 +45,9 @@ sub slim_to_perl_method {
 }
 
 sub do_import {
-  my($self,undef,$id,$path) = @_;
-
-  unshift @INC, $path
-    unless grep $_ eq $path, @INC;
+  my($self,$executor,$id,$prefix) = @_;
+  $prefix =~ s/\s*<a title=.*//;  # FIXME
+  $executor->add_import($prefix);
 
   [ $id => "OK" ];
 }
@@ -61,7 +55,7 @@ sub do_import {
 sub do_make {
   my($self,$executor,$id,$instance,$class,@args) = @_;
 
-  [ $id => $executor->create($instance, $self->slim_to_perl_class($class), \@args) ];
+  [ $id => $executor->create($instance, $class, \@args) ];
 }
 
 sub do_call {
