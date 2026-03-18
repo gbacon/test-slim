@@ -9,7 +9,6 @@ RUN apt-get update \
       build-essential \
  && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /workspaces/test-slim
-COPY . .
-
+WORKDIR /tmp/bootstrap
+COPY cpanfile .
 RUN cpanm --notest --installdeps .

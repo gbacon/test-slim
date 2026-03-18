@@ -1,6 +1,7 @@
 {
   "name": "test-slim",
   "build": {
-    "dockerfile": "Dockerfile"
+    "dockerfile": "Dockerfile",
+    "context": "..",
   },
 }
