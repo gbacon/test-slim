@@ -1,0 +1,26 @@
+name: test
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  perl-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install system deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y perl cpanminus build-essential
+
+      - name: Install Perl dependencies
+        run: |
+          cpanm --notest --installdeps .
+
+      - name: Run developer tests
+        run: |
+          chmod +x bin/test-dev
+          bin/test-dev
