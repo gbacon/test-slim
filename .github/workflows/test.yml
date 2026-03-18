@@ -17,4 +17,10 @@ jobs:
 
       - name: Run developer tests in container
         run: |
-          docker run --rm -v "$PWD":/workspaces/test-slim -w /workspaces/test-slim test-slim-ci bin/test-dev
+          docker run --rm \
+            -e LANG=C.UTF-8 \
+            -e LC_ALL=C.UTF-8 \
+            -v "$PWD":/workspaces/test-slim \
+            -w /workspaces/test-slim \
+            test-slim-ci \
+            bin/test-dev
