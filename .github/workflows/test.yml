@@ -18,7 +18,12 @@ jobs:
 
       - name: Install Perl dependencies
         run: |
-          cpanm --notest --installdeps .
+          cpanm --notest --verbose --installdeps --cpanfile cpanfile .
+
+      - name: Sanity check modules
+        run: |
+            perl -MHTML::TreeBuilder -e 1
+            perl -MText::CharWidth -e 1
 
       - name: Run developer tests
         run: |
