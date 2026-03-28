@@ -65,7 +65,8 @@ test {
 };
 
 test {
-  my $badmake = "000102:[000001:000085:[000004:000015:scriptTable_1_0:000004:make:000016:scriptTableActor:000009:MyFixture:]:]";
+  my $tablename = "scriptTable_1_0";
+  my $badmake = "000102:[000001:000085:[000004:000015:$tablename:000004:make:000016:scriptTableActor:000009:MyFixture:]:]";
 
   print $fitnesse $badmake . "000003:bye";
   $fitnesse->flush;
@@ -74,10 +75,10 @@ test {
 
   my @replies = <$fitnesse>;
 
-  is $replies[0], "Slim -- V0.3\n";
+  is $replies[0], "Slim -- V0.3\n", "server greeting";
 
   my @exception = Test::Slim::List->new(substr $replies[1], 7)->list;
-  is $exception[0][0], "scriptTable_1_0";
+  is $exception[0][0], $tablename, "table name echoed";
   is $exception[0][1], '__EXCEPTION__:message:<<NO_CLASS MyFixture>>', $exception[0][1];
 
   is scalar    @exception,      1, "length of exception list";

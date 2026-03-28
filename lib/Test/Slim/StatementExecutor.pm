@@ -49,10 +49,9 @@ sub resolve_class {
   for my $candidate (@candidates) {
       my $path = $self->path_to_class($candidate);
       return $candidate if eval { require $path; 1 };
-      warn "require failed: $path\n$@";
   }
 
-  die "message:<<NO_CLASS $class>>";
+  die "message:<<NO_CLASS $class>>\n";
 }
 
 sub create {
