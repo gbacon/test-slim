@@ -18,7 +18,7 @@ BEGIN {
 my $executor = Test::Slim::StatementExecutor::->new;
 
 is_deeply(
-  Test::Slim::Statement::->execute($executor, "i1", "import", "test module"),
+  Test::Slim::Statement::->execute($executor, "i1", "import", "fitnesse.slim.test"),
   ["i1" => "OK"],
   "import test module"
 );

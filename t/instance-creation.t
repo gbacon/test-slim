@@ -9,6 +9,9 @@ use File::Spec;
 use Module::Build;
 use Test::More tests => 10;
 
+my $TEST_SLIM = "Fitnesse::Slim::Test::TestSlim";
+my $TEST_SLIM_ARGS = $TEST_SLIM . "WithArguments";
+
 BEGIN {
   use_ok("Test::Slim::StatementExecutor")
     || BAIL_OUT("Cannnot use Test::Slim::StatementExecutor!");
@@ -19,17 +22,17 @@ BEGIN {
 {
   my $caller = Test::Slim::StatementExecutor->new;
 
-  my $response = $caller->create("x", "TestModule::TestSlim", []);
+  my $response = $caller->create("x", $TEST_SLIM, []);
   is($response, "OK", "create an instance: $response ($@)");
 
   my $x = $caller->instance("x");
-  is(ref($x), "TestModule::TestSlim");
+  is(ref($x), $TEST_SLIM);
 }
 
 {
   my $caller = Test::Slim::StatementExecutor->new;
 
-  my $response = $caller->create("x", "TestModule::TestSlimWithArguments", [3]);
+  my $response = $caller->create("x", $TEST_SLIM_ARGS, [3]);
   is($response, "OK", "create an instance with arguments");
 
   my $x = $caller->instance("x");
@@ -40,7 +43,7 @@ BEGIN {
   my $caller = Test::Slim::StatementExecutor->new;
   $caller->set_symbol("X", 3);
 
-  my $response = $caller->create("x", "TestModule::TestSlimWithArguments", ['$X']);
+  my $response = $caller->create("x", $TEST_SLIM_ARGS, ['$X']);
   is($response, "OK", "create an instance with arguments that are symbols");
 
   my $x = $caller->instance("x");
@@ -50,8 +53,8 @@ BEGIN {
 {
   my $caller = Test::Slim::StatementExecutor->new;
 
-  my $response = $caller->create("x", "TestModule::TestSlim", ["noSuchArgument"]);
-  like($response, qr/^\Q${Test::Slim::Statement::EXCEPTION_TAG}\Emessage:<<COULD_NOT_INVOKE_CONSTRUCTOR TestModule::TestSlim\[1]/);
+  my $response = $caller->create("x", $TEST_SLIM, ["noSuchArgument"]);
+  like($response, qr/^\Q${Test::Slim::Statement::EXCEPTION_TAG}\Emessage:<<COULD_NOT_INVOKE_CONSTRUCTOR $TEST_SLIM\[1]/);
 }
 
 {

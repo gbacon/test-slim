@@ -179,7 +179,7 @@ sub call {
 
   chomp $@;
   $Test::Slim::Statement::EXCEPTION_TAG
-    . "message:<<exception in ${class}::$method\[$n]: $@>>"
+    . "message:<<$@>>"
 }
 
 1;

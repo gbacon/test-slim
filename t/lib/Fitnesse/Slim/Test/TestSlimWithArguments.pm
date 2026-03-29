@@ -1,4 +1,4 @@
-package TestModule::TestSlimWithArguments;
+package Fitnesse::Slim::Test::TestSlimWithArguments;
 
 use strict;
 use warnings;

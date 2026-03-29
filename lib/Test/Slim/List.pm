@@ -4,7 +4,33 @@ use strict;
 use warnings;
 
 use Encode qw/ is_utf8 encode decode /;
-use Text::CharWidth qw/ mbswidth /;
+
+sub _utf16_code_units_length {
+  my($s) = @_;
+  my $utf16be = encode("UTF-16BE", $s);
+  use bytes;
+  return length($utf16be) / 2;
+}
+
+sub _take_utf16_units {
+  my ($s, $units) = @_;
+  my $out = "";
+  my $count = 0;
+
+  while (length $s) {
+    my $ch = substr($s, 0, 1, "");
+    my $u = _utf16_code_units_length($ch);
+    last if $count + $u > $units;
+    $out .= $ch;
+    $count += $u;
+    last if $count == $units;
+  }
+
+  die "syntax error: no item of length $units ($out$s)"
+    unless $count == $units;
+
+  return ($out, $s);
+}
 
 sub new {
   my($this,$l) = @_;
@@ -26,27 +52,30 @@ sub list {
   die "cannot deserialize empty string"    unless length $_;
   defined eval { $_ = decode "UTF-8", $_, 1 unless is_utf8 $_ }
     or die "cannot deserialize non-UTF-8 encoding";
+
   die "syntax error: missing open bracket ($_)"
     unless s/^\[//;
   die "syntax error: missing close bracket ($_)"
     unless s/\]$//;
 
   die "syntax error: missing list-length ($_)"
-    unless s/^(\d{6})://;
+    unless s/^([0-9]{6})://;
 
   my @l;
   for (my $length = $1; $length > 0; --$length) {
     die "syntax error: missing item-length ($_)"
-      unless s/^(\d{6})://;
+      unless s/^([0-9]{6})://;
 
-    (my $length = $1) =~ s/^0+//;
-    my $item = qr/(.{$length}):/s;
-    die "syntax error: no item of length $length ($_)"
-      unless s/^$item//;
+    (my $item_len = $1) =~ s/^0+//;
+    $item_len = 0 if $item_len eq "";
 
-    $item = $1;
+    my($item,$rest) = _take_utf16_units $_, $item_len;
+    die "syntax error: no item of length $item_len ($_)"
+      unless substr($rest, 0, 1) eq ":";
+    $_ = substr $rest, 1;
+
     unless (defined eval { push @l, [ $self->new($item)->list ] }) {
-      push @l, $item;
+      push @l, is_utf8($item) ? $item : decode("UTF-8", $item, 1);
     }
   }
 
@@ -71,19 +100,16 @@ sub serialize {
     my $length;
     if (defined $_) {
       if (ref $_) {
-        use bytes;
         $item = $self->new($_)->serialize;
-        $length = length $item;
+        $length = _utf16_code_units_length $item;
       }
       elsif (is_utf8($_) || defined eval { $_ = decode("utf8", $_, 1) }) {
-        # work around weirdness in mbswidth with respect to TAB, CR, and NL
-        $length = mbswidth($_) + 2 * tr/\r\n\t//;
-        $item = encode "UTF-8", $_, 1;
+        $item = $_;
+        $length = _utf16_code_units_length $item;
       }
       else {
-        use bytes;
-        $length = length $_;
         $item = $_;
+        $length = _utf16_code_units_length $item;
       }
     }
     else {

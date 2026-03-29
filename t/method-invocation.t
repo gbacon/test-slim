@@ -22,7 +22,7 @@ sub test(&) {
   my($block) = @_;
 
   $executor = Test::Slim::StatementExecutor->new;
-  $executor->create("test_slim", "TestModule::TestSlim", []);
+  $executor->create("test_slim", "Fitnesse::Slim::Test::TestSlim", []);
   $test_slim = $executor->instance("test_slim");
 
   $block->();
@@ -38,7 +38,7 @@ test {
   like($result, qr/\Q$Test::Slim::Statement::EXCEPTION_TAG\E
                    message:<<NO_METHOD_IN_CLASS  \s+
                    no_such_method\[0]            \s+
-                   TestModule::TestSlim>>/x,
+                   Fitnesse::Slim::Test::TestSlim>>/x,
     "can't call a method that doesn't exist");
 };
 

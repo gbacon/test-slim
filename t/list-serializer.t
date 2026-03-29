@@ -54,7 +54,7 @@ BEGIN {
   );
 }
 
-use Test::More tests => @tests + 1;
+use Test::More tests => @tests + 2;
 
 BEGIN { use_ok("Test::Slim::List") || BAIL_OUT("Cannot use Test::Slim::List!") }
 
@@ -63,3 +63,14 @@ for (@tests) {
   my($test_name,$input,$expected) = @$_;
   ok(Test::Slim::List->new($input)->serialize eq $expected, $test_name);
 }
+
+my $list = [
+  "id",
+  "ØÅÆ_ØÅÆ",
+  "Æ_ØÅ",
+];
+
+my $wire = Test::Slim::List->new($list)->serialize;
+my @round = Test::Slim::List->new($wire)->list;
+
+is_deeply(\@round, $list, "round-trip UTF-8 strings in serialized list");

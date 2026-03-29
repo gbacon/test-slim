@@ -6,7 +6,7 @@ use warnings;
 
 use lib "t/lib";
 
-use Test::More tests => 35;
+use Test::More tests => 37;
 
 BEGIN {
   use_ok "Test::Slim::ListExecutor"
@@ -29,8 +29,8 @@ sub test(&) {
   $executor = Test::Slim::ListExecutor->new;
   @statements = ();
   $table = "<table><tr><td>name</td><td>bob</td></tr><tr><td>addr</td><td>here</td></tr></table>";
-  #add_statement "i1", "import", "t/lib";
-  add_statement "m1", "make", "test_slim", "TestModule::TestSlim";
+  add_statement "i1", "import", "fitnesse.slim.test";
+  add_statement "m1", "make", "test_slim", "TestSlim";
 
   $block->();
 }
@@ -119,7 +119,7 @@ test {
 };
 
 test {
-  my @results = $executor->execute(["m1", "make", "instance", "testModule.TestSlim"]);
+  my @results = $executor->execute(["m1", "make", "instance", "TestSlim"]);
   my $m1 = get_result "m1";
   is $m1, "OK", "instance given a fully qualified name in dot format: $m1";
 };
@@ -150,7 +150,7 @@ test {
 };
 
 test {
-  add_statement "m2", "make", "test_slim_2", "TestModule.TestSlimWithArguments", "3";
+  add_statement "m2", "make", "test_slim_2", "TestSlimWithArguments", "3";
   add_statement "c1", "call", "test_slim_2", "arg";
 
   check_results "m2" => "OK", "make with arg for constructor",
@@ -158,7 +158,7 @@ test {
 };
 
 test {
-  add_statement "m2", "make", "test_slim_2", "TestModule::TestSlimWithArguments", $table;
+  add_statement "m2", "make", "test_slim_2", "TestSlimWithArguments", $table;
   add_statement "c1", "call", "test_slim_2", "name";
   add_statement "c2", "call", "test_slim_2", "addr";
 
@@ -168,7 +168,7 @@ test {
 };
 
 test {
-  add_statement "m2", "make", "test_slim_2", "TestModule.TestSlimWithArguments", "nil";
+  add_statement "m2", "make", "test_slim_2", "TestSlimWithArguments", "nil";
   add_statement "c0", "call", "test_slim_2", "set_arg", $table;
   add_statement "c1", "call", "test_slim_2", "name";
   add_statement "c2", "call", "test_slim_2", "addr";
@@ -233,4 +233,12 @@ test {
 
   check_results "id", \&has_slim_exception, "survive a call to die",
                 "id", $call_target_found,   "make sure we find die_inside";
+};
+
+test {
+  add_statement "a1", "callAndAssign", "Æ_ØÅ", "test_slim", "echo", "ØÅÆØÅÆ_ØÅÆØÅÆ";
+  add_statement "c1", "call",                  "test_slim", "echo", '$Æ_ØÅ';
+
+  check_results "a1", "ØÅÆØÅÆ_ØÅÆØÅÆ", "assign UTF-8 symbol",
+                "c1", "ØÅÆØÅÆ_ØÅÆØÅÆ", "substitute UTF-8 symbol";
 };

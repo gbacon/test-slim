@@ -1,4 +1,4 @@
-package TestModule::TestSlim;
+package Fitnesse::Slim::Test::TestSlim;
 
 use strict;
 use utf8;
@@ -30,5 +30,15 @@ sub add { shift; join "", @_ }
 sub null { undef }
 
 sub die_inside { die "oops" }
+
+sub set_string {
+  my($self,$string) = @_;
+  $self->{STRING} = $string;
+}
+
+sub get_string_arg {
+  my($self) = @_;
+  $self->{STRING};
+}
 
 1;

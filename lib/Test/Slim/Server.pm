@@ -3,6 +3,7 @@ package Test::Slim::Server;
 use strict;
 use warnings;
 
+use Encode qw/ encode /;
 use IO::Select;
 use IO::Socket::INET;
 use Test::Slim::List;
@@ -66,8 +67,9 @@ sub process {
 
   while (1) {
     my $length = $self->_read($fh, 7);
+    return unless defined($length) && $length ne "";
 
-    $length =~ s/^(\d{6}):$/$1/
+    $length =~ s/^([0-9]{6}):$/$1/
       or die "expected length, but got '$length'";
 
     my $command = $self->_read($fh, $length);
@@ -77,10 +79,12 @@ sub process {
       return;
     }
     else {
+      warn "command=[$command]";
       my @instructions = Test::Slim::List->new($command)->list;
       my @results = $self->execute(@instructions);
       my $response = Test::Slim::List->new(\@results)->serialize;
-      $self->_write($fh, sprintf "%06d:%s", length $response, $response);
+      my $octets = encode "UTF-8", $response;
+      $self->_write($fh, sprintf "%06d:%s", length($octets), $octets);
     }
   }
 }
