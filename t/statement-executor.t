@@ -9,7 +9,7 @@ BEGIN {
     [ qw/ slim_to_perl_class   myPackage.MyClass   MyPackage::MyClass / ],
     [ qw/ slim_to_perl_class   this.that::theOther This::That::TheOther / ],
     [ qw/ slim_to_perl_class   testModule.testSlim TestModule::TestSlim / ],
-    #[ qw/ slim_to_perl_method  myMethod            my_method / ],
+    [ qw/ slim_to_perl_method  myMethod            my_method / ],
   );
 }
 

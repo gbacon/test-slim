@@ -14,7 +14,7 @@ sub new {
 
 sub add_import {
     my($self, $prefix) = @_;
-    push @{ $self->{IMPORTS} }, $prefix;
+    push @{ $self->{IMPORTS} }, $self->slim_to_perl_class($prefix);
 }
 
 sub path_to_class {
@@ -33,6 +33,7 @@ sub require {
 
 sub slim_to_perl_class {
   my($self,$name) = @_;
+  $name =~ s/\s+(\w)/\u$1/g;
   join "::" => map "\u$_", split /\.|::/, $name;
 }
 
@@ -54,12 +55,17 @@ sub resolve_class {
   die "message:<<NO_CLASS $class>>\n";
 }
 
+sub slim_to_perl_method {
+  my($self,$name) = @_;
+  $name =~ s/([A-Z])/_\l$1/g;
+  $name;
+}
+
 sub create {
   my($self,$id,$class,$args) = @_;
 
   eval {
     $class = $self->resolve_class($class);
-    #$self->require($class);
     $self->construct_instance($id,$class,$args);
   };
   return "OK" unless $@;
@@ -155,6 +161,7 @@ sub call {
   my $obj = $self->{instance}{$instance};
   my $n = @args;
   my $class = ref $obj;
+  $method = $self->slim_to_perl_method($method);
   return $Test::Slim::Statement::EXCEPTION_TAG
            . "message:<<NO_METHOD_IN_CLASS $method\[$n] $class>>"
     unless $obj->can($method);

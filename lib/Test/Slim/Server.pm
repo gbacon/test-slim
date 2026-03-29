@@ -104,7 +104,7 @@ sub run {
       if ($fh == $lsn) {
         my $new = $lsn->accept;
         $self->process($new);
-        exit 0;
+        # exit 0;
       }
       else {
         warn "$0: unexpected input from fd " . fileno($fh) . "\n";

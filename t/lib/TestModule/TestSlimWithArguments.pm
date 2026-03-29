@@ -16,6 +16,7 @@ sub arg {
 sub set_arg {
   my($self,$arg) = @_;
   $self->{ARG} = $arg;
+  "OK";
 }
 
 sub name {

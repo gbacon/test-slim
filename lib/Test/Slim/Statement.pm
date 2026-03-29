@@ -37,12 +37,6 @@ sub exec {
 
 sub statement { @{ $_[0]->{STATEMENT} } }
 
-sub slim_to_perl_method {
-  my($self,$name) = @_;
-  $name =~ s/([A-Z])/_\l$1/g;
-  $name;
-}
-
 sub do_import {
   my($self,$executor,$id,$prefix) = @_;
   $prefix =~ s/\s*<a title=.*//;  # FIXME
