@@ -77,4 +77,9 @@ sub is_same {
   $other == $self ? "true" : "false";
 }
 
+sub echo_string {
+  my($self,$string) = @_;
+  $string;
+}
+
 1;
