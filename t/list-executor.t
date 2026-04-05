@@ -6,7 +6,7 @@ use warnings;
 
 use lib "t/lib";
 
-use Test::More tests => 37;
+use Test::More tests => 43;
 
 BEGIN {
   use_ok "Test::Slim::ListExecutor"
@@ -220,7 +220,7 @@ test {
 
 test {
   add_statement "id", "call", "test_slim", "null";
-  check_results "id" => undef, "can return the undefined value";
+  check_results "id" => "null", "undef maps to empty string in a call result";
 };
 
 test {
@@ -241,4 +241,46 @@ test {
 
   check_results "a1", "ØÅÆØÅÆ_ØÅÆØÅÆ", "assign UTF-8 symbol",
                 "c1", "ØÅÆØÅÆ_ØÅÆØÅÆ", "substitute UTF-8 symbol";
+};
+
+test {
+  my $INST = "TEST_SLIM_INSTANCE";
+  add_statement "m1",  "make", "test_slim", "Fitnesse.Slim.Test.TestSlim";
+  add_statement "id1", "callAndAssign", $INST, "test_slim", "createTestSlimWithString", "Uncle";
+
+  @results = $executor->execute(@statements);
+
+  my $stored = $executor->executor->get_symbol($INST);
+
+  ok defined($stored), "symbol $INST was stored";
+  ok ref($stored), "stored symbol value is a reference";
+  isa_ok $stored, "Fitnesse::Slim::Test::TestSlim";
+};
+
+sub is_false {
+  my($result,undef,$test_name) = @_;
+  ok !$result, $test_name;
+}
+
+test {
+  add_statement "id1", "callAndAssign", "TEST_SLIM_INSTANCE", "test_slim", "createTestSlimWithString", "Uncle";
+  add_statement "id2", "call",                                "test_slim", "isSame",                   '$TEST_SLIM_INSTANCE';
+
+  # pick an expected id1 result once you decide the contract
+  check_results "id2", "false", "symbol can hold instance used as parameter";
+};
+
+test {
+  add_statement "id1", "callAndAssign", "TEST_SLIM_INSTANCE", "test_slim", "createTestSlimWithString", "Uncle";
+  add_statement "id2", "call",                                "test_slim", "getStringFromOther",       '$TEST_SLIM_INSTANCE';
+
+  check_results "id2", "Uncle", "symbol passes stored instance as usable parameter";
+};
+
+test {
+  add_statement "id1", "call", "test_slim", "echo", "𝄞"; # U+1D11E (2 UTF-16 units)
+
+  check_results
+    "id1", "𝄞",
+    "handles surrogate pair character";
 };

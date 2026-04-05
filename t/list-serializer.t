@@ -54,7 +54,7 @@ BEGIN {
   );
 }
 
-use Test::More tests => @tests + 2;
+use Test::More tests => @tests + 3;
 
 BEGIN { use_ok("Test::Slim::List") || BAIL_OUT("Cannot use Test::Slim::List!") }
 
@@ -74,3 +74,9 @@ my $wire = Test::Slim::List->new($list)->serialize;
 my @round = Test::Slim::List->new($wire)->list;
 
 is_deeply(\@round, $list, "round-trip UTF-8 strings in serialized list");
+
+is(
+  Test::Slim::List::->new([id1 => undef])->serialize,
+  "[000002:000003:id1:000004:null:]",
+  "undef serializes as slim null"
+);

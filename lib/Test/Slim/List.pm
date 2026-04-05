@@ -35,7 +35,7 @@ sub _take_utf16_units {
 sub new {
   my($this,$l) = @_;
   my $class = ref($this) || $this;
-  if (ref $l) {
+  if (ref($l) eq "ARRAY") {
     return bless { LIST => [ @$l ] } => $class;
   }
   else {

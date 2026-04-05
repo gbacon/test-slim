@@ -26,7 +26,7 @@ sub exec {
   my($self,$executor) = @_;
 
   my($id,$instr,@args) = $self->statement;
-  { local $" = "]["; warn "exec: [$id][$instr][@args]\n" }
+  #{ local $" = "]["; warn "exec: [$id][$instr][@args]\n" }
   my $meth = "do_" . $instr;
   my $result = eval { $self->$meth($executor, $id, @args) };
   return $result if $@ eq "";

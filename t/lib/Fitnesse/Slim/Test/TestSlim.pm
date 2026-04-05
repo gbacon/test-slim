@@ -5,9 +5,39 @@ use utf8;
 use warnings;
 
 sub new {
-  die "no arguments allowed" if @_ > 1;
-  my($class) = @_;
-  bless {} => $class;
+  my($class,@args) = @_;
+  my $self = bless {
+    STRING => undef,
+    CTRARG => 0,
+  } => $class;
+
+  return $self unless @args;
+
+  if (@args == 2) {
+    my($n,$other) = @args;
+    $self->{CTRARG} = $n;
+    $self->{STRING} = ref($other) ? $other->{STRING} : undef;
+    return $self;
+  }
+
+  die "unexpected number of arguments (" . scalar(@args) . ")";
+}
+
+sub create_test_slim_with_string {
+  my($self,$str) = @_;
+  my $testslim = ref($self)->new;
+  $testslim->set_string($str);
+  $testslim;
+}
+
+sub get_string_from_other {
+  my($self,$other) = @_;
+  $other->get_string_arg;
+}
+
+sub return_constructor_arg {
+  my($self) = @_;
+  $self->{CTRARG};
 }
 
 sub return_value { "arg" }
@@ -39,6 +69,12 @@ sub set_string {
 sub get_string_arg {
   my($self) = @_;
   $self->{STRING};
+}
+
+sub is_same {
+  my($self,$other) = @_;
+  return "false" unless ref $other;
+  $other == $self ? "true" : "false";
 }
 
 1;

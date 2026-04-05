@@ -65,8 +65,15 @@ sub create {
   my($self,$id,$class,$args) = @_;
 
   eval {
-    $class = $self->resolve_class($class);
-    $self->construct_instance($id,$class,$args);
+    ($class) = $self->replace_symbols($class);
+
+    if (ref $class) {
+      $self->{instance}{$id} = $class;
+    }
+    else {
+      $class = $self->resolve_class($class);
+      $self->construct_instance($id, $class, $args);
+    }
   };
   return "OK" unless $@;
 
@@ -96,6 +103,10 @@ sub replace_symbols {
   for (@args) {
     if (ref $_ eq "ARRAY") {
       push @result, [ $self->replace_symbols(@$_) ];
+    }
+    elsif (defined($_) && !ref($_) && /^\$(\w+)\z/) {
+      my $sym = $self->get_symbol($1);
+      push @result, defined($sym) ? $sym : $_;
     }
     else {
       s{ (?<orig> \$ (?<sym> \w+ ) ) } [
@@ -173,8 +184,9 @@ sub call {
     );
   };
   unless ($@) {
-    $result =~ s/\s+$// if defined $result;
-    return $result
+    return "null" unless defined $result;
+    $result =~ s/\s+$// unless ref $result;
+    return $result;
   }
 
   chomp $@;

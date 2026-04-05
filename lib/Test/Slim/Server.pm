@@ -79,10 +79,12 @@ sub process {
       return;
     }
     else {
-      warn "command=[$command]";
+      #warn "command=[$command]";
       my @instructions = Test::Slim::List->new($command)->list;
       my @results = $self->execute(@instructions);
+
       my $response = Test::Slim::List->new(\@results)->serialize;
+      #warn "response=[$response]";
       my $octets = encode "UTF-8", $response;
       $self->_write($fh, sprintf "%06d:%s", length($octets), $octets);
     }
