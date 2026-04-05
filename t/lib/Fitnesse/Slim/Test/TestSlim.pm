@@ -13,7 +13,12 @@ sub new {
 
   return $self unless @args;
 
-  if (@args == 2) {
+  if (@args == 1) {
+    my($n) = @args;
+    $self->{CTRARG} = $n;
+    return $self;
+  }
+  elsif (@args == 2) {
     my($n,$other) = @args;
     $self->{CTRARG} = $n;
     $self->{STRING} = ref($other) ? $other->{STRING} : undef;
@@ -50,6 +55,16 @@ sub one_arg {
 
 sub echo { @_[1 .. $#_] }
 
+sub echo_int {
+  my($self,$i) = @_;
+  $i;
+}
+
+sub echo_string {
+  my($self,$string) = @_;
+  $string;
+}
+
 sub return_string { "string" }
 *returnString = \&return_string;
 
@@ -75,11 +90,6 @@ sub is_same {
   my($self,$other) = @_;
   return "false" unless ref $other;
   $other == $self ? "true" : "false";
-}
-
-sub echo_string {
-  my($self,$string) = @_;
-  $string;
 }
 
 1;
