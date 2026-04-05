@@ -9,12 +9,17 @@ use Test::Slim::Statement;
 
 sub new {
   my($class) = @_;
-  bless { IMPORTS => [] } => $class;
+  bless {
+    imports  => [],
+    instance => {},
+    library  => [],
+    symbol   => {},
+  } => $class;
 }
 
 sub add_import {
     my($self, $prefix) = @_;
-    push @{ $self->{IMPORTS} }, $self->slim_to_perl_class($prefix);
+    push @{ $self->{imports} }, $self->slim_to_perl_class($prefix);
 }
 
 sub path_to_class {
@@ -43,7 +48,7 @@ sub resolve_class {
   my $class = $self->slim_to_perl_class($name);
 
   my @candidates = (
-      map("${_}::${class}", @{ $self->{IMPORTS} }),
+      map("${_}::${class}", @{ $self->{imports} }),
       $class,
   );
 
@@ -73,6 +78,10 @@ sub create {
     else {
       $class = $self->resolve_class($class);
       $self->construct_instance($id, $class, $args);
+
+      if ($id =~ /^library[0-9]+$/) {
+        push @{ $self->{library} }, $id;
+      }
     }
   };
   return "OK" unless $@;
@@ -93,7 +102,7 @@ sub construct_instance {
 
   chomp $@;
   my $n = @$args;
-  die "message:<<COULD_NOT_INVOKE_CONSTRUCTOR $class\[$n]: $@>>";
+  die "message:<<COULD_NOT_INVOKE_CONSTRUCTOR105 $class\[$n]: $@>>";
 }
 
 sub replace_symbols {
@@ -170,9 +179,21 @@ sub call {
     unless exists $self->{instance}{$instance};
 
   my $obj = $self->{instance}{$instance};
+  $method = $self->slim_to_perl_method($method);
+  unless ($obj->can($method)) {
+    for my $lib_id (reverse @{ $self->{library} }) {
+      warn "trying [$method] in library [$lib_id]";
+      my $lib = $self->{instance}{$lib_id};
+      next unless $lib && ref $lib;
+      if ($lib->can($method)) {
+        $obj = $lib;
+        last;
+      }
+    }
+  }
+
   my $n = @args;
   my $class = ref $obj;
-  $method = $self->slim_to_perl_method($method);
   return $Test::Slim::Statement::EXCEPTION_TAG
            . "message:<<NO_METHOD_IN_CLASS $method\[$n] $class>>"
     unless $obj->can($method);

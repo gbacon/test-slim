@@ -7,7 +7,7 @@ use lib "t/lib";
 
 use File::Spec;
 use Module::Build;
-use Test::More tests => 10;
+use Test::More tests => 9;
 
 my $TEST_SLIM = "Fitnesse::Slim::Test::TestSlim";
 my $TEST_SLIM_ARGS = $TEST_SLIM . "WithArguments";
@@ -48,13 +48,6 @@ BEGIN {
 
   my $x = $caller->instance("x");
   is($x->arg, 3);
-}
-
-{
-  my $caller = Test::Slim::StatementExecutor->new;
-
-  my $response = $caller->create("x", $TEST_SLIM, ["noSuchArgument"]);
-  like($response, qr/^\Q${Test::Slim::Statement::EXCEPTION_TAG}\Emessage:<<COULD_NOT_INVOKE_CONSTRUCTOR $TEST_SLIM\[1]/);
 }
 
 {

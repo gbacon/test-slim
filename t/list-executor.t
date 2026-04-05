@@ -189,32 +189,32 @@ test {
 
 test {
   add_statement "id1", "callAndAssign", "v", "test_slim", "add", "x", "y";
-  add_statement "id2", "call", "test_slim", "echo", '$v';
+  add_statement "id2", "call", "test_slim", "echo_string", '$v';
   check_results "id1" => "xy", "callAndAssign returns assigned value",
                 "id2" => "xy", "assign the return value to a symbol";
 };
 
 test {
-  add_statement "id1", "callAndAssign", "v1", "test_slim", "echo", "Bob";
-  add_statement "id2", "callAndAssign", "v2", "test_slim", "echo", "Martin";
-  add_statement "id3", "call", "test_slim", "echo", 'name: $v1 $v2';
+  add_statement "id1", "callAndAssign", "v1", "test_slim", "echo_string", "Bob";
+  add_statement "id2", "callAndAssign", "v2", "test_slim", "echo_string", "Martin";
+  add_statement "id3", "call", "test_slim", "echo_string", 'name: $v1 $v2';
   check_results "id3" => "name: Bob Martin", "replace multiple symbols in a single argument";
 };
 
 test {
-  add_statement "id3", "call", "test_slim", "echo", '$v1';
+  add_statement "id3", "call", "test_slim", "echo_string", '$v1';
   check_results "id3" => '$v1', q(ignore '$' if what follows is not a symbol);
 };
 
 test {
   my $l = [ qw/ 1 2 / ];
-  add_statement "id", "call", "test_slim", "echo", $l;
+  add_statement "id", "call", "test_slim", "echo_string", $l;
   check_results "id" => $l, "can pass and return a list";
 };
 
 test {
-  add_statement "id1", "callAndAssign", "v", "test_slim", "echo", "x";
-  add_statement "id2", "call", "test_slim", "echo", ['$v'];
+  add_statement "id1", "callAndAssign", "v", "test_slim", "echo_string", "x";
+  add_statement "id2", "call", "test_slim", "echo_string", ['$v'];
   check_results "id2" => ["x"], "pass a symbol in a list";
 };
 
@@ -236,8 +236,8 @@ test {
 };
 
 test {
-  add_statement "a1", "callAndAssign", "Æ_ØÅ", "test_slim", "echo", "ØÅÆØÅÆ_ØÅÆØÅÆ";
-  add_statement "c1", "call",                  "test_slim", "echo", '$Æ_ØÅ';
+  add_statement "a1", "callAndAssign", "Æ_ØÅ", "test_slim", "echo_string", "ØÅÆØÅÆ_ØÅÆØÅÆ";
+  add_statement "c1", "call",                  "test_slim", "echo_string", '$Æ_ØÅ';
 
   check_results "a1", "ØÅÆØÅÆ_ØÅÆØÅÆ", "assign UTF-8 symbol",
                 "c1", "ØÅÆØÅÆ_ØÅÆØÅÆ", "substitute UTF-8 symbol";
@@ -278,7 +278,7 @@ test {
 };
 
 test {
-  add_statement "id1", "call", "test_slim", "echo", "𝄞"; # U+1D11E (2 UTF-16 units)
+  add_statement "id1", "call", "test_slim", "echo_string", "𝄞"; # U+1D11E (2 UTF-16 units)
 
   check_results
     "id1", "𝄞",

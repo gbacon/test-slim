@@ -5,4 +5,9 @@ sub new {
   bless {} => $class;
 }
 
+sub echo {
+  my($self,$arg) = @_;
+  $arg;
+}
+
 1;

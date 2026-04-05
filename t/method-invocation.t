@@ -79,7 +79,7 @@ test {
 
 test {
   $executor->set_symbol("v", "bob");
-  is($executor->call("test_slim", "echo", 'hi $v.'), "hi bob.",
+  is($executor->call("test_slim", "echo_string", 'hi $v.'), "hi bob.",
     "can replace symbol expressions with their values");
 };
 

@@ -10,11 +10,6 @@ sub clone_symbol {
   $symbol;
 }
 
-sub echo {
-  my($self,$string) = @_;
-  $string;
-}
-
 sub free_symbol {
   my($self,$symbol) = @_;
   $symbol;

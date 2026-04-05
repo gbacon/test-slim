@@ -53,7 +53,7 @@ sub one_arg {
     unless @_ == 2;
 }
 
-sub echo { @_[1 .. $#_] }
+# sub echo { @_[1 .. $#_] }
 
 sub echo_int {
   my($self,$i) = @_;
