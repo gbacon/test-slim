@@ -89,16 +89,16 @@
    },
    "conformanceSummary" : {
       "classificationCounts" : {
-         "conformant" : 41,
+         "conformant" : 42,
          "engine_gap" : 0,
          "environment_limited" : 1,
-         "fixture_gap" : 4,
+         "fixture_gap" : 3,
          "harness_limited" : 4
       },
-      "confirmedConformantPages" : 41,
+      "confirmedConformantPages" : 42,
       "confirmedEngineGapPages" : 0,
       "environmentBlockedPages" : 1,
-      "fixtureBlockedPages" : 4,
+      "fixtureBlockedPages" : 3,
       "interpretation" : "Raw page-level FitNesse assertion counts are preserved separately. Embedded negative, ignored, and exception outcomes are valid when the outer acceptance page checks them successfully. Fixture and harness blockers are not attributed to the SLiM engine without evidence.",
       "pages" : 50,
       "testHarnessBlockedPages" : 4
@@ -1499,13 +1499,13 @@
          "expectedBenefit" : "Targets TableTableSuite.SymbolsInTableTableManagedByTheFixture.",
          "increment" : "TableTableIncFirstCol fixture and executor-consumer behavior",
          "priority" : 1,
-         "scope" : "Use upstream StatementExecutorConsumer semantics for symbol ownership and assignment; isolate core changes and regressions."
+         "scope" : "Implement the exact upstream consumer hook for fixture-managed symbols and the table result; isolate the core engine change."
       },
       {
-         "expectedBenefit" : "Targets converter, DetailedDiff, and login acceptance pages.",
-         "increment" : "Remaining standalone fixtures",
+         "expectedBenefit" : "Targets the two remaining nested-fixture pages.",
+         "increment" : "TestSlimWithConverter and DetailedDiff",
          "priority" : 2,
-         "scope" : "Reproduce each installed upstream fixture contract and assess any required core conversion behavior separately."
+         "scope" : "Inspect converter behavior and diff rendering against upstream, and determine if either needs core support."
       }
    ],
    "libraryIdentityEngineIncrement" : {
@@ -1613,25 +1613,68 @@
       },
       "upstreamReference" : "/tmp/fitnesse-src/src/fitnesse/slim/test/library/LibraryInSetUp.java"
    },
+   "loginDialogFixtureIncrement" : {
+      "affectedPageResults" : [
+         {
+            "after" : {
+               "exceptions" : 0,
+               "ignored" : 0,
+               "right" : 1,
+               "wrong" : 0
+            },
+            "before" : {
+               "exceptions" : 2,
+               "ignored" : 0,
+               "right" : 0,
+               "wrong" : 0
+            },
+            "page" : "TestTryingParameterizationIsntTooGreedy",
+            "status" : "conformant"
+         }
+      ],
+      "behavior" : "Stores credentials, increments each login attempt, returns boolean text, and exposes the success or failure message.",
+      "family" : "FitNesse LoginDialogDriver",
+      "fullInventory" : {
+         "knownServerExits" : 0,
+         "notYetRerun" : true,
+         "pages" : 50
+      },
+      "newlyConformantPages" : [
+         "TestTryingParameterizationIsntTooGreedy"
+      ],
+      "perlTests" : {
+         "command" : "bin/test-dev",
+         "files" : 36,
+         "knownTodoFailures" : 4,
+         "status" : "PASS",
+         "tests" : 392
+      },
+      "regression" : {
+         "assertions" : 8,
+         "file" : "t/logindialog-driver.t",
+         "preFix" : "Fitnesse::Slim::Test::LoginDialogDriver was missing."
+      },
+      "upstreamReference" : "/tmp/fitnesse-src/src/fitnesse/slim/test/LoginDialogDriver.java"
+   },
    "pageRunMethod" : "Ran all 50 Test=true pages individually via ?test&format=xml using the external Perl SLiM server started by /tmp/run_slim_acceptance.py. Each response confirmed fitnesse.slim.SlimService at 127.0.0.1:8099; no unexpected Perl process exit occurred during a page.",
    "pageTotals" : {
-      "blockedPages" : 9,
+      "blockedPages" : 8,
       "completedResponses" : 50,
-      "confirmedConformantPages" : 41,
+      "confirmedConformantPages" : 42,
       "confirmedEngineGapPages" : 0,
       "counts" : {
-         "exceptions" : 28,
+         "exceptions" : 26,
          "ignored" : 2,
-         "right" : 323,
+         "right" : 324,
          "wrong" : 29
       },
       "environmentLimitedPages" : 1,
       "externalPerlConfirmed" : 50,
-      "failingPages" : 9,
-      "fixtureGapPages" : 4,
+      "failingPages" : 8,
+      "fixtureGapPages" : 3,
       "harnessLimitedPages" : 4,
       "pages" : 50,
-      "passingPages" : 41,
+      "passingPages" : 42,
       "serverExits" : 0
    },
    "pages" : [
@@ -3849,26 +3892,23 @@
       {
          "attempt" : 49,
          "conformance" : {
-            "dependencies" : [
-               "LoginDialogDriver",
-               "TestSlim.login_with_username_and_password"
-            ],
+            "dependencies" : [],
             "expectedBehavior" : "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
             "intentionalInnerNegativeOrExceptionCoverage" : false,
             "rawCounts" : {
-               "exceptions" : 2,
+               "exceptions" : 0,
                "ignored" : 0,
-               "right" : 0,
+               "right" : 1,
                "wrong" : 0
             },
-            "reason" : "LoginDialogDriver and its login method are absent, so scenario selection is not assessed.",
-            "status" : "fixture_gap",
+            "reason" : "LoginDialogDriver accepts the shared username/password scenario and records the upstream message and attempt count.",
+            "status" : "conformant",
             "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
          "evidence" : "Full 50-page ?test&format=xml rerun after Map result conversion; FitNesse used the external Perl listener at 127.0.0.1:8099.",
          "exceptionDetails" : [],
-         "exceptions" : 2,
+         "exceptions" : 0,
          "executionException" : null,
          "externalPerlConfirmed" : true,
          "failureDetails" : {
@@ -3882,14 +3922,14 @@
          "ignored" : 0,
          "page" : "TestTryingParameterizationIsntTooGreedy",
          "rawCounts" : {
-            "exceptions" : 2,
+            "exceptions" : 0,
             "ignored" : 0,
-            "right" : 0,
+            "right" : 1,
             "wrong" : 0
          },
          "responseBytes" : 33926,
-         "right" : 0,
-         "rootCause" : "LoginDialogDriver and its login method are absent, so scenario selection is not assessed.",
+         "right" : 1,
+         "rootCause" : "LoginDialogDriver accepts the shared username/password scenario and records the upstream message and attempt count.",
          "status" : "completed",
          "testSystem" : "slim:fitnesse.slim.SlimService",
          "testSystemConfirmed" : "slim:fitnesse.slim.SlimService",

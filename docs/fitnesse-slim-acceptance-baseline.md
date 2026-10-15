@@ -46,11 +46,11 @@ The Perl engine previously returned a plain hash reference from `StatementExecut
 
 ## Current acceptance results
 
-The latest targeted runs report **41 conformant pages**; all 50 pages will be rerun after the remaining fixture increments. Raw page totals currently combine the latest affected-page results with the last full inventory: **323 right, 29 wrong, 2 ignored, and 28 exceptions**. The affected page ran through the external Perl service at `127.0.0.1:8099`, with **zero server exits**.
+The latest targeted runs report **42 conformant pages**; all 50 pages will be rerun after the remaining fixture increments. Raw page totals currently combine the latest affected-page results with the last full inventory: **324 right, 29 wrong, 2 ignored, and 26 exceptions**. The affected page ran through the external Perl service at `127.0.0.1:8099`, with **zero server exits**.
 
-`DefineAliasTest` improved from 8 right and 67 exceptions to 22 right and no exceptions. `HybridDecisionTable.ImplementDynamicDecisionTableWithHybridTable` improved from 25 exceptions to 5 right and no exceptions. Both setup-library pages pass (1 and 2 right). `HashTableWithHtmlContent` and `TestPageWithInclude` pass with 1 right each. Both Sleep pages pass (1 and 9 right); as these run against the already connected server, they do not independently validate startup-time runner flags. `TestChineseWords` passes with 1 right after EchoScript gained UTF-8 stdout behavior. `TestSequentialArgumentProcessing` now passes with 8 right and no exceptions using TestSlim's upstream concatenation method. All 31 pages that were conformant at the start remain conformant. The complete 50-page comparison will be recorded after the fixture phase.
+`DefineAliasTest` improved from 8 right and 67 exceptions to 22 right and no exceptions. `HybridDecisionTable.ImplementDynamicDecisionTableWithHybridTable` improved from 25 exceptions to 5 right and no exceptions. Both setup-library pages pass (1 and 2 right). `HashTableWithHtmlContent` and `TestPageWithInclude` pass with 1 right each. Both Sleep pages pass (1 and 9 right); as these run against the already connected server, they do not independently validate startup-time runner flags. `TestChineseWords` passes with 1 right after EchoScript gained UTF-8 stdout behavior. `TestSequentialArgumentProcessing` passes with 8 right using TestSlim's upstream concatenation method. `TestTryingParameterizationIsntTooGreedy` now passes with 1 right using the upstream LoginDialogDriver state and login behavior. All 31 pages that were conformant at the start remain conformant. The complete 50-page comparison will be recorded after the fixture phase.
 
-The 9 remaining non-conformant pages comprise 4 fixture gaps, 4 FitNesse harness/rendering limitations, and 1 environment-limited timeout page. Remaining fixture gaps are TableTableIncFirstCol/TestQuery.echo_int, TestSlimWithConverter, DetailedDiff, and LoginDialogDriver.
+The 8 remaining non-conformant pages comprise 3 fixture gaps, 4 FitNesse harness/rendering limitations, and 1 environment-limited timeout page. Remaining fixture gaps are TableTableIncFirstCol/TestQuery.echo_int, TestSlimWithConverter, and DetailedDiff.
 
 ## Per-page results
 
@@ -104,7 +104,7 @@ The 9 remaining non-conformant pages comprise 4 fixture gaps, 4 FitNesse harness
 | `TestSystemSlimSuite.HowtoEnforceA_TimelimitPerTestCommand.NotWorking_SettingSlimTimeout` | 1 | 0 | 0 | 0 | conformant | Sleep returned `WakeUp 12000` as shown by this page documenting that `slim.timeout` alone does not stop the command. |
 | `TestSystemSlimSuite.HowtoEnforceA_TimelimitPerTestCommand.PartiallyWorking_SettingSlimFlags` | 9 | 0 | 0 | 0 | conformant | Sleep responses match the page's expected table values. Runner startup flags are not independently assessed by this directly connected external-service test. |
 | `TestSystemSlimSuite.TimeoutInSlimTestSystem` | 4 | 0 | 0 | 0 | conformant | The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server. |
-| `TestTryingParameterizationIsntTooGreedy` | 0 | 0 | 0 | 2 | fixture_gap | LoginDialogDriver and its login method are absent, so scenario selection is not assessed. |
+| `TestTryingParameterizationIsntTooGreedy` | 1 | 0 | 0 | 0 | conformant | LoginDialogDriver accepts the shared username/password scenario and records the upstream message and attempt count. |
 | `TestTwoIdenticalTablesOnPageDontConflict` | 1 | 0 | 0 | 0 | conformant | The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server. |
 
 ## Next increment
