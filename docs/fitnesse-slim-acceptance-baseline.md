@@ -46,13 +46,13 @@ The Perl engine previously returned a plain hash reference from `StatementExecut
 
 ## Current acceptance results
 
-The latest targeted runs report **43 conformant pages**; all 50 pages will be rerun after the remaining fixture increments. Raw page totals currently combine the latest affected-page results with the last full inventory: **345 right, 8 wrong, 2 ignored, and 26 exceptions**. The affected page ran through the external Perl service at `127.0.0.1:8099`, with **zero server exits**.
+The latest targeted runs report **44 conformant pages**; all 50 pages will be rerun after the remaining fixture increment. Raw page totals currently combine the latest affected-page results with the last full inventory: **360 right, 7 wrong, 2 ignored, and 17 exceptions**. The affected page ran through the external Perl service at `127.0.0.1:8099`, with **zero server crashes**.
 
-`DefineAliasTest` improved from 8 right and 67 exceptions to 22 right and no exceptions. `HybridDecisionTable.ImplementDynamicDecisionTableWithHybridTable` improved from 25 exceptions to 5 right and no exceptions. Both setup-library pages pass (1 and 2 right). `HashTableWithHtmlContent` and `TestPageWithInclude` pass with 1 right each. Both Sleep pages pass (1 and 9 right); as these run against the already connected server, they do not independently validate startup-time runner flags. `TestChineseWords` passes with 1 right. `TestSequentialArgumentProcessing` passes with 8 right. `TestTryingParameterizationIsntTooGreedy` passes with 1 right. `TestDetailedDiff` now passes all 22 outer assertions; its nested page intentionally reports 25 pass, 50 fail, and 1 ignored checks, which ResponseExaminer validates. All 31 pages that were conformant at the start remain conformant. The complete 50-page comparison will be recorded after the fixture phase.
+`DefineAliasTest` improved from 8 right and 67 exceptions to 22 right and no exceptions. `HybridDecisionTable.ImplementDynamicDecisionTableWithHybridTable` improved from 25 exceptions to 5 right and no exceptions. Both setup-library pages pass (1 and 2 right). `HashTableWithHtmlContent` and `TestPageWithInclude` pass with 1 right each. Both Sleep pages pass (1 and 9 right); as these run against the already connected server, they do not independently validate startup-time runner flags. `TestChineseWords` passes with 1 right. `TestSequentialArgumentProcessing` passes with 8 right. `TestTryingParameterizationIsntTooGreedy` passes with 1 right. `TestDetailedDiff` passes all 22 outer assertions while confirming the nested page's intentional 25 pass, 50 fail, and 1 ignored counts. `SymbolsInTableTableManagedByTheFixture` now passes with 15 right; it exercises the fixture-managed symbol path. All 31 pages that were conformant at the start remain conformant. The complete 50-page comparison will be recorded after the final fixture increment.
 
-The 7 remaining non-conformant pages comprise 2 fixture gaps, 4 FitNesse harness/rendering limitations, and 1 environment-limited timeout page. Remaining fixture gaps are TableTableIncFirstCol/TestQuery.echo_int and TestSlimWithConverter.
+The 6 remaining non-conformant pages comprise 1 fixture gap, 4 FitNesse harness/rendering limitations, and 1 environment-limited timeout page. The remaining fixture gap is `TestSlimWithConverter`.
 
-The fixture-managed-symbol executor path now mirrors upstream `StatementExecutorConsumer`: fixtures receive the current executor, can register a method-name regex for symbol handling, and restore normal replacement when finished. The 4 focused engine regressions pass, and `bin/test-dev` passes with 38 files and 402 tests. This does not yet change the TableTable acceptance result; its Perl fixture still needs implementation.
+The fixture-managed-symbol executor path mirrors upstream `StatementExecutorConsumer`: fixtures receive the current executor, can register a method-name regex for symbol handling, and restore normal replacement when finished. The focused engine regression and TableTable fixture regression pass. `bin/test-dev` passes with 39 files and 407 tests. The TableTable page did not require the separately named TestQuery fixture because its script checks are handled by the existing TestSlim.echoInt method.
 
 ## Per-page results
 
@@ -88,7 +88,7 @@ The fixture-managed-symbol executor path now mirrors upstream `StatementExecutor
 | `StopSuite` | 6 | 0 | 0 | 0 | conformant | ConstructorThrows raises the upstream StopSuite exception; the executor returns ABORT_SLIM_SUITE and FitNesse runs suite teardown. |
 | `StopTest` | 6 | 0 | 0 | 0 | conformant | ConstructorThrows raises the upstream StopTest exception; the executor returns ABORT_SLIM_TEST and FitNesse continues with later pages and teardown. |
 | `StopTestInSuiteSetUp` | 7 | 0 | 0 | 0 | conformant | The stop exception is returned with ABORT_SLIM_TEST; FitNesse skips suite tests and still executes suite teardown. |
-| `TableTableSuite.SymbolsInTableTableManagedByTheFixture` | 0 | 1 | 0 | 9 | fixture_gap | TableTableIncFirstCol and TestQuery.echo_int are absent. |
+| `TableTableSuite.SymbolsInTableTableManagedByTheFixture` | 15 | 0 | 0 | 0 | conformant | The TableTableIncFirstCol consumer fixture increments values, assigns symbols inside the table, and restores normal symbol substitution afterward. |
 | `TestChineseWords` | 1 | 0 | 0 | 0 | conformant | EchoScript echoes the original Unicode value and writes its UTF-8 bytes plus newline to stdout. |
 | `TestComparators` | 26 | 0 | 0 | 0 | conformant | The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server. |
 | `TestCustomComparators` | 1 | 2 | 0 | 0 | harness_limited | The nested response is retrieved, but its output lacks the expected glob comparison; the root-level nested test does not receive the outer suite CustomComparators setup. |
@@ -111,4 +111,4 @@ The fixture-managed-symbol executor path now mirrors upstream `StatementExecutor
 
 ## Next increment
 
-The next increment is the TableTableIncFirstCol/TestQuery fixture using the now-verified consumer contract. The other remaining fixture page is TestSlimWithConverter.
+The final fixture page is TestCustomConverter, which depends on TestSlimWithConverter and its converter behavior.

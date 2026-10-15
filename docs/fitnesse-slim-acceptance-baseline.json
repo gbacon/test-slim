@@ -89,16 +89,16 @@
    },
    "conformanceSummary" : {
       "classificationCounts" : {
-         "conformant" : 43,
+         "conformant" : 44,
          "engine_gap" : 0,
          "environment_limited" : 1,
-         "fixture_gap" : 2,
+         "fixture_gap" : 1,
          "harness_limited" : 4
       },
-      "confirmedConformantPages" : 43,
+      "confirmedConformantPages" : 44,
       "confirmedEngineGapPages" : 0,
       "environmentBlockedPages" : 1,
-      "fixtureBlockedPages" : 2,
+      "fixtureBlockedPages" : 1,
       "interpretation" : "Raw page-level FitNesse assertion counts are preserved separately. Embedded negative, ignored, and exception outcomes are valid when the outer acceptance page checks them successfully. Fixture and harness blockers are not attributed to the SLiM engine without evidence.",
       "pages" : 50,
       "testHarnessBlockedPages" : 4
@@ -1569,16 +1569,10 @@
    },
    "implementationPlan" : [
       {
-         "expectedBenefit" : "Targets TableTableSuite.SymbolsInTableTableManagedByTheFixture.",
-         "increment" : "TableTableIncFirstCol and TestQuery.echo_int",
+         "expectedBenefit" : "Targets TestCustomConverter, the sole remaining fixture-gap page.",
+         "increment" : "TestSlimWithConverter fixture",
          "priority" : 1,
-         "scope" : "Implement the exact nested-list table result and in-table symbol reads/assignments using StatementExecutorConsumer."
-      },
-      {
-         "expectedBenefit" : "Targets TestCustomConverter.",
-         "increment" : "TestSlimWithConverter",
-         "priority" : 2,
-         "scope" : "Inspect the installed custom converter extension point and add only compatible fixture-local behavior unless upstream proves core support is required."
+         "scope" : "Inspect upstream converter contract and implement without broadening core conversion behavior unless independently required."
       }
    ],
    "libraryIdentityEngineIncrement" : {
@@ -1731,23 +1725,23 @@
    },
    "pageRunMethod" : "Ran all 50 Test=true pages individually via ?test&format=xml using the external Perl SLiM server started by /tmp/run_slim_acceptance.py. Each response confirmed fitnesse.slim.SlimService at 127.0.0.1:8099; no unexpected Perl process exit occurred during a page.",
    "pageTotals" : {
-      "blockedPages" : 7,
+      "blockedPages" : 6,
       "completedResponses" : 50,
-      "confirmedConformantPages" : 43,
+      "confirmedConformantPages" : 44,
       "confirmedEngineGapPages" : 0,
       "counts" : {
-         "exceptions" : 26,
+         "exceptions" : 17,
          "ignored" : 2,
-         "right" : 345,
-         "wrong" : 8
+         "right" : 360,
+         "wrong" : 7
       },
       "environmentLimitedPages" : 1,
       "externalPerlConfirmed" : 50,
-      "failingPages" : 7,
-      "fixtureGapPages" : 2,
+      "failingPages" : 6,
+      "fixtureGapPages" : 1,
       "harnessLimitedPages" : 4,
       "pages" : 50,
-      "passingPages" : 43,
+      "passingPages" : 44,
       "serverExits" : 0
    },
    "pages" : [
@@ -3114,26 +3108,23 @@
       {
          "attempt" : 31,
          "conformance" : {
-            "dependencies" : [
-               "TableTableIncFirstCol",
-               "TestQuery.echo_int"
-            ],
+            "dependencies" : [],
             "expectedBehavior" : "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
             "intentionalInnerNegativeOrExceptionCoverage" : false,
             "rawCounts" : {
-               "exceptions" : 9,
+               "exceptions" : 0,
                "ignored" : 0,
-               "right" : 0,
-               "wrong" : 1
+               "right" : 15,
+               "wrong" : 0
             },
-            "reason" : "TableTableIncFirstCol and TestQuery.echo_int are absent.",
-            "status" : "fixture_gap",
+            "reason" : "TableTableIncFirstCol increments values, assigns symbols inside the table through StatementExecutorConsumer, and restores normal symbol substitution afterward.",
+            "status" : "conformant",
             "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
          "evidence" : "Full 50-page ?test&format=xml rerun after Map result conversion; FitNesse used the external Perl listener at 127.0.0.1:8099.",
          "exceptionDetails" : [],
-         "exceptions" : 9,
+         "exceptions" : 0,
          "executionException" : null,
          "externalPerlConfirmed" : true,
          "failureDetails" : {
@@ -3147,19 +3138,19 @@
          "ignored" : 0,
          "page" : "TableTableSuite.SymbolsInTableTableManagedByTheFixture",
          "rawCounts" : {
-            "exceptions" : 9,
+            "exceptions" : 0,
             "ignored" : 0,
-            "right" : 0,
-            "wrong" : 1
+            "right" : 15,
+            "wrong" : 0
          },
          "responseBytes" : 42027,
-         "right" : 0,
-         "rootCause" : "TableTableIncFirstCol and TestQuery.echo_int are absent.",
+         "right" : 15,
+         "rootCause" : "TableTableIncFirstCol increments values, assigns symbols inside the table through StatementExecutorConsumer, and restores normal symbol substitution afterward.",
          "status" : "completed",
          "testSystem" : "slim:fitnesse.slim.SlimService",
          "testSystemConfirmed" : "slim:fitnesse.slim.SlimService",
          "url" : "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TableTableSuite.SymbolsInTableTableManagedByTheFixture?test&format=xml",
-         "wrong" : 1
+         "wrong" : 0
       },
       {
          "attempt" : 32,
@@ -6366,6 +6357,55 @@
       },
       "returnedPageResults" : 5,
       "url" : "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests?suite&format=xml"
+   },
+   "tableTableFixtureIncrement" : {
+      "affectedPageResults" : [
+         {
+            "after" : {
+               "exceptions" : 0,
+               "ignored" : 0,
+               "right" : 15,
+               "wrong" : 0
+            },
+            "before" : {
+               "exceptions" : 9,
+               "ignored" : 0,
+               "right" : 0,
+               "wrong" : 1
+            },
+            "page" : "TableTableSuite.SymbolsInTableTableManagedByTheFixture",
+            "status" : "conformant"
+         }
+      ],
+      "behavior" : "Reads symbols from table cells, increments the first value, assigns each result to the symbol in column two, returns ordered result rows, then restores automatic symbol replacement.",
+      "engineRegression" : {
+         "assertions" : 4,
+         "engineCommit" : "4d2bb540fb56d8489244b1d1686a1426ec8869fe",
+         "file" : "t/fixture-symbol-consumer.t"
+      },
+      "family" : "FitNesse fixture-managed TableTableIncFirstCol",
+      "fullInventory" : {
+         "knownServerExits" : 0,
+         "notYetRerun" : true,
+         "pages" : 50
+      },
+      "newlyConformantPages" : [
+         "TableTableSuite.SymbolsInTableTableManagedByTheFixture"
+      ],
+      "perlTests" : {
+         "command" : "bin/test-dev",
+         "files" : 39,
+         "knownTodoFailures" : 4,
+         "status" : "PASS",
+         "tests" : 407
+      },
+      "regression" : {
+         "assertions" : 5,
+         "file" : "t/table-table-fixture.t",
+         "preFix" : "The fixture class was absent; the table instruction then reported NO_INSTANCE and the symbol values remained unchanged."
+      },
+      "upstreamReference" : "/tmp/fitnesse-src/src/fitnesse/slim/test/statementexecutorconsumer/TableTableIncFirstCol.java and SymbolManagingTableTable.java",
+      "verifiedDependencyNote" : "The page uses the already implemented TestSlim.echoInt method and does not require a TestQuery fixture."
    },
    "testSlimConcatenateIncrement" : {
       "affectedPageResults" : [
