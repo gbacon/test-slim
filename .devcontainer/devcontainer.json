@@ -3,5 +3,24 @@
   "build": {
     "dockerfile": "Dockerfile",
     "context": "..",
+    "args": {
+      "FITNESSE_VERSION": "20251025",
+      "FITNESSE_SHA256": "824596f90381a9637abd4d5b2aa0f4f03f2ef5e5716399c41b2ae8889d470d11"
+    }
   },
+  "forwardPorts": [8080],
+  "portsAttributes": {
+    "8080": {
+      "label": "FitNesse",
+      "onAutoForward": "openBrowser"
+    }
+  },
+  "postStartCommand": "bash .devcontainer/start-fitnesse",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-vscode.makefile-tools"
+      ]
+    }
+  }
 }

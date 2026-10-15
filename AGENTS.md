@@ -1,0 +1,150 @@
+# AGENTS.md — test-slim
+
+## Objective
+
+Complete and maintain `Test::Slim`, a Perl implementation of the FitNesse SLiM protocol.
+
+The primary behavioral specification is the FitNesse SLiM protocol and its upstream acceptance tests. Existing Perl tests establish regression requirements.
+
+Do not rewrite the implementation merely to modernize its style.
+
+## Repository layout
+
+- `lib/Test/Slim/` — protocol implementation
+- `bin/perl-slim` — SLiM server entry point
+- `bin/test-dev` — established developer/CI test command
+- `t/` — Perl unit and regression tests
+- `t/lib/` — test fixture implementations
+- `.devcontainer/` — Codespaces and container configuration
+- `.github/workflows/` — CI
+- `FitNesseRoot/` — local FitNesse wiki data, Git-ignored
+- `tools/` — local tools, Git-ignored
+
+Inspect the current tree before relying on these descriptions.
+
+## Initial procedure
+
+1. Read the implementation, tests, dependency manifests, and CI configuration.
+2. Run `bin/test-dev` and record the baseline.
+3. Verify the development container and FitNesse installation.
+4. Start FitNesse and the Perl SLiM server.
+5. Run the upstream SLiM acceptance suite.
+6. Produce a machine-readable baseline of acceptance results.
+7. Identify the next smallest independently testable missing behavior.
+
+Do not assume previously reported test results remain current.
+
+## Development commands
+
+Unit and regression tests:
+
+```sh
+bin/test-dev
+```
+
+Perl SLiM server:
+
+```sh
+perl -Ilib -It/lib bin/perl-slim 8099
+```
+
+FitNesse:
+
+```sh
+java -jar /opt/fitnesse/fitnesse.jar -p 8080
+```
+
+The container normally starts FitNesse automatically. Do not launch a duplicate server.
+
+## Engineering requirements
+
+- Add a failing regression test before fixing an observed defect.
+- Preserve existing passing tests.
+- Prefer focused changes with minimal behavioral scope.
+- Use the existing Perl coding conventions unless a change is justified.
+- Avoid introducing dependencies without a clear need.
+- Keep the container build compatible with GitHub Actions.
+- Do not modify upstream acceptance expectations to conceal failures.
+- Do not count fixture-loading failures as protocol failures without investigating them.
+- Do not count passing fixture stubs as proof of complete protocol behavior.
+- Do not globally stringify references or coerce arbitrary scalar values into booleans.
+- Preserve protocol-correct exception formatting.
+- Treat Unicode and binary transport behavior as regression-sensitive.
+
+## Known protocol concerns
+
+### Encoding
+
+The SLiM socket frame length counts transmitted bytes. SLiM list-string lengths follow Java UTF-16 code-unit semantics. These must not be conflated.
+
+### Symbols
+
+Symbols may contain Perl object references. Exact-symbol substitution must preserve the original reference and object identity. Embedded-symbol interpolation is a separate operation.
+
+### Null and booleans
+
+Preserve distinctions between `undef`, numeric zero, empty strings, and boolean results. Serialization should follow the protocol without applying unsafe global conversions.
+
+### Fixture resolution
+
+Support graceful class and method names, imports, constructor arguments, and object-instance reuse.
+
+For method dispatch, an actor's own method takes priority. Otherwise, registered library fixtures are searched from newest to oldest.
+
+### Outstanding regression coverage
+
+The library-resolution test currently needs explicit cases for:
+
+- Actor method precedence over a library method
+- Most recently registered library precedence
+- Missing method after exhausting libraries
+- Appropriate exception reporting
+
+## Acceptance-test strategy
+
+Begin with:
+
+`FitNesse/SuiteAcceptanceTests/SuiteSlimTests`
+
+Work from focused leaf pages toward broader suites.
+
+Maintain a results inventory containing:
+
+- Page name
+- Passed assertions
+- Failed assertions
+- Exceptions
+- Root cause
+- Associated regression test
+- Implementation status
+
+Distinguish missing fixtures, unsupported features, and actual defects.
+
+Previously investigated areas include symbol manipulation, raw symbol contents, expression evaluation, and library resolution. Verify their current status.
+
+## Autonomy and reporting
+
+Work independently through small, testable increments. Commit each coherent change with a descriptive message.
+
+Before a substantial architectural change, document the proposed change and why the existing design cannot reasonably support the required behavior.
+
+Never commit credentials, generated wiki state, temporary logs, or downloaded dependencies.
+
+After each work unit, report:
+
+- Behavior implemented
+- Tests added
+- Tests run and results
+- Acceptance pages affected
+- Remaining blockers
+
+## Definition of done
+
+The implementation is complete when:
+
+1. The agreed supported FitNesse SLiM acceptance suite passes.
+2. Perl regression tests pass.
+3. CI passes.
+4. The Codespaces environment rebuilds successfully from committed configuration.
+5. Remaining unsupported behaviors are documented.
+6. No passing results depend on concealing failures or weakening assertions.

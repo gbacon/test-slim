@@ -1,0 +1,35 @@
+#! /usr/bin/env bash
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+if curl -fsS http://127.0.0.1:8080/ >/dev/null; then
+    echo "FitNesse already running"
+    exit 0
+fi
+
+mkdir -p .runtime
+
+nohup java -jar /opt/fitnesse/fitnesse.jar \
+    -p 8080 \
+    -d "$PWD" \
+    > .runtime/fitnesse.log 2>&1 < /dev/null &
+
+for i in {1..30}; do
+    if curl -fsS http://127.0.0.1:8080/ >/dev/null; then
+        echo "FitNesse ready on port 8080"
+        exit 0
+    fi
+
+    if ! kill -0 "$!" 2>/dev/null; then
+        echo "FitNesse exited unexpectedly" >&2
+        cat .runtime/fitnesse.log >&2
+        exit 1
+    fi
+
+    sleep 1
+done
+
+echo "FitNesse failed to become ready" >&2
+cat .runtime/fitnesse.log >&2
+exit 1

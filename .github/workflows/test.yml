@@ -14,7 +14,12 @@ jobs:
 
       - name: Build CI image
         run: |
-          docker build -f .devcontainer/Dockerfile -t test-slim-ci .
+          docker build \
+            --build-arg FITNESSE_VERSION=20251025 \
+            --build-arg FITNESSE_SHA256=824596f90381a9637abd4d5b2aa0f4f03f2ef5e5716399c41b2ae8889d470d11 \
+            -f .devcontainer/Dockerfile \
+            -t test-slim-ci \
+            .
 
       - name: Run developer tests in container
         run: |
