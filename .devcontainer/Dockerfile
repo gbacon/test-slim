@@ -12,6 +12,8 @@ RUN apt-get update \
       default-jre \
       curl \
       ca-certificates \
+      nodejs \
+      npm \
  && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /tmp/bootstrap
