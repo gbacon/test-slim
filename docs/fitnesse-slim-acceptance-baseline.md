@@ -46,11 +46,11 @@ The Perl engine previously returned a plain hash reference from `StatementExecut
 
 ## Current acceptance results
 
-The page-by-page XML inventory reports **31 conformant pages and 19 non-conformant pages**. Raw page assertion totals are **281 right, 29 wrong, 2 ignored, and 177 exceptions**. All 50 pages completed through the external Perl service at `127.0.0.1:8099`; FitNesse identified `slim:fitnesse.slim.SlimService` and the configured connection on every page. The Perl listener remained available, with **zero server exits**.
+The latest targeted runs report **33 conformant pages**; all 50 pages will be rerun after the remaining fixture increments. Raw page totals are currently **300 right, 29 wrong, 2 ignored, and 85 exceptions**. The two affected pages ran through the external Perl service at `127.0.0.1:8099`, with **zero server exits**.
 
-The newly conformant page is `HashTableTests.ShouldReturnHashTable` (1 right assertion). All 30 pages that were conformant before this increment remain conformant. Compared with the immediately prior baseline, right assertions increased from 280 to 281 and wrong assertions fell from 30 to 29; ignored assertions stayed at 2 and exceptions stayed at 177. These are raw page assertions, not the nested exception outcomes that the pages intentionally verify. The full before-and-after status for all 50 pages is recorded in the [machine-readable JSON inventory](fitnesse-slim-acceptance-baseline.json).
+`DefineAliasTest` improved from 8 right and 67 exceptions to 22 right and no exceptions. `HybridDecisionTable.ImplementDynamicDecisionTableWithHybridTable` improved from 25 exceptions to 5 right and no exceptions. Both are now conformant, bringing the count from 31 to 33 while preserving the prior 31. The exception reduction removes cascades after fixture construction failed. The complete 50-page comparison will be recorded after the fixture phase.
 
-The 19 remaining non-conformant pages comprise 14 fixture gaps, 4 FitNesse harness/rendering limitations, and 1 environment-limited timeout page. The confirmed hash-reference engine gap is resolved. The stop fixture increment closes four of its five target pages. `IgnoredTestsShouldColorGray` now exercises the intended exception and not-run state; its two remaining failures are caused by changed rendered CSS markup in FitNesse v20251025 rather than missing fixture behavior.
+The 17 remaining non-conformant pages comprise 12 fixture gaps, 4 FitNesse harness/rendering limitations, and 1 environment-limited timeout page. Other fixture gaps group into library setup tracking (two pages), EchoFixture/include and EchoScript Unicode output (two pages), timeout-related EchoFixture/Sleep methods (one page), standalone Sleep behavior (one page), plus single-page dependencies for hash HTML methods, table-table helpers, custom converters, detailed diff rendering, sequential argument concatenation, and LoginDialogDriver.
 
 ## Per-page results
 
@@ -64,10 +64,10 @@ The 19 remaining non-conformant pages comprise 14 fixture gaps, 4 FitNesse harne
 | `ChainWithInstanceTest` | 7 | 0 | 0 | 0 | conformant | The page passes with automatic getFixture, pushFixture, and popFixture support. |
 | `CustomTableRenderingAddedByPluginTest` | 5 | 1 | 0 | 0 | harness_limited | The nested page runs, but FitNesse output reports Could not find class MyUseCase/MyFixture. The custom alias/rendering setup from the outer suite is not available to this root-level HTTP test page. |
 | `DefineAliasInPluginTest` | 2 | 0 | 0 | 0 | conformant | The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server. |
-| `DefineAliasTest` | 8 | 0 | 0 | 67 | fixture_gap | AddUpChange is missing. The helper now reports NO_INSTANCE scriptTableActor when the missing fixture prevents the actor from being created; these follow-on errors cascade from fixture construction. |
+| `DefineAliasTest` | 22 | 0 | 0 | 0 | conformant | AddUpChange reproduces the upstream coin state and dollar/cents results; prior missing-fixture exceptions cascaded through alias examples. |
 | `HashTableTests.HashTableWithHtmlContent` | 0 | 0 | 0 | 2 | fixture_gap | Hash input conversion works, but hash_is and echo_and_log fixture methods are absent. |
 | `HashTableTests.ShouldReturnHashTable` | 1 | 0 | 0 | 0 | conformant | MapResult converts the returned map to sorted FitNesse hash-table HTML before SLiM list serialization. |
-| `HybridDecisionTable.ImplementDynamicDecisionTableWithHybridTable` | 0 | 0 | 0 | 25 | fixture_gap | AddUpChange is absent, so hybrid getter/setter dispatch is not reached. |
+| `HybridDecisionTable.ImplementDynamicDecisionTableWithHybridTable` | 5 | 0 | 0 | 0 | conformant | AddUpChange supports the upstream hybrid getter/setter calls and stateful coin totals. |
 | `IgnoredTestsShouldColorGray` | 5 | 2 | 0 | 0 | harness_limited | StopTest now produces the expected nested exception and ignored execution state. The two remaining outer regex checks expect class="ignore" immediately before the script input text; FitNesse v20251025 renders the row as class="slimRowColor3" and marks the result with <span class="ignore">Test not run</span>. This is a FitNesse rendering/acceptance-version mismatch, not a SLiM stop defect. |
 | `LibrarySuite.HowToAddFixturesWithParametersToTheLibrary` | 5 | 0 | 0 | 0 | conformant | The page passes with automatic getFixture, pushFixture, and popFixture support. |
 | `LibrarySuite.LastLibraryPreceedsEarlierLibraryTest` | 2 | 0 | 0 | 0 | conformant | The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server. |
@@ -109,6 +109,4 @@ The 19 remaining non-conformant pages comprise 14 fixture gaps, 4 FitNesse harne
 
 ## Next increment
 
-1. **AddUpChange fixture.** This fixture is required by `DefineAliasTest` and `HybridDecisionTable.ImplementDynamicDecisionTableWithHybridTable`. The repeated `NO_INSTANCE scriptTableActor` messages in `DefineAliasTest` cascade after AddUpChange construction fails.
-2. **LibraryInSetUp behavior.** Both pages under `LibrarySuite.LibraryInSetUpSuite` need the upstream setup-library fixture and call tracking.
-3. **Remaining hash fixture methods.** `HashTableTests.HashTableWithHtmlContent` needs `hash_is` and `echo_and_log`; the Map result conversion is complete and covered independently.
+The next shared dependency is library setup tracking for both pages under `LibrarySuite.LibraryInSetUpSuite`. EchoFixture methods overlap with include and timeout pages, and will be checked against their distinct upstream fixture contracts. Smaller groups include HashFixture HTML methods, TableTableIncFirstCol/TestQuery.echo_int, TestSlimWithConverter, DetailedDiff, TestSlim.concatenate_three_args, and LoginDialogDriver.
