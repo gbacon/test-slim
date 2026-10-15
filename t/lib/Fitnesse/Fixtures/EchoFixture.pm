@@ -10,4 +10,9 @@ sub echo {
   $arg;
 }
 
+sub echo_string {
+  my($self,$arg) = @_;
+  "library:$arg";
+}
+
 1;
