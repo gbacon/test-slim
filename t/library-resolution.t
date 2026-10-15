@@ -5,7 +5,7 @@ use warnings;
 
 use lib 't/lib';
 
-use Test::More tests => 9;
+use Test::More tests => 12;
 
 BEGIN {
   use_ok "Test::Slim::StatementExecutor"
@@ -56,7 +56,22 @@ is_deeply(
 );
 
 is_deeply(
-  Test::Slim::Statement->execute($executor, "c4", "call", "actor", "no_such_method"),
-  [ "c4" => "__EXCEPTION__:message:<<NO_METHOD_IN_CLASS no_such_method[0] Fitnesse::Slim::Test::TestSlim>>" ],
+  Test::Slim::Statement->execute($executor, "c4", "call", "scriptTableActor", "echo", "scenario"),
+  [ "c4" => "new:scenario" ],
+  "library fixture handles a call when the scenario actor has no instance"
+);
+
+my $symbol_value = bless {}, "Test::Slim::StatementExecutor::Symbol";
+$executor->set_symbol("master", $symbol_value);
+my $cloned = Test::Slim::Statement->execute(
+  $executor, "c5", "callAndAssign", "copy", "null", "cloneSymbol", '$master'
+);
+ok ref($cloned->[1]), "null-target cloneSymbol returns the symbol object";
+ok $executor->get_symbol("copy") == $symbol_value,
+  "null-target cloneSymbol preserves symbol object identity";
+
+is_deeply(
+  Test::Slim::Statement->execute($executor, "c6", "call", "actor", "no_such_method"),
+  [ "c6" => "__EXCEPTION__:message:<<NO_METHOD_IN_CLASS no_such_method[0] Fitnesse::Slim::Test::TestSlim>>" ],
   "missing method reports the actor class after searching libraries"
 );

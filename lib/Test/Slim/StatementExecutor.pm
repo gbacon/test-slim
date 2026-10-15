@@ -174,12 +174,30 @@ sub get_symbol {
 sub call {
   my($self,$instance,$method,@args) = @_;
 
-  return $Test::Slim::Statement::EXCEPTION_TAG
-           . "message:<<NO_INSTANCE $instance>>"
-    unless exists $self->{instance}{$instance};
-
-  my $obj = $self->{instance}{$instance};
   $method = $self->slim_to_perl_method($method);
+
+  # FitNesse routes this helper call through the reserved "null" actor.
+  if ($instance eq "null" && $method eq "clone_symbol" && @args == 1) {
+    return ($self->replace_symbols(@args))[0];
+  }
+
+  my $has_instance = exists $self->{instance}{$instance};
+  my $obj = $self->{instance}{$instance};
+  unless ($has_instance) {
+    for my $lib_id (reverse @{ $self->{library} }) {
+      warn "trying [$method] in library [$lib_id]";
+      my $lib = $self->{instance}{$lib_id};
+      next unless $lib && ref $lib;
+      if ($lib->can($method)) {
+        $obj = $lib;
+        last;
+      }
+    }
+    return $Test::Slim::Statement::EXCEPTION_TAG
+             . "message:<<NO_INSTANCE $instance>>"
+      unless $obj;
+  }
+
   unless ($obj->can($method)) {
     for my $lib_id (reverse @{ $self->{library} }) {
       warn "trying [$method] in library [$lib_id]";

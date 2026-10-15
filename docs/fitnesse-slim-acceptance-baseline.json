@@ -7,8 +7,8 @@
   "unitBaseline": {
     "command": "bin/test-dev",
     "result": "PASS",
-    "files": 18,
-    "tests": 188,
+    "files": 19,
+    "tests": 203,
     "todoFailures": 4,
     "todoDescription": "Three boilerplate TODOs and one Unicode-return TODO; all marked TODO and suite exits PASS."
   },
@@ -24,17 +24,17 @@
     },
     "note": "Historical pre-fix suite responder call returned only five BaseLineDecisionTable subtree results and did not enumerate the 50 Test=true pages. The 50-page baseline is the individually requested page inventory."
   },
-  "pageRunMethod": "Ran all 50 FitNesse pages marked Test=true individually using ?test&format=xml. All returned HTTP 200, identified the external Perl SLiM service at 127.0.0.1:8099, and completed without a Perl process exit.",
+  "pageRunMethod": "Ran all 50 Test=true pages individually via ?test&format=xml using the external Perl SLiM server started by /tmp/run_slim_acceptance.py. Each response confirmed fitnesse.slim.SlimService at 127.0.0.1:8099; no unexpected Perl process exit occurred during a page.",
   "pageTotals": {
     "pages": 50,
     "completedResponses": 50,
-    "passingPages": 12,
-    "failingPages": 38,
+    "passingPages": 17,
+    "failingPages": 33,
     "counts": {
-      "right": 12,
-      "wrong": 16,
+      "right": 17,
+      "wrong": 14,
       "ignored": 0,
-      "exceptions": 22
+      "exceptions": 19
     },
     "serverExits": 0,
     "externalPerlConfirmed": 50
@@ -68,23 +68,17 @@
       "attempt": 2,
       "http": 200,
       "status": "completed",
-      "right": 0,
+      "right": 1,
       "wrong": 0,
       "ignored": 0,
-      "exceptions": 1,
+      "exceptions": 0,
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
-      "responseBytes": 50300,
-      "rootCause": "Missing Perl fixture ShouldIBuyMilk; later table actors cascade.",
+      "responseBytes": 46068,
+      "rootCause": "Passes with the upstream-compatible ShouldIBuyMilk fixture.",
       "failureDetails": {
-        "exceptionMessages": [
-          "Could not find class ShouldIBuyMilk",
-          "Method set_cash_in_wallet[1] not found in Eg::Division",
-          "Method set_credit_card[1] not found in Eg::Division",
-          "Method set_pints_of_milk_remaining[1] not found in Eg::Division",
-          "Method go_to_store[0] not found in Eg::Division"
-        ],
+        "exceptionMessages": [],
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
@@ -96,38 +90,17 @@
       "attempt": 3,
       "http": 200,
       "status": "completed",
-      "right": 0,
+      "right": 1,
       "wrong": 0,
       "ignored": 0,
-      "exceptions": 1,
+      "exceptions": 0,
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
-      "responseBytes": 64930,
-      "rootCause": "Missing scenario-backed fixture behavior; scenario commands do not produce expected actor instances.",
+      "responseBytes": 60891,
+      "rootCause": "Passes with scenario calls dispatched through registered libraries.",
       "failureDetails": {
-        "exceptionMessages": [
-          "10",
-          "2",
-          "5.0  Test not run",
-          "S1 Base scenario",
-          "The instance scriptTableActor does not exist",
-          "20",
-          "4",
-          "Test not run",
-          "S2 Same result as base - correct",
-          "5",
-          "2.0  Test not run",
-          "S4 Same numerator as base",
-          "16",
-          "8.0  Test not run",
-          "S5 Same denominator as base",
-          "22",
-          "7",
-          "~=3.14  Test not run",
-          "S6 Special comparator",
-          "11"
-        ],
+        "exceptionMessages": [],
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
@@ -146,7 +119,7 @@
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
-      "responseBytes": 75411,
+      "responseBytes": 78431,
       "rootCause": "Nested acceptance page executes without terminating Perl; missing nested fixture behavior still produces exceptions.",
       "failureDetails": {
         "exceptionMessages": [
@@ -182,25 +155,17 @@
       "attempt": 5,
       "http": 200,
       "status": "completed",
-      "right": 0,
+      "right": 1,
       "wrong": 0,
       "ignored": 0,
-      "exceptions": 1,
+      "exceptions": 0,
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
-      "responseBytes": 86874,
-      "rootCause": "Eg.Division is implemented; the page remains blocked by the separate missing ShouldIBuyMilk fixture and cascaded table calls.",
+      "responseBytes": 72526,
+      "rootCause": "Passes with Eg.Division and ShouldIBuyMilk.",
       "failureDetails": {
-        "exceptionMessages": [
-          "Could not find class ShouldIBuyMilk",
-          "baseline: should I buy milk  Could not find class ShouldIBuyMilk",
-          "Method set_cash_in_wallet[1] not found in Fitnesse::Fixtures::TearDown",
-          "Method set_credit_card[1] not found in Fitnesse::Fixtures::TearDown",
-          "Method set_pints_of_milk_remaining[1] not found in Fitnesse::Fixtures::TearDown",
-          "Method go_to_store[0] not found in Fitnesse::Fixtures::TearDown",
-          "The instance decisionTable_45 does not exist"
-        ],
+        "exceptionMessages": [],
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
@@ -601,7 +566,7 @@
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
-      "responseBytes": 40125,
+      "responseBytes": 40123,
       "rootCause": "Missing SplitFixture.",
       "failureDetails": {
         "exceptionMessages": [
@@ -618,23 +583,18 @@
       "attempt": 21,
       "http": 200,
       "status": "completed",
-      "right": 0,
-      "wrong": 1,
+      "right": 1,
+      "wrong": 0,
       "ignored": 0,
       "exceptions": 0,
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
-      "responseBytes": 66116,
-      "rootCause": "Eg.Division resolves and computes results. Scenario output-parameter actor resolution still emits The instance null does not exist and leaves one wrong assertion.",
+      "responseBytes": 65591,
+      "rootCause": "Passes after library fallback for scriptTableActor and null-target cloneSymbol support.",
       "failureDetails": {
-        "exceptionMessages": [
-          "The instance null does not exist"
-        ],
-        "wrongAssertionMessages": [
-          "expected [ 5 .0]",
-          "expected [ 7 . 8125 ]"
-        ]
+        "exceptionMessages": [],
+        "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
       "evidence": "Individual page test request; result XML saved during baseline run."
@@ -711,22 +671,18 @@
       "attempt": 25,
       "http": 200,
       "status": "completed",
-      "right": 0,
-      "wrong": 1,
+      "right": 1,
+      "wrong": 0,
       "ignored": 0,
       "exceptions": 0,
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
-      "responseBytes": 65350,
-      "rootCause": "Eg.Division resolves for the class and library paths. The scenario-based requirement still has an unresolved null actor and one wrong assertion.",
+      "responseBytes": 65187,
+      "rootCause": "Passes after library fallback for scriptTableActor and null-target cloneSymbol support.",
       "failureDetails": {
-        "exceptionMessages": [
-          "The instance null does not exist"
-        ],
-        "wrongAssertionMessages": [
-          "expected [ 5 .0]"
-        ]
+        "exceptionMessages": [],
+        "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
       "evidence": "Individual page test request; result XML saved during baseline run."
@@ -1334,7 +1290,7 @@
       "testSystem": "SLIM:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
-      "responseBytes": 45149,
+      "responseBytes": 45148,
       "rootCause": "Missing Sleep and timer methods; TearDown currently receives calls to unsupported methods.",
       "failureDetails": {
         "exceptionMessages": [
@@ -1484,47 +1440,109 @@
     "cause": "A valid nested SLiM statement had an empty-string argument. _take_utf16_units consumed the following colon for a requested length of zero; nested list parsing failed and returned the encoded statement as a scalar. ListExecutor then dereferenced it as an arrayref. The fix avoids consuming any characters for zero units."
   },
   "fixtureIncrement": {
-    "family": "Eg.Division",
-    "upstreamClass": "eg.Division from installed FitNesse v20251025: public no-argument constructor, public numerator and denominator double fields, setNumerator(double), setDenominator(double), and quotient() returning double.",
-    "behavior": "Preserves zero-initialized state, void setters, quotient results formatted as Java double strings, and NaN/Infinity for zero denominators.",
+    "family": "Scenario actor dispatch, cloneSymbol, and ShouldIBuyMilk",
+    "upstreamBehavior": "FitNesse library resolution searches registered libraries newest-first when the actor and SUT do not provide a method; its SlimHelperLibrary cloneSymbol returns the supplied symbol object unchanged. ShouldIBuyMilk mirrors the upstream decision rule and no-op table hooks.",
     "perlTests": {
       "command": "bin/test-dev",
       "result": "PASS",
-      "files": 18,
-      "tests": 188
+      "files": 19,
+      "tests": 203
     },
-    "affectedPages": [
-      "BaseLineDecisionTable.ComparatorsAreSupported",
-      "BaseLineDecisionTable",
-      "ScenarioTestSuite.ScenarioWithOutputParametersInDecisionTables",
-      "ScenarioTestSuite.ScenarioWithOutputParametersInScripts",
-      "ScenarioTestSuite.ScriptSubclassUsedForDecisionTable",
-      "ScenarioTestSuite.UsingConstructorArgumentsFromDecisionTablesInScenarios",
-      "SegregationOfRequirementsAndImplementation"
+    "focusedTests": [
+      "t/library-resolution.t",
+      "t/should-i-buy-milk.t"
     ],
     "newlyPassingPages": [
-      "BaseLineDecisionTable.ComparatorsAreSupported",
-      "ScenarioTestSuite.ScenarioWithOutputParametersInScripts",
-      "ScenarioTestSuite.ScriptSubclassUsedForDecisionTable",
-      "ScenarioTestSuite.UsingConstructorArgumentsFromDecisionTablesInScenarios"
+      "BaseLineDecisionTable.MakingTheBaselineTableTheDefaultDecisionTable",
+      "BaseLineDecisionTable.ScenariosAreSupported",
+      "BaseLineDecisionTable",
+      "ScenarioTestSuite.ScenarioWithOutputParametersInDecisionTables",
+      "SegregationOfRequirementsAndImplementation"
     ],
     "remainingAffectedFailures": [
-      "BaseLineDecisionTable: missing ShouldIBuyMilk fixture",
-      "ScenarioTestSuite.ScenarioWithOutputParametersInDecisionTables: scenario output-parameter actor resolution reports The instance null does not exist",
-      "SegregationOfRequirementsAndImplementation: scenario implementation reports The instance null does not exist and has one wrong assertion"
+      "BaseLineDecisionTable.TestFailuresAreMarked: nested test still lacks ResponseExaminer/page-driver fixture behavior"
     ],
     "fullInventory": {
       "pages": 50,
-      "passingPages": 12,
-      "failingPages": 38,
+      "passingPages": 17,
+      "failingPages": 33,
       "counts": {
-        "right": 12,
-        "wrong": 16,
+        "right": 17,
+        "wrong": 14,
         "ignored": 0,
-        "exceptions": 22
+        "exceptions": 19
       },
       "externalPerlConfirmed": 50,
       "serverExits": 0
     }
-  }
+  },
+  "scenarioActorInvestigation": {
+    "rootCause": "Executor defect, not a fixture or incorrect scenario binding. FitNesse library method lookup is newest-first after actor/SUT lookup; SlimHelperLibrary provides cloneSymbol and the actor stack helpers, and scenario steps use synthetic scriptTableActor calls.",
+    "expectedSemantics": "If the named actor has no matching instance/method, registered libraries are searched newest-first. cloneSymbol returns its argument object unchanged, preserving symbol identity.",
+    "perlChanges": [
+      "Missing scenario actor names now fall through to registered-library lookup before NO_INSTANCE.",
+      "The null-target cloneSymbol helper substitutes and returns its exact argument object."
+    ],
+    "diagnosticArrayText": "Statement.pm debug warn interpolates nested arrayref arguments as ARRAY(0x...). This is diagnostic output only; the parsed nested list is serialized recursively for the socket frame.",
+    "affectedPages": {
+      "ScenarioTestSuite.ScenarioWithOutputParametersInDecisionTables": {
+        "right": 1,
+        "wrong": 0,
+        "ignored": 0,
+        "exceptions": 0
+      },
+      "SegregationOfRequirementsAndImplementation": {
+        "right": 1,
+        "wrong": 0,
+        "ignored": 0,
+        "exceptions": 0
+      }
+    }
+  },
+  "fixtureIncrementHistory": [
+    {
+      "family": "Eg.Division",
+      "upstreamClass": "eg.Division from installed FitNesse v20251025: public no-argument constructor, public numerator and denominator double fields, setNumerator(double), setDenominator(double), and quotient() returning double.",
+      "behavior": "Preserves zero-initialized state, void setters, quotient results formatted as Java double strings, and NaN/Infinity for zero denominators.",
+      "perlTests": {
+        "command": "bin/test-dev",
+        "result": "PASS",
+        "files": 18,
+        "tests": 188
+      },
+      "affectedPages": [
+        "BaseLineDecisionTable.ComparatorsAreSupported",
+        "BaseLineDecisionTable",
+        "ScenarioTestSuite.ScenarioWithOutputParametersInDecisionTables",
+        "ScenarioTestSuite.ScenarioWithOutputParametersInScripts",
+        "ScenarioTestSuite.ScriptSubclassUsedForDecisionTable",
+        "ScenarioTestSuite.UsingConstructorArgumentsFromDecisionTablesInScenarios",
+        "SegregationOfRequirementsAndImplementation"
+      ],
+      "newlyPassingPages": [
+        "BaseLineDecisionTable.ComparatorsAreSupported",
+        "ScenarioTestSuite.ScenarioWithOutputParametersInScripts",
+        "ScenarioTestSuite.ScriptSubclassUsedForDecisionTable",
+        "ScenarioTestSuite.UsingConstructorArgumentsFromDecisionTablesInScenarios"
+      ],
+      "remainingAffectedFailures": [
+        "BaseLineDecisionTable: missing ShouldIBuyMilk fixture",
+        "ScenarioTestSuite.ScenarioWithOutputParametersInDecisionTables: scenario output-parameter actor resolution reports The instance null does not exist",
+        "SegregationOfRequirementsAndImplementation: scenario implementation reports The instance null does not exist and has one wrong assertion"
+      ],
+      "fullInventory": {
+        "pages": 50,
+        "passingPages": 12,
+        "failingPages": 38,
+        "counts": {
+          "right": 12,
+          "wrong": 16,
+          "ignored": 0,
+          "exceptions": 22
+        },
+        "externalPerlConfirmed": 50,
+        "serverExits": 0
+      }
+    }
+  ]
 }
