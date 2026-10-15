@@ -166,6 +166,12 @@ After each work unit, report:
 - Tests run and results
 - Acceptance pages affected
 - Remaining blockers
+- Perl regression results
+- Affected FitNesse acceptance results
+- Acceptance coverage: number of upstream pages passing out of 50
+- Engine reliability: number of server crashes or protocol failures
+
+After each work unit, update DESIGN.md to document the existing design. CRITICAL: The design must remain simple! If the design begins appearing overengineered, look for opportunities to make incremental improvements that improve the design by simplifying, removing duplication, stratifying layers, and so on.
 
 ## Definition of done
 
