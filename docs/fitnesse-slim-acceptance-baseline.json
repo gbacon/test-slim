@@ -6,11 +6,10 @@
   "fitNesse": "http://127.0.0.1:8080; execution logs identified the SlimService test system and Connection to running SlimService: 127.0.0.1:8099 (FitNesse varies the testSystem capitalization on four timeout pages).",
   "unitBaseline": {
     "command": "bin/test-dev",
-    "result": "PASS",
-    "files": 20,
-    "tests": 216,
-    "todoFailures": 4,
-    "todoDescription": "Three boilerplate TODOs and one Unicode-return TODO; all marked TODO and suite exits PASS."
+    "status": "PASS",
+    "files": 22,
+    "tests": 241,
+    "knownTodoFailures": 4
   },
   "suiteResponderAttempt": {
     "url": "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests?suite&format=xml",
@@ -28,19 +27,22 @@
   "pageTotals": {
     "pages": 50,
     "completedResponses": 50,
-    "passingPages": 17,
-    "failingPages": 33,
+    "passingPages": 19,
+    "failingPages": 31,
     "counts": {
-      "right": 17,
-      "wrong": 14,
+      "right": 183,
+      "wrong": 62,
       "ignored": 0,
-      "exceptions": 19
+      "exceptions": 291
     },
     "serverExits": 0,
     "externalPerlConfirmed": 50,
-    "confirmedConformantPages": 17,
+    "confirmedConformantPages": 19,
     "confirmedEngineGapPages": 2,
-    "blockedPages": 31
+    "blockedPages": 31,
+    "fixtureGapPages": 21,
+    "harnessLimitedPages": 7,
+    "environmentLimitedPages": 1
   },
   "pages": [
     {
@@ -49,35 +51,37 @@
       "attempt": 1,
       "http": 200,
       "status": "completed",
-      "right": 1,
+      "right": 10,
       "wrong": 0,
       "ignored": 0,
       "exceptions": 0,
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
-      "responseBytes": 46597,
-      "rootCause": "Passes after adding the upstream-compatible Eg.Division fixture.",
+      "responseBytes": 46599,
+      "rootCause": "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
       "failureDetails": {
         "exceptionMessages": [],
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
       "rawCounts": {
-        "right": 1,
+        "right": 10,
         "wrong": 0,
         "ignored": 0,
         "exceptions": 0
       },
       "conformance": {
         "status": "conformant",
-        "reason": "Passes after adding the upstream-compatible Eg.Division fixture.",
+        "reason": "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
         "dependencies": [],
         "expectedBehavior": "The page completed without wrong assertions or exceptions.",
-        "verification": "Rerun the page and confirm the external Perl SLiM connection and zero failure counts.",
+        "verification": "Rerun from the full page-by-page XML inventory; the testSystem and Perl connection are recorded in this entry.",
         "intentionalInnerNegativeOrExceptionCoverage": false
-      }
+      },
+      "externalPerlConfirmed": true,
+      "exceptionDetails": []
     },
     {
       "page": "BaseLineDecisionTable.MakingTheBaselineTableTheDefaultDecisionTable",
@@ -85,35 +89,37 @@
       "attempt": 2,
       "http": 200,
       "status": "completed",
-      "right": 1,
+      "right": 7,
       "wrong": 0,
       "ignored": 0,
       "exceptions": 0,
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
-      "responseBytes": 46068,
-      "rootCause": "Passes with the upstream-compatible ShouldIBuyMilk fixture.",
+      "responseBytes": 46070,
+      "rootCause": "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
       "failureDetails": {
         "exceptionMessages": [],
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
       "rawCounts": {
-        "right": 1,
+        "right": 7,
         "wrong": 0,
         "ignored": 0,
         "exceptions": 0
       },
       "conformance": {
         "status": "conformant",
-        "reason": "Passes with the upstream-compatible ShouldIBuyMilk fixture.",
+        "reason": "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
         "dependencies": [],
         "expectedBehavior": "The page completed without wrong assertions or exceptions.",
-        "verification": "Rerun the page and confirm the external Perl SLiM connection and zero failure counts.",
+        "verification": "Rerun from the full page-by-page XML inventory; the testSystem and Perl connection are recorded in this entry.",
         "intentionalInnerNegativeOrExceptionCoverage": false
-      }
+      },
+      "externalPerlConfirmed": true,
+      "exceptionDetails": []
     },
     {
       "page": "BaseLineDecisionTable.ScenariosAreSupported",
@@ -121,35 +127,37 @@
       "attempt": 3,
       "http": 200,
       "status": "completed",
-      "right": 1,
+      "right": 10,
       "wrong": 0,
       "ignored": 0,
       "exceptions": 0,
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
-      "responseBytes": 60891,
-      "rootCause": "Passes with scenario calls dispatched through registered libraries.",
+      "responseBytes": 60892,
+      "rootCause": "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
       "failureDetails": {
         "exceptionMessages": [],
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
       "rawCounts": {
-        "right": 1,
+        "right": 10,
         "wrong": 0,
         "ignored": 0,
         "exceptions": 0
       },
       "conformance": {
         "status": "conformant",
-        "reason": "Passes with scenario calls dispatched through registered libraries.",
+        "reason": "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
         "dependencies": [],
         "expectedBehavior": "The page completed without wrong assertions or exceptions.",
-        "verification": "Rerun the page and confirm the external Perl SLiM connection and zero failure counts.",
+        "verification": "Rerun from the full page-by-page XML inventory; the testSystem and Perl connection are recorded in this entry.",
         "intentionalInnerNegativeOrExceptionCoverage": false
-      }
+      },
+      "externalPerlConfirmed": true,
+      "exceptionDetails": []
     },
     {
       "page": "BaseLineDecisionTable.TestFailuresAreMarked",
@@ -157,59 +165,43 @@
       "attempt": 4,
       "http": 200,
       "status": "completed",
-      "right": 0,
+      "right": 8,
       "wrong": 0,
       "ignored": 0,
-      "exceptions": 1,
+      "exceptions": 17,
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
-      "responseBytes": 78431,
-      "rootCause": "The PageDriver lacks make_a_test_page and ResponseExaminer is absent; the observed nested actor error occurs before embedded assertions are verified.",
+      "responseBytes": 97631,
+      "rootCause": "PageDriver now runs the nested test; the outer page remains blocked by Could not find class ResponseExaminer. Later scriptTableActor errors cascade from that failed scenario construction.",
       "failureDetails": {
         "exceptionMessages": [
-          "given test page",
-          "Testpage",
-          "given page",
-          "with content",
-          "nothing",
-          "The instance scriptTableActor does not exist",
-          "and Test System setup is",
-          "!define TEST_SYSTEM {slim}\n!path lib/*.jar",
-          "and Setup content is",
-          "|import                                                        |\n|fitnesse.slim.test                                            |",
-          "and Test content is",
-          "#\n|baseline: eg.Division                                           |\n|numerator|denominator|quotient?|# Explication                   |\n|10       |2          |5.0      |S1 Base scenario                |\n|20       |4          |         |S2 Same result as base - correct|\n|20       |6          |         |W3 Same result as base - wrong  |\n|         |5          |2.0      |S4 Same numerator as base       |\n|16       |           |8.0      |S5 Same denominator as base  |  |\n|22       |7          |~=3.14   |S6 Special comparator           |\n|9        |3          |7        |W7 Wrong result                 |\n|11       |2          |4 < _ < 6    |S8 Special comparator           |\n|         |           |         |S9 Correct but duplicate        |\n\nGiven you want to ignore outputs like ''quotient''\nThen the base scenario must ignore them already\n\n!define SLIM_DT_BASELINE (true)\n\n|eg.Division                                                    |\n|numerator|denominator|quotient?|# Explication                  |\n|10       |2.5        |         |S1 Base scenario - ignore      |\n|20       |4          |5.0      |S2  correct result             |\n|20       |20         |         |W3 Same result as base - ignore|\n#",
-          "$IT",
-          "$CONTENT @@@START: Test specific content\n#\n|baseline: eg.Division                                           |\n|numerator|denominator|quotient?|# Explication                   |\n|10       |2          |5.0      |S1 Base scenario                |\n|20       |4          |         |S2 Same result as base - correct|\n|20       |6          |         |W3 Same result as base - wrong  |\n|         |5          |2.0      |S4 Same numerator as base       |\n|16       |           |8.0      |S5 Same denominator as base  |  |\n|22       |7          |~=3.14   |S6 Special comparator           |\n|9        |3          |7        |W7 Wrong result                 |\n|11       |2          |4 < _ < 6    |S8 Special comparator           |\n|         |           |         |S9 Correct but duplicate        |\n\nGiven you want to ignore outputs like ''quotient''\nThen the base scenario must ignore them already\n\n!define SLIM_DT_BASELINE (true)\n\n|eg.Division                                                    |\n|numerator|denominator|quotient?|# Explication                  |\n|10       |2.5        |         |S1 Base scenario - ignore      |\n|20       |4          |5.0      |S2  correct result             |\n|20       |20         |         |W3 Same result as base - ignore|\n#\n@@@END: Test specific content",
-          "when page",
-          "is tested and HTML is extracted",
-          "is tested",
-          "show collapsed",
-          "content",
-          "get HTML result"
+          "Could not find class ResponseExaminer",
+          "The instance scriptTableActor does not exist"
         ],
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
       "rawCounts": {
-        "right": 0,
+        "right": 8,
         "wrong": 0,
         "ignored": 0,
-        "exceptions": 1
+        "exceptions": 17
       },
       "conformance": {
         "status": "harness_limited",
-        "reason": "The PageDriver lacks make_a_test_page and ResponseExaminer is absent; the observed nested actor error occurs before embedded assertions are verified.",
+        "reason": "PageDriver now runs the nested test; the outer page remains blocked by Could not find class ResponseExaminer. Later scriptTableActor errors cascade from that failed scenario construction.",
         "dependencies": [
           "PageDriver.make_a_test_page",
           "ResponseExaminer"
         ],
         "expectedBehavior": "Embedded page expects 8 right, 2 wrong, 2 ignored, 0 exceptions; outer page checks those counts and rendered cells.",
-        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "verification": "Current page XML includes the nested response and recorded failure evidence.",
         "intentionalInnerNegativeOrExceptionCoverage": true
-      }
+      },
+      "externalPerlConfirmed": true,
+      "exceptionDetails": []
     },
     {
       "page": "BaseLineDecisionTable",
@@ -217,35 +209,37 @@
       "attempt": 5,
       "http": 200,
       "status": "completed",
-      "right": 1,
+      "right": 17,
       "wrong": 0,
       "ignored": 0,
       "exceptions": 0,
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
-      "responseBytes": 72526,
-      "rootCause": "Passes with Eg.Division and ShouldIBuyMilk.",
+      "responseBytes": 72528,
+      "rootCause": "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
       "failureDetails": {
         "exceptionMessages": [],
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
       "rawCounts": {
-        "right": 1,
+        "right": 17,
         "wrong": 0,
         "ignored": 0,
         "exceptions": 0
       },
       "conformance": {
         "status": "conformant",
-        "reason": "Passes with Eg.Division and ShouldIBuyMilk.",
+        "reason": "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
         "dependencies": [],
         "expectedBehavior": "The page completed without wrong assertions or exceptions.",
-        "verification": "Rerun the page and confirm the external Perl SLiM connection and zero failure counts.",
+        "verification": "Rerun from the full page-by-page XML inventory; the testSystem and Perl connection are recorded in this entry.",
         "intentionalInnerNegativeOrExceptionCoverage": false
-      }
+      },
+      "externalPerlConfirmed": true,
+      "exceptionDetails": []
     },
     {
       "page": "ChainWithInstanceTest",
@@ -253,10 +247,10 @@
       "attempt": 6,
       "http": 200,
       "status": "completed",
-      "right": 0,
+      "right": 4,
       "wrong": 1,
       "ignored": 0,
-      "exceptions": 0,
+      "exceptions": 6,
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
@@ -265,24 +259,19 @@
       "failureDetails": {
         "exceptionMessages": [
           "Method get_fixture[0] not found in Fitnesse::Slim::Test::TestSlim",
-          "do something with",
-          "Bob",
-          "and restore old fixture",
           "Method push_fixture[0] not found in Fitnesse::Slim::Test::TestSlim",
           "Method pop_fixture[0] not found in Fitnesse::Slim::Test::TestSlim",
-          "Could not find class __EXCEPTION__:message: <"
+          "Could not find class __EXCEPTION__:message:>"
         ],
-        "wrongAssertionMessages": [
-          "expected [ Uncle ]"
-        ]
+        "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
       "rawCounts": {
-        "right": 0,
+        "right": 4,
         "wrong": 1,
         "ignored": 0,
-        "exceptions": 0
+        "exceptions": 6
       },
       "conformance": {
         "status": "engine_gap",
@@ -295,7 +284,9 @@
         "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
         "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
         "intentionalInnerNegativeOrExceptionCoverage": false
-      }
+      },
+      "externalPerlConfirmed": true,
+      "exceptionDetails": []
     },
     {
       "page": "CustomTableRenderingAddedByPluginTest",
@@ -303,40 +294,44 @@
       "attempt": 7,
       "http": 200,
       "status": "completed",
-      "right": 0,
+      "right": 5,
       "wrong": 1,
       "ignored": 0,
       "exceptions": 0,
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
-      "responseBytes": 39883,
-      "rootCause": "The suite loads the rendering plugin, but PageDriver returns status 200 without fetching generated-page HTML.",
+      "responseBytes": 73738,
+      "rootCause": "The nested page runs, but FitNesse output reports Could not find class MyUseCase/MyFixture. The custom alias/rendering setup from the outer suite is not available to this root-level HTTP test page.",
       "failureDetails": {
-        "exceptionMessages": [],
-        "wrongAssertionMessages": [
-          "ensure"
-        ]
+        "exceptionMessages": [
+          "Could not find class MyUseCase",
+          "The instance scriptTableActor does not exist",
+          "Could not find class MyFixture"
+        ],
+        "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
       "rawCounts": {
-        "right": 0,
+        "right": 5,
         "wrong": 1,
         "ignored": 0,
         "exceptions": 0
       },
       "conformance": {
         "status": "harness_limited",
-        "reason": "The suite loads the rendering plugin, but PageDriver returns status 200 without fetching generated-page HTML.",
+        "reason": "The nested page runs, but FitNesse output reports Could not find class MyUseCase/MyFixture. The custom alias/rendering setup from the outer suite is not available to this root-level HTTP test page.",
         "dependencies": [
           "PageDriver nested-page execution",
           "PageDriver response HTML"
         ],
         "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
-        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "verification": "Current page XML includes the nested response and recorded failure evidence.",
         "intentionalInnerNegativeOrExceptionCoverage": false
-      }
+      },
+      "externalPerlConfirmed": true,
+      "exceptionDetails": []
     },
     {
       "page": "DefineAliasInPluginTest",
@@ -344,40 +339,40 @@
       "attempt": 8,
       "http": 200,
       "status": "completed",
-      "right": 0,
-      "wrong": 1,
+      "right": 2,
+      "wrong": 0,
       "ignored": 0,
       "exceptions": 0,
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
-      "responseBytes": 33670,
-      "rootCause": "The plugin alias test uses the same PageDriver stub, which inspects source rather than generated-page output.",
+      "responseBytes": 50609,
+      "rootCause": "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
       "failureDetails": {
-        "exceptionMessages": [],
-        "wrongAssertionMessages": [
-          "ensure"
-        ]
+        "exceptionMessages": [
+          "Could not find class MyRequirement",
+          "The instance scriptTableActor does not exist"
+        ],
+        "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
       "rawCounts": {
-        "right": 0,
-        "wrong": 1,
+        "right": 2,
+        "wrong": 0,
         "ignored": 0,
         "exceptions": 0
       },
       "conformance": {
-        "status": "harness_limited",
-        "reason": "The plugin alias test uses the same PageDriver stub, which inspects source rather than generated-page output.",
-        "dependencies": [
-          "PageDriver nested-page execution",
-          "PageDriver response HTML"
-        ],
-        "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
-        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "status": "conformant",
+        "reason": "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
+        "dependencies": [],
+        "expectedBehavior": "The page completed without wrong assertions or exceptions.",
+        "verification": "Rerun from the full page-by-page XML inventory; the testSystem and Perl connection are recorded in this entry.",
         "intentionalInnerNegativeOrExceptionCoverage": false
-      }
+      },
+      "externalPerlConfirmed": true,
+      "exceptionDetails": []
     },
     {
       "page": "DefineAliasTest",
@@ -388,11 +383,11 @@
       "right": 0,
       "wrong": 0,
       "ignored": 0,
-      "exceptions": 1,
+      "exceptions": 73,
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
-      "responseBytes": 90418,
+      "responseBytes": 90194,
       "rootCause": "AddUpChange and implicit SlimHelperLibrary.getFixture are absent; later actor errors cascade.",
       "failureDetails": {
         "exceptionMessages": [
@@ -401,8 +396,8 @@
           "The instance dynamicDecisionTable_44 does not exist",
           "The instance dynamicDecisionTable_45 does not exist",
           "The instance dynamicDecisionTable_46 does not exist",
-          "Method get_fixture[0] not found in Fitnesse::Slim::Test::TestSlim",
-          "Could not find class __EXCEPTION__:message: <",
+          "The instance scriptTableActor does not exist",
+          "Could not find class __EXCEPTION__:message:>",
           "The instance dynamicDecisionTable_48 does not exist",
           "The instance dynamicDecisionTable_50 does not exist",
           "Method get_fixture[0] not found in Fitnesse::Slim::Test::TestQuery",
@@ -412,12 +407,12 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
       "rawCounts": {
         "right": 0,
         "wrong": 0,
         "ignored": 0,
-        "exceptions": 1
+        "exceptions": 73
       },
       "conformance": {
         "status": "fixture_gap",
@@ -429,7 +424,9 @@
         "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
         "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
         "intentionalInnerNegativeOrExceptionCoverage": false
-      }
+      },
+      "externalPerlConfirmed": true,
+      "exceptionDetails": []
     },
     {
       "page": "HashTableTests.HashTableWithHtmlContent",
@@ -440,7 +437,7 @@
       "right": 0,
       "wrong": 0,
       "ignored": 0,
-      "exceptions": 1,
+      "exceptions": 2,
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
@@ -454,12 +451,12 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
       "rawCounts": {
         "right": 0,
         "wrong": 0,
         "ignored": 0,
-        "exceptions": 1
+        "exceptions": 2
       },
       "conformance": {
         "status": "fixture_gap",
@@ -471,7 +468,9 @@
         "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
         "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
         "intentionalInnerNegativeOrExceptionCoverage": false
-      }
+      },
+      "externalPerlConfirmed": true,
+      "exceptionDetails": []
     },
     {
       "page": "HashTableTests.ShouldReturnHashTable",
@@ -490,12 +489,10 @@
       "rootCause": "The Perl hashref is returned as HASH(0x...), a process-specific pointer string rather than a FitNesse-compatible hash value.",
       "failureDetails": {
         "exceptionMessages": [],
-        "wrongAssertionMessages": [
-          "expected [ address \n\t\t here \n\t name \n\t\t bob ]"
-        ]
+        "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
       "rawCounts": {
         "right": 0,
         "wrong": 1,
@@ -511,7 +508,9 @@
         "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
         "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
         "intentionalInnerNegativeOrExceptionCoverage": false
-      }
+      },
+      "externalPerlConfirmed": true,
+      "exceptionDetails": []
     },
     {
       "page": "HybridDecisionTable.ImplementDynamicDecisionTableWithHybridTable",
@@ -522,27 +521,26 @@
       "right": 0,
       "wrong": 0,
       "ignored": 0,
-      "exceptions": 1,
+      "exceptions": 25,
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
-      "responseBytes": 44016,
+      "responseBytes": 44256,
       "rootCause": "AddUpChange is absent, so hybrid getter/setter dispatch is not reached.",
       "failureDetails": {
         "exceptionMessages": [
           "Could not find class AddUpChange",
-          "Method set[2] not found in Eg::Division",
-          "Method get[1] not found in Eg::Division"
+          "The instance decisionTable_42 does not exist"
         ],
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
       "rawCounts": {
         "right": 0,
         "wrong": 0,
         "ignored": 0,
-        "exceptions": 1
+        "exceptions": 25
       },
       "conformance": {
         "status": "fixture_gap",
@@ -553,7 +551,9 @@
         "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
         "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
         "intentionalInnerNegativeOrExceptionCoverage": false
-      }
+      },
+      "externalPerlConfirmed": true,
+      "exceptionDetails": []
     },
     {
       "page": "IgnoredTestsShouldColorGray",
@@ -561,59 +561,59 @@
       "attempt": 13,
       "http": 200,
       "status": "completed",
-      "right": 0,
-      "wrong": 0,
+      "right": 3,
+      "wrong": 4,
       "ignored": 0,
-      "exceptions": 1,
+      "exceptions": 16,
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
-      "responseBytes": 71208,
-      "rootCause": "The page intentionally tests StopTest/ignored rendering, but PageDriver cannot execute/fetch the nested page and ResponseExaminer is absent.",
+      "responseBytes": 88501,
+      "rootCause": "The page runs nested content, but ConstructorThrows is missing and ResponseExaminer cannot be constructed, so its expected inner ignore rendering cannot be checked.",
       "failureDetails": {
         "exceptionMessages": [
-          "given test page",
-          "Testpage",
-          "Method make_a_test_page[1] not found in Fitnesse::Fixtures::HashFixture",
-          "and Test content is",
-          "!|Script|\n|Stop Test|\n|Not Executed and should be ignored|\n!|Script|\n|Not Executed and should be ignored as well|",
-          "when page",
-          "is tested and HTML is extracted",
-          "get HTML result",
-          "Could not find class ResponseExaminer",
-          "Method set_type[1] not found in Fitnesse::Fixtures::HashFixture",
-          "Method set_pattern[1] not found in Fitnesse::Fixtures::HashFixture",
-          "Method set_group[1] not found in Fitnesse::Fixtures::HashFixture",
-          "Method found[0] not found in Fitnesse::Fixtures::HashFixture",
-          "get HTML input",
-          "show collapsed",
-          "get value",
-          "Method get_value[0] not found in Fitnesse::Fixtures::HashFixture",
+          "Could not find class ConstructorThrows",
+          "The instance scriptTableActor does not exist",
+          "Could not find class ResponseExaminer"
+        ],
+        "wrongAssertionMessages": [
           "then",
           "\\d",
-          "assertions pass,"
-        ],
-        "wrongAssertionMessages": []
+          "assertions pass,",
+          "0",
+          "fail,",
+          "are ignored",
+          "1",
+          "exceptions thrown",
+          "and cell",
+          "Not Executed and should be ignored",
+          "has result",
+          "ignore",
+          "Not Executed and should be ignored as well",
+          "Test not run"
+        ]
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
       "rawCounts": {
-        "right": 0,
-        "wrong": 0,
+        "right": 3,
+        "wrong": 4,
         "ignored": 0,
-        "exceptions": 1
+        "exceptions": 16
       },
       "conformance": {
         "status": "harness_limited",
-        "reason": "The page intentionally tests StopTest/ignored rendering, but PageDriver cannot execute/fetch the nested page and ResponseExaminer is absent.",
+        "reason": "The page runs nested content, but ConstructorThrows is missing and ResponseExaminer cannot be constructed, so its expected inner ignore rendering cannot be checked.",
         "dependencies": [
           "PageDriver nested-page execution",
           "ResponseExaminer"
         ],
         "expectedBehavior": "Embedded StopTest raises one exception and later script steps render as ignored; outer assertions verify the markup.",
-        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "verification": "Current page XML includes the nested response and recorded failure evidence.",
         "intentionalInnerNegativeOrExceptionCoverage": true
-      }
+      },
+      "externalPerlConfirmed": true,
+      "exceptionDetails": []
     },
     {
       "page": "LibrarySuite.HowToAddFixturesWithParametersToTheLibrary",
@@ -621,10 +621,10 @@
       "attempt": 14,
       "http": 200,
       "status": "completed",
-      "right": 0,
+      "right": 4,
       "wrong": 0,
       "ignored": 0,
-      "exceptions": 1,
+      "exceptions": 3,
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
@@ -633,18 +633,18 @@
       "failureDetails": {
         "exceptionMessages": [
           "Method get_fixture[0] not found in Fitnesse::Slim::Test::TestSlim",
-          "Could not find class __EXCEPTION__:message: <",
+          "Could not find class __EXCEPTION__:message:>",
           "Method get_string_arg[0] not found in Fitnesse::Fixtures::EchoFixture"
         ],
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
       "rawCounts": {
-        "right": 0,
+        "right": 4,
         "wrong": 0,
         "ignored": 0,
-        "exceptions": 1
+        "exceptions": 3
       },
       "conformance": {
         "status": "fixture_gap",
@@ -656,7 +656,9 @@
         "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
         "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
         "intentionalInnerNegativeOrExceptionCoverage": true
-      }
+      },
+      "externalPerlConfirmed": true,
+      "exceptionDetails": []
     },
     {
       "page": "LibrarySuite.LastLibraryPreceedsEarlierLibraryTest",
@@ -664,7 +666,7 @@
       "attempt": 15,
       "http": 200,
       "status": "completed",
-      "right": 1,
+      "right": 2,
       "wrong": 0,
       "ignored": 0,
       "exceptions": 0,
@@ -672,27 +674,29 @@
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
       "responseBytes": 40467,
-      "rootCause": "Passes.",
+      "rootCause": "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
       "failureDetails": {
         "exceptionMessages": [],
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
       "rawCounts": {
-        "right": 1,
+        "right": 2,
         "wrong": 0,
         "ignored": 0,
         "exceptions": 0
       },
       "conformance": {
         "status": "conformant",
-        "reason": "Passes.",
+        "reason": "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
         "dependencies": [],
         "expectedBehavior": "The page completed without wrong assertions or exceptions.",
-        "verification": "Rerun the page and confirm the external Perl SLiM connection and zero failure counts.",
+        "verification": "Rerun from the full page-by-page XML inventory; the testSystem and Perl connection are recorded in this entry.",
         "intentionalInnerNegativeOrExceptionCoverage": false
-      }
+      },
+      "externalPerlConfirmed": true,
+      "exceptionDetails": []
     },
     {
       "page": "LibrarySuite.LibraryInSetUpSuite.LibraryInSetUpAndPageTest",
@@ -700,30 +704,29 @@
       "attempt": 16,
       "http": 200,
       "status": "completed",
-      "right": 0,
+      "right": 1,
       "wrong": 0,
       "ignored": 0,
-      "exceptions": 1,
+      "exceptions": 2,
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
-      "responseBytes": 39713,
+      "responseBytes": 39605,
       "rootCause": "LibraryInSetUp and setup-library call tracking are absent.",
       "failureDetails": {
         "exceptionMessages": [
           "Could not find class LibraryInSetUp",
-          "then the one one installed in this page takes precedence over the one in the setup page",
-          "Method echo_in_set_up_library_called[0] not found in Fitnesse::Slim::Test::Library::LibraryFixture"
+          "The instance scriptTableActor does not exist"
         ],
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
       "rawCounts": {
-        "right": 0,
+        "right": 1,
         "wrong": 0,
         "ignored": 0,
-        "exceptions": 1
+        "exceptions": 2
       },
       "conformance": {
         "status": "fixture_gap",
@@ -735,7 +738,9 @@
         "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
         "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
         "intentionalInnerNegativeOrExceptionCoverage": false
-      }
+      },
+      "externalPerlConfirmed": true,
+      "exceptionDetails": []
     },
     {
       "page": "LibrarySuite.LibraryInSetUpSuite.LibraryInSetUpTest",
@@ -746,7 +751,7 @@
       "right": 0,
       "wrong": 0,
       "ignored": 0,
-      "exceptions": 1,
+      "exceptions": 2,
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
@@ -755,18 +760,17 @@
       "failureDetails": {
         "exceptionMessages": [
           "Could not find class LibraryInSetUp",
-          "then is should have been invoked on the library in the setup page",
           "Method echo_in_set_up_library_called[0] not found in Fitnesse::Slim::Test::Library::LibraryFixture"
         ],
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
       "rawCounts": {
         "right": 0,
         "wrong": 0,
         "ignored": 0,
-        "exceptions": 1
+        "exceptions": 2
       },
       "conformance": {
         "status": "fixture_gap",
@@ -778,7 +782,9 @@
         "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
         "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
         "intentionalInnerNegativeOrExceptionCoverage": false
-      }
+      },
+      "externalPerlConfirmed": true,
+      "exceptionDetails": []
     },
     {
       "page": "LibrarySuite.OneLibraryTest",
@@ -794,13 +800,13 @@
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
       "responseBytes": 38024,
-      "rootCause": "Passes.",
+      "rootCause": "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
       "failureDetails": {
         "exceptionMessages": [],
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
       "rawCounts": {
         "right": 1,
         "wrong": 0,
@@ -809,12 +815,14 @@
       },
       "conformance": {
         "status": "conformant",
-        "reason": "Passes.",
+        "reason": "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
         "dependencies": [],
         "expectedBehavior": "The page completed without wrong assertions or exceptions.",
-        "verification": "Rerun the page and confirm the external Perl SLiM connection and zero failure counts.",
+        "verification": "Rerun from the full page-by-page XML inventory; the testSystem and Perl connection are recorded in this entry.",
         "intentionalInnerNegativeOrExceptionCoverage": false
-      }
+      },
+      "externalPerlConfirmed": true,
+      "exceptionDetails": []
     },
     {
       "page": "QueryTableSuite.SetContextValue",
@@ -823,9 +831,9 @@
       "http": 200,
       "status": "completed",
       "right": 0,
-      "wrong": 1,
+      "wrong": 2,
       "ignored": 0,
-      "exceptions": 0,
+      "exceptions": 2,
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
@@ -835,18 +843,15 @@
         "exceptionMessages": [
           "Could not find class SplitFixture"
         ],
-        "wrongAssertionMessages": [
-          "expected [ 100 ]",
-          "expected [ John ]"
-        ]
+        "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
       "rawCounts": {
         "right": 0,
-        "wrong": 1,
+        "wrong": 2,
         "ignored": 0,
-        "exceptions": 0
+        "exceptions": 2
       },
       "conformance": {
         "status": "fixture_gap",
@@ -857,7 +862,9 @@
         "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
         "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
         "intentionalInnerNegativeOrExceptionCoverage": false
-      }
+      },
+      "externalPerlConfirmed": true,
+      "exceptionDetails": []
     },
     {
       "page": "QueryTableSuite.TestMatching",
@@ -868,7 +875,7 @@
       "right": 0,
       "wrong": 0,
       "ignored": 0,
-      "exceptions": 1,
+      "exceptions": 14,
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
@@ -881,12 +888,12 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
       "rawCounts": {
         "right": 0,
         "wrong": 0,
         "ignored": 0,
-        "exceptions": 1
+        "exceptions": 14
       },
       "conformance": {
         "status": "fixture_gap",
@@ -897,7 +904,9 @@
         "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
         "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
         "intentionalInnerNegativeOrExceptionCoverage": false
-      }
+      },
+      "externalPerlConfirmed": true,
+      "exceptionDetails": []
     },
     {
       "page": "ScenarioTestSuite.ScenarioWithOutputParametersInDecisionTables",
@@ -905,7 +914,7 @@
       "attempt": 21,
       "http": 200,
       "status": "completed",
-      "right": 1,
+      "right": 6,
       "wrong": 0,
       "ignored": 0,
       "exceptions": 0,
@@ -913,27 +922,29 @@
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
       "responseBytes": 65591,
-      "rootCause": "Passes after library fallback for scriptTableActor and null-target cloneSymbol support.",
+      "rootCause": "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
       "failureDetails": {
         "exceptionMessages": [],
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
       "rawCounts": {
-        "right": 1,
+        "right": 6,
         "wrong": 0,
         "ignored": 0,
         "exceptions": 0
       },
       "conformance": {
         "status": "conformant",
-        "reason": "Passes after library fallback for scriptTableActor and null-target cloneSymbol support.",
+        "reason": "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
         "dependencies": [],
         "expectedBehavior": "The page completed without wrong assertions or exceptions.",
-        "verification": "Rerun the page and confirm the external Perl SLiM connection and zero failure counts.",
+        "verification": "Rerun from the full page-by-page XML inventory; the testSystem and Perl connection are recorded in this entry.",
         "intentionalInnerNegativeOrExceptionCoverage": false
-      }
+      },
+      "externalPerlConfirmed": true,
+      "exceptionDetails": []
     },
     {
       "page": "ScenarioTestSuite.ScenarioWithOutputParametersInScripts",
@@ -941,7 +952,7 @@
       "attempt": 22,
       "http": 200,
       "status": "completed",
-      "right": 1,
+      "right": 4,
       "wrong": 0,
       "ignored": 0,
       "exceptions": 0,
@@ -949,27 +960,29 @@
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
       "responseBytes": 44766,
-      "rootCause": "Passes after Eg.Division returns Java-compatible double strings, including integral values such as 10.0.",
+      "rootCause": "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
       "failureDetails": {
         "exceptionMessages": [],
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
       "rawCounts": {
-        "right": 1,
+        "right": 4,
         "wrong": 0,
         "ignored": 0,
         "exceptions": 0
       },
       "conformance": {
         "status": "conformant",
-        "reason": "Passes after Eg.Division returns Java-compatible double strings, including integral values such as 10.0.",
+        "reason": "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
         "dependencies": [],
         "expectedBehavior": "The page completed without wrong assertions or exceptions.",
-        "verification": "Rerun the page and confirm the external Perl SLiM connection and zero failure counts.",
+        "verification": "Rerun from the full page-by-page XML inventory; the testSystem and Perl connection are recorded in this entry.",
         "intentionalInnerNegativeOrExceptionCoverage": false
-      }
+      },
+      "externalPerlConfirmed": true,
+      "exceptionDetails": []
     },
     {
       "page": "ScenarioTestSuite.ScriptSubclassUsedForDecisionTable",
@@ -977,7 +990,7 @@
       "attempt": 23,
       "http": 200,
       "status": "completed",
-      "right": 1,
+      "right": 2,
       "wrong": 0,
       "ignored": 0,
       "exceptions": 0,
@@ -985,27 +998,29 @@
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
       "responseBytes": 37821,
-      "rootCause": "Passes with the new Eg.Division fixture.",
+      "rootCause": "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
       "failureDetails": {
         "exceptionMessages": [],
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
       "rawCounts": {
-        "right": 1,
+        "right": 2,
         "wrong": 0,
         "ignored": 0,
         "exceptions": 0
       },
       "conformance": {
         "status": "conformant",
-        "reason": "Passes with the new Eg.Division fixture.",
+        "reason": "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
         "dependencies": [],
         "expectedBehavior": "The page completed without wrong assertions or exceptions.",
-        "verification": "Rerun the page and confirm the external Perl SLiM connection and zero failure counts.",
+        "verification": "Rerun from the full page-by-page XML inventory; the testSystem and Perl connection are recorded in this entry.",
         "intentionalInnerNegativeOrExceptionCoverage": false
-      }
+      },
+      "externalPerlConfirmed": true,
+      "exceptionDetails": []
     },
     {
       "page": "ScenarioTestSuite.UsingConstructorArgumentsFromDecisionTablesInScenarios",
@@ -1013,7 +1028,7 @@
       "attempt": 24,
       "http": 200,
       "status": "completed",
-      "right": 1,
+      "right": 8,
       "wrong": 0,
       "ignored": 0,
       "exceptions": 0,
@@ -1021,27 +1036,29 @@
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
       "responseBytes": 50306,
-      "rootCause": "Passes with the new Eg.Division fixture; construction uses the upstream no-argument fixture constructor.",
+      "rootCause": "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
       "failureDetails": {
         "exceptionMessages": [],
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
       "rawCounts": {
-        "right": 1,
+        "right": 8,
         "wrong": 0,
         "ignored": 0,
         "exceptions": 0
       },
       "conformance": {
         "status": "conformant",
-        "reason": "Passes with the new Eg.Division fixture; construction uses the upstream no-argument fixture constructor.",
+        "reason": "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
         "dependencies": [],
         "expectedBehavior": "The page completed without wrong assertions or exceptions.",
-        "verification": "Rerun the page and confirm the external Perl SLiM connection and zero failure counts.",
+        "verification": "Rerun from the full page-by-page XML inventory; the testSystem and Perl connection are recorded in this entry.",
         "intentionalInnerNegativeOrExceptionCoverage": false
-      }
+      },
+      "externalPerlConfirmed": true,
+      "exceptionDetails": []
     },
     {
       "page": "SegregationOfRequirementsAndImplementation",
@@ -1049,35 +1066,37 @@
       "attempt": 25,
       "http": 200,
       "status": "completed",
-      "right": 1,
+      "right": 12,
       "wrong": 0,
       "ignored": 0,
       "exceptions": 0,
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
-      "responseBytes": 65187,
-      "rootCause": "Passes after library fallback for scriptTableActor and null-target cloneSymbol support.",
+      "responseBytes": 65189,
+      "rootCause": "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
       "failureDetails": {
         "exceptionMessages": [],
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
       "rawCounts": {
-        "right": 1,
+        "right": 12,
         "wrong": 0,
         "ignored": 0,
         "exceptions": 0
       },
       "conformance": {
         "status": "conformant",
-        "reason": "Passes after library fallback for scriptTableActor and null-target cloneSymbol support.",
+        "reason": "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
         "dependencies": [],
         "expectedBehavior": "The page completed without wrong assertions or exceptions.",
-        "verification": "Rerun the page and confirm the external Perl SLiM connection and zero failure counts.",
+        "verification": "Rerun from the full page-by-page XML inventory; the testSystem and Perl connection are recorded in this entry.",
         "intentionalInnerNegativeOrExceptionCoverage": false
-      }
+      },
+      "externalPerlConfirmed": true,
+      "exceptionDetails": []
     },
     {
       "page": "SlimSymbols.NamingConvention",
@@ -1085,7 +1104,7 @@
       "attempt": 26,
       "http": 200,
       "status": "completed",
-      "right": 1,
+      "right": 5,
       "wrong": 0,
       "ignored": 0,
       "exceptions": 0,
@@ -1093,27 +1112,29 @@
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
       "responseBytes": 43008,
-      "rootCause": "Passes.",
+      "rootCause": "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
       "failureDetails": {
         "exceptionMessages": [],
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
       "rawCounts": {
-        "right": 1,
+        "right": 5,
         "wrong": 0,
         "ignored": 0,
         "exceptions": 0
       },
       "conformance": {
         "status": "conformant",
-        "reason": "Passes.",
+        "reason": "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
         "dependencies": [],
         "expectedBehavior": "The page completed without wrong assertions or exceptions.",
-        "verification": "Rerun the page and confirm the external Perl SLiM connection and zero failure counts.",
+        "verification": "Rerun from the full page-by-page XML inventory; the testSystem and Perl connection are recorded in this entry.",
         "intentionalInnerNegativeOrExceptionCoverage": false
-      }
+      },
+      "externalPerlConfirmed": true,
+      "exceptionDetails": []
     },
     {
       "page": "SlimSymbols.SlimSymbolManipulation",
@@ -1121,7 +1142,7 @@
       "attempt": 27,
       "http": 200,
       "status": "completed",
-      "right": 1,
+      "right": 18,
       "wrong": 0,
       "ignored": 0,
       "exceptions": 0,
@@ -1129,27 +1150,29 @@
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
       "responseBytes": 62085,
-      "rootCause": "Passes.",
+      "rootCause": "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
       "failureDetails": {
         "exceptionMessages": [],
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
       "rawCounts": {
-        "right": 1,
+        "right": 18,
         "wrong": 0,
         "ignored": 0,
         "exceptions": 0
       },
       "conformance": {
         "status": "conformant",
-        "reason": "Passes.",
+        "reason": "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
         "dependencies": [],
         "expectedBehavior": "The page completed without wrong assertions or exceptions.",
-        "verification": "Rerun the page and confirm the external Perl SLiM connection and zero failure counts.",
+        "verification": "Rerun from the full page-by-page XML inventory; the testSystem and Perl connection are recorded in this entry.",
         "intentionalInnerNegativeOrExceptionCoverage": false
-      }
+      },
+      "externalPerlConfirmed": true,
+      "exceptionDetails": []
     },
     {
       "page": "StopSuite",
@@ -1157,44 +1180,49 @@
       "attempt": 28,
       "http": 200,
       "status": "completed",
-      "right": 0,
-      "wrong": 1,
+      "right": 2,
+      "wrong": 4,
       "ignored": 0,
       "exceptions": 0,
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
-      "responseBytes": 46792,
-      "rootCause": "The page deliberately tests StopSuite and teardown, but PageDriver does not run nested suites or fetch result HTML.",
+      "responseBytes": 72710,
+      "rootCause": "The nested suite request runs successfully, then fails because its generated TestPageA/TestPageB tables resolve as missing classes; the first missing stopper fixture is ConstructorThrows.",
       "failureDetails": {
-        "exceptionMessages": [],
+        "exceptionMessages": [
+          "Could not find class ConstructorThrows",
+          "Could not find class TableInPageANeverToBeExecuted",
+          "Could not find class TableInPageBNeverToBeExecuted"
+        ],
         "wrongAssertionMessages": [
           "test results for suite",
           "MySuite",
           "should contain",
-          "table in page A never to be executed  Test not run",
-          "ensure"
+          "table in page A never to be executed Test not run"
         ]
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
       "rawCounts": {
-        "right": 0,
-        "wrong": 1,
+        "right": 2,
+        "wrong": 4,
         "ignored": 0,
         "exceptions": 0
       },
       "conformance": {
-        "status": "harness_limited",
-        "reason": "The page deliberately tests StopSuite and teardown, but PageDriver does not run nested suites or fetch result HTML.",
+        "status": "fixture_gap",
+        "reason": "The nested suite request runs successfully, then fails because its generated TestPageA/TestPageB tables resolve as missing classes; the first missing stopper fixture is ConstructorThrows.",
         "dependencies": [
-          "PageDriver nested-suite execution",
-          "PageDriver response HTML"
+          "ConstructorThrows",
+          "generated test-page table fixtures"
         ],
         "expectedBehavior": "StopSuite skips remaining tests while test and suite teardown still execute.",
-        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "verification": "Current page XML includes generated nested test output and the missing fixture class message.",
         "intentionalInnerNegativeOrExceptionCoverage": true
-      }
+      },
+      "externalPerlConfirmed": true,
+      "exceptionDetails": []
     },
     {
       "page": "StopTest",
@@ -1202,44 +1230,48 @@
       "attempt": 29,
       "http": 200,
       "status": "completed",
-      "right": 0,
-      "wrong": 1,
+      "right": 3,
+      "wrong": 3,
       "ignored": 0,
       "exceptions": 0,
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
-      "responseBytes": 46697,
-      "rootCause": "The page deliberately tests StopTest and teardown, but PageDriver does not run nested suites or fetch result HTML.",
+      "responseBytes": 72873,
+      "rootCause": "The nested suite request runs successfully, then fails because ConstructorThrows and TableNeverToBeExecuted fixture classes are absent.",
       "failureDetails": {
-        "exceptionMessages": [],
+        "exceptionMessages": [
+          "Could not find class ConstructorThrows",
+          "Could not find class TableNeverToBeExecuted"
+        ],
         "wrongAssertionMessages": [
           "test results for suite",
           "MySuite",
           "should contain",
-          "table never to be executed  Test not run",
-          "ensure"
+          "table never to be executed Test not run"
         ]
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
       "rawCounts": {
-        "right": 0,
-        "wrong": 1,
+        "right": 3,
+        "wrong": 3,
         "ignored": 0,
         "exceptions": 0
       },
       "conformance": {
-        "status": "harness_limited",
-        "reason": "The page deliberately tests StopTest and teardown, but PageDriver does not run nested suites or fetch result HTML.",
+        "status": "fixture_gap",
+        "reason": "The nested suite request runs successfully, then fails because ConstructorThrows and TableNeverToBeExecuted fixture classes are absent.",
         "dependencies": [
-          "PageDriver nested-suite execution",
-          "PageDriver response HTML"
+          "ConstructorThrows",
+          "generated test-page table fixtures"
         ],
         "expectedBehavior": "StopTest skips the current page remainder, allows the next test, and still runs teardown.",
-        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "verification": "Current page XML includes generated nested test output and the missing fixture class message.",
         "intentionalInnerNegativeOrExceptionCoverage": true
-      }
+      },
+      "externalPerlConfirmed": true,
+      "exceptionDetails": []
     },
     {
       "page": "StopTestInSuiteSetUp",
@@ -1247,44 +1279,50 @@
       "attempt": 30,
       "http": 200,
       "status": "completed",
-      "right": 0,
-      "wrong": 1,
+      "right": 2,
+      "wrong": 5,
       "ignored": 0,
       "exceptions": 0,
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
-      "responseBytes": 50019,
-      "rootCause": "The page deliberately tests StopTest during SuiteSetUp, but PageDriver does not run nested suites or fetch result HTML.",
+      "responseBytes": 77801,
+      "rootCause": "The nested suite request runs successfully, then fails because ConstructorThrows and its generated setup/page table fixtures are absent.",
       "failureDetails": {
-        "exceptionMessages": [],
+        "exceptionMessages": [
+          "Could not find class ConstructorThrows",
+          "Could not find class TableInPageSetupNeverToBeExecuted",
+          "Could not find class TableInPageANeverToBeExecuted",
+          "Could not find class TableInPageBNeverToBeExecuted"
+        ],
         "wrongAssertionMessages": [
           "test results for suite",
           "MySuite",
           "should contain",
-          "table in page setup never to be executed  Test not run",
-          "ensure"
+          "table in page setup never to be executed Test not run"
         ]
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
       "rawCounts": {
-        "right": 0,
-        "wrong": 1,
+        "right": 2,
+        "wrong": 5,
         "ignored": 0,
         "exceptions": 0
       },
       "conformance": {
-        "status": "harness_limited",
-        "reason": "The page deliberately tests StopTest during SuiteSetUp, but PageDriver does not run nested suites or fetch result HTML.",
+        "status": "fixture_gap",
+        "reason": "The nested suite request runs successfully, then fails because ConstructorThrows and its generated setup/page table fixtures are absent.",
         "dependencies": [
-          "PageDriver nested-suite execution",
-          "PageDriver response HTML"
+          "ConstructorThrows",
+          "generated test-page table fixtures"
         ],
         "expectedBehavior": "StopTest in SuiteSetUp skips suite tests but still runs teardown.",
-        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "verification": "Current page XML includes generated nested test output and the missing fixture class message.",
         "intentionalInnerNegativeOrExceptionCoverage": true
-      }
+      },
+      "externalPerlConfirmed": true,
+      "exceptionDetails": []
     },
     {
       "page": "TableTableSuite.SymbolsInTableTableManagedByTheFixture",
@@ -1295,28 +1333,26 @@
       "right": 0,
       "wrong": 1,
       "ignored": 0,
-      "exceptions": 0,
+      "exceptions": 9,
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
-      "responseBytes": 42109,
+      "responseBytes": 41919,
       "rootCause": "TableTableIncFirstCol and TestQuery.echo_int are absent.",
       "failureDetails": {
         "exceptionMessages": [
-          "Method echo_int[1] not found in Fitnesse::Slim::Test::TestQuery",
+          "The instance scriptTableActor does not exist",
           "Could not find class TableTableIncFirstCol"
         ],
-        "wrongAssertionMessages": [
-          "expected [ 104 ]"
-        ]
+        "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
       "rawCounts": {
         "right": 0,
         "wrong": 1,
         "ignored": 0,
-        "exceptions": 0
+        "exceptions": 9
       },
       "conformance": {
         "status": "fixture_gap",
@@ -1328,7 +1364,9 @@
         "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
         "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
         "intentionalInnerNegativeOrExceptionCoverage": false
-      }
+      },
+      "externalPerlConfirmed": true,
+      "exceptionDetails": []
     },
     {
       "page": "TestChineseWords",
@@ -1352,7 +1390,7 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
       "rawCounts": {
         "right": 0,
         "wrong": 0,
@@ -1368,7 +1406,9 @@
         "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
         "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
         "intentionalInnerNegativeOrExceptionCoverage": false
-      }
+      },
+      "externalPerlConfirmed": true,
+      "exceptionDetails": []
     },
     {
       "page": "TestComparators",
@@ -1376,7 +1416,7 @@
       "attempt": 33,
       "http": 200,
       "status": "completed",
-      "right": 1,
+      "right": 26,
       "wrong": 0,
       "ignored": 0,
       "exceptions": 0,
@@ -1384,27 +1424,29 @@
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
       "responseBytes": 65213,
-      "rootCause": "Passes.",
+      "rootCause": "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
       "failureDetails": {
         "exceptionMessages": [],
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
       "rawCounts": {
-        "right": 1,
+        "right": 26,
         "wrong": 0,
         "ignored": 0,
         "exceptions": 0
       },
       "conformance": {
         "status": "conformant",
-        "reason": "Passes.",
+        "reason": "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
         "dependencies": [],
         "expectedBehavior": "The page completed without wrong assertions or exceptions.",
-        "verification": "Rerun the page and confirm the external Perl SLiM connection and zero failure counts.",
+        "verification": "Rerun from the full page-by-page XML inventory; the testSystem and Perl connection are recorded in this entry.",
         "intentionalInnerNegativeOrExceptionCoverage": false
-      }
+      },
+      "externalPerlConfirmed": true,
+      "exceptionDetails": []
     },
     {
       "page": "TestCustomComparators",
@@ -1412,15 +1454,15 @@
       "attempt": 34,
       "http": 200,
       "status": "completed",
-      "right": 0,
-      "wrong": 1,
+      "right": 1,
+      "wrong": 2,
       "ignored": 0,
       "exceptions": 0,
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
-      "responseBytes": 35028,
-      "rootCause": "The suite configures the glob comparator, but PageDriver never fetches the nested TestPage result.",
+      "responseBytes": 53263,
+      "rootCause": "The nested response is retrieved, but its output lacks the expected glob comparison; the root-level nested test does not receive the outer suite CustomComparators setup.",
       "failureDetails": {
         "exceptionMessages": [],
         "wrongAssertionMessages": [
@@ -1428,28 +1470,30 @@
           "TestPage",
           "should contain",
           "t*t matches test",
-          "ensure"
+          "test in scenario"
         ]
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
       "rawCounts": {
-        "right": 0,
-        "wrong": 1,
+        "right": 1,
+        "wrong": 2,
         "ignored": 0,
         "exceptions": 0
       },
       "conformance": {
         "status": "harness_limited",
-        "reason": "The suite configures the glob comparator, but PageDriver never fetches the nested TestPage result.",
+        "reason": "The nested response is retrieved, but its output lacks the expected glob comparison; the root-level nested test does not receive the outer suite CustomComparators setup.",
         "dependencies": [
           "PageDriver nested-page execution",
           "glob comparator setup"
         ],
         "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
-        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "verification": "Current page XML includes the nested response and recorded failure evidence.",
         "intentionalInnerNegativeOrExceptionCoverage": false
-      }
+      },
+      "externalPerlConfirmed": true,
+      "exceptionDetails": []
     },
     {
       "page": "TestCustomConverter",
@@ -1460,32 +1504,26 @@
       "right": 0,
       "wrong": 0,
       "ignored": 0,
-      "exceptions": 1,
+      "exceptions": 17,
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
-      "responseBytes": 42935,
+      "responseBytes": 42209,
       "rootCause": "TestSlimWithConverter and its converter-control fixture methods are absent; this run does not establish an engine defect.",
       "failureDetails": {
         "exceptionMessages": [
           "Could not find class TestSlimWithConverter",
-          "Method reset_converters[0] not found in Fitnesse::Fixtures::EchoFixture",
-          "Method get_object[0] not found in Fitnesse::Fixtures::EchoFixture",
-          "Method get_list[0] not found in Fitnesse::Fixtures::EchoFixture",
-          "Method get_array_list[0] not found in Fitnesse::Fixtures::EchoFixture",
-          "Method same_list[1] not found in Fitnesse::Fixtures::EchoFixture",
-          "Method set_list_converter[0] not found in Fitnesse::Fixtures::EchoFixture",
-          "Method remove_list_converter[0] not found in Fitnesse::Fixtures::EchoFixture"
+          "The instance scriptTableActor does not exist"
         ],
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
       "rawCounts": {
         "right": 0,
         "wrong": 0,
         "ignored": 0,
-        "exceptions": 1
+        "exceptions": 17
       },
       "conformance": {
         "status": "fixture_gap",
@@ -1497,7 +1535,9 @@
         "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
         "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
         "intentionalInnerNegativeOrExceptionCoverage": false
-      }
+      },
+      "externalPerlConfirmed": true,
+      "exceptionDetails": []
     },
     {
       "page": "TestDetailedDiff",
@@ -1505,73 +1545,62 @@
       "attempt": 36,
       "http": 200,
       "status": "completed",
-      "right": 0,
-      "wrong": 1,
+      "right": 1,
+      "wrong": 21,
       "ignored": 0,
-      "exceptions": 0,
+      "exceptions": 12,
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
-      "responseBytes": 163508,
-      "rootCause": "The page deliberately creates mismatches and an ignored result to inspect rendered diffs, but PageDriver/ResponseExaminer cannot extract nested HTML.",
+      "responseBytes": 191894,
+      "rootCause": "Nested HTTP execution works, but the page cannot inspect its response because ResponseExaminer and the DetailedDiff fixture are absent; downstream scriptTableActor errors cascade.",
       "failureDetails": {
         "exceptionMessages": [
-          "given test page",
-          "Testpage",
-          "Method make_a_test_page[1] not found in Fitnesse::Fixtures::EchoFixture",
-          "and Test content is",
-          "!- variable defined: TEST_SYSTEM=slim \n import \n\t fitnesse.slim.test \n Test Strings by plain compare, neither custom compare nor regular expression. In this case detailed diff is wanted. Detailed Diff \n\t actual string \n\t\t expected string? \n\t\t #comment \n\t abc \n\t\t abc \n\t\t equal \n\t abc \n\t\t xyz \n\t\t completly different \n\t abc \n\t\t xbc \n\t\t first char different \n\t abc \n\t\t ayc \n\t\t middle char different \n\t abc \n\t\t abz \n\t\t last char different \n\t xyz \n\t\t actual empty, expected filled \n\t abc \n\t\t \n\t\t actual filled, expected empty; will be counted as ignored \n\t < &> \n\t\t < &> \n\t\t equal with HTML special chars \n\t < &> \n\t\t xyz \n\t\t completly different with HTML special chars \n\t < &> \n\t\t x&> \n\t\t first char different with HTML special chars \n\t < &> \n\t\t \n\t\t middle char different with HTML special chars \n\t < &> \n\t\t < &z \n\t\t last char differentwith HTML special chars \n\t < &> \n\t\t actual empty, expected filled with HTML special chars \n\t abc \n\t\t < &> \n\t\t completly different with HTML special chars \n\t abc \n\t abc \n\t\t a&c \n\t\t middle char different with HTML special chars \n\t abc \n\t\t ab> \n\t\t last char different with HTML special chars \n\t Hello World \n\t\t Wellcome Lord \n\t\t no obvious match \n Test Strings by regular expression. In this case no detailed diff is wanted. Detailed Diff \n\t actual string \n\t\t expected string? \n\t\t #comment \n\t abc \n\t\t =~/abc/ \n\t\t match \n\t abc \n\t\t =~/a.c/ \n\t\t match \n\t abc \n\t\t =~/\\w+/ \n\t\t match \n\t abc \n\t\t =~/\\w{3}/ \n\t\t match \n\t abc \n\t\t =~/^\\w{3}$/ \n\t\t match \n\t abc \n\t\t =~/\\w{1}/ \n\t\t match \n\t abc \n\t\t =~/^\\w{1}$/ \n\t\t no match \n\t abc \n\t\t =~/[ABC]+/ \n\t\t no match \n\t abc \n\t\t =~/[ABC]+/i \n\t\t wrong syntax, disable value comparison, use string comparison \n Test integers by string comparison. In this case detailed diff ist wanted. Detailed Diff \n\t actual int \n\t\t expected int? \n\t\t #comment \n\t 1 \n\t\t 1 \n\t\t equal \n\t 1 \n\t\t 2 \n\t\t completly different \n\t 1 \n\t\t 10 \n\t\t partially different \n\t 1 \n\t\t completly different \n Test integers by value comparison, see",
-          "when page",
-          "is tested and HTML is extracted",
-          "get HTML result",
-          "Could not find class ResponseExaminer",
-          "Method set_type[1] not found in Fitnesse::Fixtures::EchoFixture",
-          "Method set_pattern[1] not found in Fitnesse::Fixtures::EchoFixture",
-          "Method set_group[1] not found in Fitnesse::Fixtures::EchoFixture",
-          "Method found[0] not found in Fitnesse::Fixtures::EchoFixture",
-          "get HTML input",
-          "show collapsed",
-          "get value",
-          "Method get_value[0] not found in Fitnesse::Fixtures::EchoFixture",
-          "then",
-          "25",
-          "assertions pass,"
+          "Could not find class DetailedDiff",
+          "The instance decisionTable_1 does not exist",
+          "The instance decisionTable_2 does not exist",
+          "The instance decisionTable_3 does not exist",
+          "The instance decisionTable_4 does not exist",
+          "The instance decisionTable_5 does not exist",
+          "The instance decisionTable_6 does not exist",
+          "The instance decisionTable_7 does not exist",
+          "The instance scriptTableActor does not exist",
+          "Could not find class ResponseExaminer"
         ],
         "wrongAssertionMessages": [
-          "ensure",
-          "expected [ xyz ]",
-          "expected [ x bc]",
-          "expected [a y c]",
-          "expected [ab z ]",
-          "expected [ W ell c o me   L ord]",
-          "expected [ x ef]",
-          "expected [d y f]",
-          "expected [de z ]",
-          "expected [$symbol->[ def ]]",
-          "expected [$symbol->[ d ef]]",
-          "expected [$symbol->[d e f]]"
+          "then",
+          "25",
+          "assertions pass,",
+          "50",
+          "fail,",
+          "1",
+          "are ignored",
+          "0",
+          "exceptions thrown"
         ]
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
       "rawCounts": {
-        "right": 0,
-        "wrong": 1,
+        "right": 1,
+        "wrong": 21,
         "ignored": 0,
-        "exceptions": 0
+        "exceptions": 12
       },
       "conformance": {
         "status": "harness_limited",
-        "reason": "The page deliberately creates mismatches and an ignored result to inspect rendered diffs, but PageDriver/ResponseExaminer cannot extract nested HTML.",
+        "reason": "Nested HTTP execution works, but the page cannot inspect its response because ResponseExaminer and the DetailedDiff fixture are absent; downstream scriptTableActor errors cascade.",
         "dependencies": [
           "PageDriver nested-page execution",
           "ResponseExaminer",
           "EchoFixture page helpers"
         ],
         "expectedBehavior": "Embedded page intentionally expects 25 right, 50 wrong, 1 ignored, 0 exceptions; outer page verifies diff markup.",
-        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "verification": "Current page XML includes the nested response and recorded failure evidence.",
         "intentionalInnerNegativeOrExceptionCoverage": true
-      }
+      },
+      "externalPerlConfirmed": true,
+      "exceptionDetails": []
     },
     {
       "page": "TestExceptionIsDisplayed",
@@ -1579,51 +1608,62 @@
       "attempt": 37,
       "http": 200,
       "status": "completed",
-      "right": 0,
-      "wrong": 0,
+      "right": 4,
+      "wrong": 15,
       "ignored": 0,
-      "exceptions": 1,
+      "exceptions": 28,
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
-      "responseBytes": 139548,
-      "rootCause": "The page deliberately checks rendered exceptions; PageDriver/ResponseExaminer and nested exception fixtures are missing.",
+      "responseBytes": 149085,
+      "rootCause": "Nested HTTP execution works, but the page lacks ResponseExaminer, DecisionTableExecuteThrows, ConstructorThrows, and TestSlim exception methods needed to build and inspect the expected response.",
       "failureDetails": {
         "exceptionMessages": [
-          "given test page",
-          "Testpage",
-          "Method make_a_test_page[1] not found in Fitnesse::Fixtures::EchoFixture",
-          "and Test content is",
-          "!- import \n\t fitnesse.slim.test \n if you expect an exception you can test for it and pass the test \nuse the keyword  EXCEPTION: Test Slim \n\t # Scenario \n\t\t throw Normal? \n\t\t throw Exception With Message? \n\t Testing for an expected Exception \n\t\t EXCEPTION:=~/This is my exception/ \n\t\t EXCEPTION:=~/Test message/ \n\t otherwise error is indicated. Watch how an exception with message is displayed shorter compared to a normal exception \n\t\t This is my exception \n\t\t Test message \n if you expect an exception but there is non then the cell will fail \n Test Slim \n\t string \n\t\t getStringArg? \n\t\t getStringArg? \n\t Hello \n\t\t Hello \n\t\t EXCEPTION: Hello \n An exception occurring in a not cell specific function call is added to the current row. \nThis applies to: execute, reset, table, beginTable, endTable DT:fitnesse.slim.test.DecisionTableExecuteThrows \n\t x \n\t\t x? \n\t 5 \n\t\t 5 \n and also to constructor failures DT:ConstructorThrows \n\t\t test goes on \n\t x \n\t\t x? \n\t 5 \n\t\t 5 \n Multiple exceptions can happen in one row and in a in cell in the same row DT:fitnesse.slim.test.DecisionTableExecuteThrows \n\t Which Methods Fail \n\t\t x \n\t\t x? \n\t NONE \n\t\t 5 \n\t\t 5 \n\t execute setX getX \n\t\t 5 \n\t\t 5 \n\t reset \n\t\t 2 \n\t\t 2 \n\t reset \n\t\t 5 \n\t\t 5 \n Everything goes wrong - Fitnesse catches all 7 exceptions \nThe exceptions are added at the right level:  cell - for getter and setter \n\t row - for reset and execute \n\t table - for table, beginTable and endTable \n  DT:fitnesse.slim.test.DecisionTableExecuteThrows \n\t\t Total Disaster \n\t x \n\t\t x? \n\t 5 \n\t\t 5 \n Scripts behave like decision tables \n script:fitnesse.slim.test.DecisionTableExecuteThrows \n\t check \n\t\t execute \n\t\t EXCEPTION: =~/EXECUTE_THROWS/ \n A stop test is counted as fail and not as error script:ConstructorThrows \n\t\t stop test \n\t check \n\t\t execute \n\t\t Not reached as test is stopped \n -!",
-          "when page",
-          "is tested and HTML is extracted",
-          "get HTML result",
-          "Could not find class ResponseExaminer",
-          "Method set_type[1] not found in Fitnesse::Fixtures::EchoFixture",
-          "Method set_pattern[1] not found in Fitnesse::Fixtures::EchoFixture",
-          "Method set_group[1] not found in Fitnesse::Fixtures::EchoFixture",
-          "Method found[0] not found in Fitnesse::Fixtures::EchoFixture",
-          "get HTML input",
-          "show collapsed",
-          "get value",
-          "Method get_value[0] not found in Fitnesse::Fixtures::EchoFixture",
+          "Method throw_normal[0] not found in Fitnesse::Slim::Test::TestSlim",
+          "Method throw_exception_with_message[0] not found in Fitnesse::Slim::Test::TestSlim",
+          "Could not find class Fitnesse::Slim::Test::DecisionTableExecuteThrows",
+          "The instance decisionTable_3 does not exist",
+          "Could not find class ConstructorThrows",
+          "The instance decisionTable_4 does not exist",
+          "The instance decisionTable_5 does not exist",
+          "The instance decisionTable_6 does not exist",
+          "The instance scriptTableActor does not exist",
+          "Could not find class ResponseExaminer"
+        ],
+        "wrongAssertionMessages": [
           "then",
           "8",
-          "assertions pass,"
-        ],
-        "wrongAssertionMessages": []
+          "assertions pass,",
+          "1",
+          "fail,",
+          "0",
+          "are ignored",
+          "18",
+          "exceptions thrown",
+          "and cell",
+          ".This is my exception. found in:[^<]*",
+          "has result",
+          "pass",
+          ".Test message. found in:[^<]*",
+          "This is my exception./span>./td>./tr>.tr class=\"exception-detail closed-detail\">.td>__EXCEPTION__:java.lang.Excep[^<]*",
+          "error",
+          "Test message",
+          "java.lang.RuntimeException: test goes on",
+          "The instance decisionTable_\\d.setX. does not exist",
+          "5..span...td...tr..tr class=\"exception-detail closed-detail\"..td.__EXCEPTION__:fitnesse.slim.SlimError: SETX_THROWS[^<]*"
+        ]
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
       "rawCounts": {
-        "right": 0,
-        "wrong": 0,
+        "right": 4,
+        "wrong": 15,
         "ignored": 0,
-        "exceptions": 1
+        "exceptions": 28
       },
       "conformance": {
         "status": "harness_limited",
-        "reason": "The page deliberately checks rendered exceptions; PageDriver/ResponseExaminer and nested exception fixtures are missing.",
+        "reason": "Nested HTTP execution works, but the page lacks ResponseExaminer, DecisionTableExecuteThrows, ConstructorThrows, and TestSlim exception methods needed to build and inspect the expected response.",
         "dependencies": [
           "PageDriver nested-page execution",
           "ResponseExaminer",
@@ -1631,9 +1671,11 @@
           "ConstructorThrows"
         ],
         "expectedBehavior": "Embedded page intentionally expects 8 right, 1 wrong, 0 ignored, 18 exceptions; outer page verifies exception text and placement.",
-        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "verification": "Current page XML includes the nested response and recorded failure evidence.",
         "intentionalInnerNegativeOrExceptionCoverage": true
-      }
+      },
+      "externalPerlConfirmed": true,
+      "exceptionDetails": []
     },
     {
       "page": "TestOrderedQueryWithDuplicateRows",
@@ -1644,7 +1686,7 @@
       "right": 0,
       "wrong": 0,
       "ignored": 0,
-      "exceptions": 1,
+      "exceptions": 4,
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
@@ -1657,12 +1699,12 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
       "rawCounts": {
         "right": 0,
         "wrong": 0,
         "ignored": 0,
-        "exceptions": 1
+        "exceptions": 4
       },
       "conformance": {
         "status": "fixture_gap",
@@ -1673,7 +1715,9 @@
         "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
         "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
         "intentionalInnerNegativeOrExceptionCoverage": false
-      }
+      },
+      "externalPerlConfirmed": true,
+      "exceptionDetails": []
     },
     {
       "page": "TestPageWithInclude",
@@ -1684,7 +1728,7 @@
       "right": 0,
       "wrong": 0,
       "ignored": 0,
-      "exceptions": 1,
+      "exceptions": 2,
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
@@ -1698,12 +1742,12 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
       "rawCounts": {
         "right": 0,
         "wrong": 0,
         "ignored": 0,
-        "exceptions": 1
+        "exceptions": 2
       },
       "conformance": {
         "status": "fixture_gap",
@@ -1715,7 +1759,9 @@
         "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
         "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
         "intentionalInnerNegativeOrExceptionCoverage": false
-      }
+      },
+      "externalPerlConfirmed": true,
+      "exceptionDetails": []
     },
     {
       "page": "TestScriptTable",
@@ -1723,7 +1769,7 @@
       "attempt": 40,
       "http": 200,
       "status": "completed",
-      "right": 1,
+      "right": 2,
       "wrong": 0,
       "ignored": 0,
       "exceptions": 0,
@@ -1731,27 +1777,29 @@
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
       "responseBytes": 31302,
-      "rootCause": "Passes.",
+      "rootCause": "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
       "failureDetails": {
         "exceptionMessages": [],
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
       "rawCounts": {
-        "right": 1,
+        "right": 2,
         "wrong": 0,
         "ignored": 0,
         "exceptions": 0
       },
       "conformance": {
         "status": "conformant",
-        "reason": "Passes.",
+        "reason": "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
         "dependencies": [],
         "expectedBehavior": "The page completed without wrong assertions or exceptions.",
-        "verification": "Rerun the page and confirm the external Perl SLiM connection and zero failure counts.",
+        "verification": "Rerun from the full page-by-page XML inventory; the testSystem and Perl connection are recorded in this entry.",
         "intentionalInnerNegativeOrExceptionCoverage": false
-      }
+      },
+      "externalPerlConfirmed": true,
+      "exceptionDetails": []
     },
     {
       "page": "TestScriptTableDisplayParameterValue",
@@ -1759,7 +1807,7 @@
       "attempt": 41,
       "http": 200,
       "status": "completed",
-      "right": 1,
+      "right": 3,
       "wrong": 0,
       "ignored": 0,
       "exceptions": 0,
@@ -1767,27 +1815,29 @@
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
       "responseBytes": 34944,
-      "rootCause": "Passes.",
+      "rootCause": "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
       "failureDetails": {
         "exceptionMessages": [],
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
       "rawCounts": {
-        "right": 1,
+        "right": 3,
         "wrong": 0,
         "ignored": 0,
         "exceptions": 0
       },
       "conformance": {
         "status": "conformant",
-        "reason": "Passes.",
+        "reason": "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
         "dependencies": [],
         "expectedBehavior": "The page completed without wrong assertions or exceptions.",
-        "verification": "Rerun the page and confirm the external Perl SLiM connection and zero failure counts.",
+        "verification": "Rerun from the full page-by-page XML inventory; the testSystem and Perl connection are recorded in this entry.",
         "intentionalInnerNegativeOrExceptionCoverage": false
-      }
+      },
+      "externalPerlConfirmed": true,
+      "exceptionDetails": []
     },
     {
       "page": "TestSequentialArgumentProcessing",
@@ -1798,7 +1848,7 @@
       "right": 0,
       "wrong": 0,
       "ignored": 0,
-      "exceptions": 1,
+      "exceptions": 23,
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
@@ -1806,31 +1856,17 @@
       "rootCause": "TestSlim.concatenate_three_args is absent, so semicolon argument expansion is not assessed.",
       "failureDetails": {
         "exceptionMessages": [
-          "Method concatenate_three_args[3] not found in Fitnesse::Slim::Test::TestSlim",
-          "concatenate",
-          "a",
-          "and",
-          "b",
-          "c",
-          "x",
-          "y",
-          "z",
-          "conCatentate a b c",
-          "conCatentate;",
-          "check",
-          "echo string",
-          "$RESULT",
-          "x y z"
+          "Method concatenate_three_args[3] not found in Fitnesse::Slim::Test::TestSlim"
         ],
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
       "rawCounts": {
         "right": 0,
         "wrong": 0,
         "ignored": 0,
-        "exceptions": 1
+        "exceptions": 23
       },
       "conformance": {
         "status": "fixture_gap",
@@ -1841,7 +1877,9 @@
         "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
         "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
         "intentionalInnerNegativeOrExceptionCoverage": false
-      }
+      },
+      "externalPerlConfirmed": true,
+      "exceptionDetails": []
     },
     {
       "page": "TestSubsetQuery",
@@ -1852,7 +1890,7 @@
       "right": 0,
       "wrong": 0,
       "ignored": 0,
-      "exceptions": 1,
+      "exceptions": 6,
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
@@ -1865,12 +1903,12 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
       "rawCounts": {
         "right": 0,
         "wrong": 0,
         "ignored": 0,
-        "exceptions": 1
+        "exceptions": 6
       },
       "conformance": {
         "status": "fixture_gap",
@@ -1881,7 +1919,9 @@
         "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
         "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
         "intentionalInnerNegativeOrExceptionCoverage": false
-      }
+      },
+      "externalPerlConfirmed": true,
+      "exceptionDetails": []
     },
     {
       "page": "TestSystemSlimSuite.ErrorSituationsDuringSlimServerStartup.B_TimeoutAsSlimServerDiesBeforeConnecting",
@@ -1889,39 +1929,39 @@
       "attempt": 44,
       "http": 200,
       "status": "completed",
-      "right": 0,
+      "right": 2,
       "wrong": 1,
       "ignored": 0,
       "exceptions": 0,
       "testSystem": "SLIM:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
-      "responseBytes": 31473,
-      "rootCause": "The page deliberately starts an invalid runner and checks nested HTTP output; PageDriver cannot retrieve the response.",
+      "responseBytes": 52013,
+      "rootCause": "PageDriver retrieves a 200 response, but the body does not contain the expected dead-test-runner message; the child test runner setup behavior remains unverified.",
       "failureDetails": {
         "exceptionMessages": [],
-        "wrongAssertionMessages": [
-          "ensure"
-        ]
+        "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "SLIM:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
       "rawCounts": {
-        "right": 0,
+        "right": 2,
         "wrong": 1,
         "ignored": 0,
         "exceptions": 0
       },
       "conformance": {
         "status": "harness_limited",
-        "reason": "The page deliberately starts an invalid runner and checks nested HTTP output; PageDriver cannot retrieve the response.",
+        "reason": "PageDriver retrieves a 200 response, but the body does not contain the expected dead-test-runner message; the child test runner setup behavior remains unverified.",
         "dependencies": [
           "PageDriver nested-page execution"
         ],
         "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
-        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "verification": "Current page XML includes the nested response and recorded failure evidence.",
         "intentionalInnerNegativeOrExceptionCoverage": true
-      }
+      },
+      "externalPerlConfirmed": true,
+      "exceptionDetails": []
     },
     {
       "page": "TestSystemSlimSuite.ErrorSituationsDuringSlimServerStartup.C_TimeoutAsNoServerAtGivenSocket",
@@ -1929,27 +1969,23 @@
       "attempt": 45,
       "http": 200,
       "status": "completed",
-      "right": 0,
+      "right": 3,
       "wrong": 1,
       "ignored": 0,
       "exceptions": 0,
       "testSystem": "SLIM:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
-      "responseBytes": 32505,
+      "responseBytes": 52900,
       "rootCause": "The test expects port 8099 unbound, but the inventory server occupies it; content_matches and PageDriver support are also missing.",
       "failureDetails": {
-        "exceptionMessages": [
-          "Method content_matches[1] not found in Fitnesse::Slim::Test::TestSlim"
-        ],
-        "wrongAssertionMessages": [
-          "ensure"
-        ]
+        "exceptionMessages": [],
+        "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "SLIM:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
       "rawCounts": {
-        "right": 0,
+        "right": 3,
         "wrong": 1,
         "ignored": 0,
         "exceptions": 0
@@ -1965,7 +2001,9 @@
         "expectedBehavior": "Nested debug request fails quickly only when its target port is unbound and reports elapsed time.",
         "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
         "intentionalInnerNegativeOrExceptionCoverage": true
-      }
+      },
+      "externalPerlConfirmed": true,
+      "exceptionDetails": []
     },
     {
       "page": "TestSystemSlimSuite.HowtoEnforceA_TimelimitPerTestCommand.NotWorking_SettingSlimTimeout",
@@ -1976,27 +2014,26 @@
       "right": 0,
       "wrong": 0,
       "ignored": 0,
-      "exceptions": 1,
+      "exceptions": 3,
       "testSystem": "SLIM:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
-      "responseBytes": 28231,
+      "responseBytes": 28153,
       "rootCause": "The page documents that slim.timeout alone does not enforce command limits, but the Sleep fixture is absent.",
       "failureDetails": {
         "exceptionMessages": [
           "Could not find class Fitnesse::Slim::Test::Sleep",
-          "Method set_timer[1] not found in Fitnesse::Fixtures::EchoFixture",
-          "Method do_sleep[0] not found in Fitnesse::Fixtures::EchoFixture"
+          "The instance decisionTable_42 does not exist"
         ],
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "SLIM:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
       "rawCounts": {
         "right": 0,
         "wrong": 0,
         "ignored": 0,
-        "exceptions": 1
+        "exceptions": 3
       },
       "conformance": {
         "status": "fixture_gap",
@@ -2007,7 +2044,9 @@
         "expectedBehavior": "The documentation says slim.timeout alone does not interrupt the long command.",
         "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
         "intentionalInnerNegativeOrExceptionCoverage": true
-      }
+      },
+      "externalPerlConfirmed": true,
+      "exceptionDetails": []
     },
     {
       "page": "TestSystemSlimSuite.HowtoEnforceA_TimelimitPerTestCommand.PartiallyWorking_SettingSlimFlags",
@@ -2018,30 +2057,29 @@
       "right": 0,
       "wrong": 0,
       "ignored": 0,
-      "exceptions": 1,
+      "exceptions": 22,
       "testSystem": "SLIM:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
-      "responseBytes": 45148,
+      "responseBytes": 41804,
       "rootCause": "Sleep and EchoFixture timer methods are absent; stated timeout/teardown behavior is not exercised.",
       "failureDetails": {
         "exceptionMessages": [
           "Could not find class Fitnesse::Slim::Test::Sleep",
-          "Method set_timer[1] not found in Fitnesse::Fixtures::EchoFixture",
-          "Method do_sleep[0] not found in Fitnesse::Fixtures::EchoFixture",
-          "fitnesse.slim.test.Sleep  Could not find class Fitnesse::Slim::Test::Sleep",
-          "Method set_timer[1] not found in Fitnesse::Fixtures::TearDown",
-          "Method do_sleep[0] not found in Fitnesse::Fixtures::TearDown"
+          "The instance decisionTable_42 does not exist",
+          "The instance decisionTable_43 does not exist",
+          "The instance decisionTable_44 does not exist",
+          "The instance decisionTable_45 does not exist"
         ],
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "SLIM:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
       "rawCounts": {
         "right": 0,
         "wrong": 0,
         "ignored": 0,
-        "exceptions": 1
+        "exceptions": 22
       },
       "conformance": {
         "status": "fixture_gap",
@@ -2054,7 +2092,9 @@
         "expectedBehavior": "Short commands pass; an overlong command times out; the page documents teardown and later-command caveats.",
         "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
         "intentionalInnerNegativeOrExceptionCoverage": true
-      }
+      },
+      "externalPerlConfirmed": true,
+      "exceptionDetails": []
     },
     {
       "page": "TestSystemSlimSuite.TimeoutInSlimTestSystem",
@@ -2062,46 +2102,39 @@
       "attempt": 48,
       "http": 200,
       "status": "completed",
-      "right": 0,
-      "wrong": 1,
+      "right": 4,
+      "wrong": 0,
       "ignored": 0,
       "exceptions": 0,
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
-      "responseBytes": 37166,
-      "rootCause": "The page checks timeout output from an embedded test, but Sleep and result retrieval are unavailable; this is not yet an engine verdict.",
+      "responseBytes": 73870,
+      "rootCause": "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
       "failureDetails": {
-        "exceptionMessages": [],
-        "wrongAssertionMessages": [
-          "test results for page in debug mode",
-          "TestPage",
-          "should contain",
-          "The instruction timed out after 1 seconds",
-          "ensure",
-          "span class=\"pass\">fitnesse.fixtures.Sleep"
-        ]
+        "exceptionMessages": [
+          "The instruction timed out after 1 seconds"
+        ],
+        "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
       "rawCounts": {
-        "right": 0,
-        "wrong": 1,
+        "right": 4,
+        "wrong": 0,
         "ignored": 0,
         "exceptions": 0
       },
       "conformance": {
-        "status": "harness_limited",
-        "reason": "The page checks timeout output from an embedded test, but Sleep and result retrieval are unavailable; this is not yet an engine verdict.",
-        "dependencies": [
-          "fitnesse.fixtures.Sleep",
-          "PageDriver nested result retrieval",
-          "statement timeout support"
-        ],
-        "expectedBehavior": "Embedded page expects a short Sleep pass and a long-command timeout marker.",
-        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "status": "conformant",
+        "reason": "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
+        "dependencies": [],
+        "expectedBehavior": "The page completed without wrong assertions or exceptions.",
+        "verification": "Rerun from the full page-by-page XML inventory; the testSystem and Perl connection are recorded in this entry.",
         "intentionalInnerNegativeOrExceptionCoverage": true
-      }
+      },
+      "externalPerlConfirmed": true,
+      "exceptionDetails": []
     },
     {
       "page": "TestTryingParameterizationIsntTooGreedy",
@@ -2112,30 +2145,26 @@
       "right": 0,
       "wrong": 0,
       "ignored": 0,
-      "exceptions": 1,
+      "exceptions": 2,
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
-      "responseBytes": 33950,
+      "responseBytes": 33866,
       "rootCause": "LoginDialogDriver and its login method are absent, so scenario selection is not assessed.",
       "failureDetails": {
         "exceptionMessages": [
           "Could not find class LoginDialogDriver",
-          "connect as",
-          "bob",
-          "with",
-          "xyzz",
-          "Method login_with_username_and_password[2] not found in Fitnesse::Slim::Test::TestSlim"
+          "The instance scriptTableActor does not exist"
         ],
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
       "rawCounts": {
         "right": 0,
         "wrong": 0,
         "ignored": 0,
-        "exceptions": 1
+        "exceptions": 2
       },
       "conformance": {
         "status": "fixture_gap",
@@ -2147,7 +2176,9 @@
         "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
         "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
         "intentionalInnerNegativeOrExceptionCoverage": false
-      }
+      },
+      "externalPerlConfirmed": true,
+      "exceptionDetails": []
     },
     {
       "page": "TestTwoIdenticalTablesOnPageDontConflict",
@@ -2163,13 +2194,13 @@
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
       "responseBytes": 31297,
-      "rootCause": "Passes.",
+      "rootCause": "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
       "failureDetails": {
         "exceptionMessages": [],
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
       "rawCounts": {
         "right": 1,
         "wrong": 0,
@@ -2178,12 +2209,14 @@
       },
       "conformance": {
         "status": "conformant",
-        "reason": "Passes.",
+        "reason": "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
         "dependencies": [],
         "expectedBehavior": "The page completed without wrong assertions or exceptions.",
-        "verification": "Rerun the page and confirm the external Perl SLiM connection and zero failure counts.",
+        "verification": "Rerun from the full page-by-page XML inventory; the testSystem and Perl connection are recorded in this entry.",
         "intentionalInnerNegativeOrExceptionCoverage": false
-      }
+      },
+      "externalPerlConfirmed": true,
+      "exceptionDetails": []
     }
   ],
   "previousBaseline": {
@@ -2196,80 +2229,114 @@
       "ignored": 0,
       "exceptions": 28
     },
-    "serverExits": 0
+    "serverExits": 0,
+    "countsMeaning": "Per-page outcome markers summed across the inventory, not raw page assertion totals; see remainingPageClassification.previousCountCaveat."
   },
   "postFixVerification": {
+    "increment": "PageDriver HTTP behavior",
+    "pagesExercised": 50,
+    "completedResponses": 50,
     "serverExits": 0,
-    "crashPages": [
-      "BaseLineDecisionTable.TestFailuresAreMarked",
-      "IgnoredTestsShouldColorGray",
-      "TestDetailedDiff",
-      "TestExceptionIsDisplayed"
-    ],
-    "pageResults": {
-      "BaseLineDecisionTable.TestFailuresAreMarked": {
-        "right": 0,
-        "wrong": 0,
-        "ignored": 0,
-        "exceptions": 1
-      },
-      "IgnoredTestsShouldColorGray": {
-        "right": 0,
-        "wrong": 0,
-        "ignored": 0,
-        "exceptions": 1
-      },
-      "TestDetailedDiff": {
-        "right": 0,
-        "wrong": 1,
-        "ignored": 0,
-        "exceptions": 0
-      },
-      "TestExceptionIsDisplayed": {
-        "right": 0,
-        "wrong": 0,
-        "ignored": 0,
-        "exceptions": 1
-      }
+    "externalPerlConfirmed": 50,
+    "totals": {
+      "right": 183,
+      "wrong": 62,
+      "ignored": 0,
+      "exceptions": 291
     },
-    "classificationChange": "TestDetailedDiff changed from one exception to one wrong assertion because execution continued after removing the crash; its rendered output shows missing ResponseExaminer/EchoFixture methods. This is not an assertion improvement."
+    "conformanceStatuses": {
+      "conformant": 19,
+      "harness_limited": 7,
+      "engine_gap": 2,
+      "fixture_gap": 21,
+      "environment_limited": 1
+    },
+    "newlyConformantPages": [
+      "DefineAliasInPluginTest",
+      "TestSystemSlimSuite.TimeoutInSlimTestSystem"
+    ],
+    "nestedExecutionEvidence": {
+      "test": "RUN_PAGE_DRIVER_INTEGRATION=1 perl t/page-driver-integration.t",
+      "passedAssertions": 3,
+      "result": "PageDriver created and marked a nested page; FitNesse executed it through a second Perl SLiM connection; the existing outer connection successfully executed another statement afterward."
+    },
+    "finalRepeat": {
+      "pages": 50,
+      "completedResponses": 50,
+      "externalPerlConfirmed": 50,
+      "requestOrParseErrors": 0,
+      "assertionCountsUnchangedFromRecordedRun": true,
+      "totals": {
+        "right": 183,
+        "wrong": 62,
+        "ignored": 0,
+        "exceptions": 291
+      },
+      "serverExits": 0
+    },
+    "supplementalPageRuns": [
+      {
+        "page": "ScenarioLibraryTestSuite.ScenarioLibraryShouldIncludeVariables",
+        "url": "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.ScenarioLibraryTestSuite.ScenarioLibraryShouldIncludeVariables?test&format=xml",
+        "status": "completed",
+        "http": 200,
+        "right": 6,
+        "wrong": 0,
+        "ignored": 0,
+        "exceptions": 0,
+        "externalPerlConfirmed": true,
+        "note": "This page is not one of the 50 Test=true inventory pages; it was run separately because it uses makeASuitePage."
+      }
+    ]
   },
   "historicalCrash": {
     "message": "Can't use string (\"[000006:000048:scriptTable_42_0/...\") as an ARRAY ref while \"strict refs\" in use at lib/Test/Slim/ListExecutor.pm line 19.",
     "cause": "A valid nested SLiM statement had an empty-string argument. _take_utf16_units consumed the following colon for a requested length of zero; nested list parsing failed and returned the encoded statement as a scalar. ListExecutor then dereferenced it as an arrayref. The fix avoids consuming any characters for zero units."
   },
   "fixtureIncrement": {
-    "family": "Scenario actor dispatch, cloneSymbol, and ShouldIBuyMilk",
-    "upstreamBehavior": "FitNesse library resolution searches registered libraries newest-first when the actor and SUT do not provide a method; its SlimHelperLibrary cloneSymbol returns the supplied symbol object unchanged. ShouldIBuyMilk mirrors the upstream decision rule and no-op table hooks.",
+    "family": "PageDriver HTTP acceptance harness",
+    "upstreamBehavior": "Installed FitNesse v20251025 PageDriver has an implicit no-argument constructor. Acceptance scenarios call createPageWithContent(String,String), makeATestPage(String), makeASuitePage(String), requestPage(String), content(), contentContains(String), contentMatches(String), and lineNumberContaining(String). Java PageCreator uses saveData; requestPage runs the requested responder and returns its status.",
+    "perlBehavior": "The Perl fixture posts saveData with editTime=9999999999999, ticketId=321, and pageContent; marks pages using saveProperties/PageType=Test; issues HTTP GET requests for the supplied page URI; retains status and body on the PageDriver and in a per-SLiM-process ResponseContext. HTTP status errors are retained; transport errors are raised as fixture exceptions.",
     "perlTests": {
       "command": "bin/test-dev",
       "result": "PASS",
-      "files": 19,
-      "tests": 203
+      "files": 22,
+      "tests": 241,
+      "knownTodoFailures": 4
     },
     "focusedTests": [
-      "t/library-resolution.t",
-      "t/should-i-buy-milk.t"
+      {
+        "file": "t/page-driver.t",
+        "assertions": 25
+      },
+      {
+        "file": "t/page-driver-integration.t",
+        "assertions": 3,
+        "command": "RUN_PAGE_DRIVER_INTEGRATION=1 perl t/page-driver-integration.t"
+      }
     ],
     "newlyPassingPages": [
-      "BaseLineDecisionTable.MakingTheBaselineTableTheDefaultDecisionTable",
-      "BaseLineDecisionTable.ScenariosAreSupported",
-      "BaseLineDecisionTable",
-      "ScenarioTestSuite.ScenarioWithOutputParametersInDecisionTables",
-      "SegregationOfRequirementsAndImplementation"
+      "DefineAliasInPluginTest",
+      "TestSystemSlimSuite.TimeoutInSlimTestSystem"
     ],
-    "remainingAffectedFailures": [
-      "BaseLineDecisionTable.TestFailuresAreMarked: nested test still lacks ResponseExaminer/page-driver fixture behavior"
+    "remainingHarnessPages": [
+      "BaseLineDecisionTable.TestFailuresAreMarked",
+      "CustomTableRenderingAddedByPluginTest",
+      "IgnoredTestsShouldColorGray",
+      "TestCustomComparators",
+      "TestDetailedDiff",
+      "TestExceptionIsDisplayed",
+      "TestSystemSlimSuite.ErrorSituationsDuringSlimServerStartup.B_TimeoutAsSlimServerDiesBeforeConnecting"
     ],
     "fullInventory": {
       "pages": 50,
-      "passingPages": 17,
-      "failingPages": 33,
-      "counts": {
-        "right": 17,
-        "wrong": 14,
+      "passingPages": 19,
+      "failingPages": 31,
+      "rawAssertionCounts": {
+        "right": 183,
+        "wrong": 62,
         "ignored": 0,
-        "exceptions": 19
+        "exceptions": 291
       },
       "externalPerlConfirmed": 50,
       "serverExits": 0
@@ -2342,6 +2409,43 @@
         "externalPerlConfirmed": 50,
         "serverExits": 0
       }
+    },
+    {
+      "family": "Scenario actor dispatch, cloneSymbol, and ShouldIBuyMilk",
+      "upstreamBehavior": "FitNesse library resolution searches registered libraries newest-first when the actor and SUT do not provide a method; its SlimHelperLibrary cloneSymbol returns the supplied symbol object unchanged. ShouldIBuyMilk mirrors the upstream decision rule and no-op table hooks.",
+      "perlTests": {
+        "command": "bin/test-dev",
+        "result": "PASS",
+        "files": 19,
+        "tests": 203
+      },
+      "focusedTests": [
+        "t/library-resolution.t",
+        "t/should-i-buy-milk.t"
+      ],
+      "newlyPassingPages": [
+        "BaseLineDecisionTable.MakingTheBaselineTableTheDefaultDecisionTable",
+        "BaseLineDecisionTable.ScenariosAreSupported",
+        "BaseLineDecisionTable",
+        "ScenarioTestSuite.ScenarioWithOutputParametersInDecisionTables",
+        "SegregationOfRequirementsAndImplementation"
+      ],
+      "remainingAffectedFailures": [
+        "BaseLineDecisionTable.TestFailuresAreMarked: nested test still lacks ResponseExaminer/page-driver fixture behavior"
+      ],
+      "fullInventory": {
+        "pages": 50,
+        "passingPages": 17,
+        "failingPages": 33,
+        "counts": {
+          "right": 17,
+          "wrong": 14,
+          "ignored": 0,
+          "exceptions": 19
+        },
+        "externalPerlConfirmed": 50,
+        "serverExits": 0
+      }
     }
   ],
   "conformanceSummary": {
@@ -2362,37 +2466,57 @@
   },
   "classificationMethod": "Each page retains raw right/wrong/ignored/exception counts. Conformance classification uses page content, inherited setup, embedded expected counts, current Perl fixtures, and upstream FitNesse documentation. Negative examples are evaluated by their outer assertions, not by assuming every inner failure is a defect.",
   "remainingPageClassification": {
-    "sourceReviewed": "All 33 raw non-passing pages, including page content and applicable parent setup.",
-    "sharedSuiteSetup": "SuiteSlimTests/SetUp imports fitnesse.fixtures and registers PageDriver and EchoFixture libraries, includes LibrarySuite setup, and loads custom alias, renderer, and glob-comparator plugins. PageDriver/ResponseExaminer use FitNesse in-process context upstream; concurrent independent SLiM sessions are now supported, but the HTTP-backed Perl harness fixtures remain unimplemented.",
-    "intentionalCoverage": "Some pages intentionally create wrong cells, exceptions, ignored rows, stopped tests, or timeouts inside nested tests and assert their rendering outside. Their outer pages still need to pass before those behaviors are verified.",
+    "sourceReviewed": "All 50 individual page XML responses rerun after PageDriver implementation; result counts are assertions from the page-level <result><counts> element.",
+    "sharedSuiteSetup": "SuiteSlimTests/SetUp imports fitnesse.fixtures and registers PageDriver and EchoFixture libraries. HTTP-backed PageDriver now creates pages with saveData, marks Test pages with saveProperties, and requests page/test/suite/execution-log routes. The external nested page request does not inherit all outer suite plugin/comparator settings.",
+    "intentionalCoverage": "Several pages assert intentionally failing, ignored, exception, stopped, or timed-out results inside nested pages. Those inner outcomes are visible in returned HTML only where fixture setup and ResponseExaminer dependencies allow the outer test to inspect them.",
     "confirmedEngineGaps": [
       "ChainWithInstanceTest: automatic SlimHelperLibrary getFixture/pushFixture/popFixture behavior is absent.",
       "HashTableTests.ShouldReturnHashTable: returned Perl hash reference becomes HASH(0x...), not a FitNesse-compatible hash value."
     ],
-    "rawFailurePages": 33,
-    "blockedOrUnverifiedPages": 31
+    "fixtureGaps": [
+      "StopSuite, StopTest, and StopTestInSuiteSetUp now execute their nested suites; they fail on missing ConstructorThrows and generated fixture classes. Other fixture gaps are detailed per page."
+    ],
+    "harnessLimited": [
+      "BaseLineDecisionTable.TestFailuresAreMarked",
+      "CustomTableRenderingAddedByPluginTest",
+      "IgnoredTestsShouldColorGray",
+      "TestCustomComparators",
+      "TestDetailedDiff",
+      "TestExceptionIsDisplayed",
+      "TestSystemSlimSuite.ErrorSituationsDuringSlimServerStartup.B_TimeoutAsSlimServerDiesBeforeConnecting"
+    ],
+    "rawFailurePages": 31,
+    "blockedOrUnassessablePages": 31,
+    "classificationCounts": {
+      "conformant": 19,
+      "harness_limited": 7,
+      "engine_gap": 2,
+      "fixture_gap": 21,
+      "environment_limited": 1
+    },
+    "previousCountCaveat": "The pre-PageDriver baseline summed one page outcome marker per page (17 right, 14 wrong, 19 exceptions), not the assertion counts returned by the page-level XML. Current raw assertion totals are freshly parsed from all 50 XML responses and should not be subtracted from those markers."
   },
   "implementationPlan": [
     {
       "priority": 1,
-      "increment": "Implement HTTP PageDriver and ResponseExaminer harness fixtures",
-      "expectedBenefit": "Unblocks meaningful verification of up to 12 pages that inspect embedded test/suite HTML, including failure/exception/ignore rendering, custom plugin rendering, stop behavior, startup handling, and timeout output.",
-      "scope": "Implement HTTP-backed PageDriver operations for page creation, test marking, page/suite/log requests, and status/body/source capture; then implement ResponseExaminer separately over retained response and page content. Keep both under t/lib, outside the protocol implementation.",
-      "caveat": "Concurrent SLiM support is verified, but some embedded pages also need target fixtures. Newly observable inner outcomes must be checked against the outer assertions and classified separately."
+      "increment": "Implement ResponseExaminer over PageDriver response context",
+      "expectedBenefit": "Targets the remaining pages that must inspect nested result HTML, including intentional failure, exception, and ignore rendering.",
+      "scope": "Read the retained last HTTP response from Fitnesse::Fixtures::ResponseContext; support contents and pageHtml only if actual acceptance calls require both, regex matching/capture groups, and upstream no-match behavior. Keep outside lib/Test/Slim.",
+      "caveat": "Some pages also expose missing target fixtures or suite plugin configuration; those are independent and will remain non-conformant."
     },
     {
       "priority": 2,
-      "increment": "Implement query fixture family (SplitFixture and DuplicateRows)",
-      "expectedBenefit": "Directly targets four pages: two QueryTableSuite pages and ordered/subset duplicate-row query pages.",
-      "scope": "Reproduce upstream row data, constructor parsing, duplicate ordering, and query methods; test returned row structures independently.",
-      "caveat": "Rerun unchanged pages to separate fixture data problems from query-table matching behavior."
+      "increment": "Implement the coherent missing negative-test fixtures for stop and exception pages",
+      "expectedBenefit": "Makes the StopSuite/StopTest/StopTestInSuiteSetUp expectations and exception rendering reachable.",
+      "scope": "Trace ConstructorThrows, throw methods, and page-specific fixtures from installed FitNesse source; add focused fixture tests.",
+      "caveat": "Do not treat fixture errors as evidence of protocol defects; verify stop/ignore behavior through the unchanged outer pages."
     },
     {
       "priority": 3,
-      "increment": "Implement automatic SlimHelperLibrary actor-stack behavior",
-      "expectedBenefit": "Targets ChainWithInstanceTest and removes shared getFixture gaps in alias and parameterized-library pages; replaces isolated helper handling with upstream library behavior.",
-      "scope": "Register helper methods as an automatic library, preserve actor object identity through push/pop, and retain cloneSymbol regression coverage.",
-      "caveat": "These operations belong to the built-in helper library, not ordinary TestSlim fixture methods."
+      "increment": "Implement query fixtures SplitFixture and DuplicateRows",
+      "expectedBenefit": "Targets QueryTableSuite plus ordered and subset duplicate-row pages.",
+      "scope": "Reproduce upstream row data, constructor parsing, duplicate ordering, and query methods; test returned row structures independently.",
+      "caveat": "Rerun unchanged pages to distinguish fixture data problems from query-table matching behavior."
     }
   ],
   "additionalConfirmedDefect": "HashFixture map-return serialization is a confirmed one-page engine gap; add a focused regression and fix as a separate targeted increment after the highest-coverage shared increments.",
@@ -2462,7 +2586,8 @@
       },
       "serverExits": 0,
       "pageResultChanges": 0,
-      "newlyPassingPages": []
+      "newlyPassingPages": [],
+      "countsMeaning": "Historical per-page outcome markers, not raw page assertion totals; superseded by postFixVerification raw XML counts."
     }
   },
   "preConcurrencyUnitBaseline": {
