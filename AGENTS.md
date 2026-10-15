@@ -151,6 +151,19 @@ Do not modify upstream acceptance pages to manufacture passing results.
 
 Record the acceptance-test baseline before implementing additional features.
 
+Do not merely transliterate Java code to Perl. Use a native Perl style, not verbose, architecture astronautics, FooFactoryFactoryFactory nonsense that is typical to Java cargo culting. Do not write Python or FORTRAN in Perl either. Look for opportunities to exploit Perl's strengths in the design. Write like a Perl expert who is not trying to show off.
+
+Always look for opportunities to refactor in ways that incrementally improve the design:
+
+- Remove duplication
+- Use Perl's functional-paradigm features tastefully
+- We are not afraid of punctuation
+- Use closures and metaprogramming where they express the design cleanly
+
+Use good Perl style: https://perldoc.perl.org/perlstyle
+
+To the extent possible, keep the code clean with regard to `use strict` and `use warnings`.
+
 ## Autonomy and reporting
 
 Work independently through small, testable increments. Commit each coherent change with a descriptive message.
