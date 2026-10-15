@@ -37,7 +37,10 @@
       "exceptions": 19
     },
     "serverExits": 0,
-    "externalPerlConfirmed": 50
+    "externalPerlConfirmed": 50,
+    "confirmedConformantPages": 17,
+    "confirmedEngineGapPages": 2,
+    "blockedPages": 31
   },
   "pages": [
     {
@@ -60,7 +63,21 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run."
+      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "rawCounts": {
+        "right": 1,
+        "wrong": 0,
+        "ignored": 0,
+        "exceptions": 0
+      },
+      "conformance": {
+        "status": "conformant",
+        "reason": "Passes after adding the upstream-compatible Eg.Division fixture.",
+        "dependencies": [],
+        "expectedBehavior": "The page completed without wrong assertions or exceptions.",
+        "verification": "Rerun the page and confirm the external Perl SLiM connection and zero failure counts.",
+        "intentionalInnerNegativeOrExceptionCoverage": false
+      }
     },
     {
       "page": "BaseLineDecisionTable.MakingTheBaselineTableTheDefaultDecisionTable",
@@ -82,7 +99,21 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run."
+      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "rawCounts": {
+        "right": 1,
+        "wrong": 0,
+        "ignored": 0,
+        "exceptions": 0
+      },
+      "conformance": {
+        "status": "conformant",
+        "reason": "Passes with the upstream-compatible ShouldIBuyMilk fixture.",
+        "dependencies": [],
+        "expectedBehavior": "The page completed without wrong assertions or exceptions.",
+        "verification": "Rerun the page and confirm the external Perl SLiM connection and zero failure counts.",
+        "intentionalInnerNegativeOrExceptionCoverage": false
+      }
     },
     {
       "page": "BaseLineDecisionTable.ScenariosAreSupported",
@@ -104,7 +135,21 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run."
+      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "rawCounts": {
+        "right": 1,
+        "wrong": 0,
+        "ignored": 0,
+        "exceptions": 0
+      },
+      "conformance": {
+        "status": "conformant",
+        "reason": "Passes with scenario calls dispatched through registered libraries.",
+        "dependencies": [],
+        "expectedBehavior": "The page completed without wrong assertions or exceptions.",
+        "verification": "Rerun the page and confirm the external Perl SLiM connection and zero failure counts.",
+        "intentionalInnerNegativeOrExceptionCoverage": false
+      }
     },
     {
       "page": "BaseLineDecisionTable.TestFailuresAreMarked",
@@ -120,7 +165,7 @@
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
       "responseBytes": 78431,
-      "rootCause": "Nested acceptance page executes without terminating Perl; missing nested fixture behavior still produces exceptions.",
+      "rootCause": "The PageDriver lacks make_a_test_page and ResponseExaminer is absent; the observed nested actor error occurs before embedded assertions are verified.",
       "failureDetails": {
         "exceptionMessages": [
           "given test page",
@@ -147,7 +192,24 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run."
+      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "rawCounts": {
+        "right": 0,
+        "wrong": 0,
+        "ignored": 0,
+        "exceptions": 1
+      },
+      "conformance": {
+        "status": "harness_limited",
+        "reason": "The PageDriver lacks make_a_test_page and ResponseExaminer is absent; the observed nested actor error occurs before embedded assertions are verified.",
+        "dependencies": [
+          "PageDriver.make_a_test_page",
+          "ResponseExaminer"
+        ],
+        "expectedBehavior": "Embedded page expects 8 right, 2 wrong, 2 ignored, 0 exceptions; outer page checks those counts and rendered cells.",
+        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "intentionalInnerNegativeOrExceptionCoverage": true
+      }
     },
     {
       "page": "BaseLineDecisionTable",
@@ -169,7 +231,21 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run."
+      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "rawCounts": {
+        "right": 1,
+        "wrong": 0,
+        "ignored": 0,
+        "exceptions": 0
+      },
+      "conformance": {
+        "status": "conformant",
+        "reason": "Passes with Eg.Division and ShouldIBuyMilk.",
+        "dependencies": [],
+        "expectedBehavior": "The page completed without wrong assertions or exceptions.",
+        "verification": "Rerun the page and confirm the external Perl SLiM connection and zero failure counts.",
+        "intentionalInnerNegativeOrExceptionCoverage": false
+      }
     },
     {
       "page": "ChainWithInstanceTest",
@@ -185,7 +261,7 @@
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
       "responseBytes": 46889,
-      "rootCause": "Missing TestSlim fixture methods get_fixture, push_fixture, and pop_fixture.",
+      "rootCause": "Automatic SlimHelperLibrary actor-stack operations getFixture, pushFixture, and popFixture are absent.",
       "failureDetails": {
         "exceptionMessages": [
           "Method get_fixture[0] not found in Fitnesse::Slim::Test::TestSlim",
@@ -201,7 +277,25 @@
         ]
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run."
+      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "rawCounts": {
+        "right": 0,
+        "wrong": 1,
+        "ignored": 0,
+        "exceptions": 0
+      },
+      "conformance": {
+        "status": "engine_gap",
+        "reason": "Automatic SlimHelperLibrary actor-stack operations getFixture, pushFixture, and popFixture are absent.",
+        "dependencies": [
+          "SlimHelperLibrary.getFixture",
+          "SlimHelperLibrary.pushFixture",
+          "SlimHelperLibrary.popFixture"
+        ],
+        "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
+        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "intentionalInnerNegativeOrExceptionCoverage": false
+      }
     },
     {
       "page": "CustomTableRenderingAddedByPluginTest",
@@ -217,7 +311,7 @@
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
       "responseBytes": 39883,
-      "rootCause": "FitNesse plugin/custom-rendering test-harness expectation fails; no Perl fixture load error observed.",
+      "rootCause": "The suite loads the rendering plugin, but PageDriver returns status 200 without fetching generated-page HTML.",
       "failureDetails": {
         "exceptionMessages": [],
         "wrongAssertionMessages": [
@@ -225,7 +319,24 @@
         ]
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run."
+      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "rawCounts": {
+        "right": 0,
+        "wrong": 1,
+        "ignored": 0,
+        "exceptions": 0
+      },
+      "conformance": {
+        "status": "harness_limited",
+        "reason": "The suite loads the rendering plugin, but PageDriver returns status 200 without fetching generated-page HTML.",
+        "dependencies": [
+          "PageDriver nested-page execution",
+          "PageDriver response HTML"
+        ],
+        "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
+        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "intentionalInnerNegativeOrExceptionCoverage": false
+      }
     },
     {
       "page": "DefineAliasInPluginTest",
@@ -241,7 +352,7 @@
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
       "responseBytes": 33670,
-      "rootCause": "FitNesse plugin alias setup/expectation fails; no Perl fixture load error observed.",
+      "rootCause": "The plugin alias test uses the same PageDriver stub, which inspects source rather than generated-page output.",
       "failureDetails": {
         "exceptionMessages": [],
         "wrongAssertionMessages": [
@@ -249,7 +360,24 @@
         ]
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run."
+      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "rawCounts": {
+        "right": 0,
+        "wrong": 1,
+        "ignored": 0,
+        "exceptions": 0
+      },
+      "conformance": {
+        "status": "harness_limited",
+        "reason": "The plugin alias test uses the same PageDriver stub, which inspects source rather than generated-page output.",
+        "dependencies": [
+          "PageDriver nested-page execution",
+          "PageDriver response HTML"
+        ],
+        "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
+        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "intentionalInnerNegativeOrExceptionCoverage": false
+      }
     },
     {
       "page": "DefineAliasTest",
@@ -265,7 +393,7 @@
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
       "responseBytes": 90418,
-      "rootCause": "Missing alias target fixture(s), causing later actor calls to cascade.",
+      "rootCause": "AddUpChange and implicit SlimHelperLibrary.getFixture are absent; later actor errors cascade.",
       "failureDetails": {
         "exceptionMessages": [
           "Could not find class AddUpChange",
@@ -284,7 +412,24 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run."
+      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "rawCounts": {
+        "right": 0,
+        "wrong": 0,
+        "ignored": 0,
+        "exceptions": 1
+      },
+      "conformance": {
+        "status": "fixture_gap",
+        "reason": "AddUpChange and implicit SlimHelperLibrary.getFixture are absent; later actor errors cascade.",
+        "dependencies": [
+          "AddUpChange",
+          "SlimHelperLibrary.getFixture"
+        ],
+        "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
+        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "intentionalInnerNegativeOrExceptionCoverage": false
+      }
     },
     {
       "page": "HashTableTests.HashTableWithHtmlContent",
@@ -300,7 +445,7 @@
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
       "responseBytes": 32891,
-      "rootCause": "Missing hash_is and echo_and_log methods in existing HashFixture/EchoFixture.",
+      "rootCause": "Hash input conversion works, but hash_is and echo_and_log fixture methods are absent.",
       "failureDetails": {
         "exceptionMessages": [
           "Method hash_is[1] not found in Fitnesse::Fixtures::HashFixture",
@@ -309,7 +454,24 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run."
+      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "rawCounts": {
+        "right": 0,
+        "wrong": 0,
+        "ignored": 0,
+        "exceptions": 1
+      },
+      "conformance": {
+        "status": "fixture_gap",
+        "reason": "Hash input conversion works, but hash_is and echo_and_log fixture methods are absent.",
+        "dependencies": [
+          "HashFixture.hash_is",
+          "EchoFixture.echo_and_log"
+        ],
+        "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
+        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "intentionalInnerNegativeOrExceptionCoverage": false
+      }
     },
     {
       "page": "HashTableTests.ShouldReturnHashTable",
@@ -325,7 +487,7 @@
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
       "responseBytes": 32039,
-      "rootCause": "Fixture result does not match expected hash rendering/order.",
+      "rootCause": "The Perl hashref is returned as HASH(0x...), a process-specific pointer string rather than a FitNesse-compatible hash value.",
       "failureDetails": {
         "exceptionMessages": [],
         "wrongAssertionMessages": [
@@ -333,7 +495,23 @@
         ]
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run."
+      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "rawCounts": {
+        "right": 0,
+        "wrong": 1,
+        "ignored": 0,
+        "exceptions": 0
+      },
+      "conformance": {
+        "status": "engine_gap",
+        "reason": "The Perl hashref is returned as HASH(0x...), a process-specific pointer string rather than a FitNesse-compatible hash value.",
+        "dependencies": [
+          "hash-reference response conversion"
+        ],
+        "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
+        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "intentionalInnerNegativeOrExceptionCoverage": false
+      }
     },
     {
       "page": "HybridDecisionTable.ImplementDynamicDecisionTableWithHybridTable",
@@ -349,7 +527,7 @@
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
       "responseBytes": 44016,
-      "rootCause": "Missing AddUpChange fixture; subsequent decision-table actor errors cascade.",
+      "rootCause": "AddUpChange is absent, so hybrid getter/setter dispatch is not reached.",
       "failureDetails": {
         "exceptionMessages": [
           "Could not find class AddUpChange",
@@ -359,7 +537,23 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run."
+      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "rawCounts": {
+        "right": 0,
+        "wrong": 0,
+        "ignored": 0,
+        "exceptions": 1
+      },
+      "conformance": {
+        "status": "fixture_gap",
+        "reason": "AddUpChange is absent, so hybrid getter/setter dispatch is not reached.",
+        "dependencies": [
+          "AddUpChange"
+        ],
+        "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
+        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "intentionalInnerNegativeOrExceptionCoverage": false
+      }
     },
     {
       "page": "IgnoredTestsShouldColorGray",
@@ -375,7 +569,7 @@
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
       "responseBytes": 71208,
-      "rootCause": "Missing HashFixture/EchoFixture page-driver methods and ResponseExaminer fixture; server remains alive.",
+      "rootCause": "The page intentionally tests StopTest/ignored rendering, but PageDriver cannot execute/fetch the nested page and ResponseExaminer is absent.",
       "failureDetails": {
         "exceptionMessages": [
           "given test page",
@@ -402,7 +596,24 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run."
+      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "rawCounts": {
+        "right": 0,
+        "wrong": 0,
+        "ignored": 0,
+        "exceptions": 1
+      },
+      "conformance": {
+        "status": "harness_limited",
+        "reason": "The page intentionally tests StopTest/ignored rendering, but PageDriver cannot execute/fetch the nested page and ResponseExaminer is absent.",
+        "dependencies": [
+          "PageDriver nested-page execution",
+          "ResponseExaminer"
+        ],
+        "expectedBehavior": "Embedded StopTest raises one exception and later script steps render as ignored; outer assertions verify the markup.",
+        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "intentionalInnerNegativeOrExceptionCoverage": true
+      }
     },
     {
       "page": "LibrarySuite.HowToAddFixturesWithParametersToTheLibrary",
@@ -418,7 +629,7 @@
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
       "responseBytes": 45319,
-      "rootCause": "Missing TestSlim/EchoFixture methods used by parameterized library fixture test.",
+      "rootCause": "Implicit getFixture and EchoFixture.get_string_arg are missing; the page also has an explanatory negative query example.",
       "failureDetails": {
         "exceptionMessages": [
           "Method get_fixture[0] not found in Fitnesse::Slim::Test::TestSlim",
@@ -428,7 +639,24 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run."
+      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "rawCounts": {
+        "right": 0,
+        "wrong": 0,
+        "ignored": 0,
+        "exceptions": 1
+      },
+      "conformance": {
+        "status": "fixture_gap",
+        "reason": "Implicit getFixture and EchoFixture.get_string_arg are missing; the page also has an explanatory negative query example.",
+        "dependencies": [
+          "SlimHelperLibrary.getFixture",
+          "EchoFixture.get_string_arg"
+        ],
+        "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
+        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "intentionalInnerNegativeOrExceptionCoverage": true
+      }
     },
     {
       "page": "LibrarySuite.LastLibraryPreceedsEarlierLibraryTest",
@@ -450,7 +678,21 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run."
+      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "rawCounts": {
+        "right": 1,
+        "wrong": 0,
+        "ignored": 0,
+        "exceptions": 0
+      },
+      "conformance": {
+        "status": "conformant",
+        "reason": "Passes.",
+        "dependencies": [],
+        "expectedBehavior": "The page completed without wrong assertions or exceptions.",
+        "verification": "Rerun the page and confirm the external Perl SLiM connection and zero failure counts.",
+        "intentionalInnerNegativeOrExceptionCoverage": false
+      }
     },
     {
       "page": "LibrarySuite.LibraryInSetUpSuite.LibraryInSetUpAndPageTest",
@@ -466,7 +708,7 @@
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
       "responseBytes": 39713,
-      "rootCause": "Missing LibraryInSetUp fixture and setup-library method.",
+      "rootCause": "LibraryInSetUp and setup-library call tracking are absent.",
       "failureDetails": {
         "exceptionMessages": [
           "Could not find class LibraryInSetUp",
@@ -476,7 +718,24 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run."
+      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "rawCounts": {
+        "right": 0,
+        "wrong": 0,
+        "ignored": 0,
+        "exceptions": 1
+      },
+      "conformance": {
+        "status": "fixture_gap",
+        "reason": "LibraryInSetUp and setup-library call tracking are absent.",
+        "dependencies": [
+          "LibraryInSetUp",
+          "LibraryFixture call tracking"
+        ],
+        "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
+        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "intentionalInnerNegativeOrExceptionCoverage": false
+      }
     },
     {
       "page": "LibrarySuite.LibraryInSetUpSuite.LibraryInSetUpTest",
@@ -492,7 +751,7 @@
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
       "responseBytes": 39296,
-      "rootCause": "Missing LibraryInSetUp fixture and setup-library method.",
+      "rootCause": "LibraryInSetUp and setup-library call tracking are absent.",
       "failureDetails": {
         "exceptionMessages": [
           "Could not find class LibraryInSetUp",
@@ -502,7 +761,24 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run."
+      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "rawCounts": {
+        "right": 0,
+        "wrong": 0,
+        "ignored": 0,
+        "exceptions": 1
+      },
+      "conformance": {
+        "status": "fixture_gap",
+        "reason": "LibraryInSetUp and setup-library call tracking are absent.",
+        "dependencies": [
+          "LibraryInSetUp",
+          "LibraryFixture call tracking"
+        ],
+        "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
+        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "intentionalInnerNegativeOrExceptionCoverage": false
+      }
     },
     {
       "page": "LibrarySuite.OneLibraryTest",
@@ -524,7 +800,21 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run."
+      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "rawCounts": {
+        "right": 1,
+        "wrong": 0,
+        "ignored": 0,
+        "exceptions": 0
+      },
+      "conformance": {
+        "status": "conformant",
+        "reason": "Passes.",
+        "dependencies": [],
+        "expectedBehavior": "The page completed without wrong assertions or exceptions.",
+        "verification": "Rerun the page and confirm the external Perl SLiM connection and zero failure counts.",
+        "intentionalInnerNegativeOrExceptionCoverage": false
+      }
     },
     {
       "page": "QueryTableSuite.SetContextValue",
@@ -540,7 +830,7 @@
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
       "responseBytes": 34353,
-      "rootCause": "Missing SplitFixture; result assertions then fail.",
+      "rootCause": "SplitFixture is absent, so query rows and symbol values are not tested.",
       "failureDetails": {
         "exceptionMessages": [
           "Could not find class SplitFixture"
@@ -551,7 +841,23 @@
         ]
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run."
+      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "rawCounts": {
+        "right": 0,
+        "wrong": 1,
+        "ignored": 0,
+        "exceptions": 0
+      },
+      "conformance": {
+        "status": "fixture_gap",
+        "reason": "SplitFixture is absent, so query rows and symbol values are not tested.",
+        "dependencies": [
+          "SplitFixture"
+        ],
+        "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
+        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "intentionalInnerNegativeOrExceptionCoverage": false
+      }
     },
     {
       "page": "QueryTableSuite.TestMatching",
@@ -567,7 +873,7 @@
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
       "responseBytes": 40123,
-      "rootCause": "Missing SplitFixture.",
+      "rootCause": "SplitFixture is absent, so query matching behavior is not tested.",
       "failureDetails": {
         "exceptionMessages": [
           "Could not find class SplitFixture"
@@ -575,7 +881,23 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run."
+      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "rawCounts": {
+        "right": 0,
+        "wrong": 0,
+        "ignored": 0,
+        "exceptions": 1
+      },
+      "conformance": {
+        "status": "fixture_gap",
+        "reason": "SplitFixture is absent, so query matching behavior is not tested.",
+        "dependencies": [
+          "SplitFixture"
+        ],
+        "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
+        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "intentionalInnerNegativeOrExceptionCoverage": false
+      }
     },
     {
       "page": "ScenarioTestSuite.ScenarioWithOutputParametersInDecisionTables",
@@ -597,7 +919,21 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run."
+      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "rawCounts": {
+        "right": 1,
+        "wrong": 0,
+        "ignored": 0,
+        "exceptions": 0
+      },
+      "conformance": {
+        "status": "conformant",
+        "reason": "Passes after library fallback for scriptTableActor and null-target cloneSymbol support.",
+        "dependencies": [],
+        "expectedBehavior": "The page completed without wrong assertions or exceptions.",
+        "verification": "Rerun the page and confirm the external Perl SLiM connection and zero failure counts.",
+        "intentionalInnerNegativeOrExceptionCoverage": false
+      }
     },
     {
       "page": "ScenarioTestSuite.ScenarioWithOutputParametersInScripts",
@@ -619,7 +955,21 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run."
+      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "rawCounts": {
+        "right": 1,
+        "wrong": 0,
+        "ignored": 0,
+        "exceptions": 0
+      },
+      "conformance": {
+        "status": "conformant",
+        "reason": "Passes after Eg.Division returns Java-compatible double strings, including integral values such as 10.0.",
+        "dependencies": [],
+        "expectedBehavior": "The page completed without wrong assertions or exceptions.",
+        "verification": "Rerun the page and confirm the external Perl SLiM connection and zero failure counts.",
+        "intentionalInnerNegativeOrExceptionCoverage": false
+      }
     },
     {
       "page": "ScenarioTestSuite.ScriptSubclassUsedForDecisionTable",
@@ -641,7 +991,21 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run."
+      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "rawCounts": {
+        "right": 1,
+        "wrong": 0,
+        "ignored": 0,
+        "exceptions": 0
+      },
+      "conformance": {
+        "status": "conformant",
+        "reason": "Passes with the new Eg.Division fixture.",
+        "dependencies": [],
+        "expectedBehavior": "The page completed without wrong assertions or exceptions.",
+        "verification": "Rerun the page and confirm the external Perl SLiM connection and zero failure counts.",
+        "intentionalInnerNegativeOrExceptionCoverage": false
+      }
     },
     {
       "page": "ScenarioTestSuite.UsingConstructorArgumentsFromDecisionTablesInScenarios",
@@ -663,7 +1027,21 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run."
+      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "rawCounts": {
+        "right": 1,
+        "wrong": 0,
+        "ignored": 0,
+        "exceptions": 0
+      },
+      "conformance": {
+        "status": "conformant",
+        "reason": "Passes with the new Eg.Division fixture; construction uses the upstream no-argument fixture constructor.",
+        "dependencies": [],
+        "expectedBehavior": "The page completed without wrong assertions or exceptions.",
+        "verification": "Rerun the page and confirm the external Perl SLiM connection and zero failure counts.",
+        "intentionalInnerNegativeOrExceptionCoverage": false
+      }
     },
     {
       "page": "SegregationOfRequirementsAndImplementation",
@@ -685,7 +1063,21 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run."
+      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "rawCounts": {
+        "right": 1,
+        "wrong": 0,
+        "ignored": 0,
+        "exceptions": 0
+      },
+      "conformance": {
+        "status": "conformant",
+        "reason": "Passes after library fallback for scriptTableActor and null-target cloneSymbol support.",
+        "dependencies": [],
+        "expectedBehavior": "The page completed without wrong assertions or exceptions.",
+        "verification": "Rerun the page and confirm the external Perl SLiM connection and zero failure counts.",
+        "intentionalInnerNegativeOrExceptionCoverage": false
+      }
     },
     {
       "page": "SlimSymbols.NamingConvention",
@@ -707,7 +1099,21 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run."
+      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "rawCounts": {
+        "right": 1,
+        "wrong": 0,
+        "ignored": 0,
+        "exceptions": 0
+      },
+      "conformance": {
+        "status": "conformant",
+        "reason": "Passes.",
+        "dependencies": [],
+        "expectedBehavior": "The page completed without wrong assertions or exceptions.",
+        "verification": "Rerun the page and confirm the external Perl SLiM connection and zero failure counts.",
+        "intentionalInnerNegativeOrExceptionCoverage": false
+      }
     },
     {
       "page": "SlimSymbols.SlimSymbolManipulation",
@@ -729,7 +1135,21 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run."
+      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "rawCounts": {
+        "right": 1,
+        "wrong": 0,
+        "ignored": 0,
+        "exceptions": 0
+      },
+      "conformance": {
+        "status": "conformant",
+        "reason": "Passes.",
+        "dependencies": [],
+        "expectedBehavior": "The page completed without wrong assertions or exceptions.",
+        "verification": "Rerun the page and confirm the external Perl SLiM connection and zero failure counts.",
+        "intentionalInnerNegativeOrExceptionCoverage": false
+      }
     },
     {
       "page": "StopSuite",
@@ -745,7 +1165,7 @@
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
       "responseBytes": 46792,
-      "rootCause": "Nested suite-control harness assertions fail; investigate page-driver/suite responder setup before attributing to SLiM.",
+      "rootCause": "The page deliberately tests StopSuite and teardown, but PageDriver does not run nested suites or fetch result HTML.",
       "failureDetails": {
         "exceptionMessages": [],
         "wrongAssertionMessages": [
@@ -757,7 +1177,24 @@
         ]
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run."
+      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "rawCounts": {
+        "right": 0,
+        "wrong": 1,
+        "ignored": 0,
+        "exceptions": 0
+      },
+      "conformance": {
+        "status": "harness_limited",
+        "reason": "The page deliberately tests StopSuite and teardown, but PageDriver does not run nested suites or fetch result HTML.",
+        "dependencies": [
+          "PageDriver nested-suite execution",
+          "PageDriver response HTML"
+        ],
+        "expectedBehavior": "StopSuite skips remaining tests while test and suite teardown still execute.",
+        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "intentionalInnerNegativeOrExceptionCoverage": true
+      }
     },
     {
       "page": "StopTest",
@@ -773,7 +1210,7 @@
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
       "responseBytes": 46697,
-      "rootCause": "Nested test-control harness assertions fail; investigate page-driver/suite responder setup before attributing to SLiM.",
+      "rootCause": "The page deliberately tests StopTest and teardown, but PageDriver does not run nested suites or fetch result HTML.",
       "failureDetails": {
         "exceptionMessages": [],
         "wrongAssertionMessages": [
@@ -785,7 +1222,24 @@
         ]
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run."
+      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "rawCounts": {
+        "right": 0,
+        "wrong": 1,
+        "ignored": 0,
+        "exceptions": 0
+      },
+      "conformance": {
+        "status": "harness_limited",
+        "reason": "The page deliberately tests StopTest and teardown, but PageDriver does not run nested suites or fetch result HTML.",
+        "dependencies": [
+          "PageDriver nested-suite execution",
+          "PageDriver response HTML"
+        ],
+        "expectedBehavior": "StopTest skips the current page remainder, allows the next test, and still runs teardown.",
+        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "intentionalInnerNegativeOrExceptionCoverage": true
+      }
     },
     {
       "page": "StopTestInSuiteSetUp",
@@ -801,7 +1255,7 @@
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
       "responseBytes": 50019,
-      "rootCause": "Nested suite setup/test-control harness assertions fail.",
+      "rootCause": "The page deliberately tests StopTest during SuiteSetUp, but PageDriver does not run nested suites or fetch result HTML.",
       "failureDetails": {
         "exceptionMessages": [],
         "wrongAssertionMessages": [
@@ -813,7 +1267,24 @@
         ]
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run."
+      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "rawCounts": {
+        "right": 0,
+        "wrong": 1,
+        "ignored": 0,
+        "exceptions": 0
+      },
+      "conformance": {
+        "status": "harness_limited",
+        "reason": "The page deliberately tests StopTest during SuiteSetUp, but PageDriver does not run nested suites or fetch result HTML.",
+        "dependencies": [
+          "PageDriver nested-suite execution",
+          "PageDriver response HTML"
+        ],
+        "expectedBehavior": "StopTest in SuiteSetUp skips suite tests but still runs teardown.",
+        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "intentionalInnerNegativeOrExceptionCoverage": true
+      }
     },
     {
       "page": "TableTableSuite.SymbolsInTableTableManagedByTheFixture",
@@ -829,7 +1300,7 @@
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
       "responseBytes": 42109,
-      "rootCause": "Missing TableTableIncFirstCol and TestQuery.echo_int fixture behavior.",
+      "rootCause": "TableTableIncFirstCol and TestQuery.echo_int are absent.",
       "failureDetails": {
         "exceptionMessages": [
           "Method echo_int[1] not found in Fitnesse::Slim::Test::TestQuery",
@@ -840,7 +1311,24 @@
         ]
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run."
+      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "rawCounts": {
+        "right": 0,
+        "wrong": 1,
+        "ignored": 0,
+        "exceptions": 0
+      },
+      "conformance": {
+        "status": "fixture_gap",
+        "reason": "TableTableIncFirstCol and TestQuery.echo_int are absent.",
+        "dependencies": [
+          "TableTableIncFirstCol",
+          "TestQuery.echo_int"
+        ],
+        "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
+        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "intentionalInnerNegativeOrExceptionCoverage": false
+      }
     },
     {
       "page": "TestChineseWords",
@@ -856,7 +1344,7 @@
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
       "responseBytes": 30692,
-      "rootCause": "Missing EchoScript.echo_to_stdout method.",
+      "rootCause": "EchoScript.echo_to_stdout is absent, so Unicode stdout behavior is not reached.",
       "failureDetails": {
         "exceptionMessages": [
           "Method echo_to_stdout[1] not found in Fitnesse::Slim::Test::EchoScript"
@@ -864,7 +1352,23 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run."
+      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "rawCounts": {
+        "right": 0,
+        "wrong": 0,
+        "ignored": 0,
+        "exceptions": 1
+      },
+      "conformance": {
+        "status": "fixture_gap",
+        "reason": "EchoScript.echo_to_stdout is absent, so Unicode stdout behavior is not reached.",
+        "dependencies": [
+          "EchoScript.echo_to_stdout"
+        ],
+        "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
+        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "intentionalInnerNegativeOrExceptionCoverage": false
+      }
     },
     {
       "page": "TestComparators",
@@ -886,7 +1390,21 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run."
+      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "rawCounts": {
+        "right": 1,
+        "wrong": 0,
+        "ignored": 0,
+        "exceptions": 0
+      },
+      "conformance": {
+        "status": "conformant",
+        "reason": "Passes.",
+        "dependencies": [],
+        "expectedBehavior": "The page completed without wrong assertions or exceptions.",
+        "verification": "Rerun the page and confirm the external Perl SLiM connection and zero failure counts.",
+        "intentionalInnerNegativeOrExceptionCoverage": false
+      }
     },
     {
       "page": "TestCustomComparators",
@@ -902,7 +1420,7 @@
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
       "responseBytes": 35028,
-      "rootCause": "FitNesse custom-comparator page harness expectation fails; investigate comparator registration/fixture setup.",
+      "rootCause": "The suite configures the glob comparator, but PageDriver never fetches the nested TestPage result.",
       "failureDetails": {
         "exceptionMessages": [],
         "wrongAssertionMessages": [
@@ -914,7 +1432,24 @@
         ]
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run."
+      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "rawCounts": {
+        "right": 0,
+        "wrong": 1,
+        "ignored": 0,
+        "exceptions": 0
+      },
+      "conformance": {
+        "status": "harness_limited",
+        "reason": "The suite configures the glob comparator, but PageDriver never fetches the nested TestPage result.",
+        "dependencies": [
+          "PageDriver nested-page execution",
+          "glob comparator setup"
+        ],
+        "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
+        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "intentionalInnerNegativeOrExceptionCoverage": false
+      }
     },
     {
       "page": "TestCustomConverter",
@@ -930,7 +1465,7 @@
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
       "responseBytes": 42935,
-      "rootCause": "Missing TestSlimWithConverter and converter-oriented EchoFixture methods.",
+      "rootCause": "TestSlimWithConverter and its converter-control fixture methods are absent; this run does not establish an engine defect.",
       "failureDetails": {
         "exceptionMessages": [
           "Could not find class TestSlimWithConverter",
@@ -945,7 +1480,24 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run."
+      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "rawCounts": {
+        "right": 0,
+        "wrong": 0,
+        "ignored": 0,
+        "exceptions": 1
+      },
+      "conformance": {
+        "status": "fixture_gap",
+        "reason": "TestSlimWithConverter and its converter-control fixture methods are absent; this run does not establish an engine defect.",
+        "dependencies": [
+          "TestSlimWithConverter",
+          "custom converter fixture methods"
+        ],
+        "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
+        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "intentionalInnerNegativeOrExceptionCoverage": false
+      }
     },
     {
       "page": "TestDetailedDiff",
@@ -961,7 +1513,7 @@
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
       "responseBytes": 163508,
-      "rootCause": "Missing ResponseExaminer/EchoFixture page methods; now reports wrong assertions instead of a server-crash exception.",
+      "rootCause": "The page deliberately creates mismatches and an ignored result to inspect rendered diffs, but PageDriver/ResponseExaminer cannot extract nested HTML.",
       "failureDetails": {
         "exceptionMessages": [
           "given test page",
@@ -1001,7 +1553,25 @@
         ]
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run."
+      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "rawCounts": {
+        "right": 0,
+        "wrong": 1,
+        "ignored": 0,
+        "exceptions": 0
+      },
+      "conformance": {
+        "status": "harness_limited",
+        "reason": "The page deliberately creates mismatches and an ignored result to inspect rendered diffs, but PageDriver/ResponseExaminer cannot extract nested HTML.",
+        "dependencies": [
+          "PageDriver nested-page execution",
+          "ResponseExaminer",
+          "EchoFixture page helpers"
+        ],
+        "expectedBehavior": "Embedded page intentionally expects 25 right, 50 wrong, 1 ignored, 0 exceptions; outer page verifies diff markup.",
+        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "intentionalInnerNegativeOrExceptionCoverage": true
+      }
     },
     {
       "page": "TestExceptionIsDisplayed",
@@ -1017,7 +1587,7 @@
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
       "responseBytes": 139548,
-      "rootCause": "Missing ResponseExaminer/EchoFixture page methods; nested test reports fixture exceptions without terminating Perl.",
+      "rootCause": "The page deliberately checks rendered exceptions; PageDriver/ResponseExaminer and nested exception fixtures are missing.",
       "failureDetails": {
         "exceptionMessages": [
           "given test page",
@@ -1044,7 +1614,26 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run."
+      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "rawCounts": {
+        "right": 0,
+        "wrong": 0,
+        "ignored": 0,
+        "exceptions": 1
+      },
+      "conformance": {
+        "status": "harness_limited",
+        "reason": "The page deliberately checks rendered exceptions; PageDriver/ResponseExaminer and nested exception fixtures are missing.",
+        "dependencies": [
+          "PageDriver nested-page execution",
+          "ResponseExaminer",
+          "DecisionTableExecuteThrows",
+          "ConstructorThrows"
+        ],
+        "expectedBehavior": "Embedded page intentionally expects 8 right, 1 wrong, 0 ignored, 18 exceptions; outer page verifies exception text and placement.",
+        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "intentionalInnerNegativeOrExceptionCoverage": true
+      }
     },
     {
       "page": "TestOrderedQueryWithDuplicateRows",
@@ -1060,7 +1649,7 @@
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
       "responseBytes": 32545,
-      "rootCause": "Missing DuplicateRows fixture.",
+      "rootCause": "DuplicateRows is absent, so ordered-query behavior is not reached.",
       "failureDetails": {
         "exceptionMessages": [
           "Could not find class DuplicateRows"
@@ -1068,7 +1657,23 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run."
+      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "rawCounts": {
+        "right": 0,
+        "wrong": 0,
+        "ignored": 0,
+        "exceptions": 1
+      },
+      "conformance": {
+        "status": "fixture_gap",
+        "reason": "DuplicateRows is absent, so ordered-query behavior is not reached.",
+        "dependencies": [
+          "DuplicateRows"
+        ],
+        "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
+        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "intentionalInnerNegativeOrExceptionCoverage": false
+      }
     },
     {
       "page": "TestPageWithInclude",
@@ -1084,7 +1689,7 @@
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
       "responseBytes": 31263,
-      "rootCause": "Missing EchoFixture.set_name/name methods.",
+      "rootCause": "EchoFixture.set_name and name are absent.",
       "failureDetails": {
         "exceptionMessages": [
           "Method set_name[1] not found in Fitnesse::Fixtures::EchoFixture",
@@ -1093,7 +1698,24 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run."
+      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "rawCounts": {
+        "right": 0,
+        "wrong": 0,
+        "ignored": 0,
+        "exceptions": 1
+      },
+      "conformance": {
+        "status": "fixture_gap",
+        "reason": "EchoFixture.set_name and name are absent.",
+        "dependencies": [
+          "EchoFixture.set_name",
+          "EchoFixture.name"
+        ],
+        "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
+        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "intentionalInnerNegativeOrExceptionCoverage": false
+      }
     },
     {
       "page": "TestScriptTable",
@@ -1115,7 +1737,21 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run."
+      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "rawCounts": {
+        "right": 1,
+        "wrong": 0,
+        "ignored": 0,
+        "exceptions": 0
+      },
+      "conformance": {
+        "status": "conformant",
+        "reason": "Passes.",
+        "dependencies": [],
+        "expectedBehavior": "The page completed without wrong assertions or exceptions.",
+        "verification": "Rerun the page and confirm the external Perl SLiM connection and zero failure counts.",
+        "intentionalInnerNegativeOrExceptionCoverage": false
+      }
     },
     {
       "page": "TestScriptTableDisplayParameterValue",
@@ -1137,7 +1773,21 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run."
+      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "rawCounts": {
+        "right": 1,
+        "wrong": 0,
+        "ignored": 0,
+        "exceptions": 0
+      },
+      "conformance": {
+        "status": "conformant",
+        "reason": "Passes.",
+        "dependencies": [],
+        "expectedBehavior": "The page completed without wrong assertions or exceptions.",
+        "verification": "Rerun the page and confirm the external Perl SLiM connection and zero failure counts.",
+        "intentionalInnerNegativeOrExceptionCoverage": false
+      }
     },
     {
       "page": "TestSequentialArgumentProcessing",
@@ -1153,7 +1803,7 @@
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
       "responseBytes": 59056,
-      "rootCause": "Missing TestSlim.concatenate_three_args method.",
+      "rootCause": "TestSlim.concatenate_three_args is absent, so semicolon argument expansion is not assessed.",
       "failureDetails": {
         "exceptionMessages": [
           "Method concatenate_three_args[3] not found in Fitnesse::Slim::Test::TestSlim",
@@ -1175,7 +1825,23 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run."
+      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "rawCounts": {
+        "right": 0,
+        "wrong": 0,
+        "ignored": 0,
+        "exceptions": 1
+      },
+      "conformance": {
+        "status": "fixture_gap",
+        "reason": "TestSlim.concatenate_three_args is absent, so semicolon argument expansion is not assessed.",
+        "dependencies": [
+          "TestSlim.concatenate_three_args"
+        ],
+        "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
+        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "intentionalInnerNegativeOrExceptionCoverage": false
+      }
     },
     {
       "page": "TestSubsetQuery",
@@ -1191,7 +1857,7 @@
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
       "responseBytes": 33696,
-      "rootCause": "Missing DuplicateRows fixture.",
+      "rootCause": "DuplicateRows is absent, so subset-query behavior is not reached.",
       "failureDetails": {
         "exceptionMessages": [
           "Could not find class DuplicateRows"
@@ -1199,7 +1865,23 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run."
+      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "rawCounts": {
+        "right": 0,
+        "wrong": 0,
+        "ignored": 0,
+        "exceptions": 1
+      },
+      "conformance": {
+        "status": "fixture_gap",
+        "reason": "DuplicateRows is absent, so subset-query behavior is not reached.",
+        "dependencies": [
+          "DuplicateRows"
+        ],
+        "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
+        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "intentionalInnerNegativeOrExceptionCoverage": false
+      }
     },
     {
       "page": "TestSystemSlimSuite.ErrorSituationsDuringSlimServerStartup.B_TimeoutAsSlimServerDiesBeforeConnecting",
@@ -1215,7 +1897,7 @@
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
       "responseBytes": 31473,
-      "rootCause": "Negative startup test page assertion fails under the running external-server harness; inspect expected startup orchestration.",
+      "rootCause": "The page deliberately starts an invalid runner and checks nested HTTP output; PageDriver cannot retrieve the response.",
       "failureDetails": {
         "exceptionMessages": [],
         "wrongAssertionMessages": [
@@ -1223,7 +1905,23 @@
         ]
       },
       "testSystemConfirmed": "SLIM:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run."
+      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "rawCounts": {
+        "right": 0,
+        "wrong": 1,
+        "ignored": 0,
+        "exceptions": 0
+      },
+      "conformance": {
+        "status": "harness_limited",
+        "reason": "The page deliberately starts an invalid runner and checks nested HTTP output; PageDriver cannot retrieve the response.",
+        "dependencies": [
+          "PageDriver nested-page execution"
+        ],
+        "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
+        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "intentionalInnerNegativeOrExceptionCoverage": true
+      }
     },
     {
       "page": "TestSystemSlimSuite.ErrorSituationsDuringSlimServerStartup.C_TimeoutAsNoServerAtGivenSocket",
@@ -1239,7 +1937,7 @@
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
       "responseBytes": 32505,
-      "rootCause": "Negative startup test page needs isolated no-server setup and TestSlim.content_matches helper.",
+      "rootCause": "The test expects port 8099 unbound, but the inventory server occupies it; content_matches and PageDriver support are also missing.",
       "failureDetails": {
         "exceptionMessages": [
           "Method content_matches[1] not found in Fitnesse::Slim::Test::TestSlim"
@@ -1249,7 +1947,25 @@
         ]
       },
       "testSystemConfirmed": "SLIM:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run."
+      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "rawCounts": {
+        "right": 0,
+        "wrong": 1,
+        "ignored": 0,
+        "exceptions": 0
+      },
+      "conformance": {
+        "status": "environment_limited",
+        "reason": "The test expects port 8099 unbound, but the inventory server occupies it; content_matches and PageDriver support are also missing.",
+        "dependencies": [
+          "outer Perl port isolation",
+          "TestSlim.content_matches",
+          "PageDriver nested-page execution"
+        ],
+        "expectedBehavior": "Nested debug request fails quickly only when its target port is unbound and reports elapsed time.",
+        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "intentionalInnerNegativeOrExceptionCoverage": true
+      }
     },
     {
       "page": "TestSystemSlimSuite.HowtoEnforceA_TimelimitPerTestCommand.NotWorking_SettingSlimTimeout",
@@ -1265,7 +1981,7 @@
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
       "responseBytes": 28231,
-      "rootCause": "Missing Sleep fixture and timeout methods; expected limited-support page may intentionally assert nonworking behavior.",
+      "rootCause": "The page documents that slim.timeout alone does not enforce command limits, but the Sleep fixture is absent.",
       "failureDetails": {
         "exceptionMessages": [
           "Could not find class Fitnesse::Slim::Test::Sleep",
@@ -1275,7 +1991,23 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "SLIM:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run."
+      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "rawCounts": {
+        "right": 0,
+        "wrong": 0,
+        "ignored": 0,
+        "exceptions": 1
+      },
+      "conformance": {
+        "status": "fixture_gap",
+        "reason": "The page documents that slim.timeout alone does not enforce command limits, but the Sleep fixture is absent.",
+        "dependencies": [
+          "fitnesse.slim.test.Sleep"
+        ],
+        "expectedBehavior": "The documentation says slim.timeout alone does not interrupt the long command.",
+        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "intentionalInnerNegativeOrExceptionCoverage": true
+      }
     },
     {
       "page": "TestSystemSlimSuite.HowtoEnforceA_TimelimitPerTestCommand.PartiallyWorking_SettingSlimFlags",
@@ -1291,7 +2023,7 @@
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
       "responseBytes": 45148,
-      "rootCause": "Missing Sleep and timer methods; TearDown currently receives calls to unsupported methods.",
+      "rootCause": "Sleep and EchoFixture timer methods are absent; stated timeout/teardown behavior is not exercised.",
       "failureDetails": {
         "exceptionMessages": [
           "Could not find class Fitnesse::Slim::Test::Sleep",
@@ -1304,7 +2036,25 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "SLIM:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run."
+      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "rawCounts": {
+        "right": 0,
+        "wrong": 0,
+        "ignored": 0,
+        "exceptions": 1
+      },
+      "conformance": {
+        "status": "fixture_gap",
+        "reason": "Sleep and EchoFixture timer methods are absent; stated timeout/teardown behavior is not exercised.",
+        "dependencies": [
+          "fitnesse.slim.test.Sleep",
+          "EchoFixture.set_timer",
+          "EchoFixture.do_sleep"
+        ],
+        "expectedBehavior": "Short commands pass; an overlong command times out; the page documents teardown and later-command caveats.",
+        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "intentionalInnerNegativeOrExceptionCoverage": true
+      }
     },
     {
       "page": "TestSystemSlimSuite.TimeoutInSlimTestSystem",
@@ -1320,7 +2070,7 @@
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
       "responseBytes": 37166,
-      "rootCause": "Timeout test completes with a timeout marker, but its outer debug-page assertions fail; likely harness expectation/configuration.",
+      "rootCause": "The page checks timeout output from an embedded test, but Sleep and result retrieval are unavailable; this is not yet an engine verdict.",
       "failureDetails": {
         "exceptionMessages": [],
         "wrongAssertionMessages": [
@@ -1333,7 +2083,25 @@
         ]
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run."
+      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "rawCounts": {
+        "right": 0,
+        "wrong": 1,
+        "ignored": 0,
+        "exceptions": 0
+      },
+      "conformance": {
+        "status": "harness_limited",
+        "reason": "The page checks timeout output from an embedded test, but Sleep and result retrieval are unavailable; this is not yet an engine verdict.",
+        "dependencies": [
+          "fitnesse.fixtures.Sleep",
+          "PageDriver nested result retrieval",
+          "statement timeout support"
+        ],
+        "expectedBehavior": "Embedded page expects a short Sleep pass and a long-command timeout marker.",
+        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "intentionalInnerNegativeOrExceptionCoverage": true
+      }
     },
     {
       "page": "TestTryingParameterizationIsntTooGreedy",
@@ -1349,7 +2117,7 @@
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
       "responseBytes": 33950,
-      "rootCause": "Missing LoginDialogDriver fixture.",
+      "rootCause": "LoginDialogDriver and its login method are absent, so scenario selection is not assessed.",
       "failureDetails": {
         "exceptionMessages": [
           "Could not find class LoginDialogDriver",
@@ -1362,7 +2130,24 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run."
+      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "rawCounts": {
+        "right": 0,
+        "wrong": 0,
+        "ignored": 0,
+        "exceptions": 1
+      },
+      "conformance": {
+        "status": "fixture_gap",
+        "reason": "LoginDialogDriver and its login method are absent, so scenario selection is not assessed.",
+        "dependencies": [
+          "LoginDialogDriver",
+          "TestSlim.login_with_username_and_password"
+        ],
+        "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
+        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "intentionalInnerNegativeOrExceptionCoverage": false
+      }
     },
     {
       "page": "TestTwoIdenticalTablesOnPageDontConflict",
@@ -1384,7 +2169,21 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual page test request; result XML saved during baseline run."
+      "evidence": "Individual page test request; result XML saved during baseline run.",
+      "rawCounts": {
+        "right": 1,
+        "wrong": 0,
+        "ignored": 0,
+        "exceptions": 0
+      },
+      "conformance": {
+        "status": "conformant",
+        "reason": "Passes.",
+        "dependencies": [],
+        "expectedBehavior": "The page completed without wrong assertions or exceptions.",
+        "verification": "Rerun the page and confirm the external Perl SLiM connection and zero failure counts.",
+        "intentionalInnerNegativeOrExceptionCoverage": false
+      }
     }
   ],
   "previousBaseline": {
@@ -1544,5 +2343,57 @@
         "serverExits": 0
       }
     }
-  ]
+  ],
+  "conformanceSummary": {
+    "pages": 50,
+    "confirmedConformantPages": 17,
+    "confirmedEngineGapPages": 2,
+    "fixtureBlockedPages": 18,
+    "testHarnessBlockedPages": 12,
+    "environmentBlockedPages": 1,
+    "classificationCounts": {
+      "conformant": 17,
+      "engine_gap": 2,
+      "environment_limited": 1,
+      "fixture_gap": 18,
+      "harness_limited": 12
+    },
+    "interpretation": "Raw page-level FitNesse counts are preserved separately. Pages with intentional wrong cells, exceptions, or ignored rows inside embedded tests are not considered conformant until their outer pages verify those outcomes. Fixture and harness blockers are not attributed to the SLiM engine without evidence."
+  },
+  "classificationMethod": "Each page retains raw right/wrong/ignored/exception counts. Conformance classification uses page content, inherited setup, embedded expected counts, current Perl fixtures, and upstream FitNesse documentation. Negative examples are evaluated by their outer assertions, not by assuming every inner failure is a defect.",
+  "remainingPageClassification": {
+    "sourceReviewed": "All 33 raw non-passing pages, including page content and applicable parent setup.",
+    "sharedSuiteSetup": "SuiteSlimTests/SetUp imports fitnesse.fixtures and registers PageDriver and EchoFixture libraries, includes LibrarySuite setup, and loads custom alias, renderer, and glob-comparator plugins. The current Perl PageDriver is a small stub: request_page returns 200 without fetching nested results.",
+    "intentionalCoverage": "Some pages intentionally create wrong cells, exceptions, ignored rows, stopped tests, or timeouts inside nested tests and assert their rendering outside. Their outer pages still need to pass before those behaviors are verified.",
+    "confirmedEngineGaps": [
+      "ChainWithInstanceTest: automatic SlimHelperLibrary getFixture/pushFixture/popFixture behavior is absent.",
+      "HashTableTests.ShouldReturnHashTable: returned Perl hash reference becomes HASH(0x...), not a FitNesse-compatible hash value."
+    ],
+    "rawFailurePages": 33,
+    "blockedOrUnverifiedPages": 31
+  },
+  "implementationPlan": [
+    {
+      "priority": 1,
+      "increment": "Complete nested acceptance harness fixtures (PageDriver and ResponseExaminer)",
+      "expectedBenefit": "Unblocks meaningful verification of up to 11 pages that inspect embedded test/suite HTML, including failure/exception/ignore rendering, custom plugin rendering, stop behavior, and startup handling.",
+      "scope": "Implement nested page creation, request/result retrieval, and HTML extraction in test fixtures; add focused fixture tests.",
+      "caveat": "Some embedded tests also need target fixture classes; this increment makes their behavior observable but may expose independent gaps."
+    },
+    {
+      "priority": 2,
+      "increment": "Implement query fixture family (SplitFixture and DuplicateRows)",
+      "expectedBenefit": "Directly targets four pages: two QueryTableSuite pages and ordered/subset duplicate-row query pages.",
+      "scope": "Reproduce upstream row data, constructor parsing, duplicate ordering, and query methods; test returned row structures independently.",
+      "caveat": "Rerun unchanged pages to separate fixture data problems from query-table matching behavior."
+    },
+    {
+      "priority": 3,
+      "increment": "Implement automatic SlimHelperLibrary actor-stack behavior",
+      "expectedBenefit": "Targets ChainWithInstanceTest and removes shared getFixture gaps in alias and parameterized-library pages; replaces isolated helper handling with upstream library behavior.",
+      "scope": "Register helper methods as an automatic library, preserve actor object identity through push/pop, and retain cloneSymbol regression coverage.",
+      "caveat": "These operations belong to the built-in helper library, not ordinary TestSlim fixture methods."
+    }
+  ],
+  "additionalConfirmedDefect": "HashFixture map-return serialization is a confirmed one-page engine gap; add a focused regression and fix as a separate targeted increment after the highest-coverage shared increments."
 }
