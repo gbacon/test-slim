@@ -170,6 +170,7 @@ After each work unit, report:
 - Affected FitNesse acceptance results
 - Acceptance coverage: number of upstream pages passing out of 50
 - Engine reliability: number of server crashes or protocol failures
+- Before-and-after list of individual page statuses, not just aggregate totals to make regressions visible even when the overall pass count increases
 
 After each work unit, update DESIGN.md to document the existing design. CRITICAL: The design must remain simple! If the design begins appearing overengineered, look for opportunities to make incremental improvements that improve the design by simplifying, removing duplication, stratifying layers, and so on.
 
