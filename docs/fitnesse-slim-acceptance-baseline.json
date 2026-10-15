@@ -89,21 +89,70 @@
    },
    "conformanceSummary" : {
       "classificationCounts" : {
-         "conformant" : 42,
+         "conformant" : 43,
          "engine_gap" : 0,
          "environment_limited" : 1,
-         "fixture_gap" : 3,
+         "fixture_gap" : 2,
          "harness_limited" : 4
       },
-      "confirmedConformantPages" : 42,
+      "confirmedConformantPages" : 43,
       "confirmedEngineGapPages" : 0,
       "environmentBlockedPages" : 1,
-      "fixtureBlockedPages" : 3,
+      "fixtureBlockedPages" : 2,
       "interpretation" : "Raw page-level FitNesse assertion counts are preserved separately. Embedded negative, ignored, and exception outcomes are valid when the outer acceptance page checks them successfully. Fixture and harness blockers are not attributed to the SLiM engine without evidence.",
       "pages" : 50,
       "testHarnessBlockedPages" : 4
    },
    "date" : "2026-10-15",
+   "detailedDiffFixtureIncrement" : {
+      "affectedPageResults" : [
+         {
+            "after" : {
+               "exceptions" : 0,
+               "ignored" : 0,
+               "right" : 22,
+               "wrong" : 0
+            },
+            "before" : {
+               "exceptions" : 0,
+               "ignored" : 0,
+               "right" : 1,
+               "wrong" : 21
+            },
+            "nestedExpected" : {
+               "exceptions" : 0,
+               "ignored" : 1,
+               "right" : 25,
+               "wrong" : 50
+            },
+            "page" : "TestDetailedDiff",
+            "status" : "conformant"
+         }
+      ],
+      "behavior" : "Stores strings, integers, doubles, and symbol text; returns each via the matching expected getter; echoes strings. FitNesse itself renders detailed differences.",
+      "family" : "FitNesse DetailedDiff fixture",
+      "fullInventory" : {
+         "knownServerExits" : 0,
+         "notYetRerun" : true,
+         "pages" : 50
+      },
+      "newlyConformantPages" : [
+         "TestDetailedDiff"
+      ],
+      "perlTests" : {
+         "command" : "bin/test-dev",
+         "files" : 37,
+         "knownTodoFailures" : 4,
+         "status" : "PASS",
+         "tests" : 398
+      },
+      "regression" : {
+         "assertions" : 6,
+         "file" : "t/detailed-diff-fixture.t",
+         "preFix" : "The DetailedDiff fixture class was missing."
+      },
+      "upstreamReference" : "/tmp/fitnesse-src/src/fitnesse/slim/test/DetailedDiff.java"
+   },
    "echoHashFixtureIncrement" : {
       "affectedPageResults" : [
          {
@@ -1499,13 +1548,13 @@
          "expectedBenefit" : "Targets TableTableSuite.SymbolsInTableTableManagedByTheFixture.",
          "increment" : "TableTableIncFirstCol fixture and executor-consumer behavior",
          "priority" : 1,
-         "scope" : "Implement the exact upstream consumer hook for fixture-managed symbols and the table result; isolate the core engine change."
+         "scope" : "Implement upstream StatementExecutorConsumer symbol handling and nested-list fixture results, isolating core engine behavior."
       },
       {
-         "expectedBenefit" : "Targets the two remaining nested-fixture pages.",
-         "increment" : "TestSlimWithConverter and DetailedDiff",
+         "expectedBenefit" : "Targets TestCustomConverter.",
+         "increment" : "TestSlimWithConverter",
          "priority" : 2,
-         "scope" : "Inspect converter behavior and diff rendering against upstream, and determine if either needs core support."
+         "scope" : "Inspect the installed custom converter extension point and implement only if compatible without broad converter architecture."
       }
    ],
    "libraryIdentityEngineIncrement" : {
@@ -1658,23 +1707,23 @@
    },
    "pageRunMethod" : "Ran all 50 Test=true pages individually via ?test&format=xml using the external Perl SLiM server started by /tmp/run_slim_acceptance.py. Each response confirmed fitnesse.slim.SlimService at 127.0.0.1:8099; no unexpected Perl process exit occurred during a page.",
    "pageTotals" : {
-      "blockedPages" : 8,
+      "blockedPages" : 7,
       "completedResponses" : 50,
-      "confirmedConformantPages" : 42,
+      "confirmedConformantPages" : 43,
       "confirmedEngineGapPages" : 0,
       "counts" : {
          "exceptions" : 26,
          "ignored" : 2,
-         "right" : 324,
-         "wrong" : 29
+         "right" : 345,
+         "wrong" : 8
       },
       "environmentLimitedPages" : 1,
       "externalPerlConfirmed" : 50,
-      "failingPages" : 8,
-      "fixtureGapPages" : 3,
+      "failingPages" : 7,
+      "fixtureGapPages" : 2,
       "harnessLimitedPages" : 4,
       "pages" : 50,
-      "passingPages" : 42,
+      "passingPages" : 43,
       "serverExits" : 0
    },
    "pages" : [
@@ -3284,21 +3333,17 @@
       {
          "attempt" : 36,
          "conformance" : {
-            "dependencies" : [
-               "PageDriver.make_a_test_page",
-               "ResponseExaminer",
-               "DetailedDiff"
-            ],
+            "dependencies" : [],
             "expectedBehavior" : "The outer page verifies detailed diff markup for equal, unequal, symbol, and scenario results from the embedded page.",
             "intentionalInnerNegativeOrExceptionCoverage" : true,
             "rawCounts" : {
                "exceptions" : 0,
                "ignored" : 0,
-               "right" : 1,
-               "wrong" : 21
+               "right" : 22,
+               "wrong" : 0
             },
-            "reason" : "ResponseExaminer retrieves and inspects the nested HTML. The DetailedDiff fixture is missing, so the nested diff output expected by the outer page is not generated.",
-            "status" : "fixture_gap",
+            "reason" : "DetailedDiff supplies expected values; ResponseExaminer confirms the nested page intentional 25-pass, 50-fail, 1-ignored result and rendered diff markup.",
+            "status" : "conformant",
             "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
@@ -3327,17 +3372,17 @@
          "rawCounts" : {
             "exceptions" : 0,
             "ignored" : 0,
-            "right" : 1,
-            "wrong" : 21
+            "right" : 22,
+            "wrong" : 0
          },
          "responseBytes" : 494486,
-         "right" : 1,
-         "rootCause" : "ResponseExaminer retrieves and inspects the nested HTML. The DetailedDiff fixture is missing, so the nested diff output expected by the outer page is not generated.",
+         "right" : 22,
+         "rootCause" : "DetailedDiff supplies expected values; ResponseExaminer confirms the nested page intentional 25-pass, 50-fail, 1-ignored result and rendered diff markup.",
          "status" : "completed",
          "testSystem" : "slim:fitnesse.slim.SlimService",
          "testSystemConfirmed" : "slim:fitnesse.slim.SlimService",
          "url" : "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestDetailedDiff?test&format=xml",
-         "wrong" : 21
+         "wrong" : 0
       },
       {
          "attempt" : 37,

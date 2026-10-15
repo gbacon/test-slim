@@ -46,11 +46,11 @@ The Perl engine previously returned a plain hash reference from `StatementExecut
 
 ## Current acceptance results
 
-The latest targeted runs report **42 conformant pages**; all 50 pages will be rerun after the remaining fixture increments. Raw page totals currently combine the latest affected-page results with the last full inventory: **324 right, 29 wrong, 2 ignored, and 26 exceptions**. The affected page ran through the external Perl service at `127.0.0.1:8099`, with **zero server exits**.
+The latest targeted runs report **43 conformant pages**; all 50 pages will be rerun after the remaining fixture increments. Raw page totals currently combine the latest affected-page results with the last full inventory: **345 right, 8 wrong, 2 ignored, and 26 exceptions**. The affected page ran through the external Perl service at `127.0.0.1:8099`, with **zero server exits**.
 
-`DefineAliasTest` improved from 8 right and 67 exceptions to 22 right and no exceptions. `HybridDecisionTable.ImplementDynamicDecisionTableWithHybridTable` improved from 25 exceptions to 5 right and no exceptions. Both setup-library pages pass (1 and 2 right). `HashTableWithHtmlContent` and `TestPageWithInclude` pass with 1 right each. Both Sleep pages pass (1 and 9 right); as these run against the already connected server, they do not independently validate startup-time runner flags. `TestChineseWords` passes with 1 right after EchoScript gained UTF-8 stdout behavior. `TestSequentialArgumentProcessing` passes with 8 right using TestSlim's upstream concatenation method. `TestTryingParameterizationIsntTooGreedy` now passes with 1 right using the upstream LoginDialogDriver state and login behavior. All 31 pages that were conformant at the start remain conformant. The complete 50-page comparison will be recorded after the fixture phase.
+`DefineAliasTest` improved from 8 right and 67 exceptions to 22 right and no exceptions. `HybridDecisionTable.ImplementDynamicDecisionTableWithHybridTable` improved from 25 exceptions to 5 right and no exceptions. Both setup-library pages pass (1 and 2 right). `HashTableWithHtmlContent` and `TestPageWithInclude` pass with 1 right each. Both Sleep pages pass (1 and 9 right); as these run against the already connected server, they do not independently validate startup-time runner flags. `TestChineseWords` passes with 1 right. `TestSequentialArgumentProcessing` passes with 8 right. `TestTryingParameterizationIsntTooGreedy` passes with 1 right. `TestDetailedDiff` now passes all 22 outer assertions; its nested page intentionally reports 25 pass, 50 fail, and 1 ignored checks, which ResponseExaminer validates. All 31 pages that were conformant at the start remain conformant. The complete 50-page comparison will be recorded after the fixture phase.
 
-The 8 remaining non-conformant pages comprise 3 fixture gaps, 4 FitNesse harness/rendering limitations, and 1 environment-limited timeout page. Remaining fixture gaps are TableTableIncFirstCol/TestQuery.echo_int, TestSlimWithConverter, and DetailedDiff.
+The 7 remaining non-conformant pages comprise 2 fixture gaps, 4 FitNesse harness/rendering limitations, and 1 environment-limited timeout page. Remaining fixture gaps are TableTableIncFirstCol/TestQuery.echo_int and TestSlimWithConverter.
 
 ## Per-page results
 
@@ -91,7 +91,7 @@ The 8 remaining non-conformant pages comprise 3 fixture gaps, 4 FitNesse harness
 | `TestComparators` | 26 | 0 | 0 | 0 | conformant | The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server. |
 | `TestCustomComparators` | 1 | 2 | 0 | 0 | harness_limited | The nested response is retrieved, but its output lacks the expected glob comparison; the root-level nested test does not receive the outer suite CustomComparators setup. |
 | `TestCustomConverter` | 0 | 0 | 0 | 17 | fixture_gap | TestSlimWithConverter and its converter-control fixture methods are absent; this run does not establish an engine defect. |
-| `TestDetailedDiff` | 1 | 21 | 0 | 0 | fixture_gap | ResponseExaminer retrieves and inspects the nested HTML. The DetailedDiff fixture is missing, so the nested diff output expected by the outer page is not generated. |
+| `TestDetailedDiff` | 22 | 0 | 0 | 0 | conformant | DetailedDiff supplies the expected values; ResponseExaminer confirms the nested page's intentional 25-pass, 50-fail, 1-ignored result and rendered diff markup. |
 | `TestExceptionIsDisplayed` | 19 | 0 | 0 | 0 | conformant | The Perl exception fixtures and TestSlim methods now reproduce the expected upstream exception messages, classes, and stop behavior; all 19 outer checks pass. |
 | `TestOrderedQueryWithDuplicateRows` | 14 | 0 | 0 | 0 | conformant | All page assertions pass. SetContextValue also reports two ignored symbol-assignment cells, which are expected query-table behavior. |
 | `TestPageWithInclude` | 1 | 0 | 0 | 0 | conformant | EchoFixture stores and returns the name set by the included page. |
@@ -109,4 +109,4 @@ The 8 remaining non-conformant pages comprise 3 fixture gaps, 4 FitNesse harness
 
 ## Next increment
 
-The next coherent family is TableTableIncFirstCol with TestQuery.echo_int, which supplies the remaining table-table page's missing fixture methods. Other remaining standalone dependencies include TestSlimWithConverter, DetailedDiff, and LoginDialogDriver.
+The next increment is TableTableIncFirstCol with TestQuery.echo_int. Its upstream source also uses StatementExecutorConsumer to manage symbols inside the table; verify that executor integration before implementing the fixture. The other remaining fixture page is TestSlimWithConverter.
