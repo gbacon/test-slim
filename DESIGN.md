@@ -1,6 +1,6 @@
 # Current design
 
-`Test::Slim` has three small execution layers. `Test::Slim::Server` reads and writes framed SLiM messages over a socket. `Test::Slim::List` handles SLiM list values and lengths. `Test::Slim::ListExecutor` turns each decoded statement into a `Test::Slim::Statement` call.
+`Test::Slim` has three small execution layers. `Test::Slim::Server` reads and writes framed SLiM messages over a socket. `Test::Slim::List` handles SLiM list values and lengths, including recursive nested statements and zero-length string items. `Test::Slim::ListExecutor` turns each decoded statement into a `Test::Slim::Statement` call.
 
 `Test::Slim::Statement` routes protocol operations to `Test::Slim::StatementExecutor`. The statement executor owns imported class prefixes, actor instances, registered library instances, and symbols. It resolves graceful class and method names, constructs fixtures, substitutes symbols, converts HTML table arguments where appropriate, dispatches actor methods before searching libraries newest-first, and formats results or SLiM exceptions.
 

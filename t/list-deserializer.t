@@ -6,7 +6,7 @@ use warnings;
 
 use Encode qw/ decode is_utf8 /;
 
-use Test::More tests => 15;
+use Test::More tests => 16;
 
 my $have_test_exception;
 BEGIN {
@@ -78,3 +78,15 @@ my $expect = [
 ];
 
 is_deeply $lst, $expect, "actual list transmitted by fitnesse";
+
+my $nested_statement =
+  "[000006:000048:scriptTable_42_0/scriptTable_2_0/scriptTable_1_1:" .
+  "000013:callAndAssign:000007:CONTENT:000016:scriptTableActor:" .
+  "000004:echo:000000::]";
+my $decoded_statement = eval {
+  [ Test::Slim::List->new($nested_statement)->list ]
+};
+is_deeply $decoded_statement,
+  [ "scriptTable_42_0/scriptTable_2_0/scriptTable_1_1",
+    "callAndAssign", "CONTENT", "scriptTableActor", "echo", "" ],
+  "deserialize nested script-table statement with empty argument";

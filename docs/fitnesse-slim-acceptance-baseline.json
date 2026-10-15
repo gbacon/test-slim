@@ -3,12 +3,12 @@
   "fitNesseVersion": "20251025",
   "branch": "codex/complete-slim",
   "server": "external Perl SLiM: perl -Ilib -It/lib bin/perl-slim 8099",
-  "fitNesse": "http://127.0.0.1:8080; execution log confirmed slim:fitnesse.slim.SlimService and 127.0.0.1:8099",
+  "fitNesse": "http://127.0.0.1:8080; execution logs identified the SlimService test system and Connection to running SlimService: 127.0.0.1:8099 (FitNesse varies the testSystem capitalization on four timeout pages).",
   "unitBaseline": {
     "command": "bin/test-dev",
     "result": "PASS",
     "files": 17,
-    "tests": 171,
+    "tests": 174,
     "todoFailures": 4,
     "todoDescription": "Three boilerplate TODOs and one Unicode-return TODO; all marked TODO and suite exits PASS."
   },
@@ -22,9 +22,9 @@
       "ignored": 0,
       "exceptions": 175
     },
-    "note": "The suite responder produced only five BaseLineDecisionTable subtree results and did not enumerate the 50 Test=true pages; an aggregate SLiM server crash was visible in the Perl transcript. The five results are not used as the page inventory."
+    "note": "Historical pre-fix suite responder call returned only five BaseLineDecisionTable subtree results and did not enumerate the 50 Test=true pages. The 50-page baseline is the individually requested page inventory."
   },
-  "pageRunMethod": "Ran each of the 50 FitNesse pages marked Test=true individually with ?test&format=xml. All responses were HTTP 200 and the execution log identified the external Perl SLiM endpoint. Restarted Perl after process exits.",
+  "pageRunMethod": "Ran all 50 FitNesse pages marked Test=true individually using ?test&format=xml. All returned HTTP 200, identified slim:fitnesse.slim.SlimService at 127.0.0.1:8099, and completed without a Perl process exit.",
   "pageTotals": {
     "pages": 50,
     "completedResponses": 50,
@@ -32,22 +32,12 @@
     "failingPages": 42,
     "counts": {
       "right": 8,
-      "wrong": 13,
+      "wrong": 14,
       "ignored": 0,
-      "exceptions": 29
+      "exceptions": 28
     },
-    "serverExits": 4
-  },
-  "crash": {
-    "affectedPages": [
-      "BaseLineDecisionTable.TestFailuresAreMarked",
-      "IgnoredTestsShouldColorGray",
-      "TestDetailedDiff",
-      "TestExceptionIsDisplayed"
-    ],
-    "FitNesseMessage": "Could not send/receive data with SUT",
-    "PerlMessage": "Can't use string (\"[000006:000048:scriptTable_42_0/...\") as an ARRAY ref while \"strict refs\" in use at lib/Test/Slim/ListExecutor.pm line 19.",
-    "classification": "Perl SLiM executor input-shape failure. The FitNesse transport exceptions on the four pages are cascades from server termination, not four independent protocol defects."
+    "serverExits": 0,
+    "externalPerlConfirmed": 50
   },
   "pages": [
     {
@@ -63,7 +53,7 @@
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
-      "responseBytes": 49988,
+      "responseBytes": 49990,
       "rootCause": "Missing Perl fixture Eg.Division; resulting actor calls cascade.",
       "failureDetails": {
         "exceptionMessages": [
@@ -114,7 +104,7 @@
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
-      "responseBytes": 64926,
+      "responseBytes": 64925,
       "rootCause": "Missing scenario-backed fixture behavior; scenario commands do not produce expected actor instances.",
       "failureDetails": {
         "exceptionMessages": [
@@ -148,12 +138,24 @@
       "exceptions": 1,
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
-      "executionException": "Could not send/receive data with SUT",
-      "responseBytes": 27603,
-      "perlServerExit": 255,
-      "rootCause": "Perl SLiM executor crash while processing nested script-table command; subsequent transport exception is cascading.",
+      "executionException": null,
+      "responseBytes": 75413,
+      "rootCause": "Nested acceptance page executes without terminating Perl; missing nested fixture behavior still produces exceptions.",
       "failureDetails": {
-        "exceptionMessages": [],
+        "exceptionMessages": [
+          "given test page",
+          "Testpage",
+          "given page",
+          "with content",
+          "nothing",
+          "The instance scriptTableActor does not exist",
+          "and Test System setup is",
+          "!define TEST_SYSTEM {slim} !path lib/*.jar",
+          "and Setup content is",
+          "|import | |fitnesse.slim.test |",
+          "and Test content is",
+          "# |baseline: eg.Division | |numerator|denominator|quotient?|# Explication | |10 |2 |5.0 |S1 Base scenario | |20 |4 | |S2 Same result as base - correct| |20 |6 | |W3 Same result as base - wrong | | |5 |2.0 |S4 Same numerator as base | |16 | |8.0 |S5 Same denominator as base | | |22 |7 |~=3.14 |S6 Special comparator | |9 |3 |7 |W7 Wrong result | |11 |2 |4 < _ < 6 |S8 Special comparator | | | | |S9 Correct but duplicate | Given you want to ignore outputs like ''quotient'' Then the base scenario must ignore them already !define SLIM_DT_BASELINE (true) |eg.Division | |numerator|denominator|quotient?|# Explication | |10 |2.5 | |S1 Base scenario - ignore | |20 |4 |5.0 |S2 correct result | |20 |20 | |W3 Same result as base - ignore| #"
+        ],
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
@@ -172,15 +174,17 @@
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
-      "responseBytes": 81361,
+      "responseBytes": 86874,
       "rootCause": "Missing Perl fixtures (ShouldIBuyMilk, Eg.Division); later actor instance errors cascade.",
       "failureDetails": {
         "exceptionMessages": [
           "Could not find class ShouldIBuyMilk",
-          "The instance decisionTable_43 does not exist",
-          "The instance decisionTable_44 does not exist",
-          "The instance decisionTable_45 does not exist",
-          "The instance decisionTable_46 does not exist"
+          "baseline: should I buy milk Could not find class ShouldIBuyMilk",
+          "Method set_cash_in_wallet[1] not found in Fitnesse::Fixtures::TearDown",
+          "Method set_credit_card[1] not found in Fitnesse::Fixtures::TearDown",
+          "Method set_pints_of_milk_remaining[1] not found in Fitnesse::Fixtures::TearDown",
+          "Method go_to_store[0] not found in Fitnesse::Fixtures::TearDown",
+          "The instance decisionTable_45 does not exist"
         ],
         "wrongAssertionMessages": []
       },
@@ -232,7 +236,7 @@
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
-      "responseBytes": 39884,
+      "responseBytes": 39883,
       "rootCause": "FitNesse plugin/custom-rendering test-harness expectation fails; no Perl fixture load error observed.",
       "failureDetails": {
         "exceptionMessages": [],
@@ -388,12 +392,24 @@
       "exceptions": 1,
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
-      "executionException": "Could not send/receive data with SUT",
-      "responseBytes": 27577,
-      "perlServerExit": 255,
-      "rootCause": "Perl SLiM executor exits during nested test execution; FitNesse reports transport failure.",
+      "executionException": null,
+      "responseBytes": 71208,
+      "rootCause": "Missing HashFixture/EchoFixture page-driver methods and ResponseExaminer fixture; server remains alive.",
       "failureDetails": {
-        "exceptionMessages": [],
+        "exceptionMessages": [
+          "given test page",
+          "Testpage",
+          "Method make_a_test_page[1] not found in Fitnesse::Fixtures::HashFixture",
+          "and Test content is",
+          "!|Script| |Stop Test| |Not Executed and should be ignored| !|Script| |Not Executed and should be ignored as well|",
+          "when page",
+          "is tested and HTML is extracted",
+          "get HTML result",
+          "Could not find class ResponseExaminer",
+          "Method set_type[1] not found in Fitnesse::Fixtures::HashFixture",
+          "Method set_pattern[1] not found in Fitnesse::Fixtures::HashFixture",
+          "Method set_group[1] not found in Fitnesse::Fixtures::HashFixture"
+        ],
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
@@ -460,7 +476,7 @@
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
-      "responseBytes": 39714,
+      "responseBytes": 39713,
       "rootCause": "Missing LibraryInSetUp fixture and setup-library method.",
       "failureDetails": {
         "exceptionMessages": [
@@ -686,7 +702,7 @@
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
-      "responseBytes": 52915,
+      "responseBytes": 52916,
       "rootCause": "Missing Eg.Division behavior/methods on the scenario actor.",
       "failureDetails": {
         "exceptionMessages": [
@@ -721,22 +737,22 @@
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
-      "responseBytes": 71439,
+      "responseBytes": 73250,
       "rootCause": "Missing Eg.Division and its decision-table methods.",
       "failureDetails": {
         "exceptionMessages": [
           "Could not find class Division",
-          "The instance decisionTable_43 does not exist",
+          "Division Could not find class Division",
+          "Method set_numerator[1] not found in Fitnesse::Fixtures::TearDown",
+          "Method set_denominator[1] not found in Fitnesse::Fixtures::TearDown",
+          "Method quotient[0] not found in Fitnesse::Fixtures::TearDown",
           "Could not find class Eg::Division",
           "10",
           "2",
           "5.0 Test not run",
           "Method set_numerator[1] not found in Fitnesse::Slim::Test::TestSlim",
           "Method set_denominator[1] not found in Fitnesse::Slim::Test::TestSlim",
-          "Method quotient[0] not found in Fitnesse::Slim::Test::TestSlim",
-          "12.6",
-          "3",
-          "4.2 Test not run"
+          "Method quotient[0] not found in Fitnesse::Slim::Test::TestSlim"
         ],
         "wrongAssertionMessages": []
       },
@@ -756,7 +772,7 @@
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
-      "responseBytes": 43010,
+      "responseBytes": 43009,
       "rootCause": "Passes.",
       "failureDetails": {
         "exceptionMessages": [],
@@ -856,7 +872,7 @@
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
-      "responseBytes": 50021,
+      "responseBytes": 50019,
       "rootCause": "Nested suite setup/test-control harness assertions fail.",
       "failureDetails": {
         "exceptionMessages": [],
@@ -1010,18 +1026,39 @@
       "http": 200,
       "status": "completed",
       "right": 0,
-      "wrong": 0,
+      "wrong": 1,
       "ignored": 0,
-      "exceptions": 1,
+      "exceptions": 0,
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
-      "executionException": "Could not send/receive data with SUT",
-      "responseBytes": 27892,
-      "perlServerExit": 255,
-      "rootCause": "Perl SLiM executor exits during nested test execution; FitNesse reports transport failure.",
+      "executionException": null,
+      "responseBytes": 163508,
+      "rootCause": "Missing ResponseExaminer/EchoFixture page methods; now reports wrong assertions instead of a server-crash exception.",
       "failureDetails": {
-        "exceptionMessages": [],
-        "wrongAssertionMessages": []
+        "exceptionMessages": [
+          "given test page",
+          "Testpage",
+          "Method make_a_test_page[1] not found in Fitnesse::Fixtures::EchoFixture",
+          "and Test content is",
+          "!- variable defined: TEST_SYSTEM=slim import fitnesse.slim.test Test Strings by plain compare, neither custom compare nor regular expression. In this case detailed diff is wanted. Detailed Diff actual string expected string? #comment abc abc equal abc xyz completly different abc xbc first char different abc ayc middle char different abc abz last char different xyz actual empty, expected filled abc actual filled, expected empty; will be counted as ignored < &> < &> equal with HTML special chars < &> xyz completly different with HTML special chars < &> x&> first char different with HTML special chars < &> middle char different with HTML special chars < &> < &z last char differentwith HTML special chars < &> actual empty, expected filled with HTML special chars abc < &> completly different with HTML special chars abc abc a&c middle char different with HTML special chars abc ab> last char different with HTML special chars Hello World Wellcome Lord no obvious match Test Strings by regular expression. In this case no detailed diff is wanted. Detailed Diff actual string expected string? #comment abc =~/abc/ match abc =~/a.c/ match abc =~/\\w+/ match abc =~/\\w{3}/ match abc =~/^\\w{3}$/ match abc =~/\\w{1}/ match abc =~/^\\w{1}$/ no match abc =~/[ABC]+/ no match abc =~/[ABC]+/i wrong syntax, disable value comparison, use string comparison Test integers by string comparison. In this case detailed diff ist wanted. Detailed Diff actual int expected int? #comment 1 1 equal 1 2 completly different 1 10 partially different 1 completly different Test integers by value comparison, see",
+          "when page",
+          "is tested and HTML is extracted",
+          "get HTML result",
+          "Could not find class ResponseExaminer",
+          "Method set_type[1] not found in Fitnesse::Fixtures::EchoFixture",
+          "Method set_pattern[1] not found in Fitnesse::Fixtures::EchoFixture",
+          "Method set_group[1] not found in Fitnesse::Fixtures::EchoFixture"
+        ],
+        "wrongAssertionMessages": [
+          "ensure",
+          "expected [ xyz ]",
+          "expected [ x bc]",
+          "expected [a y c]",
+          "expected [ab z ]",
+          "expected [ W ell c o me L ord]",
+          "expected [ x ef]",
+          "expected [d y f]"
+        ]
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
       "evidence": "Individual page test request; result XML saved during baseline run."
@@ -1038,12 +1075,24 @@
       "exceptions": 1,
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
-      "executionException": "Could not send/receive data with SUT",
-      "responseBytes": 28888,
-      "perlServerExit": 255,
-      "rootCause": "Perl SLiM executor exits during nested test execution; FitNesse reports transport failure.",
+      "executionException": null,
+      "responseBytes": 139548,
+      "rootCause": "Missing ResponseExaminer/EchoFixture page methods; nested test reports fixture exceptions without terminating Perl.",
       "failureDetails": {
-        "exceptionMessages": [],
+        "exceptionMessages": [
+          "given test page",
+          "Testpage",
+          "Method make_a_test_page[1] not found in Fitnesse::Fixtures::EchoFixture",
+          "and Test content is",
+          "!- import fitnesse.slim.test if you expect an exception you can test for it and pass the test use the keyword EXCEPTION: Test Slim # Scenario throw Normal? throw Exception With Message? Testing for an expected Exception EXCEPTION:=~/This is my exception/ EXCEPTION:=~/Test message/ otherwise error is indicated. Watch how an exception with message is displayed shorter compared to a normal exception This is my exception Test message if you expect an exception but there is non then the cell will fail Test Slim string getStringArg? getStringArg? Hello Hello EXCEPTION: Hello An exception occurring in a not cell specific function call is added to the current row. This applies to: execute, reset, table, beginTable, endTable DT:fitnesse.slim.test.DecisionTableExecuteThrows x x? 5 5 and also to constructor failures DT:ConstructorThrows test goes on x x? 5 5 Multiple exceptions can happen in one row and in a in cell in the same row DT:fitnesse.slim.test.DecisionTableExecuteThrows Which Methods Fail x x? NONE 5 5 execute setX getX 5 5 reset 2 2 reset 5 5 Everything goes wrong - Fitnesse catches all 7 exceptions The exceptions are added at the right level: cell - for getter and setter row - for reset and execute table - for table, beginTable and endTable DT:fitnesse.slim.test.DecisionTableExecuteThrows Total Disaster x x? 5 5 Scripts behave like decision tables script:fitnesse.slim.test.DecisionTableExecuteThrows check execute EXCEPTION: =~/EXECUTE_THROWS/ A stop test is counted as fail and not as error script:ConstructorThrows stop test check execute Not reached as test is stopped -!",
+          "when page",
+          "is tested and HTML is extracted",
+          "get HTML result",
+          "Could not find class ResponseExaminer",
+          "Method set_type[1] not found in Fitnesse::Fixtures::EchoFixture",
+          "Method set_pattern[1] not found in Fitnesse::Fixtures::EchoFixture",
+          "Method set_group[1] not found in Fitnesse::Fixtures::EchoFixture"
+        ],
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
@@ -1190,7 +1239,7 @@
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
-      "responseBytes": 33698,
+      "responseBytes": 33696,
       "rootCause": "Missing DuplicateRows fixture.",
       "failureDetails": {
         "exceptionMessages": [
@@ -1386,5 +1435,57 @@
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
       "evidence": "Individual page test request; result XML saved during baseline run."
     }
-  ]
+  ],
+  "previousBaseline": {
+    "pages": 50,
+    "passingPages": 8,
+    "failingPages": 42,
+    "counts": {
+      "right": 8,
+      "wrong": 13,
+      "ignored": 0,
+      "exceptions": 29
+    },
+    "serverExits": 4
+  },
+  "postFixVerification": {
+    "serverExits": 0,
+    "crashPages": [
+      "BaseLineDecisionTable.TestFailuresAreMarked",
+      "IgnoredTestsShouldColorGray",
+      "TestDetailedDiff",
+      "TestExceptionIsDisplayed"
+    ],
+    "pageResults": {
+      "BaseLineDecisionTable.TestFailuresAreMarked": {
+        "right": 0,
+        "wrong": 0,
+        "ignored": 0,
+        "exceptions": 1
+      },
+      "IgnoredTestsShouldColorGray": {
+        "right": 0,
+        "wrong": 0,
+        "ignored": 0,
+        "exceptions": 1
+      },
+      "TestDetailedDiff": {
+        "right": 0,
+        "wrong": 1,
+        "ignored": 0,
+        "exceptions": 0
+      },
+      "TestExceptionIsDisplayed": {
+        "right": 0,
+        "wrong": 0,
+        "ignored": 0,
+        "exceptions": 1
+      }
+    },
+    "classificationChange": "TestDetailedDiff changed from one exception to one wrong assertion because execution continued after removing the crash; its rendered output shows missing ResponseExaminer/EchoFixture methods. This is not an assertion improvement."
+  },
+  "historicalCrash": {
+    "message": "Can't use string (\"[000006:000048:scriptTable_42_0/...\") as an ARRAY ref while \"strict refs\" in use at lib/Test/Slim/ListExecutor.pm line 19.",
+    "cause": "A valid nested SLiM statement had an empty-string argument. _take_utf16_units consumed the following colon for a requested length of zero; nested list parsing failed and returned the encoded statement as a scalar. ListExecutor then dereferenced it as an arrayref. The fix avoids consuming any characters for zero units."
+  }
 }

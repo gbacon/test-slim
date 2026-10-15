@@ -17,7 +17,7 @@ sub _take_utf16_units {
   my $out = "";
   my $count = 0;
 
-  while (length $s) {
+  while ($count < $units && length $s) {
     my $ch = substr($s, 0, 1, "");
     my $u = _utf16_code_units_length($ch);
     last if $count + $u > $units;

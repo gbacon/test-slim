@@ -6,8 +6,9 @@ use warnings;
 
 use IO::Handle;
 use Socket;
+use lib "t/lib";
 
-use Test::More tests => 8;
+use Test::More tests => 10;
 
 BEGIN {
   use_ok "Test::Slim::Server"
@@ -83,4 +84,27 @@ test {
 
   is scalar    @exception,      1, "length of exception list";
   is scalar @{ $exception[0] }, 2, "length of exception sublist";
+};
+
+test {
+  my $instructions = [
+    [ "i1", "import", "fitnesse.slim.test" ],
+    [ "m1", "make", "actor", "TestSlim" ],
+    [ "c1", "call", "actor", "echo_string", "" ],
+  ];
+  my $command = Test::Slim::List->new($instructions)->serialize;
+  print $fitnesse sprintf("%06d:%s", length($command), $command)
+    . "000003:bye";
+  $fitnesse->flush;
+
+  my $processed = eval { $server->process($slim); 1 };
+  ok $processed, "valid nested command with empty argument does not kill server";
+
+  SKIP: {
+    skip "server rejected command before returning a frame", 1 unless $processed;
+    my @replies = <$fitnesse>;
+    my @results = Test::Slim::List->new(substr $replies[1], 7)->list;
+    is_deeply \@results, [ [ "i1", "OK" ], [ "m1", "OK" ], [ "c1", "" ] ],
+      "empty argument round-trips through the SLiM server";
+  }
 };
