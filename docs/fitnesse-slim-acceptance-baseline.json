@@ -1,0 +1,1390 @@
+{
+  "date": "2026-10-15",
+  "fitNesseVersion": "20251025",
+  "branch": "codex/complete-slim",
+  "server": "external Perl SLiM: perl -Ilib -It/lib bin/perl-slim 8099",
+  "fitNesse": "http://127.0.0.1:8080; execution log confirmed slim:fitnesse.slim.SlimService and 127.0.0.1:8099",
+  "unitBaseline": {
+    "command": "bin/test-dev",
+    "result": "PASS",
+    "files": 17,
+    "tests": 171,
+    "todoFailures": 4,
+    "todoDescription": "Three boilerplate TODOs and one Unicode-return TODO; all marked TODO and suite exits PASS."
+  },
+  "suiteResponderAttempt": {
+    "url": "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests?suite&format=xml",
+    "httpStatus": 200,
+    "returnedPageResults": 5,
+    "returnedCounts": {
+      "right": 0,
+      "wrong": 0,
+      "ignored": 0,
+      "exceptions": 175
+    },
+    "note": "The suite responder produced only five BaseLineDecisionTable subtree results and did not enumerate the 50 Test=true pages; an aggregate SLiM server crash was visible in the Perl transcript. The five results are not used as the page inventory."
+  },
+  "pageRunMethod": "Ran each of the 50 FitNesse pages marked Test=true individually with ?test&format=xml. All responses were HTTP 200 and the execution log identified the external Perl SLiM endpoint. Restarted Perl after process exits.",
+  "pageTotals": {
+    "pages": 50,
+    "completedResponses": 50,
+    "passingPages": 8,
+    "failingPages": 42,
+    "counts": {
+      "right": 8,
+      "wrong": 13,
+      "ignored": 0,
+      "exceptions": 29
+    },
+    "serverExits": 4
+  },
+  "crash": {
+    "affectedPages": [
+      "BaseLineDecisionTable.TestFailuresAreMarked",
+      "IgnoredTestsShouldColorGray",
+      "TestDetailedDiff",
+      "TestExceptionIsDisplayed"
+    ],
+    "FitNesseMessage": "Could not send/receive data with SUT",
+    "PerlMessage": "Can't use string (\"[000006:000048:scriptTable_42_0/...\") as an ARRAY ref while \"strict refs\" in use at lib/Test/Slim/ListExecutor.pm line 19.",
+    "classification": "Perl SLiM executor input-shape failure. The FitNesse transport exceptions on the four pages are cascades from server termination, not four independent protocol defects."
+  },
+  "pages": [
+    {
+      "page": "BaseLineDecisionTable.ComparatorsAreSupported",
+      "url": "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.BaseLineDecisionTable.ComparatorsAreSupported?test&format=xml",
+      "attempt": 1,
+      "http": 200,
+      "status": "completed",
+      "right": 0,
+      "wrong": 0,
+      "ignored": 0,
+      "exceptions": 1,
+      "testSystem": "slim:fitnesse.slim.SlimService",
+      "connection": "Connection to running SlimService: 127.0.0.1:8099",
+      "executionException": null,
+      "responseBytes": 49988,
+      "rootCause": "Missing Perl fixture Eg.Division; resulting actor calls cascade.",
+      "failureDetails": {
+        "exceptionMessages": [
+          "Could not find class Eg::Division",
+          "The instance decisionTable_42 does not exist",
+          "The instance decisionTable_43 does not exist"
+        ],
+        "wrongAssertionMessages": []
+      },
+      "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
+      "evidence": "Individual page test request; result XML saved during baseline run."
+    },
+    {
+      "page": "BaseLineDecisionTable.MakingTheBaselineTableTheDefaultDecisionTable",
+      "url": "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.BaseLineDecisionTable.MakingTheBaselineTableTheDefaultDecisionTable?test&format=xml",
+      "attempt": 2,
+      "http": 200,
+      "status": "completed",
+      "right": 0,
+      "wrong": 0,
+      "ignored": 0,
+      "exceptions": 1,
+      "testSystem": "slim:fitnesse.slim.SlimService",
+      "connection": "Connection to running SlimService: 127.0.0.1:8099",
+      "executionException": null,
+      "responseBytes": 49754,
+      "rootCause": "Missing Perl fixture ShouldIBuyMilk; later table actors cascade.",
+      "failureDetails": {
+        "exceptionMessages": [
+          "Could not find class ShouldIBuyMilk",
+          "The instance decisionTable_43 does not exist"
+        ],
+        "wrongAssertionMessages": []
+      },
+      "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
+      "evidence": "Individual page test request; result XML saved during baseline run."
+    },
+    {
+      "page": "BaseLineDecisionTable.ScenariosAreSupported",
+      "url": "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.BaseLineDecisionTable.ScenariosAreSupported?test&format=xml",
+      "attempt": 3,
+      "http": 200,
+      "status": "completed",
+      "right": 0,
+      "wrong": 0,
+      "ignored": 0,
+      "exceptions": 1,
+      "testSystem": "slim:fitnesse.slim.SlimService",
+      "connection": "Connection to running SlimService: 127.0.0.1:8099",
+      "executionException": null,
+      "responseBytes": 64926,
+      "rootCause": "Missing scenario-backed fixture behavior; scenario commands do not produce expected actor instances.",
+      "failureDetails": {
+        "exceptionMessages": [
+          "Could not find class Eg::Division",
+          "10",
+          "2",
+          "5.0 Test not run",
+          "S1 Base scenario",
+          "The instance scriptTableActor does not exist",
+          "20",
+          "4",
+          "Test not run",
+          "S2 Same result as base - correct",
+          "5",
+          "2.0 Test not run"
+        ],
+        "wrongAssertionMessages": []
+      },
+      "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
+      "evidence": "Individual page test request; result XML saved during baseline run."
+    },
+    {
+      "page": "BaseLineDecisionTable.TestFailuresAreMarked",
+      "url": "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.BaseLineDecisionTable.TestFailuresAreMarked?test&format=xml",
+      "attempt": 4,
+      "http": 200,
+      "status": "completed",
+      "right": 0,
+      "wrong": 0,
+      "ignored": 0,
+      "exceptions": 1,
+      "testSystem": "slim:fitnesse.slim.SlimService",
+      "connection": "Connection to running SlimService: 127.0.0.1:8099",
+      "executionException": "Could not send/receive data with SUT",
+      "responseBytes": 27603,
+      "perlServerExit": 255,
+      "rootCause": "Perl SLiM executor crash while processing nested script-table command; subsequent transport exception is cascading.",
+      "failureDetails": {
+        "exceptionMessages": [],
+        "wrongAssertionMessages": []
+      },
+      "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
+      "evidence": "Individual page test request; result XML saved during baseline run."
+    },
+    {
+      "page": "BaseLineDecisionTable",
+      "url": "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.BaseLineDecisionTable?test&format=xml",
+      "attempt": 5,
+      "http": 200,
+      "status": "completed",
+      "right": 0,
+      "wrong": 0,
+      "ignored": 0,
+      "exceptions": 1,
+      "testSystem": "slim:fitnesse.slim.SlimService",
+      "connection": "Connection to running SlimService: 127.0.0.1:8099",
+      "executionException": null,
+      "responseBytes": 81361,
+      "rootCause": "Missing Perl fixtures (ShouldIBuyMilk, Eg.Division); later actor instance errors cascade.",
+      "failureDetails": {
+        "exceptionMessages": [
+          "Could not find class ShouldIBuyMilk",
+          "The instance decisionTable_43 does not exist",
+          "The instance decisionTable_44 does not exist",
+          "The instance decisionTable_45 does not exist",
+          "The instance decisionTable_46 does not exist"
+        ],
+        "wrongAssertionMessages": []
+      },
+      "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
+      "evidence": "Individual page test request; result XML saved during baseline run."
+    },
+    {
+      "page": "ChainWithInstanceTest",
+      "url": "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.ChainWithInstanceTest?test&format=xml",
+      "attempt": 6,
+      "http": 200,
+      "status": "completed",
+      "right": 0,
+      "wrong": 1,
+      "ignored": 0,
+      "exceptions": 0,
+      "testSystem": "slim:fitnesse.slim.SlimService",
+      "connection": "Connection to running SlimService: 127.0.0.1:8099",
+      "executionException": null,
+      "responseBytes": 46889,
+      "rootCause": "Missing TestSlim fixture methods get_fixture, push_fixture, and pop_fixture.",
+      "failureDetails": {
+        "exceptionMessages": [
+          "Method get_fixture[0] not found in Fitnesse::Slim::Test::TestSlim",
+          "do something with",
+          "Bob",
+          "and restore old fixture",
+          "Method push_fixture[0] not found in Fitnesse::Slim::Test::TestSlim",
+          "Method pop_fixture[0] not found in Fitnesse::Slim::Test::TestSlim",
+          "Could not find class __EXCEPTION__:message: <"
+        ],
+        "wrongAssertionMessages": [
+          "expected [ Uncle ]"
+        ]
+      },
+      "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
+      "evidence": "Individual page test request; result XML saved during baseline run."
+    },
+    {
+      "page": "CustomTableRenderingAddedByPluginTest",
+      "url": "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.CustomTableRenderingAddedByPluginTest?test&format=xml",
+      "attempt": 7,
+      "http": 200,
+      "status": "completed",
+      "right": 0,
+      "wrong": 1,
+      "ignored": 0,
+      "exceptions": 0,
+      "testSystem": "slim:fitnesse.slim.SlimService",
+      "connection": "Connection to running SlimService: 127.0.0.1:8099",
+      "executionException": null,
+      "responseBytes": 39884,
+      "rootCause": "FitNesse plugin/custom-rendering test-harness expectation fails; no Perl fixture load error observed.",
+      "failureDetails": {
+        "exceptionMessages": [],
+        "wrongAssertionMessages": [
+          "ensure"
+        ]
+      },
+      "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
+      "evidence": "Individual page test request; result XML saved during baseline run."
+    },
+    {
+      "page": "DefineAliasInPluginTest",
+      "url": "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.DefineAliasInPluginTest?test&format=xml",
+      "attempt": 8,
+      "http": 200,
+      "status": "completed",
+      "right": 0,
+      "wrong": 1,
+      "ignored": 0,
+      "exceptions": 0,
+      "testSystem": "slim:fitnesse.slim.SlimService",
+      "connection": "Connection to running SlimService: 127.0.0.1:8099",
+      "executionException": null,
+      "responseBytes": 33670,
+      "rootCause": "FitNesse plugin alias setup/expectation fails; no Perl fixture load error observed.",
+      "failureDetails": {
+        "exceptionMessages": [],
+        "wrongAssertionMessages": [
+          "ensure"
+        ]
+      },
+      "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
+      "evidence": "Individual page test request; result XML saved during baseline run."
+    },
+    {
+      "page": "DefineAliasTest",
+      "url": "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.DefineAliasTest?test&format=xml",
+      "attempt": 9,
+      "http": 200,
+      "status": "completed",
+      "right": 0,
+      "wrong": 0,
+      "ignored": 0,
+      "exceptions": 1,
+      "testSystem": "slim:fitnesse.slim.SlimService",
+      "connection": "Connection to running SlimService: 127.0.0.1:8099",
+      "executionException": null,
+      "responseBytes": 90418,
+      "rootCause": "Missing alias target fixture(s), causing later actor calls to cascade.",
+      "failureDetails": {
+        "exceptionMessages": [
+          "Could not find class AddUpChange",
+          "The instance dynamicDecisionTable_43 does not exist",
+          "The instance dynamicDecisionTable_44 does not exist",
+          "The instance dynamicDecisionTable_45 does not exist",
+          "The instance dynamicDecisionTable_46 does not exist",
+          "Method get_fixture[0] not found in Fitnesse::Slim::Test::TestSlim",
+          "Could not find class __EXCEPTION__:message: <",
+          "The instance dynamicDecisionTable_48 does not exist",
+          "The instance dynamicDecisionTable_50 does not exist",
+          "Method get_fixture[0] not found in Fitnesse::Slim::Test::TestQuery",
+          "Could not find class Fitnesse::Slim::Test::AddUpChange",
+          "The instance dynamicDecisionTable_55 does not exist"
+        ],
+        "wrongAssertionMessages": []
+      },
+      "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
+      "evidence": "Individual page test request; result XML saved during baseline run."
+    },
+    {
+      "page": "HashTableTests.HashTableWithHtmlContent",
+      "url": "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.HashTableTests.HashTableWithHtmlContent?test&format=xml",
+      "attempt": 10,
+      "http": 200,
+      "status": "completed",
+      "right": 0,
+      "wrong": 0,
+      "ignored": 0,
+      "exceptions": 1,
+      "testSystem": "slim:fitnesse.slim.SlimService",
+      "connection": "Connection to running SlimService: 127.0.0.1:8099",
+      "executionException": null,
+      "responseBytes": 32891,
+      "rootCause": "Missing hash_is and echo_and_log methods in existing HashFixture/EchoFixture.",
+      "failureDetails": {
+        "exceptionMessages": [
+          "Method hash_is[1] not found in Fitnesse::Fixtures::HashFixture",
+          "Method echo_and_log[1] not found in Fitnesse::Fixtures::EchoFixture"
+        ],
+        "wrongAssertionMessages": []
+      },
+      "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
+      "evidence": "Individual page test request; result XML saved during baseline run."
+    },
+    {
+      "page": "HashTableTests.ShouldReturnHashTable",
+      "url": "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.HashTableTests.ShouldReturnHashTable?test&format=xml",
+      "attempt": 11,
+      "http": 200,
+      "status": "completed",
+      "right": 0,
+      "wrong": 1,
+      "ignored": 0,
+      "exceptions": 0,
+      "testSystem": "slim:fitnesse.slim.SlimService",
+      "connection": "Connection to running SlimService: 127.0.0.1:8099",
+      "executionException": null,
+      "responseBytes": 32039,
+      "rootCause": "Fixture result does not match expected hash rendering/order.",
+      "failureDetails": {
+        "exceptionMessages": [],
+        "wrongAssertionMessages": [
+          "expected [ address here name bob ]"
+        ]
+      },
+      "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
+      "evidence": "Individual page test request; result XML saved during baseline run."
+    },
+    {
+      "page": "HybridDecisionTable.ImplementDynamicDecisionTableWithHybridTable",
+      "url": "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.HybridDecisionTable.ImplementDynamicDecisionTableWithHybridTable?test&format=xml",
+      "attempt": 12,
+      "http": 200,
+      "status": "completed",
+      "right": 0,
+      "wrong": 0,
+      "ignored": 0,
+      "exceptions": 1,
+      "testSystem": "slim:fitnesse.slim.SlimService",
+      "connection": "Connection to running SlimService: 127.0.0.1:8099",
+      "executionException": null,
+      "responseBytes": 44256,
+      "rootCause": "Missing AddUpChange fixture; subsequent decision-table actor errors cascade.",
+      "failureDetails": {
+        "exceptionMessages": [
+          "Could not find class AddUpChange",
+          "The instance decisionTable_42 does not exist"
+        ],
+        "wrongAssertionMessages": []
+      },
+      "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
+      "evidence": "Individual page test request; result XML saved during baseline run."
+    },
+    {
+      "page": "IgnoredTestsShouldColorGray",
+      "url": "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.IgnoredTestsShouldColorGray?test&format=xml",
+      "attempt": 13,
+      "http": 200,
+      "status": "completed",
+      "right": 0,
+      "wrong": 0,
+      "ignored": 0,
+      "exceptions": 1,
+      "testSystem": "slim:fitnesse.slim.SlimService",
+      "connection": "Connection to running SlimService: 127.0.0.1:8099",
+      "executionException": "Could not send/receive data with SUT",
+      "responseBytes": 27577,
+      "perlServerExit": 255,
+      "rootCause": "Perl SLiM executor exits during nested test execution; FitNesse reports transport failure.",
+      "failureDetails": {
+        "exceptionMessages": [],
+        "wrongAssertionMessages": []
+      },
+      "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
+      "evidence": "Individual page test request; result XML saved during baseline run."
+    },
+    {
+      "page": "LibrarySuite.HowToAddFixturesWithParametersToTheLibrary",
+      "url": "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.LibrarySuite.HowToAddFixturesWithParametersToTheLibrary?test&format=xml",
+      "attempt": 14,
+      "http": 200,
+      "status": "completed",
+      "right": 0,
+      "wrong": 0,
+      "ignored": 0,
+      "exceptions": 1,
+      "testSystem": "slim:fitnesse.slim.SlimService",
+      "connection": "Connection to running SlimService: 127.0.0.1:8099",
+      "executionException": null,
+      "responseBytes": 45319,
+      "rootCause": "Missing TestSlim/EchoFixture methods used by parameterized library fixture test.",
+      "failureDetails": {
+        "exceptionMessages": [
+          "Method get_fixture[0] not found in Fitnesse::Slim::Test::TestSlim",
+          "Could not find class __EXCEPTION__:message: <",
+          "Method get_string_arg[0] not found in Fitnesse::Fixtures::EchoFixture"
+        ],
+        "wrongAssertionMessages": []
+      },
+      "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
+      "evidence": "Individual page test request; result XML saved during baseline run."
+    },
+    {
+      "page": "LibrarySuite.LastLibraryPreceedsEarlierLibraryTest",
+      "url": "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.LibrarySuite.LastLibraryPreceedsEarlierLibraryTest?test&format=xml",
+      "attempt": 15,
+      "http": 200,
+      "status": "completed",
+      "right": 1,
+      "wrong": 0,
+      "ignored": 0,
+      "exceptions": 0,
+      "testSystem": "slim:fitnesse.slim.SlimService",
+      "connection": "Connection to running SlimService: 127.0.0.1:8099",
+      "executionException": null,
+      "responseBytes": 40467,
+      "rootCause": "Passes.",
+      "failureDetails": {
+        "exceptionMessages": [],
+        "wrongAssertionMessages": []
+      },
+      "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
+      "evidence": "Individual page test request; result XML saved during baseline run."
+    },
+    {
+      "page": "LibrarySuite.LibraryInSetUpSuite.LibraryInSetUpAndPageTest",
+      "url": "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.LibrarySuite.LibraryInSetUpSuite.LibraryInSetUpAndPageTest?test&format=xml",
+      "attempt": 16,
+      "http": 200,
+      "status": "completed",
+      "right": 0,
+      "wrong": 0,
+      "ignored": 0,
+      "exceptions": 1,
+      "testSystem": "slim:fitnesse.slim.SlimService",
+      "connection": "Connection to running SlimService: 127.0.0.1:8099",
+      "executionException": null,
+      "responseBytes": 39714,
+      "rootCause": "Missing LibraryInSetUp fixture and setup-library method.",
+      "failureDetails": {
+        "exceptionMessages": [
+          "Could not find class LibraryInSetUp",
+          "then the one one installed in this page takes precedence over the one in the setup page",
+          "Method echo_in_set_up_library_called[0] not found in Fitnesse::Slim::Test::Library::LibraryFixture"
+        ],
+        "wrongAssertionMessages": []
+      },
+      "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
+      "evidence": "Individual page test request; result XML saved during baseline run."
+    },
+    {
+      "page": "LibrarySuite.LibraryInSetUpSuite.LibraryInSetUpTest",
+      "url": "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.LibrarySuite.LibraryInSetUpSuite.LibraryInSetUpTest?test&format=xml",
+      "attempt": 17,
+      "http": 200,
+      "status": "completed",
+      "right": 0,
+      "wrong": 0,
+      "ignored": 0,
+      "exceptions": 1,
+      "testSystem": "slim:fitnesse.slim.SlimService",
+      "connection": "Connection to running SlimService: 127.0.0.1:8099",
+      "executionException": null,
+      "responseBytes": 39296,
+      "rootCause": "Missing LibraryInSetUp fixture and setup-library method.",
+      "failureDetails": {
+        "exceptionMessages": [
+          "Could not find class LibraryInSetUp",
+          "then is should have been invoked on the library in the setup page",
+          "Method echo_in_set_up_library_called[0] not found in Fitnesse::Slim::Test::Library::LibraryFixture"
+        ],
+        "wrongAssertionMessages": []
+      },
+      "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
+      "evidence": "Individual page test request; result XML saved during baseline run."
+    },
+    {
+      "page": "LibrarySuite.OneLibraryTest",
+      "url": "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.LibrarySuite.OneLibraryTest?test&format=xml",
+      "attempt": 18,
+      "http": 200,
+      "status": "completed",
+      "right": 1,
+      "wrong": 0,
+      "ignored": 0,
+      "exceptions": 0,
+      "testSystem": "slim:fitnesse.slim.SlimService",
+      "connection": "Connection to running SlimService: 127.0.0.1:8099",
+      "executionException": null,
+      "responseBytes": 38024,
+      "rootCause": "Passes.",
+      "failureDetails": {
+        "exceptionMessages": [],
+        "wrongAssertionMessages": []
+      },
+      "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
+      "evidence": "Individual page test request; result XML saved during baseline run."
+    },
+    {
+      "page": "QueryTableSuite.SetContextValue",
+      "url": "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.QueryTableSuite.SetContextValue?test&format=xml",
+      "attempt": 19,
+      "http": 200,
+      "status": "completed",
+      "right": 0,
+      "wrong": 1,
+      "ignored": 0,
+      "exceptions": 0,
+      "testSystem": "slim:fitnesse.slim.SlimService",
+      "connection": "Connection to running SlimService: 127.0.0.1:8099",
+      "executionException": null,
+      "responseBytes": 34353,
+      "rootCause": "Missing SplitFixture; result assertions then fail.",
+      "failureDetails": {
+        "exceptionMessages": [
+          "Could not find class SplitFixture"
+        ],
+        "wrongAssertionMessages": [
+          "expected [ 100 ]",
+          "expected [ John ]"
+        ]
+      },
+      "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
+      "evidence": "Individual page test request; result XML saved during baseline run."
+    },
+    {
+      "page": "QueryTableSuite.TestMatching",
+      "url": "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.QueryTableSuite.TestMatching?test&format=xml",
+      "attempt": 20,
+      "http": 200,
+      "status": "completed",
+      "right": 0,
+      "wrong": 0,
+      "ignored": 0,
+      "exceptions": 1,
+      "testSystem": "slim:fitnesse.slim.SlimService",
+      "connection": "Connection to running SlimService: 127.0.0.1:8099",
+      "executionException": null,
+      "responseBytes": 40123,
+      "rootCause": "Missing SplitFixture.",
+      "failureDetails": {
+        "exceptionMessages": [
+          "Could not find class SplitFixture"
+        ],
+        "wrongAssertionMessages": []
+      },
+      "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
+      "evidence": "Individual page test request; result XML saved during baseline run."
+    },
+    {
+      "page": "ScenarioTestSuite.ScenarioWithOutputParametersInDecisionTables",
+      "url": "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.ScenarioTestSuite.ScenarioWithOutputParametersInDecisionTables?test&format=xml",
+      "attempt": 21,
+      "http": 200,
+      "status": "completed",
+      "right": 0,
+      "wrong": 0,
+      "ignored": 0,
+      "exceptions": 1,
+      "testSystem": "slim:fitnesse.slim.SlimService",
+      "connection": "Connection to running SlimService: 127.0.0.1:8099",
+      "executionException": null,
+      "responseBytes": 71733,
+      "rootCause": "Missing Eg.Division behavior/methods on the scenario actor.",
+      "failureDetails": {
+        "exceptionMessages": [
+          "Could not find class Eg::Division",
+          "10",
+          "2",
+          "The instance null does not exist",
+          "$x= The instance null does not exist",
+          "Method set_numerator[1] not found in Fitnesse::Slim::Test::TestSlim",
+          "Method set_denominator[1] not found in Fitnesse::Slim::Test::TestSlim",
+          "Method quotient[0] not found in Fitnesse::Slim::Test::TestSlim",
+          "$x",
+          "1",
+          "5.0 Test not run",
+          "1000"
+        ],
+        "wrongAssertionMessages": []
+      },
+      "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
+      "evidence": "Individual page test request; result XML saved during baseline run."
+    },
+    {
+      "page": "ScenarioTestSuite.ScenarioWithOutputParametersInScripts",
+      "url": "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.ScenarioTestSuite.ScenarioWithOutputParametersInScripts?test&format=xml",
+      "attempt": 22,
+      "http": 200,
+      "status": "completed",
+      "right": 0,
+      "wrong": 0,
+      "ignored": 0,
+      "exceptions": 1,
+      "testSystem": "slim:fitnesse.slim.SlimService",
+      "connection": "Connection to running SlimService: 127.0.0.1:8099",
+      "executionException": null,
+      "responseBytes": 47078,
+      "rootCause": "Missing Eg.Division behavior/methods on the scenario actor.",
+      "failureDetails": {
+        "exceptionMessages": [
+          "Could not find class Eg::Division",
+          "Mydivision;",
+          "35",
+          "5",
+          "Method set_numerator[1] not found in Fitnesse::Slim::Test::TestSlim",
+          "Method set_denominator[1] not found in Fitnesse::Slim::Test::TestSlim",
+          "Method quotient[0] not found in Fitnesse::Slim::Test::TestSlim",
+          "Mydivision",
+          "40",
+          "4",
+          "10",
+          "_"
+        ],
+        "wrongAssertionMessages": []
+      },
+      "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
+      "evidence": "Individual page test request; result XML saved during baseline run."
+    },
+    {
+      "page": "ScenarioTestSuite.ScriptSubclassUsedForDecisionTable",
+      "url": "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.ScenarioTestSuite.ScriptSubclassUsedForDecisionTable?test&format=xml",
+      "attempt": 23,
+      "http": 200,
+      "status": "completed",
+      "right": 0,
+      "wrong": 0,
+      "ignored": 0,
+      "exceptions": 1,
+      "testSystem": "slim:fitnesse.slim.SlimService",
+      "connection": "Connection to running SlimService: 127.0.0.1:8099",
+      "executionException": null,
+      "responseBytes": 38735,
+      "rootCause": "Missing Eg.Division and script actor fixture classes.",
+      "failureDetails": {
+        "exceptionMessages": [
+          "Could not find class Eg::Division",
+          "10",
+          "2",
+          "5.0",
+          "Method set_numerator[1] not found in Fitnesse::Slim::Test::TestSlim",
+          "Method set_denominator[1] not found in Fitnesse::Slim::Test::TestSlim",
+          "Method quotient[0] not found in Fitnesse::Slim::Test::TestSlim",
+          "The instance scriptWithVerifyTableActor does not exist"
+        ],
+        "wrongAssertionMessages": []
+      },
+      "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
+      "evidence": "Individual page test request; result XML saved during baseline run."
+    },
+    {
+      "page": "ScenarioTestSuite.UsingConstructorArgumentsFromDecisionTablesInScenarios",
+      "url": "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.ScenarioTestSuite.UsingConstructorArgumentsFromDecisionTablesInScenarios?test&format=xml",
+      "attempt": 24,
+      "http": 200,
+      "status": "completed",
+      "right": 0,
+      "wrong": 0,
+      "ignored": 0,
+      "exceptions": 1,
+      "testSystem": "slim:fitnesse.slim.SlimService",
+      "connection": "Connection to running SlimService: 127.0.0.1:8099",
+      "executionException": null,
+      "responseBytes": 52915,
+      "rootCause": "Missing Eg.Division behavior/methods on the scenario actor.",
+      "failureDetails": {
+        "exceptionMessages": [
+          "Could not find class Eg::Division",
+          "3",
+          "3.0 Test not run",
+          "Method set_numerator[1] not found in Fitnesse::Slim::Test::TestSlim",
+          "Method set_denominator[1] not found in Fitnesse::Slim::Test::TestSlim",
+          "Method quotient[0] not found in Fitnesse::Slim::Test::TestSlim",
+          "2",
+          "4.5 Test not run",
+          "4.0",
+          "6",
+          "2.0",
+          "4"
+        ],
+        "wrongAssertionMessages": []
+      },
+      "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
+      "evidence": "Individual page test request; result XML saved during baseline run."
+    },
+    {
+      "page": "SegregationOfRequirementsAndImplementation",
+      "url": "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.SegregationOfRequirementsAndImplementation?test&format=xml",
+      "attempt": 25,
+      "http": 200,
+      "status": "completed",
+      "right": 0,
+      "wrong": 0,
+      "ignored": 0,
+      "exceptions": 1,
+      "testSystem": "slim:fitnesse.slim.SlimService",
+      "connection": "Connection to running SlimService: 127.0.0.1:8099",
+      "executionException": null,
+      "responseBytes": 71439,
+      "rootCause": "Missing Eg.Division and its decision-table methods.",
+      "failureDetails": {
+        "exceptionMessages": [
+          "Could not find class Division",
+          "The instance decisionTable_43 does not exist",
+          "Could not find class Eg::Division",
+          "10",
+          "2",
+          "5.0 Test not run",
+          "Method set_numerator[1] not found in Fitnesse::Slim::Test::TestSlim",
+          "Method set_denominator[1] not found in Fitnesse::Slim::Test::TestSlim",
+          "Method quotient[0] not found in Fitnesse::Slim::Test::TestSlim",
+          "12.6",
+          "3",
+          "4.2 Test not run"
+        ],
+        "wrongAssertionMessages": []
+      },
+      "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
+      "evidence": "Individual page test request; result XML saved during baseline run."
+    },
+    {
+      "page": "SlimSymbols.NamingConvention",
+      "url": "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.SlimSymbols.NamingConvention?test&format=xml",
+      "attempt": 26,
+      "http": 200,
+      "status": "completed",
+      "right": 1,
+      "wrong": 0,
+      "ignored": 0,
+      "exceptions": 0,
+      "testSystem": "slim:fitnesse.slim.SlimService",
+      "connection": "Connection to running SlimService: 127.0.0.1:8099",
+      "executionException": null,
+      "responseBytes": 43010,
+      "rootCause": "Passes.",
+      "failureDetails": {
+        "exceptionMessages": [],
+        "wrongAssertionMessages": []
+      },
+      "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
+      "evidence": "Individual page test request; result XML saved during baseline run."
+    },
+    {
+      "page": "SlimSymbols.SlimSymbolManipulation",
+      "url": "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.SlimSymbols.SlimSymbolManipulation?test&format=xml",
+      "attempt": 27,
+      "http": 200,
+      "status": "completed",
+      "right": 1,
+      "wrong": 0,
+      "ignored": 0,
+      "exceptions": 0,
+      "testSystem": "slim:fitnesse.slim.SlimService",
+      "connection": "Connection to running SlimService: 127.0.0.1:8099",
+      "executionException": null,
+      "responseBytes": 62085,
+      "rootCause": "Passes.",
+      "failureDetails": {
+        "exceptionMessages": [],
+        "wrongAssertionMessages": []
+      },
+      "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
+      "evidence": "Individual page test request; result XML saved during baseline run."
+    },
+    {
+      "page": "StopSuite",
+      "url": "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.StopSuite?test&format=xml",
+      "attempt": 28,
+      "http": 200,
+      "status": "completed",
+      "right": 0,
+      "wrong": 1,
+      "ignored": 0,
+      "exceptions": 0,
+      "testSystem": "slim:fitnesse.slim.SlimService",
+      "connection": "Connection to running SlimService: 127.0.0.1:8099",
+      "executionException": null,
+      "responseBytes": 46792,
+      "rootCause": "Nested suite-control harness assertions fail; investigate page-driver/suite responder setup before attributing to SLiM.",
+      "failureDetails": {
+        "exceptionMessages": [],
+        "wrongAssertionMessages": [
+          "test results for suite",
+          "MySuite",
+          "should contain",
+          "table in page A never to be executed Test not run",
+          "ensure"
+        ]
+      },
+      "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
+      "evidence": "Individual page test request; result XML saved during baseline run."
+    },
+    {
+      "page": "StopTest",
+      "url": "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.StopTest?test&format=xml",
+      "attempt": 29,
+      "http": 200,
+      "status": "completed",
+      "right": 0,
+      "wrong": 1,
+      "ignored": 0,
+      "exceptions": 0,
+      "testSystem": "slim:fitnesse.slim.SlimService",
+      "connection": "Connection to running SlimService: 127.0.0.1:8099",
+      "executionException": null,
+      "responseBytes": 46697,
+      "rootCause": "Nested test-control harness assertions fail; investigate page-driver/suite responder setup before attributing to SLiM.",
+      "failureDetails": {
+        "exceptionMessages": [],
+        "wrongAssertionMessages": [
+          "test results for suite",
+          "MySuite",
+          "should contain",
+          "table never to be executed Test not run",
+          "ensure"
+        ]
+      },
+      "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
+      "evidence": "Individual page test request; result XML saved during baseline run."
+    },
+    {
+      "page": "StopTestInSuiteSetUp",
+      "url": "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.StopTestInSuiteSetUp?test&format=xml",
+      "attempt": 30,
+      "http": 200,
+      "status": "completed",
+      "right": 0,
+      "wrong": 1,
+      "ignored": 0,
+      "exceptions": 0,
+      "testSystem": "slim:fitnesse.slim.SlimService",
+      "connection": "Connection to running SlimService: 127.0.0.1:8099",
+      "executionException": null,
+      "responseBytes": 50021,
+      "rootCause": "Nested suite setup/test-control harness assertions fail.",
+      "failureDetails": {
+        "exceptionMessages": [],
+        "wrongAssertionMessages": [
+          "test results for suite",
+          "MySuite",
+          "should contain",
+          "table in page setup never to be executed Test not run",
+          "ensure"
+        ]
+      },
+      "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
+      "evidence": "Individual page test request; result XML saved during baseline run."
+    },
+    {
+      "page": "TableTableSuite.SymbolsInTableTableManagedByTheFixture",
+      "url": "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TableTableSuite.SymbolsInTableTableManagedByTheFixture?test&format=xml",
+      "attempt": 31,
+      "http": 200,
+      "status": "completed",
+      "right": 0,
+      "wrong": 1,
+      "ignored": 0,
+      "exceptions": 0,
+      "testSystem": "slim:fitnesse.slim.SlimService",
+      "connection": "Connection to running SlimService: 127.0.0.1:8099",
+      "executionException": null,
+      "responseBytes": 42109,
+      "rootCause": "Missing TableTableIncFirstCol and TestQuery.echo_int fixture behavior.",
+      "failureDetails": {
+        "exceptionMessages": [
+          "Method echo_int[1] not found in Fitnesse::Slim::Test::TestQuery",
+          "Could not find class TableTableIncFirstCol"
+        ],
+        "wrongAssertionMessages": [
+          "expected [ 104 ]"
+        ]
+      },
+      "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
+      "evidence": "Individual page test request; result XML saved during baseline run."
+    },
+    {
+      "page": "TestChineseWords",
+      "url": "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestChineseWords?test&format=xml",
+      "attempt": 32,
+      "http": 200,
+      "status": "completed",
+      "right": 0,
+      "wrong": 0,
+      "ignored": 0,
+      "exceptions": 1,
+      "testSystem": "slim:fitnesse.slim.SlimService",
+      "connection": "Connection to running SlimService: 127.0.0.1:8099",
+      "executionException": null,
+      "responseBytes": 30692,
+      "rootCause": "Missing EchoScript.echo_to_stdout method.",
+      "failureDetails": {
+        "exceptionMessages": [
+          "Method echo_to_stdout[1] not found in Fitnesse::Slim::Test::EchoScript"
+        ],
+        "wrongAssertionMessages": []
+      },
+      "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
+      "evidence": "Individual page test request; result XML saved during baseline run."
+    },
+    {
+      "page": "TestComparators",
+      "url": "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestComparators?test&format=xml",
+      "attempt": 33,
+      "http": 200,
+      "status": "completed",
+      "right": 1,
+      "wrong": 0,
+      "ignored": 0,
+      "exceptions": 0,
+      "testSystem": "slim:fitnesse.slim.SlimService",
+      "connection": "Connection to running SlimService: 127.0.0.1:8099",
+      "executionException": null,
+      "responseBytes": 65213,
+      "rootCause": "Passes.",
+      "failureDetails": {
+        "exceptionMessages": [],
+        "wrongAssertionMessages": []
+      },
+      "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
+      "evidence": "Individual page test request; result XML saved during baseline run."
+    },
+    {
+      "page": "TestCustomComparators",
+      "url": "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestCustomComparators?test&format=xml",
+      "attempt": 34,
+      "http": 200,
+      "status": "completed",
+      "right": 0,
+      "wrong": 1,
+      "ignored": 0,
+      "exceptions": 0,
+      "testSystem": "slim:fitnesse.slim.SlimService",
+      "connection": "Connection to running SlimService: 127.0.0.1:8099",
+      "executionException": null,
+      "responseBytes": 35028,
+      "rootCause": "FitNesse custom-comparator page harness expectation fails; investigate comparator registration/fixture setup.",
+      "failureDetails": {
+        "exceptionMessages": [],
+        "wrongAssertionMessages": [
+          "test results for page",
+          "TestPage",
+          "should contain",
+          "t*t matches test",
+          "ensure"
+        ]
+      },
+      "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
+      "evidence": "Individual page test request; result XML saved during baseline run."
+    },
+    {
+      "page": "TestCustomConverter",
+      "url": "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestCustomConverter?test&format=xml",
+      "attempt": 35,
+      "http": 200,
+      "status": "completed",
+      "right": 0,
+      "wrong": 0,
+      "ignored": 0,
+      "exceptions": 1,
+      "testSystem": "slim:fitnesse.slim.SlimService",
+      "connection": "Connection to running SlimService: 127.0.0.1:8099",
+      "executionException": null,
+      "responseBytes": 42935,
+      "rootCause": "Missing TestSlimWithConverter and converter-oriented EchoFixture methods.",
+      "failureDetails": {
+        "exceptionMessages": [
+          "Could not find class TestSlimWithConverter",
+          "Method reset_converters[0] not found in Fitnesse::Fixtures::EchoFixture",
+          "Method get_object[0] not found in Fitnesse::Fixtures::EchoFixture",
+          "Method get_list[0] not found in Fitnesse::Fixtures::EchoFixture",
+          "Method get_array_list[0] not found in Fitnesse::Fixtures::EchoFixture",
+          "Method same_list[1] not found in Fitnesse::Fixtures::EchoFixture",
+          "Method set_list_converter[0] not found in Fitnesse::Fixtures::EchoFixture",
+          "Method remove_list_converter[0] not found in Fitnesse::Fixtures::EchoFixture"
+        ],
+        "wrongAssertionMessages": []
+      },
+      "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
+      "evidence": "Individual page test request; result XML saved during baseline run."
+    },
+    {
+      "page": "TestDetailedDiff",
+      "url": "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestDetailedDiff?test&format=xml",
+      "attempt": 36,
+      "http": 200,
+      "status": "completed",
+      "right": 0,
+      "wrong": 0,
+      "ignored": 0,
+      "exceptions": 1,
+      "testSystem": "slim:fitnesse.slim.SlimService",
+      "connection": "Connection to running SlimService: 127.0.0.1:8099",
+      "executionException": "Could not send/receive data with SUT",
+      "responseBytes": 27892,
+      "perlServerExit": 255,
+      "rootCause": "Perl SLiM executor exits during nested test execution; FitNesse reports transport failure.",
+      "failureDetails": {
+        "exceptionMessages": [],
+        "wrongAssertionMessages": []
+      },
+      "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
+      "evidence": "Individual page test request; result XML saved during baseline run."
+    },
+    {
+      "page": "TestExceptionIsDisplayed",
+      "url": "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestExceptionIsDisplayed?test&format=xml",
+      "attempt": 37,
+      "http": 200,
+      "status": "completed",
+      "right": 0,
+      "wrong": 0,
+      "ignored": 0,
+      "exceptions": 1,
+      "testSystem": "slim:fitnesse.slim.SlimService",
+      "connection": "Connection to running SlimService: 127.0.0.1:8099",
+      "executionException": "Could not send/receive data with SUT",
+      "responseBytes": 28888,
+      "perlServerExit": 255,
+      "rootCause": "Perl SLiM executor exits during nested test execution; FitNesse reports transport failure.",
+      "failureDetails": {
+        "exceptionMessages": [],
+        "wrongAssertionMessages": []
+      },
+      "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
+      "evidence": "Individual page test request; result XML saved during baseline run."
+    },
+    {
+      "page": "TestOrderedQueryWithDuplicateRows",
+      "url": "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestOrderedQueryWithDuplicateRows?test&format=xml",
+      "attempt": 38,
+      "http": 200,
+      "status": "completed",
+      "right": 0,
+      "wrong": 0,
+      "ignored": 0,
+      "exceptions": 1,
+      "testSystem": "slim:fitnesse.slim.SlimService",
+      "connection": "Connection to running SlimService: 127.0.0.1:8099",
+      "executionException": null,
+      "responseBytes": 32545,
+      "rootCause": "Missing DuplicateRows fixture.",
+      "failureDetails": {
+        "exceptionMessages": [
+          "Could not find class DuplicateRows"
+        ],
+        "wrongAssertionMessages": []
+      },
+      "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
+      "evidence": "Individual page test request; result XML saved during baseline run."
+    },
+    {
+      "page": "TestPageWithInclude",
+      "url": "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestPageWithInclude?test&format=xml",
+      "attempt": 39,
+      "http": 200,
+      "status": "completed",
+      "right": 0,
+      "wrong": 0,
+      "ignored": 0,
+      "exceptions": 1,
+      "testSystem": "slim:fitnesse.slim.SlimService",
+      "connection": "Connection to running SlimService: 127.0.0.1:8099",
+      "executionException": null,
+      "responseBytes": 31263,
+      "rootCause": "Missing EchoFixture.set_name/name methods.",
+      "failureDetails": {
+        "exceptionMessages": [
+          "Method set_name[1] not found in Fitnesse::Fixtures::EchoFixture",
+          "Method name[0] not found in Fitnesse::Fixtures::EchoFixture"
+        ],
+        "wrongAssertionMessages": []
+      },
+      "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
+      "evidence": "Individual page test request; result XML saved during baseline run."
+    },
+    {
+      "page": "TestScriptTable",
+      "url": "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestScriptTable?test&format=xml",
+      "attempt": 40,
+      "http": 200,
+      "status": "completed",
+      "right": 1,
+      "wrong": 0,
+      "ignored": 0,
+      "exceptions": 0,
+      "testSystem": "slim:fitnesse.slim.SlimService",
+      "connection": "Connection to running SlimService: 127.0.0.1:8099",
+      "executionException": null,
+      "responseBytes": 31302,
+      "rootCause": "Passes.",
+      "failureDetails": {
+        "exceptionMessages": [],
+        "wrongAssertionMessages": []
+      },
+      "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
+      "evidence": "Individual page test request; result XML saved during baseline run."
+    },
+    {
+      "page": "TestScriptTableDisplayParameterValue",
+      "url": "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestScriptTableDisplayParameterValue?test&format=xml",
+      "attempt": 41,
+      "http": 200,
+      "status": "completed",
+      "right": 1,
+      "wrong": 0,
+      "ignored": 0,
+      "exceptions": 0,
+      "testSystem": "slim:fitnesse.slim.SlimService",
+      "connection": "Connection to running SlimService: 127.0.0.1:8099",
+      "executionException": null,
+      "responseBytes": 34944,
+      "rootCause": "Passes.",
+      "failureDetails": {
+        "exceptionMessages": [],
+        "wrongAssertionMessages": []
+      },
+      "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
+      "evidence": "Individual page test request; result XML saved during baseline run."
+    },
+    {
+      "page": "TestSequentialArgumentProcessing",
+      "url": "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestSequentialArgumentProcessing?test&format=xml",
+      "attempt": 42,
+      "http": 200,
+      "status": "completed",
+      "right": 0,
+      "wrong": 0,
+      "ignored": 0,
+      "exceptions": 1,
+      "testSystem": "slim:fitnesse.slim.SlimService",
+      "connection": "Connection to running SlimService: 127.0.0.1:8099",
+      "executionException": null,
+      "responseBytes": 59056,
+      "rootCause": "Missing TestSlim.concatenate_three_args method.",
+      "failureDetails": {
+        "exceptionMessages": [
+          "Method concatenate_three_args[3] not found in Fitnesse::Slim::Test::TestSlim",
+          "concatenate",
+          "a",
+          "and",
+          "b",
+          "c",
+          "x",
+          "y",
+          "z",
+          "conCatentate a b c",
+          "conCatentate;",
+          "check"
+        ],
+        "wrongAssertionMessages": []
+      },
+      "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
+      "evidence": "Individual page test request; result XML saved during baseline run."
+    },
+    {
+      "page": "TestSubsetQuery",
+      "url": "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestSubsetQuery?test&format=xml",
+      "attempt": 43,
+      "http": 200,
+      "status": "completed",
+      "right": 0,
+      "wrong": 0,
+      "ignored": 0,
+      "exceptions": 1,
+      "testSystem": "slim:fitnesse.slim.SlimService",
+      "connection": "Connection to running SlimService: 127.0.0.1:8099",
+      "executionException": null,
+      "responseBytes": 33698,
+      "rootCause": "Missing DuplicateRows fixture.",
+      "failureDetails": {
+        "exceptionMessages": [
+          "Could not find class DuplicateRows"
+        ],
+        "wrongAssertionMessages": []
+      },
+      "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
+      "evidence": "Individual page test request; result XML saved during baseline run."
+    },
+    {
+      "page": "TestSystemSlimSuite.ErrorSituationsDuringSlimServerStartup.B_TimeoutAsSlimServerDiesBeforeConnecting",
+      "url": "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestSystemSlimSuite.ErrorSituationsDuringSlimServerStartup.B_TimeoutAsSlimServerDiesBeforeConnecting?test&format=xml",
+      "attempt": 44,
+      "http": 200,
+      "status": "completed",
+      "right": 0,
+      "wrong": 1,
+      "ignored": 0,
+      "exceptions": 0,
+      "testSystem": "SLIM:fitnesse.slim.SlimService",
+      "connection": "Connection to running SlimService: 127.0.0.1:8099",
+      "executionException": null,
+      "responseBytes": 31473,
+      "rootCause": "Negative startup test page assertion fails under the running external-server harness; inspect expected startup orchestration.",
+      "failureDetails": {
+        "exceptionMessages": [],
+        "wrongAssertionMessages": [
+          "ensure"
+        ]
+      },
+      "testSystemConfirmed": "SLIM:fitnesse.slim.SlimService",
+      "evidence": "Individual page test request; result XML saved during baseline run."
+    },
+    {
+      "page": "TestSystemSlimSuite.ErrorSituationsDuringSlimServerStartup.C_TimeoutAsNoServerAtGivenSocket",
+      "url": "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestSystemSlimSuite.ErrorSituationsDuringSlimServerStartup.C_TimeoutAsNoServerAtGivenSocket?test&format=xml",
+      "attempt": 45,
+      "http": 200,
+      "status": "completed",
+      "right": 0,
+      "wrong": 1,
+      "ignored": 0,
+      "exceptions": 0,
+      "testSystem": "SLIM:fitnesse.slim.SlimService",
+      "connection": "Connection to running SlimService: 127.0.0.1:8099",
+      "executionException": null,
+      "responseBytes": 32505,
+      "rootCause": "Negative startup test page needs isolated no-server setup and TestSlim.content_matches helper.",
+      "failureDetails": {
+        "exceptionMessages": [
+          "Method content_matches[1] not found in Fitnesse::Slim::Test::TestSlim"
+        ],
+        "wrongAssertionMessages": [
+          "ensure"
+        ]
+      },
+      "testSystemConfirmed": "SLIM:fitnesse.slim.SlimService",
+      "evidence": "Individual page test request; result XML saved during baseline run."
+    },
+    {
+      "page": "TestSystemSlimSuite.HowtoEnforceA_TimelimitPerTestCommand.NotWorking_SettingSlimTimeout",
+      "url": "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestSystemSlimSuite.HowtoEnforceA_TimelimitPerTestCommand.NotWorking_SettingSlimTimeout?test&format=xml",
+      "attempt": 46,
+      "http": 200,
+      "status": "completed",
+      "right": 0,
+      "wrong": 0,
+      "ignored": 0,
+      "exceptions": 1,
+      "testSystem": "SLIM:fitnesse.slim.SlimService",
+      "connection": "Connection to running SlimService: 127.0.0.1:8099",
+      "executionException": null,
+      "responseBytes": 28231,
+      "rootCause": "Missing Sleep fixture and timeout methods; expected limited-support page may intentionally assert nonworking behavior.",
+      "failureDetails": {
+        "exceptionMessages": [
+          "Could not find class Fitnesse::Slim::Test::Sleep",
+          "Method set_timer[1] not found in Fitnesse::Fixtures::EchoFixture",
+          "Method do_sleep[0] not found in Fitnesse::Fixtures::EchoFixture"
+        ],
+        "wrongAssertionMessages": []
+      },
+      "testSystemConfirmed": "SLIM:fitnesse.slim.SlimService",
+      "evidence": "Individual page test request; result XML saved during baseline run."
+    },
+    {
+      "page": "TestSystemSlimSuite.HowtoEnforceA_TimelimitPerTestCommand.PartiallyWorking_SettingSlimFlags",
+      "url": "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestSystemSlimSuite.HowtoEnforceA_TimelimitPerTestCommand.PartiallyWorking_SettingSlimFlags?test&format=xml",
+      "attempt": 47,
+      "http": 200,
+      "status": "completed",
+      "right": 0,
+      "wrong": 0,
+      "ignored": 0,
+      "exceptions": 1,
+      "testSystem": "SLIM:fitnesse.slim.SlimService",
+      "connection": "Connection to running SlimService: 127.0.0.1:8099",
+      "executionException": null,
+      "responseBytes": 45149,
+      "rootCause": "Missing Sleep and timer methods; TearDown currently receives calls to unsupported methods.",
+      "failureDetails": {
+        "exceptionMessages": [
+          "Could not find class Fitnesse::Slim::Test::Sleep",
+          "Method set_timer[1] not found in Fitnesse::Fixtures::EchoFixture",
+          "Method do_sleep[0] not found in Fitnesse::Fixtures::EchoFixture",
+          "fitnesse.slim.test.Sleep Could not find class Fitnesse::Slim::Test::Sleep",
+          "Method set_timer[1] not found in Fitnesse::Fixtures::TearDown",
+          "Method do_sleep[0] not found in Fitnesse::Fixtures::TearDown"
+        ],
+        "wrongAssertionMessages": []
+      },
+      "testSystemConfirmed": "SLIM:fitnesse.slim.SlimService",
+      "evidence": "Individual page test request; result XML saved during baseline run."
+    },
+    {
+      "page": "TestSystemSlimSuite.TimeoutInSlimTestSystem",
+      "url": "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestSystemSlimSuite.TimeoutInSlimTestSystem?test&format=xml",
+      "attempt": 48,
+      "http": 200,
+      "status": "completed",
+      "right": 0,
+      "wrong": 1,
+      "ignored": 0,
+      "exceptions": 0,
+      "testSystem": "slim:fitnesse.slim.SlimService",
+      "connection": "Connection to running SlimService: 127.0.0.1:8099",
+      "executionException": null,
+      "responseBytes": 37166,
+      "rootCause": "Timeout test completes with a timeout marker, but its outer debug-page assertions fail; likely harness expectation/configuration.",
+      "failureDetails": {
+        "exceptionMessages": [],
+        "wrongAssertionMessages": [
+          "test results for page in debug mode",
+          "TestPage",
+          "should contain",
+          "The instruction timed out after 1 seconds",
+          "ensure",
+          "span class=\"pass\">fitnesse.fixtures.Sleep"
+        ]
+      },
+      "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
+      "evidence": "Individual page test request; result XML saved during baseline run."
+    },
+    {
+      "page": "TestTryingParameterizationIsntTooGreedy",
+      "url": "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestTryingParameterizationIsntTooGreedy?test&format=xml",
+      "attempt": 49,
+      "http": 200,
+      "status": "completed",
+      "right": 0,
+      "wrong": 0,
+      "ignored": 0,
+      "exceptions": 1,
+      "testSystem": "slim:fitnesse.slim.SlimService",
+      "connection": "Connection to running SlimService: 127.0.0.1:8099",
+      "executionException": null,
+      "responseBytes": 33950,
+      "rootCause": "Missing LoginDialogDriver fixture.",
+      "failureDetails": {
+        "exceptionMessages": [
+          "Could not find class LoginDialogDriver",
+          "connect as",
+          "bob",
+          "with",
+          "xyzz",
+          "Method login_with_username_and_password[2] not found in Fitnesse::Slim::Test::TestSlim"
+        ],
+        "wrongAssertionMessages": []
+      },
+      "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
+      "evidence": "Individual page test request; result XML saved during baseline run."
+    },
+    {
+      "page": "TestTwoIdenticalTablesOnPageDontConflict",
+      "url": "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestTwoIdenticalTablesOnPageDontConflict?test&format=xml",
+      "attempt": 50,
+      "http": 200,
+      "status": "completed",
+      "right": 1,
+      "wrong": 0,
+      "ignored": 0,
+      "exceptions": 0,
+      "testSystem": "slim:fitnesse.slim.SlimService",
+      "connection": "Connection to running SlimService: 127.0.0.1:8099",
+      "executionException": null,
+      "responseBytes": 31297,
+      "rootCause": "Passes.",
+      "failureDetails": {
+        "exceptionMessages": [],
+        "wrongAssertionMessages": []
+      },
+      "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
+      "evidence": "Individual page test request; result XML saved during baseline run."
+    }
+  ]
+}
