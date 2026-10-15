@@ -5,6 +5,7 @@ use warnings;
 
 use Encode qw(decode encode_utf8 FB_DEFAULT);
 use HTTP::Tiny;
+use HTML::Entities qw(decode_entities);
 use Fitnesse::Fixtures::ResponseContext;
 
 sub new {
@@ -63,14 +64,14 @@ sub content {
 
 sub content_contains {
   my($self,$str) = @_;
-  index($self->_content, $str) >= 0 ? "true" : "false";
+  index($self->_decoded_content, $str) >= 0 ? "true" : "false";
 }
 
 sub content_matches {
   my($self,$pattern) = @_;
   my $regex = eval { qr/$pattern/s };
   die "invalid content pattern: $@" if $@;
-  $self->_content =~ $regex ? "true" : "false";
+  $self->_decoded_content =~ $regex ? "true" : "false";
 }
 
 sub line_number_containing {
@@ -128,6 +129,10 @@ sub _content {
   my $content = $self->{response}->{content} // "";
   return $content if utf8::is_utf8($content);
   return decode("UTF-8", $content, FB_DEFAULT);
+}
+
+sub _decoded_content {
+  decode_entities($_[0]->_content);
 }
 
 1;

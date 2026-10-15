@@ -109,7 +109,7 @@ test {
 
 test {
   add_statement "id", "call", "no_such_instance", "no_such_method";
-  my $no_instance = expect_exception 'NO_INSTANCE no_such_instance>>';
+  my $no_instance = expect_exception 'NO_INSTANCE no_such_instance.no_such_method.>>';
   check_results "id" => $no_instance, "can't call a method on an instance that doesn't exist";
 };
 

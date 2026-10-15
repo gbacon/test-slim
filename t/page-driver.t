@@ -24,7 +24,7 @@ my $server_pid = fork();
 die "fork mock FitNesse listener: $!" unless defined $server_pid;
 if (!$server_pid) {
   open my $requests, ">", $capture_path or die "open request capture: $!";
-  for (1 .. 5) {
+  for (1 .. 6) {
     my $client = $listener->accept or die "accept mock FitNesse request: $!";
     binmode $client;
     my $request_line = <$client> // "";
@@ -46,6 +46,9 @@ if (!$server_pid) {
     my($status,$reason,$content) = (200,"OK","saved");
     if ($request_line =~ m{^GET /Probe\?test }) {
       $content = "line one\nneedle in line two\nlast line";
+    }
+    elsif ($request_line =~ m{^GET /Encoded\?test }) {
+      $content = '<td>tear down after &lt;a href="MySuite.TestPageA"&gt;TestPageA&lt;/a&gt;</td>';
     }
     elsif ($request_line =~ m{^GET /Error\?test }) {
       ($status,$reason,$content) = (500,"Internal Server Error","<html>FitNesse error</html>");
@@ -90,13 +93,21 @@ is($driver->line_number_containing("last line"), 2,
   "line_number_containing counts non-trailing lines like the Java fixture");
 is($driver->line_number_containing("absent"), -1,
   "line_number_containing returns -1 when the response does not contain the text");
+is($driver->request_page("Encoded?test"), 200,
+  "encoded response fixture is available for content inspection");
+is($driver->content, '<td>tear down after &lt;a href="MySuite.TestPageA"&gt;TestPageA&lt;/a&gt;</td>',
+  "content returns the original response markup");
+is($driver->content_contains('<a href="MySuite.TestPageA">TestPageA</a>'), "true",
+  "content_contains inspects HTML-unescaped response contents like upstream PageDriver");
+is($driver->content_matches('tear down after <a href="MySuite\.TestPageA"'), "true",
+  "content_matches uses the same decoded content source");
 
 my $other = Fitnesse::Fixtures::PageDriver->new;
 is($other->request_page("Error?test"), 500,
   "HTTP error responses return their status rather than being mistaken for success");
 is($other->content, "<html>FitNesse error</html>",
   "HTTP error response bodies are retained for inspection");
-is($driver->content, "line one\nneedle in line two\nlast line",
+is($driver->content, '<td>tear down after &lt;a href="MySuite.TestPageA"&gt;TestPageA&lt;/a&gt;</td>',
   "response state belongs to each PageDriver instance");
 
 waitpid($server_pid, 0);

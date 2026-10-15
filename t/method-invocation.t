@@ -73,7 +73,7 @@ test {
   my $result = $executor->call("no_such_instance", "no_such_method", "arg");
   like($result,
        qr/\Q$Test::Slim::Statement::EXCEPTION_TAG\E
-          message:<<NO_INSTANCE  \s+  no_such_instance>>/x,
+          message:<<NO_INSTANCE  \s+  no_such_instance\.no_such_method\.>>/x,
        "can't call a method on an instance that doesn't exist");
 };
 

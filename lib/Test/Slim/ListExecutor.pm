@@ -16,7 +16,14 @@ sub executor { $_[0]->{EXECUTOR} }
 
 sub execute {
   my($self,@statements) = @_;
-  map Test::Slim::Statement->execute($self->executor, @$_), @statements;
+  my $executor = $self->executor;
+  my @results;
+  for my $statement (@statements) {
+    last if $executor->stop_requested;
+    push @results, Test::Slim::Statement->execute($executor, @$statement);
+  }
+  $executor->reset_stop_requested;
+  @results;
 }
 
 1;

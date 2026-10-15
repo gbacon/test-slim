@@ -1,12 +1,12 @@
 # FitNesse SLiM acceptance baseline
 
-Updated 2026-10-15 on `codex/complete-slim`, after automatic SlimHelperLibrary actor-stack support. The installed FitNesse distribution is v20251025.
+Updated 2026-10-15 on `codex/complete-slim`, after implementing upstream stop and exception fixtures. The installed FitNesse distribution is v20251025.
 
 FitNesse ran all pages against the external Perl SLiM server at `127.0.0.1:8099`. Every page response identified `fitnesse.slim.SlimService` and the external connection; all 50 returned HTTP 200. The Perl server exited zero times.
 
 ## Perl tests
 
-`bin/test-dev`: **PASS**, 26 files and 307 tests. Four known TODO-marked failures remain (three boilerplate checks and one Unicode-return case). The 19 focused SlimHelperLibrary regressions cover executor construction, dispatch precedence, nested actor-stack behavior, object identity, state isolation, empty-stack errors, and upstream TestSlim stringification.
+`bin/test-dev`: **PASS**, 27 files and 328 tests. Four known TODO-marked failures remain (three boilerplate checks and one Unicode-return case). The 17 focused stop/exception regressions cover ordinary exception continuation, stop-test and stop-suite markers, current-batch suppression, next-batch reset, constructor errors, and decision-table SlimError methods.
 
 ## PageDriver behavior implemented
 
@@ -32,15 +32,19 @@ The installed FitNesse v20251025 classes expose a one-string constructor and `qu
 
 `QueryTableSuite.SetContextValue` also uses the SLiM 0.4 `assign` instruction. The server now advertises protocol V0.4 and implements `assign` by storing the supplied value and returning `OK`; null remains an undefined symbol value. The class metadata in the installed FitNesse jar confirms `SplitFixture(String)`, `DuplicateRows(String)`, and `query()`; the unchanged acceptance pages validate the row structures, ordering, duplicate handling, matching, and symbol assignment end to end.
 
+## Stop and exception behavior implemented
+
+The installed FitNesse v20251025 implementations of `ConstructorThrows`, `DecisionTableExecuteThrows`, and the SLiM exception path were used as the behavioral reference. The Perl `ConstructorThrows` fixture raises ordinary, StopTest, and StopSuite constructor exceptions. `DecisionTableExecuteThrows` reproduces the upstream state, method errors, and table hooks. `TestSlim` now exposes the exception methods used by the acceptance page. The statement executor formats ordinary and Java-style exception payloads, and returns the `ABORT_SLIM_TEST` or `ABORT_SLIM_SUITE` marker for stopping exceptions. The list executor stops the remainder of the current instruction batch and resets the stop request before the next batch. FitNesse then applies its own page/suite rules, including running the appropriate teardown.
+
+`StopSuite`, `StopTest`, `StopTestInSuiteSetUp`, and `TestExceptionIsDisplayed` now pass their outer acceptance checks. Their nested tests intentionally contain exceptions; those do not count as outer failures because the pages inspect and accept them. `IgnoredTestsShouldColorGray` verifies the one nested stop exception and that later script statements are not run. Two of its outer checks remain incompatible with the installed renderer: they expect `class="ignore">Not Executed...`, while FitNesse v20251025 emits `class="slimRowColor3"><td>Not Executed... <span class="ignore">Test not run</span>`. This is a rendering/acceptance markup mismatch; stop behavior itself is correct.
+
 ## Current acceptance results
 
-The page-by-page XML inventory reports **26 conformant pages and 24 non-conformant pages**. Raw page assertion totals are **251 right, 59 wrong, 2 ignored, and 177 exceptions**. All 50 pages completed through the external Perl service at `127.0.0.1:8099`; the listener stayed alive with zero server exits. `ChainWithInstanceTest` and `LibrarySuite.HowToAddFixturesWithParametersToTheLibrary` are newly conformant. All 24 pages that passed before this increment remain conformant.
+The page-by-page XML inventory reports **30 conformant pages and 20 non-conformant pages**. Raw page assertion totals are **280 right, 30 wrong, 2 ignored, and 177 exceptions**. All 50 pages completed through the external Perl service at `127.0.0.1:8099`; FitNesse identified `slim:fitnesse.slim.SlimService` and the configured connection on every page. The Perl listener remained available, with **zero server exits**.
 
-The earlier PageDriver, ResponseExaminer, and query-fixture increments remain part of this baseline. Compared with the immediately prior inventory, this increment adds two conformant pages, reduces wrong assertions from 60 to 59, and reduces exceptions from 192 to 177; the two ignored SetContextValue cells are unchanged and its outer assertions pass. All 50 final responses came from the configured external Perl SLiM server on port 8099, with zero server exits. The current page results, failure evidence, and full before-and-after status comparison are stored in the [machine-readable JSON inventory](fitnesse-slim-acceptance-baseline.json).
+The four newly conformant pages are `StopSuite`, `StopTest`, `StopTestInSuiteSetUp`, and `TestExceptionIsDisplayed`. All 26 pages that were conformant before this increment remain conformant. Compared with the immediately prior baseline, right assertions increased from 251 to 280 and wrong assertions fell from 59 to 30; ignored assertions stayed at 2 and exceptions stayed at 177. These are raw page assertions, not the nested exception outcomes that the pages intentionally verify. The full before-and-after status for all 50 pages is recorded in the [machine-readable JSON inventory](fitnesse-slim-acceptance-baseline.json).
 
-Failure classifications group 24 pages by primary cause: 1 confirmed engine gap, 19 fixture gaps, 3 harness or nested-setup limitations, and 1 environment-limited page. These categories do not imply 24 independent protocol defects. StopSuite, StopTest, and StopTestInSuiteSetUp execute nested suites and expose missing `ConstructorThrows`/generated fixture classes; those are fixture gaps, not PageDriver failures. The custom rendering and comparator pages receive HTTP responses but their root-level nested pages do not receive all outer suite plugin/comparator setup. The remaining startup-timeout harness page receives a 200 response without the expected dead-runner message. Response inspection now works; the remaining `IgnoredTestsShouldColorGray`, `TestDetailedDiff`, and `TestExceptionIsDisplayed` failures are caused by missing target fixtures or methods.
-
-The previously committed baseline’s aggregate 17-right/14-wrong/19-exception values were page outcome markers (one marker per page), not assertion totals from page XML. They remain useful for historical page classification, but should not be subtracted from the current raw assertion totals. The JSON records this distinction. Historical verification snapshots in the JSON retain their original counts and identify their corresponding increment.
+The 20 remaining non-conformant pages comprise 14 fixture gaps, 4 FitNesse harness/rendering limitations, 1 confirmed hash-reference engine gap, and 1 environment-limited timeout page. The stop fixture increment closes four of its five target pages. `IgnoredTestsShouldColorGray` now exercises the intended exception and not-run state; its two remaining failures are caused by changed rendered CSS markup in FitNesse v20251025 rather than missing fixture behavior.
 
 ## Per-page results
 
@@ -49,23 +53,23 @@ The previously committed baseline’s aggregate 17-right/14-wrong/19-exception v
 | `BaseLineDecisionTable.ComparatorsAreSupported` | 10 | 0 | 0 | 0 | conformant | The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server. |
 | `BaseLineDecisionTable.MakingTheBaselineTableTheDefaultDecisionTable` | 7 | 0 | 0 | 0 | conformant | The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server. |
 | `BaseLineDecisionTable.ScenariosAreSupported` | 10 | 0 | 0 | 0 | conformant | The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server. |
-| `BaseLineDecisionTable.TestFailuresAreMarked` | 8 | 0 | 0 | 0 | conformant | ResponseExaminer extracts nested assertion counts and rendered result cells; all outer checks pass. The embedded test intentionally contains two wrong and two ignored cells, which the outer page verifies. |
+| `BaseLineDecisionTable.TestFailuresAreMarked` | 8 | 0 | 0 | 0 | conformant | ResponseExaminer extracts nested assertion totals and rendered cells; every outer assertion passes. The embedded target page intentionally contains two wrong and two ignored checks. |
 | `BaseLineDecisionTable` | 17 | 0 | 0 | 0 | conformant | The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server. |
-| `ChainWithInstanceTest` | 7 | 0 | 0 | 0 | conformant | Automatic SlimHelperLibrary getFixture, pushFixture, and popFixture restore the exact actor instance and state. |
+| `ChainWithInstanceTest` | 7 | 0 | 0 | 0 | conformant | The page passes with automatic getFixture, pushFixture, and popFixture support. |
 | `CustomTableRenderingAddedByPluginTest` | 5 | 1 | 0 | 0 | harness_limited | The nested page runs, but FitNesse output reports Could not find class MyUseCase/MyFixture. The custom alias/rendering setup from the outer suite is not available to this root-level HTTP test page. |
 | `DefineAliasInPluginTest` | 2 | 0 | 0 | 0 | conformant | The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server. |
-| `DefineAliasTest` | 8 | 0 | 0 | 67 | fixture_gap | AddUpChange is absent; NO_INSTANCE scriptTableActor messages cascade after the fixture constructor fails. |
+| `DefineAliasTest` | 8 | 0 | 0 | 67 | fixture_gap | AddUpChange is missing. The helper now reports NO_INSTANCE scriptTableActor when the missing fixture prevents the actor from being created; these follow-on errors cascade from fixture construction. |
 | `HashTableTests.HashTableWithHtmlContent` | 0 | 0 | 0 | 2 | fixture_gap | Hash input conversion works, but hash_is and echo_and_log fixture methods are absent. |
 | `HashTableTests.ShouldReturnHashTable` | 0 | 1 | 0 | 0 | engine_gap | The Perl hashref is returned as HASH(0x...), a process-specific pointer string rather than a FitNesse-compatible hash value. |
 | `HybridDecisionTable.ImplementDynamicDecisionTableWithHybridTable` | 0 | 0 | 0 | 25 | fixture_gap | AddUpChange is absent, so hybrid getter/setter dispatch is not reached. |
-| `IgnoredTestsShouldColorGray` | 3 | 4 | 0 | 0 | fixture_gap | ResponseExaminer now runs. The nested page still cannot exercise its expected stop-and-ignore flow because the `ConstructorThrows` fixture is missing. |
-| `LibrarySuite.HowToAddFixturesWithParametersToTheLibrary` | 5 | 0 | 0 | 0 | conformant | Automatic getFixture makes the actor available as a library; all outer checks pass. |
+| `IgnoredTestsShouldColorGray` | 5 | 2 | 0 | 0 | harness_limited | StopTest now produces the expected nested exception and ignored execution state. The two remaining outer regex checks expect class="ignore" immediately before the script input text; FitNesse v20251025 renders the row as class="slimRowColor3" and marks the result with <span class="ignore">Test not run</span>. This is a FitNesse rendering/acceptance-version mismatch, not a SLiM stop defect. |
+| `LibrarySuite.HowToAddFixturesWithParametersToTheLibrary` | 5 | 0 | 0 | 0 | conformant | The page passes with automatic getFixture, pushFixture, and popFixture support. |
 | `LibrarySuite.LastLibraryPreceedsEarlierLibraryTest` | 2 | 0 | 0 | 0 | conformant | The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server. |
 | `LibrarySuite.LibraryInSetUpSuite.LibraryInSetUpAndPageTest` | 1 | 0 | 0 | 2 | fixture_gap | LibraryInSetUp and setup-library call tracking are absent. |
 | `LibrarySuite.LibraryInSetUpSuite.LibraryInSetUpTest` | 0 | 0 | 0 | 2 | fixture_gap | LibraryInSetUp and setup-library call tracking are absent. |
 | `LibrarySuite.OneLibraryTest` | 1 | 0 | 0 | 0 | conformant | The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server. |
-| `QueryTableSuite.SetContextValue` | 4 | 0 | 2 | 0 | conformant | SplitFixture rows match and the SLiM 0.4 assign instruction transfers the selected values into symbols; two query-table symbol cells are intentionally ignored. |
-| `QueryTableSuite.TestMatching` | 27 | 0 | 0 | 0 | conformant | SplitFixture query rows pass ordered, subset, multi-column, regex, and numeric comparator matching. |
+| `QueryTableSuite.SetContextValue` | 4 | 0 | 2 | 0 | conformant | All page assertions pass. SetContextValue also reports two ignored symbol-assignment cells, which are expected query-table behavior. |
+| `QueryTableSuite.TestMatching` | 27 | 0 | 0 | 0 | conformant | All page assertions pass. SetContextValue also reports two ignored symbol-assignment cells, which are expected query-table behavior. |
 | `ScenarioTestSuite.ScenarioWithOutputParametersInDecisionTables` | 6 | 0 | 0 | 0 | conformant | The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server. |
 | `ScenarioTestSuite.ScenarioWithOutputParametersInScripts` | 4 | 0 | 0 | 0 | conformant | The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server. |
 | `ScenarioTestSuite.ScriptSubclassUsedForDecisionTable` | 2 | 0 | 0 | 0 | conformant | The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server. |
@@ -73,22 +77,22 @@ The previously committed baseline’s aggregate 17-right/14-wrong/19-exception v
 | `SegregationOfRequirementsAndImplementation` | 12 | 0 | 0 | 0 | conformant | The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server. |
 | `SlimSymbols.NamingConvention` | 5 | 0 | 0 | 0 | conformant | The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server. |
 | `SlimSymbols.SlimSymbolManipulation` | 18 | 0 | 0 | 0 | conformant | The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server. |
-| `StopSuite` | 2 | 4 | 0 | 0 | fixture_gap | The nested suite request runs successfully, then fails because its generated TestPageA/TestPageB tables resolve as missing classes; the first missing stopper fixture is ConstructorThrows. |
-| `StopTest` | 3 | 3 | 0 | 0 | fixture_gap | The nested suite request runs successfully, then fails because ConstructorThrows and TableNeverToBeExecuted fixture classes are absent. |
-| `StopTestInSuiteSetUp` | 2 | 5 | 0 | 0 | fixture_gap | The nested suite request runs successfully, then fails because ConstructorThrows and its generated setup/page table fixtures are absent. |
+| `StopSuite` | 6 | 0 | 0 | 0 | conformant | ConstructorThrows raises the upstream StopSuite exception; the executor returns ABORT_SLIM_SUITE and FitNesse runs suite teardown. |
+| `StopTest` | 6 | 0 | 0 | 0 | conformant | ConstructorThrows raises the upstream StopTest exception; the executor returns ABORT_SLIM_TEST and FitNesse continues with later pages and teardown. |
+| `StopTestInSuiteSetUp` | 7 | 0 | 0 | 0 | conformant | The stop exception is returned with ABORT_SLIM_TEST; FitNesse skips suite tests and still executes suite teardown. |
 | `TableTableSuite.SymbolsInTableTableManagedByTheFixture` | 0 | 1 | 0 | 9 | fixture_gap | TableTableIncFirstCol and TestQuery.echo_int are absent. |
 | `TestChineseWords` | 0 | 0 | 0 | 1 | fixture_gap | EchoScript.echo_to_stdout is absent, so Unicode stdout behavior is not reached. |
 | `TestComparators` | 26 | 0 | 0 | 0 | conformant | The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server. |
 | `TestCustomComparators` | 1 | 2 | 0 | 0 | harness_limited | The nested response is retrieved, but its output lacks the expected glob comparison; the root-level nested test does not receive the outer suite CustomComparators setup. |
 | `TestCustomConverter` | 0 | 0 | 0 | 17 | fixture_gap | TestSlimWithConverter and its converter-control fixture methods are absent; this run does not establish an engine defect. |
-| `TestDetailedDiff` | 1 | 21 | 0 | 0 | fixture_gap | ResponseExaminer extracts the nested response. The `DetailedDiff` fixture is absent, so expected detailed-diff output is not produced. |
-| `TestExceptionIsDisplayed` | 4 | 15 | 0 | 0 | fixture_gap | ResponseExaminer inspects the nested response. The page remains blocked by missing `DecisionTableExecuteThrows`, `ConstructorThrows`, and `TestSlim` exception methods. |
-| `TestOrderedQueryWithDuplicateRows` | 14 | 0 | 0 | 0 | conformant | DuplicateRows returns both upstream phase orders while preserving repeated setup and teardown rows. |
+| `TestDetailedDiff` | 1 | 21 | 0 | 0 | fixture_gap | ResponseExaminer retrieves and inspects the nested HTML. The DetailedDiff fixture is missing, so the nested diff output expected by the outer page is not generated. |
+| `TestExceptionIsDisplayed` | 19 | 0 | 0 | 0 | conformant | The Perl exception fixtures and TestSlim methods now reproduce the expected upstream exception messages, classes, and stop behavior; all 19 outer checks pass. |
+| `TestOrderedQueryWithDuplicateRows` | 14 | 0 | 0 | 0 | conformant | All page assertions pass. SetContextValue also reports two ignored symbol-assignment cells, which are expected query-table behavior. |
 | `TestPageWithInclude` | 0 | 0 | 0 | 2 | fixture_gap | EchoFixture.set_name and name are absent. |
 | `TestScriptTable` | 2 | 0 | 0 | 0 | conformant | The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server. |
 | `TestScriptTableDisplayParameterValue` | 3 | 0 | 0 | 0 | conformant | The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server. |
 | `TestSequentialArgumentProcessing` | 0 | 0 | 0 | 23 | fixture_gap | TestSlim.concatenate_three_args is absent, so semicolon argument expansion is not assessed. |
-| `TestSubsetQuery` | 11 | 0 | 0 | 0 | conformant | DuplicateRows passes empty, complete, and reordered subset cases with duplicate values in the query result. |
+| `TestSubsetQuery` | 11 | 0 | 0 | 0 | conformant | All page assertions pass. SetContextValue also reports two ignored symbol-assignment cells, which are expected query-table behavior. |
 | `TestSystemSlimSuite.ErrorSituationsDuringSlimServerStartup.B_TimeoutAsSlimServerDiesBeforeConnecting` | 2 | 1 | 0 | 0 | harness_limited | PageDriver retrieves a 200 response, but the body does not contain the expected dead-test-runner message; the child test runner setup behavior remains unverified. |
 | `TestSystemSlimSuite.ErrorSituationsDuringSlimServerStartup.C_TimeoutAsNoServerAtGivenSocket` | 3 | 1 | 0 | 0 | environment_limited | The test expects port 8099 unbound, but the inventory server occupies it; content_matches and PageDriver support are also missing. |
 | `TestSystemSlimSuite.HowtoEnforceA_TimelimitPerTestCommand.NotWorking_SettingSlimTimeout` | 0 | 0 | 0 | 3 | fixture_gap | The page documents that slim.timeout alone does not enforce command limits, but the Sleep fixture is absent. |
@@ -99,8 +103,6 @@ The previously committed baseline’s aggregate 17-right/14-wrong/19-exception v
 
 ## Next increment
 
-## Remaining dependency ranking
-
-Before this increment, the stop and exception fixture set had the largest raw reach at five pages (`StopSuite`, `StopTest`, `StopTestInSuiteSetUp`, `IgnoredTestsShouldColorGray`, and `TestExceptionIsDisplayed`), but it spans several page-specific fixtures. The automatic SlimHelperLibrary was the most cohesive engine-provided helper family: its methods affected `ChainWithInstanceTest`, `DefineAliasTest`, and `LibrarySuite.HowToAddFixturesWithParametersToTheLibrary`. It made two pages conformant and reduced `DefineAliasTest` from 73 to 67 exceptions; that page now reaches its expected actor and remains blocked by the missing `AddUpChange` fixture. Its missing-actor messages cascade after fixture construction fails.
-
-The next three coherent increments by expected page reach are the stop/exception fixture set (five pages), `AddUpChange` (two pages), and `LibraryInSetUp` behavior (two pages). Hash-table return and fixture behavior also touches two pages, split between a fixture gap and a confirmed engine gap. The JSON inventory keeps this ranking and the before-and-after status of each of the 50 pages.
+1. **AddUpChange fixture.** This fixture is required by `DefineAliasTest` and `HybridDecisionTable.ImplementDynamicDecisionTableWithHybridTable`. The repeated `NO_INSTANCE scriptTableActor` messages in `DefineAliasTest` cascade after AddUpChange construction fails.
+2. **LibraryInSetUp behavior.** Both pages under `LibrarySuite.LibraryInSetUpSuite` need the upstream setup-library fixture and call tracking.
+3. **Hash fixture and hash result handling.** `HashTableTests.HashTableWithHtmlContent` needs `hash_is` and `echo_and_log`; `HashTableTests.ShouldReturnHashTable` separately exposes the confirmed Perl hash-reference serialization gap. Keep fixture behavior and engine result encoding as distinct test targets.

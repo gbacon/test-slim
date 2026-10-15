@@ -15,6 +15,7 @@ sub new {
     instance => {},
     library  => ["__slim_helper_library"],
     symbol   => {},
+    stop_requested => undef,
   } => $class;
 
   $self->{instance}{__slim_helper_library} =
@@ -91,8 +92,7 @@ sub create {
   };
   return "OK" unless $@;
 
-  chomp $@;
-  $Test::Slim::Statement::EXCEPTION_TAG . $@;
+  $self->exception_result($@, 1);
 }
 
 sub construct_instance {
@@ -103,11 +103,8 @@ sub construct_instance {
       $self->replace_tables_with_hashes($self->replace_symbols(@$args))
     );
   };
-  return $self->{instance}{$id} unless $@;
-
-  chomp $@;
-  my $n = @$args;
-  die "message:<<COULD_NOT_INVOKE_CONSTRUCTOR105 $class\[$n]: $@>>";
+  die $@ if $@;
+  return $self->{instance}{$id};
 }
 
 sub replace_symbols {
@@ -179,6 +176,7 @@ sub get_symbol {
 sub call {
   my($self,$instance,$method,@args) = @_;
 
+  my $requested_method = $method;
   $method = $self->slim_to_perl_method($method);
 
   # FitNesse routes this helper call through the reserved "null" actor.
@@ -199,7 +197,7 @@ sub call {
       }
     }
     return $Test::Slim::Statement::EXCEPTION_TAG
-             . "message:<<NO_INSTANCE $instance>>"
+             . "message:<<NO_INSTANCE $instance.$requested_method.>>"
       unless $obj;
   }
 
@@ -233,9 +231,38 @@ sub call {
     return $result;
   }
 
-  chomp $@;
-  $Test::Slim::Statement::EXCEPTION_TAG
-    . "message:<<$@>>"
+  $self->exception_result($@)
 }
+
+sub exception_result {
+  my($self,$error,$pretty_print) = @_;
+  chomp $error;
+
+  return $Test::Slim::Statement::EXCEPTION_TAG . $error
+    if $error =~ /^message:<<.*>>$/s;
+
+  if ($error =~ /([\w.\$]*StopTest\w*Exception):\s*(.*)/s) {
+    $self->{stop_requested} = 'test';
+    return $Test::Slim::Statement::EXCEPTION_TAG
+      . "ABORT_SLIM_TEST:"
+      . ($pretty_print ? "message:<<$1: $2>>" : "$1: $2");
+  }
+  if ($error =~ /([\w.\$]*StopSuite\w*Exception):\s*(.*)/s) {
+    $self->{stop_requested} = 'suite';
+    return $Test::Slim::Statement::EXCEPTION_TAG
+      . "ABORT_SLIM_SUITE:"
+      . ($pretty_print ? "message:<<$1: $2>>" : "$1: $2");
+  }
+
+  if ($error =~ /^((?:java|fitnesse)\.[\w.\$]+):\s*(.*)/s) {
+    return $Test::Slim::Statement::EXCEPTION_TAG
+      . ($pretty_print ? "message:<<$1: $2>>" : "$1: $2");
+  }
+
+  $Test::Slim::Statement::EXCEPTION_TAG . "message:<<$error>>"
+}
+
+sub stop_requested { $_[0]->{stop_requested} }
+sub reset_stop_requested { $_[0]->{stop_requested} = undef }
 
 1;
