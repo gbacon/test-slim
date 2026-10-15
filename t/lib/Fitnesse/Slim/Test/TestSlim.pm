@@ -71,6 +71,11 @@ sub echo_string {
   $string;
 }
 
+sub concatenate_three_args {
+  shift;
+  join ' ' => @_;
+}
+
 sub return_string { "string" }
 *returnString = \&return_string;
 

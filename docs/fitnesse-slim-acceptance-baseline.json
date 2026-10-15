@@ -89,16 +89,16 @@
    },
    "conformanceSummary" : {
       "classificationCounts" : {
-         "conformant" : 40,
+         "conformant" : 41,
          "engine_gap" : 0,
          "environment_limited" : 1,
-         "fixture_gap" : 5,
+         "fixture_gap" : 4,
          "harness_limited" : 4
       },
-      "confirmedConformantPages" : 40,
+      "confirmedConformantPages" : 41,
       "confirmedEngineGapPages" : 0,
       "environmentBlockedPages" : 1,
-      "fixtureBlockedPages" : 5,
+      "fixtureBlockedPages" : 4,
       "interpretation" : "Raw page-level FitNesse assertion counts are preserved separately. Embedded negative, ignored, and exception outcomes are valid when the outer acceptance page checks them successfully. Fixture and harness blockers are not attributed to the SLiM engine without evidence.",
       "pages" : 50,
       "testHarnessBlockedPages" : 4
@@ -1497,15 +1497,15 @@
    "implementationPlan" : [
       {
          "expectedBenefit" : "Targets TableTableSuite.SymbolsInTableTableManagedByTheFixture.",
-         "increment" : "TableTableIncFirstCol and TestQuery.echo_int",
+         "increment" : "TableTableIncFirstCol fixture and executor-consumer behavior",
          "priority" : 1,
-         "scope" : "Reproduce the installed nested-list fixture result and echo_int method; check fixture-managed symbols against engine support."
+         "scope" : "Use upstream StatementExecutorConsumer semantics for symbol ownership and assignment; isolate core changes and regressions."
       },
       {
-         "expectedBenefit" : "Targets TestSlimWithConverter, DetailedDiff, sequential argument, and login pages.",
-         "increment" : "Standalone fixture behavior",
+         "expectedBenefit" : "Targets converter, DetailedDiff, and login acceptance pages.",
+         "increment" : "Remaining standalone fixtures",
          "priority" : 2,
-         "scope" : "Implement each verified upstream fixture contract in focused changes."
+         "scope" : "Reproduce each installed upstream fixture contract and assess any required core conversion behavior separately."
       }
    ],
    "libraryIdentityEngineIncrement" : {
@@ -1615,23 +1615,23 @@
    },
    "pageRunMethod" : "Ran all 50 Test=true pages individually via ?test&format=xml using the external Perl SLiM server started by /tmp/run_slim_acceptance.py. Each response confirmed fitnesse.slim.SlimService at 127.0.0.1:8099; no unexpected Perl process exit occurred during a page.",
    "pageTotals" : {
-      "blockedPages" : 10,
+      "blockedPages" : 9,
       "completedResponses" : 50,
-      "confirmedConformantPages" : 40,
+      "confirmedConformantPages" : 41,
       "confirmedEngineGapPages" : 0,
       "counts" : {
-         "exceptions" : 51,
+         "exceptions" : 28,
          "ignored" : 2,
-         "right" : 315,
+         "right" : 323,
          "wrong" : 29
       },
       "environmentLimitedPages" : 1,
       "externalPerlConfirmed" : 50,
-      "failingPages" : 10,
-      "fixtureGapPages" : 5,
+      "failingPages" : 9,
+      "fixtureGapPages" : 4,
       "harnessLimitedPages" : 4,
       "pages" : 50,
-      "passingPages" : 40,
+      "passingPages" : 41,
       "serverExits" : 0
    },
    "pages" : [
@@ -3522,25 +3522,23 @@
       {
          "attempt" : 42,
          "conformance" : {
-            "dependencies" : [
-               "TestSlim.concatenate_three_args"
-            ],
+            "dependencies" : [],
             "expectedBehavior" : "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
             "intentionalInnerNegativeOrExceptionCoverage" : false,
             "rawCounts" : {
-               "exceptions" : 23,
+               "exceptions" : 0,
                "ignored" : 0,
-               "right" : 0,
+               "right" : 8,
                "wrong" : 0
             },
-            "reason" : "TestSlim.concatenate_three_args is absent, so semicolon argument expansion is not assessed.",
-            "status" : "fixture_gap",
+            "reason" : "TestSlim concatenates its three supplied values with spaces; the upstream page verifies sequential and mixed argument processing.",
+            "status" : "conformant",
             "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
          "evidence" : "Full 50-page ?test&format=xml rerun after Map result conversion; FitNesse used the external Perl listener at 127.0.0.1:8099.",
          "exceptionDetails" : [],
-         "exceptions" : 23,
+         "exceptions" : 0,
          "executionException" : null,
          "externalPerlConfirmed" : true,
          "failureDetails" : {
@@ -3553,14 +3551,14 @@
          "ignored" : 0,
          "page" : "TestSequentialArgumentProcessing",
          "rawCounts" : {
-            "exceptions" : 23,
+            "exceptions" : 0,
             "ignored" : 0,
-            "right" : 0,
+            "right" : 8,
             "wrong" : 0
          },
          "responseBytes" : 59056,
-         "right" : 0,
-         "rootCause" : "TestSlim.concatenate_three_args is absent, so semicolon argument expansion is not assessed.",
+         "right" : 8,
+         "rootCause" : "TestSlim concatenates its three supplied values with spaces; the upstream page verifies sequential and mixed argument processing.",
          "status" : "completed",
          "testSystem" : "slim:fitnesse.slim.SlimService",
          "testSystemConfirmed" : "slim:fitnesse.slim.SlimService",
@@ -6259,6 +6257,49 @@
       },
       "returnedPageResults" : 5,
       "url" : "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests?suite&format=xml"
+   },
+   "testSlimConcatenateIncrement" : {
+      "affectedPageResults" : [
+         {
+            "after" : {
+               "exceptions" : 0,
+               "ignored" : 0,
+               "right" : 8,
+               "wrong" : 0
+            },
+            "before" : {
+               "exceptions" : 23,
+               "ignored" : 0,
+               "right" : 0,
+               "wrong" : 0
+            },
+            "page" : "TestSequentialArgumentProcessing",
+            "status" : "conformant"
+         }
+      ],
+      "behavior" : "Returns the three received arguments joined by single spaces. FitNesse remains responsible for sequential argument expansion.",
+      "family" : "TestSlim sequential argument target method",
+      "fullInventory" : {
+         "knownServerExits" : 0,
+         "notYetRerun" : true,
+         "pages" : 50
+      },
+      "newlyConformantPages" : [
+         "TestSequentialArgumentProcessing"
+      ],
+      "perlTests" : {
+         "command" : "bin/test-dev",
+         "files" : 35,
+         "knownTodoFailures" : 4,
+         "status" : "PASS",
+         "tests" : 384
+      },
+      "regression" : {
+         "assertions" : 3,
+         "file" : "t/testslim-concatenate.t",
+         "preFix" : "TestSlim did not expose concatenate_three_args."
+      },
+      "upstreamReference" : "/tmp/fitnesse-src/src/fitnesse/slim/test/TestSlim.java#concatenateThreeArgs"
    },
    "unitBaseline" : {
       "command" : "bin/test-dev",

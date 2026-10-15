@@ -46,11 +46,11 @@ The Perl engine previously returned a plain hash reference from `StatementExecut
 
 ## Current acceptance results
 
-The latest targeted runs report **40 conformant pages**; all 50 pages will be rerun after the remaining fixture increments. Raw page totals currently combine the latest affected-page results with the last full inventory: **315 right, 29 wrong, 2 ignored, and 51 exceptions**. The affected page ran through the external Perl service at `127.0.0.1:8099`, with **zero server exits**.
+The latest targeted runs report **41 conformant pages**; all 50 pages will be rerun after the remaining fixture increments. Raw page totals currently combine the latest affected-page results with the last full inventory: **323 right, 29 wrong, 2 ignored, and 28 exceptions**. The affected page ran through the external Perl service at `127.0.0.1:8099`, with **zero server exits**.
 
-`DefineAliasTest` improved from 8 right and 67 exceptions to 22 right and no exceptions. `HybridDecisionTable.ImplementDynamicDecisionTableWithHybridTable` improved from 25 exceptions to 5 right and no exceptions. Both setup-library pages pass (1 and 2 right). `HashTableWithHtmlContent` and `TestPageWithInclude` pass with 1 right each. Both Sleep pages pass (1 and 9 right); as these run against the already connected server, they do not independently validate startup-time runner flags. `TestChineseWords` now passes with 1 right after EchoScript gained UTF-8 stdout behavior. All 31 pages that were conformant at the start remain conformant. The complete 50-page comparison will be recorded after the fixture phase.
+`DefineAliasTest` improved from 8 right and 67 exceptions to 22 right and no exceptions. `HybridDecisionTable.ImplementDynamicDecisionTableWithHybridTable` improved from 25 exceptions to 5 right and no exceptions. Both setup-library pages pass (1 and 2 right). `HashTableWithHtmlContent` and `TestPageWithInclude` pass with 1 right each. Both Sleep pages pass (1 and 9 right); as these run against the already connected server, they do not independently validate startup-time runner flags. `TestChineseWords` passes with 1 right after EchoScript gained UTF-8 stdout behavior. `TestSequentialArgumentProcessing` now passes with 8 right and no exceptions using TestSlim's upstream concatenation method. All 31 pages that were conformant at the start remain conformant. The complete 50-page comparison will be recorded after the fixture phase.
 
-The 10 remaining non-conformant pages comprise 5 fixture gaps, 4 FitNesse harness/rendering limitations, and 1 environment-limited timeout page. Remaining fixture gaps are TableTableIncFirstCol/TestQuery.echo_int, TestSlimWithConverter, DetailedDiff, TestSlim.concatenate_three_args, and LoginDialogDriver.
+The 9 remaining non-conformant pages comprise 4 fixture gaps, 4 FitNesse harness/rendering limitations, and 1 environment-limited timeout page. Remaining fixture gaps are TableTableIncFirstCol/TestQuery.echo_int, TestSlimWithConverter, DetailedDiff, and LoginDialogDriver.
 
 ## Per-page results
 
@@ -97,7 +97,7 @@ The 10 remaining non-conformant pages comprise 5 fixture gaps, 4 FitNesse harnes
 | `TestPageWithInclude` | 1 | 0 | 0 | 0 | conformant | EchoFixture stores and returns the name set by the included page. |
 | `TestScriptTable` | 2 | 0 | 0 | 0 | conformant | The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server. |
 | `TestScriptTableDisplayParameterValue` | 3 | 0 | 0 | 0 | conformant | The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server. |
-| `TestSequentialArgumentProcessing` | 0 | 0 | 0 | 23 | fixture_gap | TestSlim.concatenate_three_args is absent, so semicolon argument expansion is not assessed. |
+| `TestSequentialArgumentProcessing` | 8 | 0 | 0 | 0 | conformant | TestSlim concatenates the three supplied values with spaces; the full upstream page validates sequential and mixed argument processing. |
 | `TestSubsetQuery` | 11 | 0 | 0 | 0 | conformant | All page assertions pass. SetContextValue also reports two ignored symbol-assignment cells, which are expected query-table behavior. |
 | `TestSystemSlimSuite.ErrorSituationsDuringSlimServerStartup.B_TimeoutAsSlimServerDiesBeforeConnecting` | 2 | 1 | 0 | 0 | harness_limited | PageDriver retrieves a 200 response, but the body does not contain the expected dead-test-runner message; the child test runner setup behavior remains unverified. |
 | `TestSystemSlimSuite.ErrorSituationsDuringSlimServerStartup.C_TimeoutAsNoServerAtGivenSocket` | 3 | 1 | 0 | 0 | environment_limited | The test expects port 8099 unbound, but the inventory server occupies it; content_matches and PageDriver support are also missing. |
@@ -109,4 +109,4 @@ The 10 remaining non-conformant pages comprise 5 fixture gaps, 4 FitNesse harnes
 
 ## Next increment
 
-The next coherent family is TableTableIncFirstCol with TestQuery.echo_int, which supplies the remaining table-table page's missing fixture methods. Other remaining standalone dependencies include EchoScript, TestSlimWithConverter, DetailedDiff, TestSlim.concatenate_three_args, and LoginDialogDriver.
+The next coherent family is TableTableIncFirstCol with TestQuery.echo_int, which supplies the remaining table-table page's missing fixture methods. Other remaining standalone dependencies include TestSlimWithConverter, DetailedDiff, and LoginDialogDriver.
