@@ -104,7 +104,7 @@ my @sockets;
 my $a = connect_to_server($port);
 push @sockets, $a if $a;
 ok($a, "connection A reaches the listener");
-is(read_line($a, 2), "Slim -- V0.3\n", "connection A receives the SLiM greeting") if $a;
+is(read_line($a, 2), "Slim -- V0.4\n", "connection A receives the SLiM greeting") if $a;
 
 my $b;
 my $can_run_b = 0;
@@ -124,7 +124,7 @@ if ($a) {
 
   $b = connect_to_server($port);
   push @sockets, $b if $b;
-  $can_run_b = $b && (read_line($b, 2) // "") eq "Slim -- V0.3\n";
+  $can_run_b = $b && (read_line($b, 2) // "") eq "Slim -- V0.4\n";
 }
 ok($can_run_b, "connection B receives a greeting while connection A remains open");
 
@@ -167,7 +167,7 @@ my $malformed = connect_to_server($port);
 push @sockets, $malformed if $malformed;
 ok($malformed, "listener accepts another client while A remains active") if $can_run_b;
 if ($malformed) {
-  is(read_line($malformed, 2), "Slim -- V0.3\n", "malformed-input client receives its greeting") if $can_run_b;
+  is(read_line($malformed, 2), "Slim -- V0.4\n", "malformed-input client receives its greeting") if $can_run_b;
   print {$malformed} "000007:invalid";
   my $malformed_closed = !defined read_line($malformed, 2);
   ok($malformed_closed, "malformed frame closes only its client session") if $can_run_b;
@@ -189,7 +189,7 @@ my $survivor = connect_to_server($port);
 push @sockets, $survivor if $survivor;
 ok($survivor, "listener accepts a new client after disconnect and malformed input") if $can_run_b;
 if ($survivor) {
-  is(read_line($survivor, 2), "Slim -- V0.3\n", "new session receives a greeting after prior sessions close") if $can_run_b;
+  is(read_line($survivor, 2), "Slim -- V0.4\n", "new session receives a greeting after prior sessions close") if $can_run_b;
   my $results = send_statements($survivor, [["i1", "import", "fitnesse.slim.test"]]);
   assert_results($results, [["i1", "OK"]], "listener processes valid statements after malformed input") if $can_run_b;
   print {$survivor} "000003:bye";

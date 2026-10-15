@@ -71,6 +71,16 @@ sub do_callAndAssign {
              $executor->call($instance, $f, @args)) ];
 }
 
+sub do_assign {
+  my($self,$executor,$id,$symbol,$value) = @_;
+
+  return $self->malformed_instruction($id)
+    unless @_ == 5 && defined $symbol;
+
+  $executor->set_symbol($symbol, $value);
+  [ $id => "OK" ];
+}
+
 sub malformed_instruction {
   my($self,$id) = @_;
 

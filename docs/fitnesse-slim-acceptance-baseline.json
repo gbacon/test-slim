@@ -7,8 +7,8 @@
   "unitBaseline": {
     "command": "bin/test-dev",
     "status": "PASS",
-    "files": 23,
-    "tests": 270,
+    "files": 25,
+    "tests": 288,
     "knownTodoFailures": 4
   },
   "suiteResponderAttempt": {
@@ -27,20 +27,20 @@
   "pageTotals": {
     "pages": 50,
     "completedResponses": 50,
-    "passingPages": 20,
-    "failingPages": 30,
+    "passingPages": 24,
+    "failingPages": 26,
     "counts": {
-      "right": 183,
-      "wrong": 62,
-      "ignored": 0,
-      "exceptions": 218
+      "right": 239,
+      "wrong": 60,
+      "ignored": 2,
+      "exceptions": 192
     },
     "serverExits": 0,
     "externalPerlConfirmed": 50,
-    "confirmedConformantPages": 20,
+    "confirmedConformantPages": 24,
     "confirmedEngineGapPages": 2,
-    "blockedPages": 30,
-    "fixtureGapPages": 24,
+    "blockedPages": 26,
+    "fixtureGapPages": 20,
     "harnessLimitedPages": 3,
     "environmentLimitedPages": 1
   },
@@ -826,37 +826,33 @@
       "attempt": 19,
       "http": 200,
       "status": "completed",
-      "right": 0,
-      "wrong": 2,
-      "ignored": 0,
-      "exceptions": 2,
+      "right": 4,
+      "wrong": 0,
+      "ignored": 2,
+      "exceptions": 0,
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
-      "responseBytes": 34353,
-      "rootCause": "SplitFixture is absent, so query rows and symbol values are not tested.",
+      "responseBytes": 34268,
+      "rootCause": "The upstream query fixture now returns its expected column/value rows; both query matching and duplicate-row checks pass through the external Perl SLiM server.",
       "failureDetails": {
-        "exceptionMessages": [
-          "Could not find class SplitFixture"
-        ],
+        "exceptionMessages": [],
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Full 50-page ?test&format=xml rerun after the ResponseExaminer increment; FitNesse was configured for the external Perl SLiM listener on 127.0.0.1:8099.",
+      "evidence": "Full 50-page ?test&format=xml rerun after the SplitFixture and DuplicateRows increment; execution log identifies the external Perl listener at 127.0.0.1:8099.",
       "rawCounts": {
-        "right": 0,
-        "wrong": 2,
-        "ignored": 0,
-        "exceptions": 2
+        "right": 4,
+        "wrong": 0,
+        "ignored": 2,
+        "exceptions": 0
       },
       "conformance": {
-        "status": "fixture_gap",
-        "reason": "SplitFixture is absent, so query rows and symbol values are not tested.",
-        "dependencies": [
-          "SplitFixture"
-        ],
-        "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
-        "verification": "Full 50-page XML inventory rerun after ResponseExaminer; the request completed through the external Perl SLiM service.",
+        "status": "conformant",
+        "reason": "All page assertions pass. SetContextValue also reports two ignored symbol-assignment cells, which are expected query-table behavior.",
+        "dependencies": [],
+        "expectedBehavior": "Query data matches the unchanged upstream acceptance expectations, including row ordering, duplicate multiplicity, subset matching, and constructor-derived symbol values.",
+        "verification": "Full 50-page XML inventory after SplitFixture, DuplicateRows, and SLiM protocol 0.4 assign support; FitNesse connected to the external Perl SLiM server at 127.0.0.1:8099.",
         "intentionalInnerNegativeOrExceptionCoverage": false
       },
       "externalPerlConfirmed": true,
@@ -868,37 +864,33 @@
       "attempt": 20,
       "http": 200,
       "status": "completed",
-      "right": 0,
+      "right": 27,
       "wrong": 0,
       "ignored": 0,
-      "exceptions": 14,
+      "exceptions": 0,
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
-      "responseBytes": 40123,
-      "rootCause": "SplitFixture is absent, so query matching behavior is not tested.",
+      "responseBytes": 40711,
+      "rootCause": "The upstream query fixture now returns its expected column/value rows; both query matching and duplicate-row checks pass through the external Perl SLiM server.",
       "failureDetails": {
-        "exceptionMessages": [
-          "Could not find class SplitFixture"
-        ],
+        "exceptionMessages": [],
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Full 50-page ?test&format=xml rerun after the ResponseExaminer increment; FitNesse was configured for the external Perl SLiM listener on 127.0.0.1:8099.",
+      "evidence": "Full 50-page ?test&format=xml rerun after the SplitFixture and DuplicateRows increment; execution log identifies the external Perl listener at 127.0.0.1:8099.",
       "rawCounts": {
-        "right": 0,
+        "right": 27,
         "wrong": 0,
         "ignored": 0,
-        "exceptions": 14
+        "exceptions": 0
       },
       "conformance": {
-        "status": "fixture_gap",
-        "reason": "SplitFixture is absent, so query matching behavior is not tested.",
-        "dependencies": [
-          "SplitFixture"
-        ],
-        "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
-        "verification": "Full 50-page XML inventory rerun after ResponseExaminer; the request completed through the external Perl SLiM service.",
+        "status": "conformant",
+        "reason": "All page assertions pass. SetContextValue also reports two ignored symbol-assignment cells, which are expected query-table behavior.",
+        "dependencies": [],
+        "expectedBehavior": "Query data matches the unchanged upstream acceptance expectations, including row ordering, duplicate multiplicity, subset matching, and constructor-derived symbol values.",
+        "verification": "Full 50-page XML inventory after SplitFixture, DuplicateRows, and SLiM protocol 0.4 assign support; FitNesse connected to the external Perl SLiM server at 127.0.0.1:8099.",
         "intentionalInnerNegativeOrExceptionCoverage": false
       },
       "externalPerlConfirmed": true,
@@ -1658,37 +1650,33 @@
       "attempt": 38,
       "http": 200,
       "status": "completed",
-      "right": 0,
+      "right": 14,
       "wrong": 0,
       "ignored": 0,
-      "exceptions": 4,
+      "exceptions": 0,
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
-      "responseBytes": 32545,
-      "rootCause": "DuplicateRows is absent, so ordered-query behavior is not reached.",
+      "responseBytes": 32980,
+      "rootCause": "The upstream query fixture now returns its expected column/value rows; both query matching and duplicate-row checks pass through the external Perl SLiM server.",
       "failureDetails": {
-        "exceptionMessages": [
-          "Could not find class DuplicateRows"
-        ],
+        "exceptionMessages": [],
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Full 50-page ?test&format=xml rerun after the ResponseExaminer increment; FitNesse was configured for the external Perl SLiM listener on 127.0.0.1:8099.",
+      "evidence": "Full 50-page ?test&format=xml rerun after the SplitFixture and DuplicateRows increment; execution log identifies the external Perl listener at 127.0.0.1:8099.",
       "rawCounts": {
-        "right": 0,
+        "right": 14,
         "wrong": 0,
         "ignored": 0,
-        "exceptions": 4
+        "exceptions": 0
       },
       "conformance": {
-        "status": "fixture_gap",
-        "reason": "DuplicateRows is absent, so ordered-query behavior is not reached.",
-        "dependencies": [
-          "DuplicateRows"
-        ],
-        "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
-        "verification": "Full 50-page XML inventory rerun after ResponseExaminer; the request completed through the external Perl SLiM service.",
+        "status": "conformant",
+        "reason": "All page assertions pass. SetContextValue also reports two ignored symbol-assignment cells, which are expected query-table behavior.",
+        "dependencies": [],
+        "expectedBehavior": "Query data matches the unchanged upstream acceptance expectations, including row ordering, duplicate multiplicity, subset matching, and constructor-derived symbol values.",
+        "verification": "Full 50-page XML inventory after SplitFixture, DuplicateRows, and SLiM protocol 0.4 assign support; FitNesse connected to the external Perl SLiM server at 127.0.0.1:8099.",
         "intentionalInnerNegativeOrExceptionCoverage": false
       },
       "externalPerlConfirmed": true,
@@ -1862,37 +1850,33 @@
       "attempt": 43,
       "http": 200,
       "status": "completed",
-      "right": 0,
+      "right": 11,
       "wrong": 0,
       "ignored": 0,
-      "exceptions": 6,
+      "exceptions": 0,
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
-      "responseBytes": 33696,
-      "rootCause": "DuplicateRows is absent, so subset-query behavior is not reached.",
+      "responseBytes": 33850,
+      "rootCause": "The upstream query fixture now returns its expected column/value rows; both query matching and duplicate-row checks pass through the external Perl SLiM server.",
       "failureDetails": {
-        "exceptionMessages": [
-          "Could not find class DuplicateRows"
-        ],
+        "exceptionMessages": [],
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Full 50-page ?test&format=xml rerun after the ResponseExaminer increment; FitNesse was configured for the external Perl SLiM listener on 127.0.0.1:8099.",
+      "evidence": "Full 50-page ?test&format=xml rerun after the SplitFixture and DuplicateRows increment; execution log identifies the external Perl listener at 127.0.0.1:8099.",
       "rawCounts": {
-        "right": 0,
+        "right": 11,
         "wrong": 0,
         "ignored": 0,
-        "exceptions": 6
+        "exceptions": 0
       },
       "conformance": {
-        "status": "fixture_gap",
-        "reason": "DuplicateRows is absent, so subset-query behavior is not reached.",
-        "dependencies": [
-          "DuplicateRows"
-        ],
-        "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
-        "verification": "Full 50-page XML inventory rerun after ResponseExaminer; the request completed through the external Perl SLiM service.",
+        "status": "conformant",
+        "reason": "All page assertions pass. SetContextValue also reports two ignored symbol-assignment cells, which are expected query-table behavior.",
+        "dependencies": [],
+        "expectedBehavior": "Query data matches the unchanged upstream acceptance expectations, including row ordering, duplicate multiplicity, subset matching, and constructor-derived symbol values.",
+        "verification": "Full 50-page XML inventory after SplitFixture, DuplicateRows, and SLiM protocol 0.4 assign support; FitNesse connected to the external Perl SLiM server at 127.0.0.1:8099.",
         "intentionalInnerNegativeOrExceptionCoverage": false
       },
       "externalPerlConfirmed": true,
@@ -2268,49 +2252,36 @@
     "cause": "A valid nested SLiM statement had an empty-string argument. _take_utf16_units consumed the following colon for a requested length of zero; nested list parsing failed and returned the encoded statement as a scalar. ListExecutor then dereferenced it as an arrayref. The fix avoids consuming any characters for zero units."
   },
   "fixtureIncrement": {
-    "family": "PageDriver HTTP acceptance harness",
-    "upstreamBehavior": "Installed FitNesse v20251025 PageDriver has an implicit no-argument constructor. Acceptance scenarios call createPageWithContent(String,String), makeATestPage(String), makeASuitePage(String), requestPage(String), content(), contentContains(String), contentMatches(String), and lineNumberContaining(String). Java PageCreator uses saveData; requestPage runs the requested responder and returns its status.",
-    "perlBehavior": "The Perl fixture posts saveData with editTime=9999999999999, ticketId=321, and pageContent; marks pages using saveProperties/PageType=Test; issues HTTP GET requests for the supplied page URI; retains status and body on the PageDriver and in a per-SLiM-process ResponseContext. HTTP status errors are retained; transport errors are raised as fixture exceptions.",
+    "family": "SplitFixture and DuplicateRows query fixtures",
+    "upstreamReference": "Installed FitNesse v20251025 classes fitnesse.fixtures.SplitFixture and fitnesse.fixtures.DuplicateRows; both expose a single-String constructor and query(). Their bytecode metadata and unchanged acceptance tables establish the constructors and query signatures.",
+    "behavior": "SplitFixture parses semicolon-separated rows and comma-separated cells into query rows of column/value pairs, retaining order and Java split empty/null behavior. DuplicateRows returns the upstream one-column x rows for phases A and B, including repeated setup and teardown rows and each phase order. The query fixtures remain in t/lib/Fitnesse/Fixtures, outside core protocol execution.",
+    "protocolCompatibility": "SetContextValue uses SLiM 0.4 assign to transfer query cells into symbols. The server now advertises V0.4; assign stores its value, returns OK, and preserves null.",
     "perlTests": {
       "command": "bin/test-dev",
       "result": "PASS",
-      "files": 22,
-      "tests": 241,
-      "knownTodoFailures": 4
+      "files": 25,
+      "tests": 288,
+      "knownTodoFailures": 4,
+      "focusedTests": [
+        "t/query-fixtures.t",
+        "t/assign-instruction.t"
+      ]
     },
-    "focusedTests": [
-      {
-        "file": "t/page-driver.t",
-        "assertions": 25
-      },
-      {
-        "file": "t/page-driver-integration.t",
-        "assertions": 3,
-        "command": "RUN_PAGE_DRIVER_INTEGRATION=1 perl t/page-driver-integration.t"
-      }
-    ],
-    "newlyPassingPages": [
-      "DefineAliasInPluginTest",
-      "TestSystemSlimSuite.TimeoutInSlimTestSystem"
-    ],
-    "remainingHarnessPages": [
-      "BaseLineDecisionTable.TestFailuresAreMarked",
-      "CustomTableRenderingAddedByPluginTest",
-      "IgnoredTestsShouldColorGray",
-      "TestCustomComparators",
-      "TestDetailedDiff",
-      "TestExceptionIsDisplayed",
-      "TestSystemSlimSuite.ErrorSituationsDuringSlimServerStartup.B_TimeoutAsSlimServerDiesBeforeConnecting"
+    "newlyConformantPages": [
+      "QueryTableSuite.SetContextValue",
+      "QueryTableSuite.TestMatching",
+      "TestOrderedQueryWithDuplicateRows",
+      "TestSubsetQuery"
     ],
     "fullInventory": {
       "pages": 50,
-      "passingPages": 19,
-      "failingPages": 31,
+      "passingPages": 24,
+      "failingPages": 26,
       "rawAssertionCounts": {
-        "right": 183,
-        "wrong": 62,
-        "ignored": 0,
-        "exceptions": 291
+        "right": 239,
+        "wrong": 60,
+        "ignored": 2,
+        "exceptions": 192
       },
       "externalPerlConfirmed": 50,
       "serverExits": 0
@@ -2420,20 +2391,56 @@
         "externalPerlConfirmed": 50,
         "serverExits": 0
       }
+    },
+    {
+      "family": "SplitFixture and DuplicateRows query fixtures",
+      "upstreamReference": "Installed FitNesse v20251025 classes fitnesse.fixtures.SplitFixture and fitnesse.fixtures.DuplicateRows; both expose a single-String constructor and query(). Their bytecode metadata and unchanged acceptance tables establish the constructors and query signatures.",
+      "behavior": "SplitFixture parses semicolon-separated rows and comma-separated cells into query rows of column/value pairs, retaining order and Java split empty/null behavior. DuplicateRows returns the upstream one-column x rows for phases A and B, including repeated setup and teardown rows and each phase order. The query fixtures remain in t/lib/Fitnesse/Fixtures, outside core protocol execution.",
+      "protocolCompatibility": "SetContextValue uses SLiM 0.4 assign to transfer query cells into symbols. The server now advertises V0.4; assign stores its value, returns OK, and preserves null.",
+      "perlTests": {
+        "command": "bin/test-dev",
+        "result": "PASS",
+        "files": 25,
+        "tests": 288,
+        "knownTodoFailures": 4,
+        "focusedTests": [
+          "t/query-fixtures.t",
+          "t/assign-instruction.t"
+        ]
+      },
+      "newlyConformantPages": [
+        "QueryTableSuite.SetContextValue",
+        "QueryTableSuite.TestMatching",
+        "TestOrderedQueryWithDuplicateRows",
+        "TestSubsetQuery"
+      ],
+      "fullInventory": {
+        "pages": 50,
+        "passingPages": 24,
+        "failingPages": 26,
+        "rawAssertionCounts": {
+          "right": 239,
+          "wrong": 60,
+          "ignored": 2,
+          "exceptions": 192
+        },
+        "externalPerlConfirmed": 50,
+        "serverExits": 0
+      }
     }
   ],
   "conformanceSummary": {
     "pages": 50,
-    "confirmedConformantPages": 20,
+    "confirmedConformantPages": 24,
     "confirmedEngineGapPages": 2,
-    "fixtureBlockedPages": 24,
+    "fixtureBlockedPages": 20,
     "testHarnessBlockedPages": 3,
     "environmentBlockedPages": 1,
     "classificationCounts": {
-      "conformant": 20,
+      "conformant": 24,
       "engine_gap": 2,
       "environment_limited": 1,
-      "fixture_gap": 24,
+      "fixture_gap": 20,
       "harness_limited": 3
     },
     "interpretation": "Raw page-level FitNesse assertion counts are preserved separately. Embedded negative, ignored, and exception outcomes are valid when the outer acceptance page checks them successfully. Fixture and harness blockers are not attributed to the SLiM engine without evidence."
@@ -2448,21 +2455,21 @@
       "HashTableTests.ShouldReturnHashTable: returned Perl hash reference becomes HASH(0x...), not a FitNesse-compatible hash value."
     ],
     "fixtureGaps": [
-      "StopSuite, StopTest, and StopTestInSuiteSetUp now execute their nested suites; they fail on missing ConstructorThrows and generated fixture classes. Other fixture gaps are detailed per page."
+      "The 20 remaining fixture-gap pages are described per page. QueryTableSuite, ordered-query, and subset-query failures were resolved by the query fixtures."
     ],
     "harnessLimited": [
       "CustomTableRenderingAddedByPluginTest: root-level nested page does not inherit the outer suite custom table alias/rendering setup.",
       "TestCustomComparators: root-level nested page does not inherit the outer suite custom comparator configuration.",
       "TestSystemSlimSuite.ErrorSituationsDuringSlimServerStartup.B_TimeoutAsSlimServerDiesBeforeConnecting: nested runner configuration does not yield the expected dead-runner response text."
     ],
-    "rawFailurePages": 30,
-    "blockedOrUnassessablePages": 30,
+    "rawFailurePages": 26,
+    "blockedOrUnassessablePages": 26,
     "classificationCounts": {
-      "conformant": 20,
+      "conformant": 24,
       "engine_gap": 2,
-      "harness_limited": 3,
-      "fixture_gap": 24,
-      "environment_limited": 1
+      "environment_limited": 1,
+      "fixture_gap": 20,
+      "harness_limited": 3
     },
     "previousCountCaveat": "The pre-PageDriver baseline summed one page outcome marker per page (17 right, 14 wrong, 19 exceptions), not the assertion counts returned by the page-level XML. Current raw assertion totals are freshly parsed from all 50 XML responses and should not be subtracted from those markers.",
     "responseExaminerResult": "BaseLineDecisionTable.TestFailuresAreMarked is newly conformant. IgnoredTestsShouldColorGray, TestDetailedDiff, and TestExceptionIsDisplayed now reach their intended result inspection but remain fixture gaps."
@@ -2470,24 +2477,24 @@
   "implementationPlan": [
     {
       "priority": 1,
-      "increment": "Implement ResponseExaminer over PageDriver response context",
-      "expectedBenefit": "Targets the remaining pages that must inspect nested result HTML, including intentional failure, exception, and ignore rendering.",
-      "scope": "Read the retained last HTTP response from Fitnesse::Fixtures::ResponseContext; support contents and pageHtml only if actual acceptance calls require both, regex matching/capture groups, and upstream no-match behavior. Keep outside lib/Test/Slim.",
-      "caveat": "Some pages also expose missing target fixtures or suite plugin configuration; those are independent and will remain non-conformant."
+      "increment": "Implement upstream stop and exception fixtures",
+      "expectedBenefit": "Unblocks StopSuite, StopTest, StopTestInSuiteSetUp, IgnoredTestsShouldColorGray, and portions of TestExceptionIsDisplayed.",
+      "scope": "Inspect ConstructorThrows and page-specific exception fixtures in installed FitNesse; reproduce exception class/name and messages with focused regressions.",
+      "caveat": "Verify outer harness assertions about intentional nested failures and ignored rows before classifying page outcomes."
     },
     {
       "priority": 2,
-      "increment": "Implement the coherent missing negative-test fixtures for stop and exception pages",
-      "expectedBenefit": "Makes the StopSuite/StopTest/StopTestInSuiteSetUp expectations and exception rendering reachable.",
-      "scope": "Trace ConstructorThrows, throw methods, and page-specific fixtures from installed FitNesse source; add focused fixture tests.",
-      "caveat": "Do not treat fixture errors as evidence of protocol defects; verify stop/ignore behavior through the unchanged outer pages."
+      "increment": "Implement AddUpChange and actor-stack fixture support",
+      "expectedBenefit": "Targets DefineAliasTest and HybridDecisionTable, plus library fixture chaining pages.",
+      "scope": "Implement the missing fixture behavior and only the directly verified SlimHelperLibrary operations from acceptance usage.",
+      "caveat": "Keep fixture dispatch behavior separate from core protocol changes unless a failing regression confirms an engine defect."
     },
     {
       "priority": 3,
-      "increment": "Implement query fixtures SplitFixture and DuplicateRows",
-      "expectedBenefit": "Targets QueryTableSuite plus ordered and subset duplicate-row pages.",
-      "scope": "Reproduce upstream row data, constructor parsing, duplicate ordering, and query methods; test returned row structures independently.",
-      "caveat": "Rerun unchanged pages to distinguish fixture data problems from query-table matching behavior."
+      "increment": "Resolve hash query return conversion",
+      "expectedBenefit": "Targets HashTableTests.ShouldReturnHashTable and related hash fixture behavior.",
+      "scope": "Inspect the acceptance assertion and upstream hash serialization behavior; add a focused hash return regression before changing conversion.",
+      "caveat": "Do not globally stringify references or alter nested-list and symbol identity semantics."
     }
   ],
   "additionalConfirmedDefect": "HashFixture map-return serialization is a confirmed one-page engine gap; add a focused regression and fix as a separate targeted increment after the highest-coverage shared increments.",
@@ -2517,8 +2524,8 @@
     ],
     "verification": {
       "concurrencyRegression": "t/server-concurrency.t PASS, 13 tests; pre-fix run failed when connection B did not receive a greeting while A remained open.",
-      "unitTests": "bin/test-dev PASS, 23 files, 270 tests; four existing TODO failures remain.",
-      "acceptanceRerun": "50/50 pages completed through external Perl SLiM; 183 right, 62 wrong, 0 ignored, 218 exceptions; 20 conformant pages.",
+      "unitTests": "Historical result at the ResponseExaminer increment: bin/test-dev PASS, 23 files, 270 tests; four existing TODO failures remained. Current test results are in unitBaseline.",
+      "acceptanceRerun": "Historical result at the ResponseExaminer increment: 50/50 pages completed through external Perl SLiM; 183 right, 62 wrong, 0 ignored, 218 exceptions; 20 conformant pages. The current post-query-fixture inventory is in pageTotals.",
       "serverStability": "0 unexpected Perl server exits during all 50 pages; FitNesse and Perl SLiM remained running.",
       "responseExaminerTests": "t/response-examiner.t PASS, 29 assertions; nested PageDriver integration PASS, 3 assertions."
     },
