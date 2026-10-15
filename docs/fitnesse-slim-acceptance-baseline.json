@@ -89,21 +89,84 @@
    },
    "conformanceSummary" : {
       "classificationCounts" : {
-         "conformant" : 35,
+         "conformant" : 37,
          "engine_gap" : 0,
          "environment_limited" : 1,
-         "fixture_gap" : 10,
+         "fixture_gap" : 8,
          "harness_limited" : 4
       },
-      "confirmedConformantPages" : 35,
+      "confirmedConformantPages" : 37,
       "confirmedEngineGapPages" : 0,
       "environmentBlockedPages" : 1,
-      "fixtureBlockedPages" : 10,
+      "fixtureBlockedPages" : 8,
       "interpretation" : "Raw page-level FitNesse assertion counts are preserved separately. Embedded negative, ignored, and exception outcomes are valid when the outer acceptance page checks them successfully. Fixture and harness blockers are not attributed to the SLiM engine without evidence.",
       "pages" : 50,
       "testHarnessBlockedPages" : 4
    },
    "date" : "2026-10-15",
+   "echoHashFixtureIncrement" : {
+      "affectedPageResults" : [
+         {
+            "after" : {
+               "exceptions" : 0,
+               "ignored" : 0,
+               "right" : 1,
+               "wrong" : 0
+            },
+            "before" : {
+               "exceptions" : 2,
+               "ignored" : 0,
+               "right" : 0,
+               "wrong" : 0
+            },
+            "page" : "HashTableTests.HashTableWithHtmlContent",
+            "status" : "conformant"
+         },
+         {
+            "after" : {
+               "exceptions" : 0,
+               "ignored" : 0,
+               "right" : 1,
+               "wrong" : 0
+            },
+            "before" : {
+               "exceptions" : 2,
+               "ignored" : 0,
+               "right" : 0,
+               "wrong" : 0
+            },
+            "page" : "TestPageWithInclude",
+            "status" : "conformant"
+         }
+      ],
+      "behavior" : "EchoFixture stores and returns names, performs string/integer echo, and logs echoAndLog values. HashFixture.sendAsHash is void and hashIs logs and returns the stored map value.",
+      "family" : "EchoFixture and HashFixture acceptance helpers",
+      "fullInventory" : {
+         "knownServerExits" : 0,
+         "notYetRerun" : true,
+         "pages" : 50
+      },
+      "newlyConformantPages" : [
+         "HashTableTests.HashTableWithHtmlContent",
+         "TestPageWithInclude"
+      ],
+      "perlTests" : {
+         "command" : "bin/test-dev",
+         "files" : 32,
+         "knownTodoFailures" : 4,
+         "status" : "PASS",
+         "tests" : 367
+      },
+      "regression" : {
+         "assertions" : 7,
+         "file" : "t/echo-hash-fixtures.t",
+         "preFix" : "The focused test reported missing set_name, name, echo_and_log, and hash_is; send_as_hash also leaked its assignment result."
+      },
+      "upstreamReferences" : [
+         "/tmp/fitnesse-src/src/fitnesse/fixtures/EchoFixture.java",
+         "/tmp/fitnesse-src/src/fitnesse/fixtures/HashFixture.java"
+      ]
+   },
    "fitNesse" : "http://127.0.0.1:8080; execution logs identified the SlimService test system and Connection to running SlimService: 127.0.0.1:8099 (FitNesse varies the testSystem capitalization on four timeout pages).",
    "fitNesseVersion" : "20251025",
    "fixtureFamilyImpactAnalysis" : {
@@ -1390,22 +1453,22 @@
    },
    "implementationPlan" : [
       {
-         "expectedBenefit" : "Targets include pages and timeout behavior pages sharing these fixture methods.",
-         "increment" : "EchoFixture and Sleep fixtures",
+         "expectedBenefit" : "Targets TableTableSuite.SymbolsInTableTableManagedByTheFixture.",
+         "increment" : "TableTableIncFirstCol and TestQuery.echo_int",
          "priority" : 1,
-         "scope" : "Reproduce each installed upstream EchoFixture, EchoScript, and Sleep implementation; keep timer semantics limited to documented behavior."
+         "scope" : "Reproduce the installed nested-list fixture result and echo_int method."
       },
       {
-         "expectedBenefit" : "Targets HashTableWithHtmlContent and TableTableSuite.SymbolsInTableTableManagedByTheFixture.",
-         "increment" : "Remaining hash and table fixtures",
+         "expectedBenefit" : "Targets both timeout documentation pages.",
+         "increment" : "Sleep fixture family",
          "priority" : 2,
-         "scope" : "Implement hash_is/echo_and_log and TableTableIncFirstCol/TestQuery.echo_int from upstream sources."
+         "scope" : "Verify constructors and timer behavior; preserve intentional timeout and teardown results."
       },
       {
-         "expectedBenefit" : "Targets custom converter, detailed diff, sequential argument, and login pages.",
-         "increment" : "Other standalone fixture families",
+         "expectedBenefit" : "Targets EchoScript, TestSlimWithConverter, DetailedDiff, concatenate_three_args, and LoginDialogDriver pages.",
+         "increment" : "Remaining standalone fixtures",
          "priority" : 3,
-         "scope" : "Inspect converter, DetailedDiff, TestSlim, and LoginDialogDriver contracts separately."
+         "scope" : "Implement bounded fixture contracts from installed upstream Java sources."
       }
    ],
    "libraryIdentityEngineIncrement" : {
@@ -1515,23 +1578,23 @@
    },
    "pageRunMethod" : "Ran all 50 Test=true pages individually via ?test&format=xml using the external Perl SLiM server started by /tmp/run_slim_acceptance.py. Each response confirmed fitnesse.slim.SlimService at 127.0.0.1:8099; no unexpected Perl process exit occurred during a page.",
    "pageTotals" : {
-      "blockedPages" : 15,
+      "blockedPages" : 13,
       "completedResponses" : 50,
-      "confirmedConformantPages" : 35,
+      "confirmedConformantPages" : 37,
       "confirmedEngineGapPages" : 0,
       "counts" : {
-         "exceptions" : 81,
+         "exceptions" : 77,
          "ignored" : 2,
-         "right" : 302,
+         "right" : 304,
          "wrong" : 29
       },
       "environmentLimitedPages" : 1,
       "externalPerlConfirmed" : 50,
-      "failingPages" : 15,
-      "fixtureGapPages" : 10,
+      "failingPages" : 13,
+      "fixtureGapPages" : 8,
       "harnessLimitedPages" : 4,
       "pages" : 50,
-      "passingPages" : 35,
+      "passingPages" : 37,
       "serverExits" : 0
    },
    "pages" : [
@@ -1957,26 +2020,23 @@
       {
          "attempt" : 10,
          "conformance" : {
-            "dependencies" : [
-               "HashFixture.hash_is",
-               "EchoFixture.echo_and_log"
-            ],
+            "dependencies" : [],
             "expectedBehavior" : "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
             "intentionalInnerNegativeOrExceptionCoverage" : false,
             "rawCounts" : {
-               "exceptions" : 2,
+               "exceptions" : 0,
                "ignored" : 0,
-               "right" : 0,
+               "right" : 1,
                "wrong" : 0
             },
-            "reason" : "Hash input conversion works, but hash_is and echo_and_log fixture methods are absent.",
-            "status" : "fixture_gap",
+            "reason" : "HashFixture.hash_is and EchoFixture.echo_and_log reproduce the upstream stored-value return and output behavior; nested HTML content passes unchanged.",
+            "status" : "conformant",
             "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
          "evidence" : "Full 50-page ?test&format=xml rerun after Map result conversion; FitNesse used the external Perl listener at 127.0.0.1:8099.",
          "exceptionDetails" : [],
-         "exceptions" : 2,
+         "exceptions" : 0,
          "executionException" : null,
          "externalPerlConfirmed" : true,
          "failureDetails" : {
@@ -1990,14 +2050,14 @@
          "ignored" : 0,
          "page" : "HashTableTests.HashTableWithHtmlContent",
          "rawCounts" : {
-            "exceptions" : 2,
+            "exceptions" : 0,
             "ignored" : 0,
-            "right" : 0,
+            "right" : 1,
             "wrong" : 0
          },
          "responseBytes" : 32891,
-         "right" : 0,
-         "rootCause" : "Hash input conversion works, but hash_is and echo_and_log fixture methods are absent.",
+         "right" : 1,
+         "rootCause" : "HashFixture.hash_is and EchoFixture.echo_and_log reproduce the upstream stored-value return and output behavior; nested HTML content passes unchanged.",
          "status" : "completed",
          "testSystem" : "slim:fitnesse.slim.SlimService",
          "testSystemConfirmed" : "slim:fitnesse.slim.SlimService",
@@ -3292,26 +3352,23 @@
       {
          "attempt" : 39,
          "conformance" : {
-            "dependencies" : [
-               "EchoFixture.set_name",
-               "EchoFixture.name"
-            ],
+            "dependencies" : [],
             "expectedBehavior" : "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
             "intentionalInnerNegativeOrExceptionCoverage" : false,
             "rawCounts" : {
-               "exceptions" : 2,
+               "exceptions" : 0,
                "ignored" : 0,
-               "right" : 0,
+               "right" : 1,
                "wrong" : 0
             },
-            "reason" : "EchoFixture.set_name and name are absent.",
-            "status" : "fixture_gap",
+            "reason" : "EchoFixture stores and returns the name set by the included page.",
+            "status" : "conformant",
             "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
          "evidence" : "Full 50-page ?test&format=xml rerun after Map result conversion; FitNesse used the external Perl listener at 127.0.0.1:8099.",
          "exceptionDetails" : [],
-         "exceptions" : 2,
+         "exceptions" : 0,
          "executionException" : null,
          "externalPerlConfirmed" : true,
          "failureDetails" : {
@@ -3325,14 +3382,14 @@
          "ignored" : 0,
          "page" : "TestPageWithInclude",
          "rawCounts" : {
-            "exceptions" : 2,
+            "exceptions" : 0,
             "ignored" : 0,
-            "right" : 0,
+            "right" : 1,
             "wrong" : 0
          },
          "responseBytes" : 31263,
-         "right" : 0,
-         "rootCause" : "EchoFixture.set_name and name are absent.",
+         "right" : 1,
+         "rootCause" : "EchoFixture stores and returns the name set by the included page.",
          "status" : "completed",
          "testSystem" : "slim:fitnesse.slim.SlimService",
          "testSystemConfirmed" : "slim:fitnesse.slim.SlimService",

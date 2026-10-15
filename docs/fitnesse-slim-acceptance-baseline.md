@@ -46,11 +46,11 @@ The Perl engine previously returned a plain hash reference from `StatementExecut
 
 ## Current acceptance results
 
-The latest targeted runs report **35 conformant pages**; all 50 pages will be rerun after the remaining fixture increments. Raw page totals currently combine the latest affected-page results with the last full inventory: **302 right, 29 wrong, 2 ignored, and 81 exceptions**. The affected pages ran through the external Perl service at `127.0.0.1:8099`, with **zero server exits**.
+The latest targeted runs report **37 conformant pages**; all 50 pages will be rerun after the remaining fixture increments. Raw page totals currently combine the latest affected-page results with the last full inventory: **304 right, 29 wrong, 2 ignored, and 77 exceptions**. The affected pages ran through the external Perl service at `127.0.0.1:8099`, with **zero server exits**.
 
-`DefineAliasTest` improved from 8 right and 67 exceptions to 22 right and no exceptions. `HybridDecisionTable.ImplementDynamicDecisionTableWithHybridTable` improved from 25 exceptions to 5 right and no exceptions. `LibraryInSetUpTest` passes with 1 right, and `LibraryInSetUpAndPageTest` now passes with 2 right. All 31 pages that were conformant at the start remain conformant. The setup page had reused `library1`; the executor now retains both library object references, resolves a direct name to the first matching registration, and searches fallback methods newest-first, matching upstream. The complete 50-page comparison will be recorded after the fixture phase.
+`DefineAliasTest` improved from 8 right and 67 exceptions to 22 right and no exceptions. `HybridDecisionTable.ImplementDynamicDecisionTableWithHybridTable` improved from 25 exceptions to 5 right and no exceptions. Both setup-library pages pass (1 and 2 right). `HashTableWithHtmlContent` and `TestPageWithInclude` each now pass with 1 right and no exceptions. All 31 pages that were conformant at the start remain conformant. The complete 50-page comparison will be recorded after the fixture phase.
 
-The 15 remaining non-conformant pages comprise 10 fixture gaps, 4 FitNesse harness/rendering limitations, and 1 environment-limited timeout page. Remaining fixture gaps group into EchoFixture/include and EchoScript Unicode output (two pages), timeout-related EchoFixture/Sleep methods (one page), standalone Sleep behavior (one page), plus single-page dependencies for hash HTML methods, table-table helpers, custom converters, detailed diff rendering, sequential argument concatenation, and LoginDialogDriver.
+The 13 remaining non-conformant pages comprise 8 fixture gaps, 4 FitNesse harness/rendering limitations, and 1 environment-limited timeout page. Remaining fixture gaps are TableTableIncFirstCol/TestQuery.echo_int, EchoScript Unicode output, TestSlimWithConverter, DetailedDiff, TestSlim.concatenate_three_args, two Sleep timeout pages, and LoginDialogDriver.
 
 ## Per-page results
 
@@ -65,7 +65,7 @@ The 15 remaining non-conformant pages comprise 10 fixture gaps, 4 FitNesse harne
 | `CustomTableRenderingAddedByPluginTest` | 5 | 1 | 0 | 0 | harness_limited | The nested page runs, but FitNesse output reports Could not find class MyUseCase/MyFixture. The custom alias/rendering setup from the outer suite is not available to this root-level HTTP test page. |
 | `DefineAliasInPluginTest` | 2 | 0 | 0 | 0 | conformant | The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server. |
 | `DefineAliasTest` | 22 | 0 | 0 | 0 | conformant | AddUpChange reproduces the upstream coin state and dollar/cents results; prior missing-fixture exceptions cascaded through alias examples. |
-| `HashTableTests.HashTableWithHtmlContent` | 0 | 0 | 0 | 2 | fixture_gap | Hash input conversion works, but hash_is and echo_and_log fixture methods are absent. |
+| `HashTableTests.HashTableWithHtmlContent` | 1 | 0 | 0 | 0 | conformant | HashFixture.hash_is and EchoFixture.echo_and_log reproduce the upstream stored-value return and output behavior; nested HTML content passes unchanged. |
 | `HashTableTests.ShouldReturnHashTable` | 1 | 0 | 0 | 0 | conformant | MapResult converts the returned map to sorted FitNesse hash-table HTML before SLiM list serialization. |
 | `HybridDecisionTable.ImplementDynamicDecisionTableWithHybridTable` | 5 | 0 | 0 | 0 | conformant | AddUpChange supports the upstream hybrid getter/setter calls and stateful coin totals. |
 | `IgnoredTestsShouldColorGray` | 5 | 2 | 0 | 0 | harness_limited | StopTest now produces the expected nested exception and ignored execution state. The two remaining outer regex checks expect class="ignore" immediately before the script input text; FitNesse v20251025 renders the row as class="slimRowColor3" and marks the result with <span class="ignore">Test not run</span>. This is a FitNesse rendering/acceptance-version mismatch, not a SLiM stop defect. |
@@ -94,7 +94,7 @@ The 15 remaining non-conformant pages comprise 10 fixture gaps, 4 FitNesse harne
 | `TestDetailedDiff` | 1 | 21 | 0 | 0 | fixture_gap | ResponseExaminer retrieves and inspects the nested HTML. The DetailedDiff fixture is missing, so the nested diff output expected by the outer page is not generated. |
 | `TestExceptionIsDisplayed` | 19 | 0 | 0 | 0 | conformant | The Perl exception fixtures and TestSlim methods now reproduce the expected upstream exception messages, classes, and stop behavior; all 19 outer checks pass. |
 | `TestOrderedQueryWithDuplicateRows` | 14 | 0 | 0 | 0 | conformant | All page assertions pass. SetContextValue also reports two ignored symbol-assignment cells, which are expected query-table behavior. |
-| `TestPageWithInclude` | 0 | 0 | 0 | 2 | fixture_gap | EchoFixture.set_name and name are absent. |
+| `TestPageWithInclude` | 1 | 0 | 0 | 0 | conformant | EchoFixture stores and returns the name set by the included page. |
 | `TestScriptTable` | 2 | 0 | 0 | 0 | conformant | The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server. |
 | `TestScriptTableDisplayParameterValue` | 3 | 0 | 0 | 0 | conformant | The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server. |
 | `TestSequentialArgumentProcessing` | 0 | 0 | 0 | 23 | fixture_gap | TestSlim.concatenate_three_args is absent, so semicolon argument expansion is not assessed. |
@@ -109,4 +109,4 @@ The 15 remaining non-conformant pages comprise 10 fixture gaps, 4 FitNesse harne
 
 ## Next increment
 
-The next broad fixture increment is EchoFixture and Sleep behavior, which reaches include and timeout scenarios. Remaining smaller groups include HashFixture HTML methods, TableTableIncFirstCol/TestQuery.echo_int, TestSlimWithConverter, DetailedDiff, TestSlim.concatenate_three_args, and LoginDialogDriver.
+The next coherent family is TableTableIncFirstCol with TestQuery.echo_int, which supplies the remaining table-table page's missing fixture methods. Sleep is another shared family across two timeout pages; inspect its fixture and timeout expectations separately.
