@@ -14,13 +14,17 @@ sub new {
   my $self = bless {
     imports  => [],
     instance => {},
-    library  => ["__slim_helper_library"],
+    library  => [],
     symbol   => {},
     stop_requested => undef,
   } => $class;
 
   $self->{instance}{__slim_helper_library} =
     Test::Slim::SlimHelperLibrary->new($self->{instance});
+  push @{ $self->{library} }, {
+    id => "__slim_helper_library",
+    object => $self->{instance}{__slim_helper_library},
+  };
   $self;
 }
 
@@ -79,16 +83,23 @@ sub create {
   eval {
     ($class) = $self->replace_symbols($class);
 
+    my $is_library = $id =~ /^library[0-9]+$/;
+    my $object;
     if (ref $class) {
-      $self->{instance}{$id} = $class;
+      $object = $class;
     }
     else {
       $class = $self->resolve_class($class);
-      $self->construct_instance($id, $class, $args);
+      $object = $class->new(
+        $self->replace_tables_with_hashes($self->replace_symbols(@$args))
+      );
+    }
 
-      if ($id =~ /^library[0-9]+$/) {
-        push @{ $self->{library} }, $id;
-      }
+    if ($is_library) {
+      push @{ $self->{library} }, { id => $id, object => $object };
+    }
+    else {
+      $self->{instance}{$id} = $object;
     }
   };
   return "OK" unless $@;
@@ -161,7 +172,13 @@ sub replace_table_with_hash {
 
 sub instance {
   my($self,$id) = @_;
-  $self->{instance}{$id};
+  return $self->{instance}{$id} if exists $self->{instance}{$id};
+  if ($id =~ /^library[0-9]+$/) {
+    for my $library (@{ $self->{library} }) {
+      return $library->{object} if $library->{id} eq $id;
+    }
+  }
+  return;
 }
 
 sub set_symbol {
@@ -187,10 +204,19 @@ sub call {
 
   my $has_instance = exists $self->{instance}{$instance};
   my $obj = $self->{instance}{$instance};
+  if (!$has_instance && $instance =~ /^library[0-9]+$/) {
+    for my $library (@{ $self->{library} }) {
+      if ($library->{id} eq $instance) {
+        $obj = $library->{object};
+        $has_instance = 1;
+        last;
+      }
+    }
+  }
   unless ($has_instance) {
     for my $lib_id (reverse @{ $self->{library} }) {
-      warn "trying [$method] in library [$lib_id]";
-      my $lib = $self->{instance}{$lib_id};
+      my $lib = $lib_id->{object};
+      warn "trying [$method] in library [$lib_id->{id}]";
       next unless $lib && ref $lib;
       if ($lib->can($method)) {
         $obj = $lib;
@@ -204,8 +230,8 @@ sub call {
 
   unless ($obj->can($method)) {
     for my $lib_id (reverse @{ $self->{library} }) {
-      warn "trying [$method] in library [$lib_id]";
-      my $lib = $self->{instance}{$lib_id};
+      my $lib = $lib_id->{object};
+      warn "trying [$method] in library [$lib_id->{id}]";
       next unless $lib && ref $lib;
       if ($lib->can($method)) {
         $obj = $lib;

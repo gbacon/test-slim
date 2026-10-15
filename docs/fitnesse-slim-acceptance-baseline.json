@@ -89,14 +89,14 @@
    },
    "conformanceSummary" : {
       "classificationCounts" : {
-         "conformant" : 34,
-         "engine_gap" : 1,
+         "conformant" : 35,
+         "engine_gap" : 0,
          "environment_limited" : 1,
          "fixture_gap" : 10,
          "harness_limited" : 4
       },
-      "confirmedConformantPages" : 34,
-      "confirmedEngineGapPages" : 1,
+      "confirmedConformantPages" : 35,
+      "confirmedEngineGapPages" : 0,
       "environmentBlockedPages" : 1,
       "fixtureBlockedPages" : 10,
       "interpretation" : "Raw page-level FitNesse assertion counts are preserved separately. Embedded negative, ignored, and exception outcomes are valid when the outer acceptance page checks them successfully. Fixture and harness blockers are not attributed to the SLiM engine without evidence.",
@@ -1390,24 +1390,68 @@
    },
    "implementationPlan" : [
       {
-         "expectedBenefit" : "Closes the remaining LibraryInSetUp page and preserves upstream newest-first lookup.",
-         "increment" : "Library object identity on repeated IDs",
+         "expectedBenefit" : "Targets include pages and timeout behavior pages sharing these fixture methods.",
+         "increment" : "EchoFixture and Sleep fixtures",
          "priority" : 1,
-         "scope" : "Keep library objects in registration entries rather than resolving each old ID through the overwritten actor map."
+         "scope" : "Reproduce each installed upstream EchoFixture, EchoScript, and Sleep implementation; keep timer semantics limited to documented behavior."
       },
       {
-         "expectedBenefit" : "Targets include, Unicode output, and timeout behavior pages.",
-         "increment" : "Echo and timeout fixtures",
+         "expectedBenefit" : "Targets HashTableWithHtmlContent and TableTableSuite.SymbolsInTableTableManagedByTheFixture.",
+         "increment" : "Remaining hash and table fixtures",
          "priority" : 2,
-         "scope" : "Implement each installed upstream EchoFixture, EchoScript, and Sleep contract."
+         "scope" : "Implement hash_is/echo_and_log and TableTableIncFirstCol/TestQuery.echo_int from upstream sources."
       },
       {
-         "expectedBenefit" : "Targets hash HTML, table-table, converter, detailed diff, sequential argument, and login pages.",
-         "increment" : "Remaining standalone fixture families",
+         "expectedBenefit" : "Targets custom converter, detailed diff, sequential argument, and login pages.",
+         "increment" : "Other standalone fixture families",
          "priority" : 3,
-         "scope" : "Split by verified upstream fixture contracts; isolate any engine defects."
+         "scope" : "Inspect converter, DetailedDiff, TestSlim, and LoginDialogDriver contracts separately."
       }
    ],
+   "libraryIdentityEngineIncrement" : {
+      "affectedPageResults" : [
+         {
+            "after" : {
+               "exceptions" : 0,
+               "ignored" : 0,
+               "right" : 2,
+               "wrong" : 0
+            },
+            "before" : {
+               "exceptions" : 2,
+               "ignored" : 0,
+               "right" : 1,
+               "wrong" : 0
+            },
+            "page" : "LibrarySuite.LibraryInSetUpSuite.LibraryInSetUpAndPageTest",
+            "status" : "conformant"
+         }
+      ],
+      "behavior" : "Library entries now retain their instance references. Direct lookup by a library name uses the first matching registration; method fallback remains newest-first.",
+      "family" : "Retain object identity for repeated library instance names",
+      "fullInventory" : {
+         "knownServerExits" : 0,
+         "notYetRerun" : true,
+         "pages" : 50
+      },
+      "newlyConformantPages" : [
+         "LibrarySuite.LibraryInSetUpSuite.LibraryInSetUpAndPageTest"
+      ],
+      "perlTests" : {
+         "command" : "bin/test-dev",
+         "files" : 31,
+         "knownTodoFailures" : 4,
+         "status" : "PASS",
+         "tests" : 360
+      },
+      "regression" : {
+         "assertions" : 8,
+         "file" : "t/library-identity.t",
+         "preFix" : "The earlier LibraryInSetUp method disappeared after EchoSupport reused library1."
+      },
+      "rootCause" : "The Perl executor stored library IDs then looked up each candidate through a map overwritten by later make instructions that reused the same libraryN name. Upstream retains each Library object in an ordered list.",
+      "upstreamReference" : "SlimExecutionContext.addToInstancesOrLibrary/getInstance and LibraryMethodExecutor.execute in installed FitNesse v20251025"
+   },
    "libraryInSetUpIncrement" : {
       "affectedPageResults" : [
          {
@@ -1428,9 +1472,9 @@
          },
          {
             "after" : {
-               "exceptions" : 1,
+               "exceptions" : 0,
                "ignored" : 0,
-               "right" : 1,
+               "right" : 2,
                "wrong" : 0
             },
             "before" : {
@@ -1440,8 +1484,8 @@
                "wrong" : 0
             },
             "page" : "LibrarySuite.LibraryInSetUpSuite.LibraryInSetUpAndPageTest",
-            "rootCause" : "Reused library1 IDs overwrite object lookup; upstream retains both objects.",
-            "status" : "blocked_by_engine_gap"
+            "rootCause" : "Resolved by library object retention; see libraryIdentityEngineIncrement.",
+            "status" : "conformant"
          }
       ],
       "behavior" : "echo records a call on the fixture instance; echoInSetUpLibraryCalled returns that instance-local state.",
@@ -1452,7 +1496,8 @@
          "pages" : 50
       },
       "newlyConformantPages" : [
-         "LibrarySuite.LibraryInSetUpSuite.LibraryInSetUpTest"
+         "LibrarySuite.LibraryInSetUpSuite.LibraryInSetUpTest",
+         "LibrarySuite.LibraryInSetUpSuite.LibraryInSetUpAndPageTest"
       ],
       "perlTests" : {
          "command" : "bin/test-dev",
@@ -1470,23 +1515,23 @@
    },
    "pageRunMethod" : "Ran all 50 Test=true pages individually via ?test&format=xml using the external Perl SLiM server started by /tmp/run_slim_acceptance.py. Each response confirmed fitnesse.slim.SlimService at 127.0.0.1:8099; no unexpected Perl process exit occurred during a page.",
    "pageTotals" : {
-      "blockedPages" : 16,
+      "blockedPages" : 15,
       "completedResponses" : 50,
-      "confirmedConformantPages" : 34,
-      "confirmedEngineGapPages" : 1,
+      "confirmedConformantPages" : 35,
+      "confirmedEngineGapPages" : 0,
       "counts" : {
-         "exceptions" : 82,
+         "exceptions" : 81,
          "ignored" : 2,
-         "right" : 301,
+         "right" : 302,
          "wrong" : 29
       },
       "environmentLimitedPages" : 1,
       "externalPerlConfirmed" : 50,
-      "failingPages" : 16,
+      "failingPages" : 15,
       "fixtureGapPages" : 10,
       "harnessLimitedPages" : 4,
       "pages" : 50,
-      "passingPages" : 34,
+      "passingPages" : 35,
       "serverExits" : 0
    },
    "pages" : [
@@ -2190,26 +2235,23 @@
       {
          "attempt" : 16,
          "conformance" : {
-            "dependencies" : [
-               "LibraryInSetUp",
-               "LibraryFixture call tracking"
-            ],
+            "dependencies" : [],
             "expectedBehavior" : "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
             "intentionalInnerNegativeOrExceptionCoverage" : false,
             "rawCounts" : {
-               "exceptions" : 1,
+               "exceptions" : 0,
                "ignored" : 0,
-               "right" : 1,
+               "right" : 2,
                "wrong" : 0
             },
-            "reason" : "FitNesse reuses library1 for setup and page libraries. Upstream retains both object references, but the Perl ID-only registry lookup loses the earlier setup object.",
-            "status" : "engine_gap",
+            "reason" : "The registry retains both objects when setup and page libraries reuse library1; fallback dispatch finds the page library first and the setup library when its method is absent.",
+            "status" : "conformant",
             "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
          "evidence" : "Full 50-page ?test&format=xml rerun after Map result conversion; FitNesse used the external Perl listener at 127.0.0.1:8099.",
          "exceptionDetails" : [],
-         "exceptions" : 1,
+         "exceptions" : 0,
          "executionException" : null,
          "externalPerlConfirmed" : true,
          "failureDetails" : {
@@ -2223,14 +2265,14 @@
          "ignored" : 0,
          "page" : "LibrarySuite.LibraryInSetUpSuite.LibraryInSetUpAndPageTest",
          "rawCounts" : {
-            "exceptions" : 1,
+            "exceptions" : 0,
             "ignored" : 0,
-            "right" : 1,
+            "right" : 2,
             "wrong" : 0
          },
          "responseBytes" : 39657,
-         "right" : 1,
-         "rootCause" : "FitNesse reuses library1 for setup and page libraries. Upstream retains both object references, but the Perl ID-only registry lookup loses the earlier setup object.",
+         "right" : 2,
+         "rootCause" : "The registry retains both objects when setup and page libraries reuse library1; fallback dispatch finds the page library first and the setup library when its method is absent.",
          "status" : "completed",
          "testSystem" : "slim:fitnesse.slim.SlimService",
          "testSystemConfirmed" : "slim:fitnesse.slim.SlimService",
