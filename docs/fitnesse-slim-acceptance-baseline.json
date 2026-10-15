@@ -89,16 +89,16 @@
    },
    "conformanceSummary" : {
       "classificationCounts" : {
-         "conformant" : 33,
-         "engine_gap" : 0,
+         "conformant" : 34,
+         "engine_gap" : 1,
          "environment_limited" : 1,
-         "fixture_gap" : 12,
+         "fixture_gap" : 10,
          "harness_limited" : 4
       },
-      "confirmedConformantPages" : 33,
-      "confirmedEngineGapPages" : 0,
+      "confirmedConformantPages" : 34,
+      "confirmedEngineGapPages" : 1,
       "environmentBlockedPages" : 1,
-      "fixtureBlockedPages" : 12,
+      "fixtureBlockedPages" : 10,
       "interpretation" : "Raw page-level FitNesse assertion counts are preserved separately. Embedded negative, ignored, and exception outcomes are valid when the outer acceptance page checks them successfully. Fixture and harness blockers are not attributed to the SLiM engine without evidence.",
       "pages" : 50,
       "testHarnessBlockedPages" : 4
@@ -1390,43 +1390,103 @@
    },
    "implementationPlan" : [
       {
-         "expectedBenefit" : "Targets both LibraryInSetUpSuite acceptance pages.",
-         "increment" : "LibraryInSetUp behavior",
+         "expectedBenefit" : "Closes the remaining LibraryInSetUp page and preserves upstream newest-first lookup.",
+         "increment" : "Library object identity on repeated IDs",
          "priority" : 1,
-         "scope" : "Trace setup library instantiation and call tracking against installed upstream fixtures."
+         "scope" : "Keep library objects in registration entries rather than resolving each old ID through the overwritten actor map."
       },
       {
-         "expectedBenefit" : "Targets include, Unicode output, and timeout pages.",
+         "expectedBenefit" : "Targets include, Unicode output, and timeout behavior pages.",
          "increment" : "Echo and timeout fixtures",
          "priority" : 2,
-         "scope" : "Implement separately verified EchoFixture, EchoScript, and Sleep behavior."
+         "scope" : "Implement each installed upstream EchoFixture, EchoScript, and Sleep contract."
       },
       {
          "expectedBenefit" : "Targets hash HTML, table-table, converter, detailed diff, sequential argument, and login pages.",
-         "increment" : "Remaining focused fixture families",
+         "increment" : "Remaining standalone fixture families",
          "priority" : 3,
-         "scope" : "Split by upstream fixture contracts and keep any confirmed engine defect separate."
+         "scope" : "Split by verified upstream fixture contracts; isolate any engine defects."
       }
    ],
+   "libraryInSetUpIncrement" : {
+      "affectedPageResults" : [
+         {
+            "after" : {
+               "exceptions" : 0,
+               "ignored" : 0,
+               "right" : 1,
+               "wrong" : 0
+            },
+            "before" : {
+               "exceptions" : 2,
+               "ignored" : 0,
+               "right" : 0,
+               "wrong" : 0
+            },
+            "page" : "LibrarySuite.LibraryInSetUpSuite.LibraryInSetUpTest",
+            "status" : "conformant"
+         },
+         {
+            "after" : {
+               "exceptions" : 1,
+               "ignored" : 0,
+               "right" : 1,
+               "wrong" : 0
+            },
+            "before" : {
+               "exceptions" : 2,
+               "ignored" : 0,
+               "right" : 1,
+               "wrong" : 0
+            },
+            "page" : "LibrarySuite.LibraryInSetUpSuite.LibraryInSetUpAndPageTest",
+            "rootCause" : "Reused library1 IDs overwrite object lookup; upstream retains both objects.",
+            "status" : "blocked_by_engine_gap"
+         }
+      ],
+      "behavior" : "echo records a call on the fixture instance; echoInSetUpLibraryCalled returns that instance-local state.",
+      "family" : "FitNesse LibraryInSetUp fixture",
+      "fullInventory" : {
+         "knownServerExits" : 0,
+         "notYetRerun" : true,
+         "pages" : 50
+      },
+      "newlyConformantPages" : [
+         "LibrarySuite.LibraryInSetUpSuite.LibraryInSetUpTest"
+      ],
+      "perlTests" : {
+         "command" : "bin/test-dev",
+         "files" : 30,
+         "knownTodoFailures" : 4,
+         "status" : "PASS",
+         "tests" : 352
+      },
+      "regression" : {
+         "assertions" : 6,
+         "file" : "t/library-in-setup.t",
+         "status" : "PASS"
+      },
+      "upstreamReference" : "/tmp/fitnesse-src/src/fitnesse/slim/test/library/LibraryInSetUp.java"
+   },
    "pageRunMethod" : "Ran all 50 Test=true pages individually via ?test&format=xml using the external Perl SLiM server started by /tmp/run_slim_acceptance.py. Each response confirmed fitnesse.slim.SlimService at 127.0.0.1:8099; no unexpected Perl process exit occurred during a page.",
    "pageTotals" : {
-      "blockedPages" : 17,
+      "blockedPages" : 16,
       "completedResponses" : 50,
-      "confirmedConformantPages" : 33,
-      "confirmedEngineGapPages" : 0,
+      "confirmedConformantPages" : 34,
+      "confirmedEngineGapPages" : 1,
       "counts" : {
-         "exceptions" : 85,
+         "exceptions" : 82,
          "ignored" : 2,
-         "right" : 300,
+         "right" : 301,
          "wrong" : 29
       },
       "environmentLimitedPages" : 1,
       "externalPerlConfirmed" : 50,
-      "failingPages" : 17,
-      "fixtureGapPages" : 12,
+      "failingPages" : 16,
+      "fixtureGapPages" : 10,
       "harnessLimitedPages" : 4,
       "pages" : 50,
-      "passingPages" : 33,
+      "passingPages" : 34,
       "serverExits" : 0
    },
    "pages" : [
@@ -2137,19 +2197,19 @@
             "expectedBehavior" : "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
             "intentionalInnerNegativeOrExceptionCoverage" : false,
             "rawCounts" : {
-               "exceptions" : 2,
+               "exceptions" : 1,
                "ignored" : 0,
                "right" : 1,
                "wrong" : 0
             },
-            "reason" : "LibraryInSetUp and setup-library call tracking are absent.",
-            "status" : "fixture_gap",
+            "reason" : "FitNesse reuses library1 for setup and page libraries. Upstream retains both object references, but the Perl ID-only registry lookup loses the earlier setup object.",
+            "status" : "engine_gap",
             "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
          "evidence" : "Full 50-page ?test&format=xml rerun after Map result conversion; FitNesse used the external Perl listener at 127.0.0.1:8099.",
          "exceptionDetails" : [],
-         "exceptions" : 2,
+         "exceptions" : 1,
          "executionException" : null,
          "externalPerlConfirmed" : true,
          "failureDetails" : {
@@ -2163,14 +2223,14 @@
          "ignored" : 0,
          "page" : "LibrarySuite.LibraryInSetUpSuite.LibraryInSetUpAndPageTest",
          "rawCounts" : {
-            "exceptions" : 2,
+            "exceptions" : 1,
             "ignored" : 0,
             "right" : 1,
             "wrong" : 0
          },
          "responseBytes" : 39657,
          "right" : 1,
-         "rootCause" : "LibraryInSetUp and setup-library call tracking are absent.",
+         "rootCause" : "FitNesse reuses library1 for setup and page libraries. Upstream retains both object references, but the Perl ID-only registry lookup loses the earlier setup object.",
          "status" : "completed",
          "testSystem" : "slim:fitnesse.slim.SlimService",
          "testSystemConfirmed" : "slim:fitnesse.slim.SlimService",
@@ -2180,26 +2240,23 @@
       {
          "attempt" : 17,
          "conformance" : {
-            "dependencies" : [
-               "LibraryInSetUp",
-               "LibraryFixture call tracking"
-            ],
+            "dependencies" : [],
             "expectedBehavior" : "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
             "intentionalInnerNegativeOrExceptionCoverage" : false,
             "rawCounts" : {
-               "exceptions" : 2,
+               "exceptions" : 0,
                "ignored" : 0,
-               "right" : 0,
+               "right" : 1,
                "wrong" : 0
             },
-            "reason" : "LibraryInSetUp and setup-library call tracking are absent.",
-            "status" : "fixture_gap",
+            "reason" : "LibraryInSetUp tracks delegated echo calls on its own instance.",
+            "status" : "conformant",
             "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
          "evidence" : "Full 50-page ?test&format=xml rerun after Map result conversion; FitNesse used the external Perl listener at 127.0.0.1:8099.",
          "exceptionDetails" : [],
-         "exceptions" : 2,
+         "exceptions" : 0,
          "executionException" : null,
          "externalPerlConfirmed" : true,
          "failureDetails" : {
@@ -2213,14 +2270,14 @@
          "ignored" : 0,
          "page" : "LibrarySuite.LibraryInSetUpSuite.LibraryInSetUpTest",
          "rawCounts" : {
-            "exceptions" : 2,
+            "exceptions" : 0,
             "ignored" : 0,
-            "right" : 0,
+            "right" : 1,
             "wrong" : 0
          },
          "responseBytes" : 39296,
-         "right" : 0,
-         "rootCause" : "LibraryInSetUp and setup-library call tracking are absent.",
+         "right" : 1,
+         "rootCause" : "LibraryInSetUp tracks delegated echo calls on its own instance.",
          "status" : "completed",
          "testSystem" : "slim:fitnesse.slim.SlimService",
          "testSystemConfirmed" : "slim:fitnesse.slim.SlimService",

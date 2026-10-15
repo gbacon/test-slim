@@ -46,11 +46,11 @@ The Perl engine previously returned a plain hash reference from `StatementExecut
 
 ## Current acceptance results
 
-The latest targeted runs report **33 conformant pages**; all 50 pages will be rerun after the remaining fixture increments. Raw page totals are currently **300 right, 29 wrong, 2 ignored, and 85 exceptions**. The two affected pages ran through the external Perl service at `127.0.0.1:8099`, with **zero server exits**.
+The latest targeted runs report **34 conformant pages**; all 50 pages will be rerun after the remaining fixture increments. Raw page totals currently combine the latest affected-page results with the last full inventory: **301 right, 29 wrong, 2 ignored, and 82 exceptions**. The affected pages ran through the external Perl service at `127.0.0.1:8099`, with **zero server exits**.
 
-`DefineAliasTest` improved from 8 right and 67 exceptions to 22 right and no exceptions. `HybridDecisionTable.ImplementDynamicDecisionTableWithHybridTable` improved from 25 exceptions to 5 right and no exceptions. Both are now conformant, bringing the count from 31 to 33 while preserving the prior 31. The exception reduction removes cascades after fixture construction failed. The complete 50-page comparison will be recorded after the fixture phase.
+`DefineAliasTest` improved from 8 right and 67 exceptions to 22 right and no exceptions. `HybridDecisionTable.ImplementDynamicDecisionTableWithHybridTable` improved from 25 exceptions to 5 right and no exceptions. Both are now conformant, preserving all 31 prior pages. `LibraryInSetUpTest` also passes (1 right, no exceptions). `LibraryInSetUpAndPageTest` has one remaining executor exception when the page registers another `library1`; upstream stores both library objects independently. That registry issue is isolated for a separate engine regression and fix. The complete 50-page comparison will be recorded after the fixture phase.
 
-The 17 remaining non-conformant pages comprise 12 fixture gaps, 4 FitNesse harness/rendering limitations, and 1 environment-limited timeout page. Other fixture gaps group into library setup tracking (two pages), EchoFixture/include and EchoScript Unicode output (two pages), timeout-related EchoFixture/Sleep methods (one page), standalone Sleep behavior (one page), plus single-page dependencies for hash HTML methods, table-table helpers, custom converters, detailed diff rendering, sequential argument concatenation, and LoginDialogDriver.
+The 16 remaining non-conformant pages comprise 10 fixture gaps, 1 confirmed library-registry engine defect, 4 FitNesse harness/rendering limitations, and 1 environment-limited timeout page. Remaining fixture gaps group into EchoFixture/include and EchoScript Unicode output (two pages), timeout-related EchoFixture/Sleep methods (one page), standalone Sleep behavior (one page), plus single-page dependencies for hash HTML methods, table-table helpers, custom converters, detailed diff rendering, sequential argument concatenation, and LoginDialogDriver.
 
 ## Per-page results
 
@@ -71,8 +71,8 @@ The 17 remaining non-conformant pages comprise 12 fixture gaps, 4 FitNesse harne
 | `IgnoredTestsShouldColorGray` | 5 | 2 | 0 | 0 | harness_limited | StopTest now produces the expected nested exception and ignored execution state. The two remaining outer regex checks expect class="ignore" immediately before the script input text; FitNesse v20251025 renders the row as class="slimRowColor3" and marks the result with <span class="ignore">Test not run</span>. This is a FitNesse rendering/acceptance-version mismatch, not a SLiM stop defect. |
 | `LibrarySuite.HowToAddFixturesWithParametersToTheLibrary` | 5 | 0 | 0 | 0 | conformant | The page passes with automatic getFixture, pushFixture, and popFixture support. |
 | `LibrarySuite.LastLibraryPreceedsEarlierLibraryTest` | 2 | 0 | 0 | 0 | conformant | The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server. |
-| `LibrarySuite.LibraryInSetUpSuite.LibraryInSetUpAndPageTest` | 1 | 0 | 0 | 2 | fixture_gap | LibraryInSetUp and setup-library call tracking are absent. |
-| `LibrarySuite.LibraryInSetUpSuite.LibraryInSetUpTest` | 0 | 0 | 0 | 2 | fixture_gap | LibraryInSetUp and setup-library call tracking are absent. |
+| `LibrarySuite.LibraryInSetUpSuite.LibraryInSetUpAndPageTest` | 1 | 0 | 0 | 1 | engine_gap | FitNesse reuses library instance name `library1` for setup and page libraries. Upstream retains both object references, while the Perl registry's ID-only lookup loses the earlier setup instance after the later make. |
+| `LibrarySuite.LibraryInSetUpSuite.LibraryInSetUpTest` | 1 | 0 | 0 | 0 | conformant | The new LibraryInSetUp fixture tracks delegated echo calls on its own instance. |
 | `LibrarySuite.OneLibraryTest` | 1 | 0 | 0 | 0 | conformant | The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server. |
 | `QueryTableSuite.SetContextValue` | 4 | 0 | 2 | 0 | conformant | All page assertions pass. SetContextValue also reports two ignored symbol-assignment cells, which are expected query-table behavior. |
 | `QueryTableSuite.TestMatching` | 27 | 0 | 0 | 0 | conformant | All page assertions pass. SetContextValue also reports two ignored symbol-assignment cells, which are expected query-table behavior. |
@@ -109,4 +109,4 @@ The 17 remaining non-conformant pages comprise 12 fixture gaps, 4 FitNesse harne
 
 ## Next increment
 
-The next shared dependency is library setup tracking for both pages under `LibrarySuite.LibraryInSetUpSuite`. EchoFixture methods overlap with include and timeout pages, and will be checked against their distinct upstream fixture contracts. Smaller groups include HashFixture HTML methods, TableTableIncFirstCol/TestQuery.echo_int, TestSlimWithConverter, DetailedDiff, TestSlim.concatenate_three_args, and LoginDialogDriver.
+The next increment is the isolated library-registry engine fix: retain each library object when FitNesse reuses a `libraryN` name, matching upstream's object list and newest-first dispatch. After that, EchoFixture and Sleep behavior provide the broadest remaining shared fixture coverage. Smaller groups include HashFixture HTML methods, TableTableIncFirstCol/TestQuery.echo_int, TestSlimWithConverter, DetailedDiff, TestSlim.concatenate_three_args, and LoginDialogDriver.
