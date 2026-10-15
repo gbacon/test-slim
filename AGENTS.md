@@ -122,6 +122,35 @@ Distinguish missing fixtures, unsupported features, and actual defects.
 
 Previously investigated areas include symbol manipulation, raw symbol contents, expression evaluation, and library resolution. Verify their current status.
 
+### Running FitNesse acceptance tests programmatically
+
+FitNesse runs automatically in the Codespace on port 8080.
+
+The development environment configures FitNesse to connect to the external Perl SLiM server on `127.0.0.1:8099`. Do not assume FitNesse's built-in Java SLiM implementation is being tested.
+
+Start the Perl server if it is not already running:
+
+```sh
+perl -Ilib -It/lib bin/perl-slim 8099
+```
+
+Run an individual acceptance page through FitNesse's HTTP interface:
+
+```sh
+curl -sS \
+  'http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.SlimSymbols.NamingConvention?test&format=xml'
+```
+
+Run the full SLiM acceptance suite by replacing the page path with `FitNesse.SuiteAcceptanceTests.SuiteSlimTests` and using the appropriate suite responder.
+
+Determine the response format and extract assertion counts, exceptions, and failure details. Do not treat HTTP success as test success.
+
+Confirm that test requests reach the Perl server. If necessary, inspect its output or temporarily stop it to verify that the acceptance test fails.
+
+Do not modify upstream acceptance pages to manufacture passing results.
+
+Record the acceptance-test baseline before implementing additional features.
+
 ## Autonomy and reporting
 
 Work independently through small, testable increments. Commit each coherent change with a descriptive message.
