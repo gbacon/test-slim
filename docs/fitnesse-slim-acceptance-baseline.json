@@ -2363,7 +2363,7 @@
   "classificationMethod": "Each page retains raw right/wrong/ignored/exception counts. Conformance classification uses page content, inherited setup, embedded expected counts, current Perl fixtures, and upstream FitNesse documentation. Negative examples are evaluated by their outer assertions, not by assuming every inner failure is a defect.",
   "remainingPageClassification": {
     "sourceReviewed": "All 33 raw non-passing pages, including page content and applicable parent setup.",
-    "sharedSuiteSetup": "SuiteSlimTests/SetUp imports fitnesse.fixtures and registers PageDriver and EchoFixture libraries, includes LibrarySuite setup, and loads custom alias, renderer, and glob-comparator plugins. The current Perl PageDriver is a small stub: request_page returns 200 without fetching nested results.",
+    "sharedSuiteSetup": "SuiteSlimTests/SetUp imports fitnesse.fixtures and registers PageDriver and EchoFixture libraries, includes LibrarySuite setup, and loads custom alias, renderer, and glob-comparator plugins. The current Perl PageDriver is a small stub: request_page returns 200 without fetching nested results. PageDriver/ResponseExaminer use FitNesse in-process context upstream; an HTTP Perl equivalent is blocked on the synchronous SLiM accept loop because nested test requests need a second simultaneous connection.",
     "intentionalCoverage": "Some pages intentionally create wrong cells, exceptions, ignored rows, stopped tests, or timeouts inside nested tests and assert their rendering outside. Their outer pages still need to pass before those behaviors are verified.",
     "confirmedEngineGaps": [
       "ChainWithInstanceTest: automatic SlimHelperLibrary getFixture/pushFixture/popFixture behavior is absent.",
@@ -2375,10 +2375,10 @@
   "implementationPlan": [
     {
       "priority": 1,
-      "increment": "Complete nested acceptance harness fixtures (PageDriver and ResponseExaminer)",
-      "expectedBenefit": "Unblocks meaningful verification of up to 11 pages that inspect embedded test/suite HTML, including failure/exception/ignore rendering, custom plugin rendering, stop behavior, and startup handling.",
-      "scope": "Implement nested page creation, request/result retrieval, and HTML extraction in test fixtures; add focused fixture tests.",
-      "caveat": "Some embedded tests also need target fixture classes; this increment makes their behavior observable but may expose independent gaps."
+      "increment": "Nested acceptance harness prerequisites, then HTTP PageDriver and ResponseExaminer",
+      "expectedBenefit": "Unblocks meaningful verification of up to 12 pages that inspect embedded test/suite HTML, including failure/exception/ignore rendering, custom plugin rendering, stop behavior, startup handling, and timeout output.",
+      "scope": "Stage 1: isolate state per SLiM connection and support simultaneous clients with regressions. Stage 2: use HTTP-backed PageDriver operations for page creation, test marking, and page/suite/log requests. Stage 3: implement ResponseExaminer extraction over retained HTTP response and source-page content. Keep the harness in t/lib, outside the protocol implementation.",
+      "caveat": "A fixture-only implementation would deadlock: nested ?test launches another SLiM connection while the outer PageDriver call is waiting, and the server currently processes connections inline. Some embedded tests also require independent fixture families."
     },
     {
       "priority": 2,
@@ -2395,5 +2395,50 @@
       "caveat": "These operations belong to the built-in helper library, not ordinary TestSlim fixture methods."
     }
   ],
-  "additionalConfirmedDefect": "HashFixture map-return serialization is a confirmed one-page engine gap; add a focused regression and fix as a separate targeted increment after the highest-coverage shared increments."
+  "additionalConfirmedDefect": "HashFixture map-return serialization is a confirmed one-page engine gap; add a focused regression and fix as a separate targeted increment after the highest-coverage shared increments.",
+  "harnessInvestigation": {
+    "status": "documented_dependency_no_implementation",
+    "fitNesseVersion": "20251025",
+    "installedClasses": [
+      "fitnesse.fixtures.PageDriver",
+      "fitnesse.fixtures.ResponseExaminer"
+    ],
+    "observedFlow": [
+      "PageDriver creates page content and marks pages as tests through FitNesse responders.",
+      "request_page calls ?test, ?suite, or ?executionLog and retains status/response content.",
+      "ResponseExaminer reads the current response or page HTML, applies multiline/dotall regular expressions, and returns the selected capture group.",
+      "Outer pages inspect embedded pass/fail/ignore/exception markup, counts, startup errors, and timeout output."
+    ],
+    "upstreamArchitecture": "The Java fixtures use FitNesse in-process fixture context and helpers. The Perl equivalent must use HTTP and retain response body/source HTML in test-harness fixture state outside lib/Test/Slim.",
+    "blockingDependency": {
+      "type": "server_concurrency",
+      "evidence": "Test::Slim::Server::run accepts a connection and calls process inline; process blocks until the connection ends. An HTTP ?test starts a second FitNesse-to-SLiM client while the outer PageDriver call is waiting, and the server cannot accept that client until the outer call returns.",
+      "classification": "test-harness/server integration limitation, not a protocol framing or method-resolution defect"
+    },
+    "recommendation": [
+      "Add simultaneous-client regressions and isolate executor state per connection; provide bounded concurrent connection handling without changing framing or statement semantics.",
+      "Implement the minimum HTTP PageDriver behavior used by this inventory and test page creation, test marking, page/suite/execution-log requests, response status/body capture.",
+      "Implement ResponseExaminer over retained response/page content with contents/pageHtml, multiline/dotall regex and capture-group behavior.",
+      "Run affected pages and the full 50-page inventory; reclassify newly exposed fixture gaps separately."
+    ],
+    "verification": {
+      "unitTests": "bin/test-dev PASS, 19 files, 203 tests; four TODO failures as recorded in baseline.",
+      "acceptanceRerun": "not performed; no implementation change was made and existing raw/conformance baseline remains unchanged.",
+      "serverStability": "No server crash observed; nested execution remains unverified."
+    },
+    "affectedBaselinePages": [
+      "BaseLineDecisionTable.TestFailuresAreMarked",
+      "CustomTableRenderingAddedByPluginTest",
+      "DefineAliasInPluginTest",
+      "IgnoredTestsShouldColorGray",
+      "StopSuite",
+      "StopTest",
+      "StopTestInSuiteSetUp",
+      "TestCustomComparators",
+      "TestDetailedDiff",
+      "TestExceptionIsDisplayed",
+      "TestSystemSlimSuite.ErrorSituationsDuringSlimServerStartup.B_TimeoutAsSlimServerDiesBeforeConnecting",
+      "TestSystemSlimSuite.TimeoutInSlimTestSystem"
+    ]
+  }
 }
