@@ -7,8 +7,8 @@
   "unitBaseline": {
     "command": "bin/test-dev",
     "result": "PASS",
-    "files": 17,
-    "tests": 174,
+    "files": 18,
+    "tests": 188,
     "todoFailures": 4,
     "todoDescription": "Three boilerplate TODOs and one Unicode-return TODO; all marked TODO and suite exits PASS."
   },
@@ -24,17 +24,17 @@
     },
     "note": "Historical pre-fix suite responder call returned only five BaseLineDecisionTable subtree results and did not enumerate the 50 Test=true pages. The 50-page baseline is the individually requested page inventory."
   },
-  "pageRunMethod": "Ran all 50 FitNesse pages marked Test=true individually using ?test&format=xml. All returned HTTP 200, identified slim:fitnesse.slim.SlimService at 127.0.0.1:8099, and completed without a Perl process exit.",
+  "pageRunMethod": "Ran all 50 FitNesse pages marked Test=true individually using ?test&format=xml. All returned HTTP 200, identified the external Perl SLiM service at 127.0.0.1:8099, and completed without a Perl process exit.",
   "pageTotals": {
     "pages": 50,
     "completedResponses": 50,
-    "passingPages": 8,
-    "failingPages": 42,
+    "passingPages": 12,
+    "failingPages": 38,
     "counts": {
-      "right": 8,
-      "wrong": 14,
+      "right": 12,
+      "wrong": 16,
       "ignored": 0,
-      "exceptions": 28
+      "exceptions": 22
     },
     "serverExits": 0,
     "externalPerlConfirmed": 50
@@ -46,21 +46,17 @@
       "attempt": 1,
       "http": 200,
       "status": "completed",
-      "right": 0,
+      "right": 1,
       "wrong": 0,
       "ignored": 0,
-      "exceptions": 1,
+      "exceptions": 0,
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
-      "responseBytes": 49990,
-      "rootCause": "Missing Perl fixture Eg.Division; resulting actor calls cascade.",
+      "responseBytes": 46597,
+      "rootCause": "Passes after adding the upstream-compatible Eg.Division fixture.",
       "failureDetails": {
-        "exceptionMessages": [
-          "Could not find class Eg::Division",
-          "The instance decisionTable_42 does not exist",
-          "The instance decisionTable_43 does not exist"
-        ],
+        "exceptionMessages": [],
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
@@ -79,12 +75,15 @@
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
-      "responseBytes": 49754,
+      "responseBytes": 50300,
       "rootCause": "Missing Perl fixture ShouldIBuyMilk; later table actors cascade.",
       "failureDetails": {
         "exceptionMessages": [
           "Could not find class ShouldIBuyMilk",
-          "The instance decisionTable_43 does not exist"
+          "Method set_cash_in_wallet[1] not found in Eg::Division",
+          "Method set_credit_card[1] not found in Eg::Division",
+          "Method set_pints_of_milk_remaining[1] not found in Eg::Division",
+          "Method go_to_store[0] not found in Eg::Division"
         ],
         "wrongAssertionMessages": []
       },
@@ -104,14 +103,13 @@
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
-      "responseBytes": 64925,
+      "responseBytes": 64930,
       "rootCause": "Missing scenario-backed fixture behavior; scenario commands do not produce expected actor instances.",
       "failureDetails": {
         "exceptionMessages": [
-          "Could not find class Eg::Division",
           "10",
           "2",
-          "5.0 Test not run",
+          "5.0  Test not run",
           "S1 Base scenario",
           "The instance scriptTableActor does not exist",
           "20",
@@ -119,7 +117,16 @@
           "Test not run",
           "S2 Same result as base - correct",
           "5",
-          "2.0 Test not run"
+          "2.0  Test not run",
+          "S4 Same numerator as base",
+          "16",
+          "8.0  Test not run",
+          "S5 Same denominator as base",
+          "22",
+          "7",
+          "~=3.14  Test not run",
+          "S6 Special comparator",
+          "11"
         ],
         "wrongAssertionMessages": []
       },
@@ -139,7 +146,7 @@
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
-      "responseBytes": 75413,
+      "responseBytes": 75411,
       "rootCause": "Nested acceptance page executes without terminating Perl; missing nested fixture behavior still produces exceptions.",
       "failureDetails": {
         "exceptionMessages": [
@@ -150,11 +157,19 @@
           "nothing",
           "The instance scriptTableActor does not exist",
           "and Test System setup is",
-          "!define TEST_SYSTEM {slim} !path lib/*.jar",
+          "!define TEST_SYSTEM {slim}\n!path lib/*.jar",
           "and Setup content is",
-          "|import | |fitnesse.slim.test |",
+          "|import                                                        |\n|fitnesse.slim.test                                            |",
           "and Test content is",
-          "# |baseline: eg.Division | |numerator|denominator|quotient?|# Explication | |10 |2 |5.0 |S1 Base scenario | |20 |4 | |S2 Same result as base - correct| |20 |6 | |W3 Same result as base - wrong | | |5 |2.0 |S4 Same numerator as base | |16 | |8.0 |S5 Same denominator as base | | |22 |7 |~=3.14 |S6 Special comparator | |9 |3 |7 |W7 Wrong result | |11 |2 |4 < _ < 6 |S8 Special comparator | | | | |S9 Correct but duplicate | Given you want to ignore outputs like ''quotient'' Then the base scenario must ignore them already !define SLIM_DT_BASELINE (true) |eg.Division | |numerator|denominator|quotient?|# Explication | |10 |2.5 | |S1 Base scenario - ignore | |20 |4 |5.0 |S2 correct result | |20 |20 | |W3 Same result as base - ignore| #"
+          "#\n|baseline: eg.Division                                           |\n|numerator|denominator|quotient?|# Explication                   |\n|10       |2          |5.0      |S1 Base scenario                |\n|20       |4          |         |S2 Same result as base - correct|\n|20       |6          |         |W3 Same result as base - wrong  |\n|         |5          |2.0      |S4 Same numerator as base       |\n|16       |           |8.0      |S5 Same denominator as base  |  |\n|22       |7          |~=3.14   |S6 Special comparator           |\n|9        |3          |7        |W7 Wrong result                 |\n|11       |2          |4 < _ < 6    |S8 Special comparator           |\n|         |           |         |S9 Correct but duplicate        |\n\nGiven you want to ignore outputs like ''quotient''\nThen the base scenario must ignore them already\n\n!define SLIM_DT_BASELINE (true)\n\n|eg.Division                                                    |\n|numerator|denominator|quotient?|# Explication                  |\n|10       |2.5        |         |S1 Base scenario - ignore      |\n|20       |4          |5.0      |S2  correct result             |\n|20       |20         |         |W3 Same result as base - ignore|\n#",
+          "$IT",
+          "$CONTENT @@@START: Test specific content\n#\n|baseline: eg.Division                                           |\n|numerator|denominator|quotient?|# Explication                   |\n|10       |2          |5.0      |S1 Base scenario                |\n|20       |4          |         |S2 Same result as base - correct|\n|20       |6          |         |W3 Same result as base - wrong  |\n|         |5          |2.0      |S4 Same numerator as base       |\n|16       |           |8.0      |S5 Same denominator as base  |  |\n|22       |7          |~=3.14   |S6 Special comparator           |\n|9        |3          |7        |W7 Wrong result                 |\n|11       |2          |4 < _ < 6    |S8 Special comparator           |\n|         |           |         |S9 Correct but duplicate        |\n\nGiven you want to ignore outputs like ''quotient''\nThen the base scenario must ignore them already\n\n!define SLIM_DT_BASELINE (true)\n\n|eg.Division                                                    |\n|numerator|denominator|quotient?|# Explication                  |\n|10       |2.5        |         |S1 Base scenario - ignore      |\n|20       |4          |5.0      |S2  correct result             |\n|20       |20         |         |W3 Same result as base - ignore|\n#\n@@@END: Test specific content",
+          "when page",
+          "is tested and HTML is extracted",
+          "is tested",
+          "show collapsed",
+          "content",
+          "get HTML result"
         ],
         "wrongAssertionMessages": []
       },
@@ -175,11 +190,11 @@
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
       "responseBytes": 86874,
-      "rootCause": "Missing Perl fixtures (ShouldIBuyMilk, Eg.Division); later actor instance errors cascade.",
+      "rootCause": "Eg.Division is implemented; the page remains blocked by the separate missing ShouldIBuyMilk fixture and cascaded table calls.",
       "failureDetails": {
         "exceptionMessages": [
           "Could not find class ShouldIBuyMilk",
-          "baseline: should I buy milk Could not find class ShouldIBuyMilk",
+          "baseline: should I buy milk  Could not find class ShouldIBuyMilk",
           "Method set_cash_in_wallet[1] not found in Fitnesse::Fixtures::TearDown",
           "Method set_credit_card[1] not found in Fitnesse::Fixtures::TearDown",
           "Method set_pints_of_milk_remaining[1] not found in Fitnesse::Fixtures::TearDown",
@@ -349,7 +364,7 @@
       "failureDetails": {
         "exceptionMessages": [],
         "wrongAssertionMessages": [
-          "expected [ address here name bob ]"
+          "expected [ address \n\t\t here \n\t name \n\t\t bob ]"
         ]
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
@@ -368,12 +383,13 @@
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
-      "responseBytes": 44256,
+      "responseBytes": 44016,
       "rootCause": "Missing AddUpChange fixture; subsequent decision-table actor errors cascade.",
       "failureDetails": {
         "exceptionMessages": [
           "Could not find class AddUpChange",
-          "The instance decisionTable_42 does not exist"
+          "Method set[2] not found in Eg::Division",
+          "Method get[1] not found in Eg::Division"
         ],
         "wrongAssertionMessages": []
       },
@@ -401,14 +417,22 @@
           "Testpage",
           "Method make_a_test_page[1] not found in Fitnesse::Fixtures::HashFixture",
           "and Test content is",
-          "!|Script| |Stop Test| |Not Executed and should be ignored| !|Script| |Not Executed and should be ignored as well|",
+          "!|Script|\n|Stop Test|\n|Not Executed and should be ignored|\n!|Script|\n|Not Executed and should be ignored as well|",
           "when page",
           "is tested and HTML is extracted",
           "get HTML result",
           "Could not find class ResponseExaminer",
           "Method set_type[1] not found in Fitnesse::Fixtures::HashFixture",
           "Method set_pattern[1] not found in Fitnesse::Fixtures::HashFixture",
-          "Method set_group[1] not found in Fitnesse::Fixtures::HashFixture"
+          "Method set_group[1] not found in Fitnesse::Fixtures::HashFixture",
+          "Method found[0] not found in Fitnesse::Fixtures::HashFixture",
+          "get HTML input",
+          "show collapsed",
+          "get value",
+          "Method get_value[0] not found in Fitnesse::Fixtures::HashFixture",
+          "then",
+          "\\d",
+          "assertions pass,"
         ],
         "wrongAssertionMessages": []
       },
@@ -577,7 +601,7 @@
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
-      "responseBytes": 40123,
+      "responseBytes": 40125,
       "rootCause": "Missing SplitFixture.",
       "failureDetails": {
         "exceptionMessages": [
@@ -595,30 +619,22 @@
       "http": 200,
       "status": "completed",
       "right": 0,
-      "wrong": 0,
+      "wrong": 1,
       "ignored": 0,
-      "exceptions": 1,
+      "exceptions": 0,
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
-      "responseBytes": 71733,
-      "rootCause": "Missing Eg.Division behavior/methods on the scenario actor.",
+      "responseBytes": 66116,
+      "rootCause": "Eg.Division resolves and computes results. Scenario output-parameter actor resolution still emits The instance null does not exist and leaves one wrong assertion.",
       "failureDetails": {
         "exceptionMessages": [
-          "Could not find class Eg::Division",
-          "10",
-          "2",
-          "The instance null does not exist",
-          "$x= The instance null does not exist",
-          "Method set_numerator[1] not found in Fitnesse::Slim::Test::TestSlim",
-          "Method set_denominator[1] not found in Fitnesse::Slim::Test::TestSlim",
-          "Method quotient[0] not found in Fitnesse::Slim::Test::TestSlim",
-          "$x",
-          "1",
-          "5.0 Test not run",
-          "1000"
+          "The instance null does not exist"
         ],
-        "wrongAssertionMessages": []
+        "wrongAssertionMessages": [
+          "expected [ 5 .0]",
+          "expected [ 7 . 8125 ]"
+        ]
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
       "evidence": "Individual page test request; result XML saved during baseline run."
@@ -629,30 +645,17 @@
       "attempt": 22,
       "http": 200,
       "status": "completed",
-      "right": 0,
+      "right": 1,
       "wrong": 0,
       "ignored": 0,
-      "exceptions": 1,
+      "exceptions": 0,
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
-      "responseBytes": 47078,
-      "rootCause": "Missing Eg.Division behavior/methods on the scenario actor.",
+      "responseBytes": 44766,
+      "rootCause": "Passes after Eg.Division returns Java-compatible double strings, including integral values such as 10.0.",
       "failureDetails": {
-        "exceptionMessages": [
-          "Could not find class Eg::Division",
-          "Mydivision;",
-          "35",
-          "5",
-          "Method set_numerator[1] not found in Fitnesse::Slim::Test::TestSlim",
-          "Method set_denominator[1] not found in Fitnesse::Slim::Test::TestSlim",
-          "Method quotient[0] not found in Fitnesse::Slim::Test::TestSlim",
-          "Mydivision",
-          "40",
-          "4",
-          "10",
-          "_"
-        ],
+        "exceptionMessages": [],
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
@@ -664,26 +667,17 @@
       "attempt": 23,
       "http": 200,
       "status": "completed",
-      "right": 0,
+      "right": 1,
       "wrong": 0,
       "ignored": 0,
-      "exceptions": 1,
+      "exceptions": 0,
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
-      "responseBytes": 38735,
-      "rootCause": "Missing Eg.Division and script actor fixture classes.",
+      "responseBytes": 37821,
+      "rootCause": "Passes with the new Eg.Division fixture.",
       "failureDetails": {
-        "exceptionMessages": [
-          "Could not find class Eg::Division",
-          "10",
-          "2",
-          "5.0",
-          "Method set_numerator[1] not found in Fitnesse::Slim::Test::TestSlim",
-          "Method set_denominator[1] not found in Fitnesse::Slim::Test::TestSlim",
-          "Method quotient[0] not found in Fitnesse::Slim::Test::TestSlim",
-          "The instance scriptWithVerifyTableActor does not exist"
-        ],
+        "exceptionMessages": [],
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
@@ -695,30 +689,17 @@
       "attempt": 24,
       "http": 200,
       "status": "completed",
-      "right": 0,
+      "right": 1,
       "wrong": 0,
       "ignored": 0,
-      "exceptions": 1,
+      "exceptions": 0,
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
-      "responseBytes": 52916,
-      "rootCause": "Missing Eg.Division behavior/methods on the scenario actor.",
+      "responseBytes": 50306,
+      "rootCause": "Passes with the new Eg.Division fixture; construction uses the upstream no-argument fixture constructor.",
       "failureDetails": {
-        "exceptionMessages": [
-          "Could not find class Eg::Division",
-          "3",
-          "3.0 Test not run",
-          "Method set_numerator[1] not found in Fitnesse::Slim::Test::TestSlim",
-          "Method set_denominator[1] not found in Fitnesse::Slim::Test::TestSlim",
-          "Method quotient[0] not found in Fitnesse::Slim::Test::TestSlim",
-          "2",
-          "4.5 Test not run",
-          "4.0",
-          "6",
-          "2.0",
-          "4"
-        ],
+        "exceptionMessages": [],
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
@@ -731,30 +712,21 @@
       "http": 200,
       "status": "completed",
       "right": 0,
-      "wrong": 0,
+      "wrong": 1,
       "ignored": 0,
-      "exceptions": 1,
+      "exceptions": 0,
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
-      "responseBytes": 73250,
-      "rootCause": "Missing Eg.Division and its decision-table methods.",
+      "responseBytes": 65350,
+      "rootCause": "Eg.Division resolves for the class and library paths. The scenario-based requirement still has an unresolved null actor and one wrong assertion.",
       "failureDetails": {
         "exceptionMessages": [
-          "Could not find class Division",
-          "Division Could not find class Division",
-          "Method set_numerator[1] not found in Fitnesse::Fixtures::TearDown",
-          "Method set_denominator[1] not found in Fitnesse::Fixtures::TearDown",
-          "Method quotient[0] not found in Fitnesse::Fixtures::TearDown",
-          "Could not find class Eg::Division",
-          "10",
-          "2",
-          "5.0 Test not run",
-          "Method set_numerator[1] not found in Fitnesse::Slim::Test::TestSlim",
-          "Method set_denominator[1] not found in Fitnesse::Slim::Test::TestSlim",
-          "Method quotient[0] not found in Fitnesse::Slim::Test::TestSlim"
+          "The instance null does not exist"
         ],
-        "wrongAssertionMessages": []
+        "wrongAssertionMessages": [
+          "expected [ 5 .0]"
+        ]
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
       "evidence": "Individual page test request; result XML saved during baseline run."
@@ -772,7 +744,7 @@
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
-      "responseBytes": 43009,
+      "responseBytes": 43008,
       "rootCause": "Passes.",
       "failureDetails": {
         "exceptionMessages": [],
@@ -824,7 +796,7 @@
           "test results for suite",
           "MySuite",
           "should contain",
-          "table in page A never to be executed Test not run",
+          "table in page A never to be executed  Test not run",
           "ensure"
         ]
       },
@@ -852,7 +824,7 @@
           "test results for suite",
           "MySuite",
           "should contain",
-          "table never to be executed Test not run",
+          "table never to be executed  Test not run",
           "ensure"
         ]
       },
@@ -880,7 +852,7 @@
           "test results for suite",
           "MySuite",
           "should contain",
-          "table in page setup never to be executed Test not run",
+          "table in page setup never to be executed  Test not run",
           "ensure"
         ]
       },
@@ -1040,14 +1012,22 @@
           "Testpage",
           "Method make_a_test_page[1] not found in Fitnesse::Fixtures::EchoFixture",
           "and Test content is",
-          "!- variable defined: TEST_SYSTEM=slim import fitnesse.slim.test Test Strings by plain compare, neither custom compare nor regular expression. In this case detailed diff is wanted. Detailed Diff actual string expected string? #comment abc abc equal abc xyz completly different abc xbc first char different abc ayc middle char different abc abz last char different xyz actual empty, expected filled abc actual filled, expected empty; will be counted as ignored < &> < &> equal with HTML special chars < &> xyz completly different with HTML special chars < &> x&> first char different with HTML special chars < &> middle char different with HTML special chars < &> < &z last char differentwith HTML special chars < &> actual empty, expected filled with HTML special chars abc < &> completly different with HTML special chars abc abc a&c middle char different with HTML special chars abc ab> last char different with HTML special chars Hello World Wellcome Lord no obvious match Test Strings by regular expression. In this case no detailed diff is wanted. Detailed Diff actual string expected string? #comment abc =~/abc/ match abc =~/a.c/ match abc =~/\\w+/ match abc =~/\\w{3}/ match abc =~/^\\w{3}$/ match abc =~/\\w{1}/ match abc =~/^\\w{1}$/ no match abc =~/[ABC]+/ no match abc =~/[ABC]+/i wrong syntax, disable value comparison, use string comparison Test integers by string comparison. In this case detailed diff ist wanted. Detailed Diff actual int expected int? #comment 1 1 equal 1 2 completly different 1 10 partially different 1 completly different Test integers by value comparison, see",
+          "!- variable defined: TEST_SYSTEM=slim \n import \n\t fitnesse.slim.test \n Test Strings by plain compare, neither custom compare nor regular expression. In this case detailed diff is wanted. Detailed Diff \n\t actual string \n\t\t expected string? \n\t\t #comment \n\t abc \n\t\t abc \n\t\t equal \n\t abc \n\t\t xyz \n\t\t completly different \n\t abc \n\t\t xbc \n\t\t first char different \n\t abc \n\t\t ayc \n\t\t middle char different \n\t abc \n\t\t abz \n\t\t last char different \n\t xyz \n\t\t actual empty, expected filled \n\t abc \n\t\t \n\t\t actual filled, expected empty; will be counted as ignored \n\t < &> \n\t\t < &> \n\t\t equal with HTML special chars \n\t < &> \n\t\t xyz \n\t\t completly different with HTML special chars \n\t < &> \n\t\t x&> \n\t\t first char different with HTML special chars \n\t < &> \n\t\t \n\t\t middle char different with HTML special chars \n\t < &> \n\t\t < &z \n\t\t last char differentwith HTML special chars \n\t < &> \n\t\t actual empty, expected filled with HTML special chars \n\t abc \n\t\t < &> \n\t\t completly different with HTML special chars \n\t abc \n\t abc \n\t\t a&c \n\t\t middle char different with HTML special chars \n\t abc \n\t\t ab> \n\t\t last char different with HTML special chars \n\t Hello World \n\t\t Wellcome Lord \n\t\t no obvious match \n Test Strings by regular expression. In this case no detailed diff is wanted. Detailed Diff \n\t actual string \n\t\t expected string? \n\t\t #comment \n\t abc \n\t\t =~/abc/ \n\t\t match \n\t abc \n\t\t =~/a.c/ \n\t\t match \n\t abc \n\t\t =~/\\w+/ \n\t\t match \n\t abc \n\t\t =~/\\w{3}/ \n\t\t match \n\t abc \n\t\t =~/^\\w{3}$/ \n\t\t match \n\t abc \n\t\t =~/\\w{1}/ \n\t\t match \n\t abc \n\t\t =~/^\\w{1}$/ \n\t\t no match \n\t abc \n\t\t =~/[ABC]+/ \n\t\t no match \n\t abc \n\t\t =~/[ABC]+/i \n\t\t wrong syntax, disable value comparison, use string comparison \n Test integers by string comparison. In this case detailed diff ist wanted. Detailed Diff \n\t actual int \n\t\t expected int? \n\t\t #comment \n\t 1 \n\t\t 1 \n\t\t equal \n\t 1 \n\t\t 2 \n\t\t completly different \n\t 1 \n\t\t 10 \n\t\t partially different \n\t 1 \n\t\t completly different \n Test integers by value comparison, see",
           "when page",
           "is tested and HTML is extracted",
           "get HTML result",
           "Could not find class ResponseExaminer",
           "Method set_type[1] not found in Fitnesse::Fixtures::EchoFixture",
           "Method set_pattern[1] not found in Fitnesse::Fixtures::EchoFixture",
-          "Method set_group[1] not found in Fitnesse::Fixtures::EchoFixture"
+          "Method set_group[1] not found in Fitnesse::Fixtures::EchoFixture",
+          "Method found[0] not found in Fitnesse::Fixtures::EchoFixture",
+          "get HTML input",
+          "show collapsed",
+          "get value",
+          "Method get_value[0] not found in Fitnesse::Fixtures::EchoFixture",
+          "then",
+          "25",
+          "assertions pass,"
         ],
         "wrongAssertionMessages": [
           "ensure",
@@ -1055,9 +1035,13 @@
           "expected [ x bc]",
           "expected [a y c]",
           "expected [ab z ]",
-          "expected [ W ell c o me L ord]",
+          "expected [ W ell c o me   L ord]",
           "expected [ x ef]",
-          "expected [d y f]"
+          "expected [d y f]",
+          "expected [de z ]",
+          "expected [$symbol->[ def ]]",
+          "expected [$symbol->[ d ef]]",
+          "expected [$symbol->[d e f]]"
         ]
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
@@ -1084,14 +1068,22 @@
           "Testpage",
           "Method make_a_test_page[1] not found in Fitnesse::Fixtures::EchoFixture",
           "and Test content is",
-          "!- import fitnesse.slim.test if you expect an exception you can test for it and pass the test use the keyword EXCEPTION: Test Slim # Scenario throw Normal? throw Exception With Message? Testing for an expected Exception EXCEPTION:=~/This is my exception/ EXCEPTION:=~/Test message/ otherwise error is indicated. Watch how an exception with message is displayed shorter compared to a normal exception This is my exception Test message if you expect an exception but there is non then the cell will fail Test Slim string getStringArg? getStringArg? Hello Hello EXCEPTION: Hello An exception occurring in a not cell specific function call is added to the current row. This applies to: execute, reset, table, beginTable, endTable DT:fitnesse.slim.test.DecisionTableExecuteThrows x x? 5 5 and also to constructor failures DT:ConstructorThrows test goes on x x? 5 5 Multiple exceptions can happen in one row and in a in cell in the same row DT:fitnesse.slim.test.DecisionTableExecuteThrows Which Methods Fail x x? NONE 5 5 execute setX getX 5 5 reset 2 2 reset 5 5 Everything goes wrong - Fitnesse catches all 7 exceptions The exceptions are added at the right level: cell - for getter and setter row - for reset and execute table - for table, beginTable and endTable DT:fitnesse.slim.test.DecisionTableExecuteThrows Total Disaster x x? 5 5 Scripts behave like decision tables script:fitnesse.slim.test.DecisionTableExecuteThrows check execute EXCEPTION: =~/EXECUTE_THROWS/ A stop test is counted as fail and not as error script:ConstructorThrows stop test check execute Not reached as test is stopped -!",
+          "!- import \n\t fitnesse.slim.test \n if you expect an exception you can test for it and pass the test \nuse the keyword  EXCEPTION: Test Slim \n\t # Scenario \n\t\t throw Normal? \n\t\t throw Exception With Message? \n\t Testing for an expected Exception \n\t\t EXCEPTION:=~/This is my exception/ \n\t\t EXCEPTION:=~/Test message/ \n\t otherwise error is indicated. Watch how an exception with message is displayed shorter compared to a normal exception \n\t\t This is my exception \n\t\t Test message \n if you expect an exception but there is non then the cell will fail \n Test Slim \n\t string \n\t\t getStringArg? \n\t\t getStringArg? \n\t Hello \n\t\t Hello \n\t\t EXCEPTION: Hello \n An exception occurring in a not cell specific function call is added to the current row. \nThis applies to: execute, reset, table, beginTable, endTable DT:fitnesse.slim.test.DecisionTableExecuteThrows \n\t x \n\t\t x? \n\t 5 \n\t\t 5 \n and also to constructor failures DT:ConstructorThrows \n\t\t test goes on \n\t x \n\t\t x? \n\t 5 \n\t\t 5 \n Multiple exceptions can happen in one row and in a in cell in the same row DT:fitnesse.slim.test.DecisionTableExecuteThrows \n\t Which Methods Fail \n\t\t x \n\t\t x? \n\t NONE \n\t\t 5 \n\t\t 5 \n\t execute setX getX \n\t\t 5 \n\t\t 5 \n\t reset \n\t\t 2 \n\t\t 2 \n\t reset \n\t\t 5 \n\t\t 5 \n Everything goes wrong - Fitnesse catches all 7 exceptions \nThe exceptions are added at the right level:  cell - for getter and setter \n\t row - for reset and execute \n\t table - for table, beginTable and endTable \n  DT:fitnesse.slim.test.DecisionTableExecuteThrows \n\t\t Total Disaster \n\t x \n\t\t x? \n\t 5 \n\t\t 5 \n Scripts behave like decision tables \n script:fitnesse.slim.test.DecisionTableExecuteThrows \n\t check \n\t\t execute \n\t\t EXCEPTION: =~/EXECUTE_THROWS/ \n A stop test is counted as fail and not as error script:ConstructorThrows \n\t\t stop test \n\t check \n\t\t execute \n\t\t Not reached as test is stopped \n -!",
           "when page",
           "is tested and HTML is extracted",
           "get HTML result",
           "Could not find class ResponseExaminer",
           "Method set_type[1] not found in Fitnesse::Fixtures::EchoFixture",
           "Method set_pattern[1] not found in Fitnesse::Fixtures::EchoFixture",
-          "Method set_group[1] not found in Fitnesse::Fixtures::EchoFixture"
+          "Method set_group[1] not found in Fitnesse::Fixtures::EchoFixture",
+          "Method found[0] not found in Fitnesse::Fixtures::EchoFixture",
+          "get HTML input",
+          "show collapsed",
+          "get value",
+          "Method get_value[0] not found in Fitnesse::Fixtures::EchoFixture",
+          "then",
+          "8",
+          "assertions pass,"
         ],
         "wrongAssertionMessages": []
       },
@@ -1219,7 +1211,10 @@
           "z",
           "conCatentate a b c",
           "conCatentate;",
-          "check"
+          "check",
+          "echo string",
+          "$RESULT",
+          "x y z"
         ],
         "wrongAssertionMessages": []
       },
@@ -1346,7 +1341,7 @@
           "Could not find class Fitnesse::Slim::Test::Sleep",
           "Method set_timer[1] not found in Fitnesse::Fixtures::EchoFixture",
           "Method do_sleep[0] not found in Fitnesse::Fixtures::EchoFixture",
-          "fitnesse.slim.test.Sleep Could not find class Fitnesse::Slim::Test::Sleep",
+          "fitnesse.slim.test.Sleep  Could not find class Fitnesse::Slim::Test::Sleep",
           "Method set_timer[1] not found in Fitnesse::Fixtures::TearDown",
           "Method do_sleep[0] not found in Fitnesse::Fixtures::TearDown"
         ],
@@ -1442,11 +1437,11 @@
     "failingPages": 42,
     "counts": {
       "right": 8,
-      "wrong": 13,
+      "wrong": 14,
       "ignored": 0,
-      "exceptions": 29
+      "exceptions": 28
     },
-    "serverExits": 4
+    "serverExits": 0
   },
   "postFixVerification": {
     "serverExits": 0,
@@ -1487,5 +1482,49 @@
   "historicalCrash": {
     "message": "Can't use string (\"[000006:000048:scriptTable_42_0/...\") as an ARRAY ref while \"strict refs\" in use at lib/Test/Slim/ListExecutor.pm line 19.",
     "cause": "A valid nested SLiM statement had an empty-string argument. _take_utf16_units consumed the following colon for a requested length of zero; nested list parsing failed and returned the encoded statement as a scalar. ListExecutor then dereferenced it as an arrayref. The fix avoids consuming any characters for zero units."
+  },
+  "fixtureIncrement": {
+    "family": "Eg.Division",
+    "upstreamClass": "eg.Division from installed FitNesse v20251025: public no-argument constructor, public numerator and denominator double fields, setNumerator(double), setDenominator(double), and quotient() returning double.",
+    "behavior": "Preserves zero-initialized state, void setters, quotient results formatted as Java double strings, and NaN/Infinity for zero denominators.",
+    "perlTests": {
+      "command": "bin/test-dev",
+      "result": "PASS",
+      "files": 18,
+      "tests": 188
+    },
+    "affectedPages": [
+      "BaseLineDecisionTable.ComparatorsAreSupported",
+      "BaseLineDecisionTable",
+      "ScenarioTestSuite.ScenarioWithOutputParametersInDecisionTables",
+      "ScenarioTestSuite.ScenarioWithOutputParametersInScripts",
+      "ScenarioTestSuite.ScriptSubclassUsedForDecisionTable",
+      "ScenarioTestSuite.UsingConstructorArgumentsFromDecisionTablesInScenarios",
+      "SegregationOfRequirementsAndImplementation"
+    ],
+    "newlyPassingPages": [
+      "BaseLineDecisionTable.ComparatorsAreSupported",
+      "ScenarioTestSuite.ScenarioWithOutputParametersInScripts",
+      "ScenarioTestSuite.ScriptSubclassUsedForDecisionTable",
+      "ScenarioTestSuite.UsingConstructorArgumentsFromDecisionTablesInScenarios"
+    ],
+    "remainingAffectedFailures": [
+      "BaseLineDecisionTable: missing ShouldIBuyMilk fixture",
+      "ScenarioTestSuite.ScenarioWithOutputParametersInDecisionTables: scenario output-parameter actor resolution reports The instance null does not exist",
+      "SegregationOfRequirementsAndImplementation: scenario implementation reports The instance null does not exist and has one wrong assertion"
+    ],
+    "fullInventory": {
+      "pages": 50,
+      "passingPages": 12,
+      "failingPages": 38,
+      "counts": {
+        "right": 12,
+        "wrong": 16,
+        "ignored": 0,
+        "exceptions": 22
+      },
+      "externalPerlConfirmed": 50,
+      "serverExits": 0
+    }
   }
 }
