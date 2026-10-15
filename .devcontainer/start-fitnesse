@@ -10,7 +10,12 @@ fi
 
 mkdir -p .runtime
 
-nohup java -jar /opt/fitnesse/fitnesse.jar \
+nohup java \
+    -Dslim.port=8099 \
+    -Dslim.host=127.0.0.1 \
+    -Dslim.pool.size=1 \
+    -Dmanually.start.test.runner=true \
+    -jar /opt/fitnesse/fitnesse.jar \
     -p 8080 \
     -d "$PWD" \
     > .runtime/fitnesse.log 2>&1 < /dev/null &
