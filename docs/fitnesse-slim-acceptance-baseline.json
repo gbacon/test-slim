@@ -494,6 +494,30 @@
          "upstreamReference" : "Installed FitNesse v20251025 classes fitnesse.fixtures.SplitFixture and fitnesse.fixtures.DuplicateRows; both expose a single-String constructor and query(). Their bytecode metadata and unchanged acceptance tables establish the constructors and query signatures."
       }
    ],
+   "fixtureSymbolConsumerEngineIncrement" : {
+      "acceptanceEffect" : "No page status changes yet; the TableTable fixture remains to be implemented.",
+      "behavior" : "Injects the active executor into consumers after construction. The reserved SLIM_AGENT_FIXTURE_HANDLES_SYMBOLS value controls whether matching instance.method calls bypass ordinary symbol substitution; null restores substitution.",
+      "currentInventory" : {
+         "conformant" : 43,
+         "fixtureGapPages" : 2,
+         "pages" : 50,
+         "serverExits" : 0
+      },
+      "family" : "Upstream StatementExecutorConsumer lifecycle",
+      "perlTests" : {
+         "command" : "bin/test-dev",
+         "files" : 38,
+         "knownTodoFailures" : 4,
+         "status" : "PASS",
+         "tests" : 402
+      },
+      "regression" : {
+         "assertions" : 4,
+         "file" : "t/fixture-symbol-consumer.t",
+         "preFix" : "The consumer had no executor context, so it could neither inspect nor manage symbols in a table."
+      },
+      "upstreamReference" : "/tmp/fitnesse-src/src/fitnesse/slim/StatementExecutor.java and StatementExecutorConsumer.java"
+   },
    "harnessInvestigation" : {
       "affectedBaselinePages" : [
          "BaseLineDecisionTable.TestFailuresAreMarked",
@@ -1546,15 +1570,15 @@
    "implementationPlan" : [
       {
          "expectedBenefit" : "Targets TableTableSuite.SymbolsInTableTableManagedByTheFixture.",
-         "increment" : "TableTableIncFirstCol fixture and executor-consumer behavior",
+         "increment" : "TableTableIncFirstCol and TestQuery.echo_int",
          "priority" : 1,
-         "scope" : "Implement upstream StatementExecutorConsumer symbol handling and nested-list fixture results, isolating core engine behavior."
+         "scope" : "Implement the exact nested-list table result and in-table symbol reads/assignments using StatementExecutorConsumer."
       },
       {
          "expectedBenefit" : "Targets TestCustomConverter.",
          "increment" : "TestSlimWithConverter",
          "priority" : 2,
-         "scope" : "Inspect the installed custom converter extension point and implement only if compatible without broad converter architecture."
+         "scope" : "Inspect the installed custom converter extension point and add only compatible fixture-local behavior unless upstream proves core support is required."
       }
    ],
    "libraryIdentityEngineIncrement" : {

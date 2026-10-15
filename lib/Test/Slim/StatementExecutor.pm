@@ -9,6 +9,8 @@ use Test::Slim::Statement;
 use Test::Slim::SlimHelperLibrary;
 use Test::Slim::MapResult;
 
+my $FIXTURE_HANDLES_SYMBOLS = "SLIM_AGENT_FIXTURE_HANDLES_SYMBOLS";
+
 sub new {
   my($class) = @_;
   my $self = bless {
@@ -16,6 +18,7 @@ sub new {
     instance => {},
     library  => [],
     symbol   => {},
+    fixture_symbol_pattern => undef,
     stop_requested => undef,
   } => $class;
 
@@ -101,6 +104,8 @@ sub create {
     else {
       $self->{instance}{$id} = $object;
     }
+    $object->set_statement_executor($self)
+      if $object->can('set_statement_executor');
   };
   return "OK" unless $@;
 
@@ -184,6 +189,14 @@ sub instance {
 sub set_symbol {
   my($self,$symbol,$value) = @_;
   $self->{symbol}{$symbol} = $value;
+  if ($symbol eq $FIXTURE_HANDLES_SYMBOLS) {
+    $self->{fixture_symbol_pattern} = undef;
+    if (defined $value) {
+      my $pattern = eval { qr/$value/ };
+      $self->{fixture_symbol_pattern} = $pattern unless $@;
+    }
+  }
+  return $value;
 }
 
 sub get_symbol {
@@ -248,8 +261,13 @@ sub call {
 
   my $result;
   eval {
+    my @call_args = @args;
+    unless ($self->{fixture_symbol_pattern}
+        && "$instance.$requested_method" =~ /\A(?:$self->{fixture_symbol_pattern})\z/) {
+      @call_args = $self->replace_symbols(@call_args);
+    }
     $result = $obj->$method(
-      $self->replace_tables_with_hashes($self->replace_symbols(@args))
+      $self->replace_tables_with_hashes(@call_args)
     );
     $result = Test::Slim::MapResult->convert($result)
       if ref($result) eq "HASH";

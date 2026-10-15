@@ -52,6 +52,8 @@ The latest targeted runs report **43 conformant pages**; all 50 pages will be re
 
 The 7 remaining non-conformant pages comprise 2 fixture gaps, 4 FitNesse harness/rendering limitations, and 1 environment-limited timeout page. Remaining fixture gaps are TableTableIncFirstCol/TestQuery.echo_int and TestSlimWithConverter.
 
+The fixture-managed-symbol executor path now mirrors upstream `StatementExecutorConsumer`: fixtures receive the current executor, can register a method-name regex for symbol handling, and restore normal replacement when finished. The 4 focused engine regressions pass, and `bin/test-dev` passes with 38 files and 402 tests. This does not yet change the TableTable acceptance result; its Perl fixture still needs implementation.
+
 ## Per-page results
 
 | Page | Right | Wrong | Ignored | Exceptions | Conformance | Current root cause |
@@ -109,4 +111,4 @@ The 7 remaining non-conformant pages comprise 2 fixture gaps, 4 FitNesse harness
 
 ## Next increment
 
-The next increment is TableTableIncFirstCol with TestQuery.echo_int. Its upstream source also uses StatementExecutorConsumer to manage symbols inside the table; verify that executor integration before implementing the fixture. The other remaining fixture page is TestSlimWithConverter.
+The next increment is the TableTableIncFirstCol/TestQuery fixture using the now-verified consumer contract. The other remaining fixture page is TestSlimWithConverter.
