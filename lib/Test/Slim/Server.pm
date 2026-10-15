@@ -6,6 +6,7 @@ use warnings;
 use Encode qw/ encode /;
 use IO::Select;
 use IO::Socket::INET;
+use POSIX qw/ WNOHANG /;
 use Test::Slim::List;
 use Test::Slim::ListExecutor;
 
@@ -21,13 +22,13 @@ sub new {
 sub _read {
   my($self,$fh,$length) = @_;
 
-  my $result;
+  my $result = "";
   while ($length > 0) {
     my $status = sysread $fh, my($buf), $length;
 
     if (defined $status) {
-      $result .= $buf;
       last if $status == 0;
+      $result .= $buf;
       $length -= $status;
     }
     else {
@@ -50,6 +51,7 @@ sub _write {
     my $status = syswrite $fh, $buf;
 
     if (defined $status) {
+      die "syswrite returned zero" if $status == 0;
       $length -= $status;
       substr($buf, 0, $status) = "";
     }
@@ -61,6 +63,22 @@ sub _write {
 }
 
 sub process {
+  my($self,$fh) = @_;
+
+  my $ok;
+  my $error;
+  {
+    local $self->{EXEC} = Test::Slim::ListExecutor->new;
+    $ok = eval { $self->_process($fh); 1 };
+    $error = $@;
+  }
+
+  close $fh if defined fileno($fh);
+  die $error unless $ok;
+  return;
+}
+
+sub _process {
   my($self,$fh) = @_;
 
   $self->_write($fh, "Slim -- V0.3\n");
@@ -75,7 +93,6 @@ sub process {
     my $command = $self->_read($fh, $length);
 
     if (lc($command) eq "bye") {
-      close $fh;
       return;
     }
     else {
@@ -100,17 +117,47 @@ sub run {
   my($self,$port) = @_;
 
   my $lsn = IO::Socket::INET->new(ReuseAddr => 1,
-                                  Listen    => 1,
+                                  Listen    => 16,
                                   LocalPort => $port)
     or die "$0: create listen socket on port $port failed: $@\n";
 
+  local $SIG{CHLD} = sub {
+    1 while waitpid(-1, WNOHANG) > 0;
+  };
+
   my $sel = IO::Select->new($lsn);
-  while (my @ready = $sel->can_read) {
+  while (1) {
+    my @ready = $sel->can_read;
+    next unless @ready;
     foreach my $fh (@ready) {
       if ($fh == $lsn) {
         my $new = $lsn->accept;
-        $self->process($new);
-        # exit 0;
+        unless ($new) {
+          next if $!{EINTR};
+          warn "$0: accept failed: $!\n";
+          next;
+        }
+
+        my $pid = fork();
+        unless (defined $pid) {
+          warn "$0: fork failed: $!\n";
+          close $new;
+          next;
+        }
+
+        if ($pid == 0) {
+          close $lsn;
+          $SIG{CHLD} = "DEFAULT";
+          my $ok = eval { $self->process($new); 1 };
+          unless ($ok) {
+            my $error = $@;
+            warn "$0: SLiM client failed: $error\n";
+            close $new if defined fileno($new);
+          }
+          exit($ok ? 0 : 1);
+        }
+
+        close $new;
       }
       else {
         warn "$0: unexpected input from fd " . fileno($fh) . "\n";

@@ -6,11 +6,11 @@ FitNesse is configured to use the external Perl SLiM server. Each individual pag
 
 ## Perl baseline
 
-`bin/test-dev`: **PASS**, 19 files, 203 tests. Four existing failures are marked TODO (three boilerplate checks and one Unicode-return case); the harness result is PASS.
+Latest `bin/test-dev` run after the concurrency change: **PASS**, 20 files, 216 tests. Four existing failures are marked TODO (three boilerplate checks and one Unicode-return case); the harness result is PASS. The earlier pre-concurrency baseline was 19 files and 203 tests.
 
 ## Acceptance baseline
 
-The local wiki has 50 pages marked `Test=true` under `SuiteSlimTests`. Each was requested individually via `?test&format=xml`; all 50 returned HTTP 200 through the external Perl server. Seventeen pages pass and 33 fail. Summed page counts: **17 right, 14 wrong, 0 ignored, 19 exceptions**. All 50 page responses confirmed the external Perl SLiM connection; the Perl server exited on **zero** pages.
+The local wiki has 50 pages marked `Test=true` under `SuiteSlimTests`. Each was requested individually via `?test&format=xml`; all 50 returned HTTP 200 through the external Perl server. Seventeen pages pass and 33 fail. Summed page counts: **17 right, 14 wrong, 0 ignored, 19 exceptions**. All 50 page responses confirmed the external Perl SLiM connection; the Perl server exited on **zero** pages. The 2026-10-15 concurrency verification reran all 50 pages: each result and page classification matched this baseline, all requests completed, and no server exit was observed.
 
 ## Conformance assessment
 
@@ -36,16 +36,15 @@ The installed FitNesse v20251025 jar contains `fitnesse.fixtures.PageDriver` and
 
 Upstream's Java implementation uses FitNesse's in-process fixture context: PageDriver delegates page creation and request execution to FitNesse helpers, and ResponseExaminer reads the most recent response and current page from `FitnesseFixtureContext`. This is why a Perl translation cannot use that context directly. Its architecture-compatible equivalent is an HTTP-based test harness under `t/lib/Fitnesse/Fixtures/`: create and mark pages through FitNesse responders, request `?test`/`?suite`/`?executionLog`, save the response body and source page HTML in a small shared harness context, then perform ResponseExaminer's regex extraction over that data. These operations should remain outside `lib/Test/Slim/`.
 
-There is a blocking dependency before that implementation can safely run. An HTTP `?test` request starts a separate FitNesse test execution and therefore a second SLiM client connection while the outer acceptance test's PageDriver call is still waiting. `Test::Slim::Server::run` currently accepts a connection and calls `process` inline; `process` does not return until the current connection ends. The server therefore cannot accept and serve the nested connection during the PageDriver call. A fixture-only implementation would hang until FitNesse times out. This is a harness/server concurrency limitation, not a malformed SLiM frame or a fixture-method resolution defect.
+The concurrency prerequisite is now implemented. `Test::Slim::Server::run` accepts a connection and forks a worker; each call to `process` creates a fresh `ListExecutor`. The parent closes its accepted-socket copy and reaps workers with a `SIGCHLD` handler. The focused socket regression confirms that connection B completes SLiM commands while A remains open, and that actors, symbols, and library registration remain isolated. It also confirms a malformed frame is closed without interrupting A and the listener accepts a later valid client. The previous fixture-only implementation would have timed out because the synchronous accept loop could not serve the nested connection. HTTP page driving and result extraction remain unimplemented; the 12 pages stay harness-limited until those separate fixtures are added.
 
-Recommended staged work:
+Recommended next work:
 
-1. Add regression coverage for two simultaneous SLiM clients, and refactor connection execution so each connection has isolated actor/library/symbol state. Add bounded worker handling (or an equivalent concurrency mechanism) so a nested test can complete while the outer client is blocked in an HTTP fixture call. Keep framing and statement semantics unchanged.
-2. Implement the minimal Perl PageDriver HTTP operations actually used by the acceptance inventory: create a page, mark a test page, request page/suite/execution-log responders, and retain status/body/source content. Validate page creation and request behavior against FitNesse v20251025 without running nested SLiM yet.
-3. Implement ResponseExaminer separately over the retained harness response/page content, including the `contents` and `pageHtml` source types, multiline/dotall regex matching, capture group selection, and no-match behavior. Add focused unit tests with deterministic HTTP responses.
-4. Run embedded acceptance pages through the external Perl service, then rerun all 50 pages. Pages that uncover independent missing fixture families remain blocked and must not be reported as harness successes.
+1. Implement the minimal Perl PageDriver HTTP operations used by the acceptance inventory: create a page, mark a test page, request page/suite/execution-log responders, and retain status/body/source content. Validate these against FitNesse v20251025.
+2. Implement ResponseExaminer over retained response/page content, including the `contents` and `pageHtml` source types, multiline/dotall regex matching, capture-group selection, and no-match behavior. Add focused tests with deterministic response data.
+3. Run the embedded acceptance pages through the external Perl service, then rerun all 50 pages. Pages that uncover independent missing fixture families remain blocked and must not be reported as harness successes.
 
-The current 50-page raw totals and conformance classifications are unchanged by this investigation: 17 pages pass and 33 fail, with 17 confirmed conformant pages, 2 confirmed engine gaps, 18 fixture gaps, 12 harness-limited pages, and 1 environment-limited page. No nested harness behavior was implemented or newly verified in this increment.
+The current 50-page raw totals and conformance classifications remain: 17 pages pass and 33 fail, with 17 confirmed conformant pages, 2 confirmed engine gaps, 18 fixture gaps, 12 harness-limited pages, and 1 environment-limited page. Concurrent SLiM connections are verified; nested FitNesse harness behavior is not yet implemented or newly verified.
 
 LibrarySuite.HowToAddFixturesWithParametersToTheLibrary also includes an explanatory negative example where a query method is absent; that example is not an outer expected failure. The timeout pages document their stated behavior and caveats, but their missing Sleep fixtures currently prevent meaningful verification. For the no-server test, run the outer Perl endpoint on a different port and leave 8099 unbound; keep the wiki page unchanged.
 
@@ -130,7 +129,7 @@ Exact rendered exception and wrong-assertion snippets for every page are stored 
 
 ## Prioritized implementation plan
 
-1. **Nested acceptance harness prerequisites, then fixtures: concurrent per-connection SLiM execution followed by HTTP PageDriver and ResponseExaminer.** This is the broadest diagnostic and coverage increment: 12 pages inspect embedded test/suite HTML, including failure/exception/ignore rendering, custom plugin rendering, stop behavior, startup handling, and timeout output. It cannot be implemented as fixtures alone: the nested `?test` call creates a second client while the outer fixture command is active, and the current synchronous accept loop cannot service it. First add connection-isolation/concurrency regressions and support; then implement the separate HTTP harness and response extraction stages described above. Some embedded tests also need target fixtures, so this work makes their actual SLiM behavior observable and may expose additional gaps.
+1. **HTTP PageDriver and ResponseExaminer harness fixtures.** Concurrent independent SLiM sessions now support nested `?test` requests without blocking the outer connection. Implement HTTP-backed page creation, test marking, page/suite/log requests, then response extraction separately. Twelve pages inspect embedded test/suite HTML; some also need independent target fixtures, so newly observable outcomes must be classified separately.
 
 2. **Query fixture family: SplitFixture and DuplicateRows.** These named fixtures directly block four pages: both QueryTableSuite pages plus ordered and subset duplicate-row query pages. Reproduce upstream row data, constructor parsing, duplicate ordering, and query methods, then use the unchanged pages to assess query-table matching.
 

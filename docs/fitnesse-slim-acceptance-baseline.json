@@ -7,8 +7,8 @@
   "unitBaseline": {
     "command": "bin/test-dev",
     "result": "PASS",
-    "files": 19,
-    "tests": 203,
+    "files": 20,
+    "tests": 216,
     "todoFailures": 4,
     "todoDescription": "Three boilerplate TODOs and one Unicode-return TODO; all marked TODO and suite exits PASS."
   },
@@ -2363,7 +2363,7 @@
   "classificationMethod": "Each page retains raw right/wrong/ignored/exception counts. Conformance classification uses page content, inherited setup, embedded expected counts, current Perl fixtures, and upstream FitNesse documentation. Negative examples are evaluated by their outer assertions, not by assuming every inner failure is a defect.",
   "remainingPageClassification": {
     "sourceReviewed": "All 33 raw non-passing pages, including page content and applicable parent setup.",
-    "sharedSuiteSetup": "SuiteSlimTests/SetUp imports fitnesse.fixtures and registers PageDriver and EchoFixture libraries, includes LibrarySuite setup, and loads custom alias, renderer, and glob-comparator plugins. The current Perl PageDriver is a small stub: request_page returns 200 without fetching nested results. PageDriver/ResponseExaminer use FitNesse in-process context upstream; an HTTP Perl equivalent is blocked on the synchronous SLiM accept loop because nested test requests need a second simultaneous connection.",
+    "sharedSuiteSetup": "SuiteSlimTests/SetUp imports fitnesse.fixtures and registers PageDriver and EchoFixture libraries, includes LibrarySuite setup, and loads custom alias, renderer, and glob-comparator plugins. PageDriver/ResponseExaminer use FitNesse in-process context upstream; concurrent independent SLiM sessions are now supported, but the HTTP-backed Perl harness fixtures remain unimplemented.",
     "intentionalCoverage": "Some pages intentionally create wrong cells, exceptions, ignored rows, stopped tests, or timeouts inside nested tests and assert their rendering outside. Their outer pages still need to pass before those behaviors are verified.",
     "confirmedEngineGaps": [
       "ChainWithInstanceTest: automatic SlimHelperLibrary getFixture/pushFixture/popFixture behavior is absent.",
@@ -2375,10 +2375,10 @@
   "implementationPlan": [
     {
       "priority": 1,
-      "increment": "Nested acceptance harness prerequisites, then HTTP PageDriver and ResponseExaminer",
+      "increment": "Implement HTTP PageDriver and ResponseExaminer harness fixtures",
       "expectedBenefit": "Unblocks meaningful verification of up to 12 pages that inspect embedded test/suite HTML, including failure/exception/ignore rendering, custom plugin rendering, stop behavior, startup handling, and timeout output.",
-      "scope": "Stage 1: isolate state per SLiM connection and support simultaneous clients with regressions. Stage 2: use HTTP-backed PageDriver operations for page creation, test marking, and page/suite/log requests. Stage 3: implement ResponseExaminer extraction over retained HTTP response and source-page content. Keep the harness in t/lib, outside the protocol implementation.",
-      "caveat": "A fixture-only implementation would deadlock: nested ?test launches another SLiM connection while the outer PageDriver call is waiting, and the server currently processes connections inline. Some embedded tests also require independent fixture families."
+      "scope": "Implement HTTP-backed PageDriver operations for page creation, test marking, page/suite/log requests, and status/body/source capture; then implement ResponseExaminer separately over retained response and page content. Keep both under t/lib, outside the protocol implementation.",
+      "caveat": "Concurrent SLiM support is verified, but some embedded pages also need target fixtures. Newly observable inner outcomes must be checked against the outer assertions and classified separately."
     },
     {
       "priority": 2,
@@ -2397,7 +2397,7 @@
   ],
   "additionalConfirmedDefect": "HashFixture map-return serialization is a confirmed one-page engine gap; add a focused regression and fix as a separate targeted increment after the highest-coverage shared increments.",
   "harnessInvestigation": {
-    "status": "documented_dependency_no_implementation",
+    "status": "concurrent_session_prerequisite_complete",
     "fitNesseVersion": "20251025",
     "installedClasses": [
       "fitnesse.fixtures.PageDriver",
@@ -2411,20 +2411,20 @@
     ],
     "upstreamArchitecture": "The Java fixtures use FitNesse in-process fixture context and helpers. The Perl equivalent must use HTTP and retain response body/source HTML in test-harness fixture state outside lib/Test/Slim.",
     "blockingDependency": {
-      "type": "server_concurrency",
-      "evidence": "Test::Slim::Server::run accepts a connection and calls process inline; process blocks until the connection ends. An HTTP ?test starts a second FitNesse-to-SLiM client while the outer PageDriver call is waiting, and the server cannot accept that client until the outer call returns.",
-      "classification": "test-harness/server integration limitation, not a protocol framing or method-resolution defect"
+      "type": "http_harness_fixtures_remain_unimplemented",
+      "evidence": "Fork-per-connection workers now allow nested FitNesse test executions to open a second SLiM session while the outer PageDriver call waits. PageDriver and ResponseExaminer still require the separate HTTP-backed fixture implementation.",
+      "classification": "remaining test-harness limitation; no protocol defect observed"
     },
     "recommendation": [
-      "Add simultaneous-client regressions and isolate executor state per connection; provide bounded concurrent connection handling without changing framing or statement semantics.",
-      "Implement the minimum HTTP PageDriver behavior used by this inventory and test page creation, test marking, page/suite/execution-log requests, response status/body capture.",
-      "Implement ResponseExaminer over retained response/page content with contents/pageHtml, multiline/dotall regex and capture-group behavior.",
-      "Run affected pages and the full 50-page inventory; reclassify newly exposed fixture gaps separately."
+      "Implement HTTP PageDriver operations used by the acceptance pages: page creation, test marking, page/suite/execution-log requests, and response/source-content capture.",
+      "Implement ResponseExaminer over retained response/page content with contents/pageHtml, multiline/dotall regex matching, capture group and no-match semantics.",
+      "Run affected pages and all 50 inventory pages; classify independent missing fixture families separately."
     ],
     "verification": {
-      "unitTests": "bin/test-dev PASS, 19 files, 203 tests; four TODO failures as recorded in baseline.",
-      "acceptanceRerun": "not performed; no implementation change was made and existing raw/conformance baseline remains unchanged.",
-      "serverStability": "No server crash observed; nested execution remains unverified."
+      "concurrencyRegression": "t/server-concurrency.t PASS, 13 tests; pre-fix run failed when connection B did not receive a greeting while A remained open.",
+      "unitTests": "bin/test-dev PASS, 20 files, 216 tests; four existing TODO failures remain.",
+      "acceptanceRerun": "50/50 pages completed through the external Perl SLiM service; page assertion counts and classifications exactly matched the prior baseline.",
+      "serverStability": "0 unexpected Perl server exits; all 50 pages confirmed 127.0.0.1:8099; malformed-input and disconnect regressions passed."
     },
     "affectedBaselinePages": [
       "BaseLineDecisionTable.TestFailuresAreMarked",
@@ -2440,5 +2440,37 @@
       "TestSystemSlimSuite.ErrorSituationsDuringSlimServerStartup.B_TimeoutAsSlimServerDiesBeforeConnecting",
       "TestSystemSlimSuite.TimeoutInSlimTestSystem"
     ]
+  },
+  "concurrencyVerification": {
+    "model": "fork one worker per accepted SLiM connection; listener parent accepts and reaps children",
+    "isolation": "Each process() call replaces EXEC with a fresh ListExecutor, isolating imports, actor objects, library registrations and instances, symbols, and fixture-owned state.",
+    "socketCleanup": "Parent closes its accepted-socket copy; process() closes the worker socket on BYE, EOF, or exception; malformed input is contained in the worker; SIGCHLD handler reaps exited workers.",
+    "regressionTest": "t/server-concurrency.t",
+    "regressionAssertions": 13,
+    "preFixFailure": "The test timed out waiting for connection B greeting while connection A remained open.",
+    "acceptanceRun": {
+      "pages": 50,
+      "completed": 50,
+      "externalPerlConfirmed": 50,
+      "passingPages": 17,
+      "failingPages": 33,
+      "counts": {
+        "right": 17,
+        "wrong": 14,
+        "ignored": 0,
+        "exceptions": 19
+      },
+      "serverExits": 0,
+      "pageResultChanges": 0,
+      "newlyPassingPages": []
+    }
+  },
+  "preConcurrencyUnitBaseline": {
+    "command": "bin/test-dev",
+    "result": "PASS",
+    "files": 19,
+    "tests": 203,
+    "todoFailures": 4,
+    "todoDescription": "Three boilerplate TODOs and one Unicode-return TODO; all marked TODO and suite exits PASS."
   }
 }
