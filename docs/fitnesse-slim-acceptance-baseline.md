@@ -1,12 +1,12 @@
 # FitNesse SLiM acceptance baseline
 
-Updated 2026-10-15 on `codex/complete-slim`, after adding FitNesse-compatible hash result conversion. The installed FitNesse distribution is v20251025.
+Updated 2026-10-15 on `codex/complete-slim`, after the fixture-resolution phase and a full 50-page rerun. The installed FitNesse distribution is v20251025.
 
-FitNesse ran all pages against the external Perl SLiM server at `127.0.0.1:8099`. Every page response identified `fitnesse.slim.SlimService` and the external connection; all 50 returned HTTP 200. The Perl server exited zero times.
+FitNesse ran all 50 pages against the external Perl SLiM server at `127.0.0.1:8099`. Every response identified `fitnesse.slim.SlimService` and the external connection; all returned HTTP 200. The listener remained alive throughout the inventory, with zero unexpected server exits.
 
 ## Perl tests
 
-`bin/test-dev`: **PASS**, 28 files and 338 tests. Four known TODO-marked failures remain (three boilerplate checks and one Unicode-return case). The 10 focused map-result regressions cover ordered hash-table output, HTML escaping, valid markup, nulls, nested maps/lists, Unicode wire round-tripping, explicit object stringification, and reference identity. Existing tests also cover stop/exception behavior, Unicode transport, symbols, and nested lists.
+`bin/test-dev`: **PASS**, 39 files and 407 tests. Four known TODO-marked failures remain (three boilerplate checks and one Unicode-return case). Focused regressions cover hash results, fixture-managed symbol behavior, library object identity, and the added fixture families.
 
 ## PageDriver behavior implemented
 
@@ -46,13 +46,15 @@ The Perl engine previously returned a plain hash reference from `StatementExecut
 
 ## Current acceptance results
 
-The latest targeted runs report **44 conformant pages**; all 50 pages will be rerun after the remaining fixture increment. Raw page totals currently combine the latest affected-page results with the last full inventory: **360 right, 7 wrong, 2 ignored, and 17 exceptions**. The affected page ran through the external Perl service at `127.0.0.1:8099`, with **zero server crashes**.
+The full page-level XML inventory reports **44 conformant pages** and 6 non-conformant pages: 1 engine gap, 4 FitNesse harness/rendering limitations, and 1 environment-limited page. Raw totals are **360 right, 7 wrong, 2 ignored, and 17 exceptions**. Every page's raw counts match the prior inventory; no page gained or lost conformance, and no passing page regressed. Source inspection reclassified `TestCustomConverter` from a fixture gap to an engine gap. All 50 pages used the external Perl service, and the listener had zero unexpected exits.
 
-`DefineAliasTest` improved from 8 right and 67 exceptions to 22 right and no exceptions. `HybridDecisionTable.ImplementDynamicDecisionTableWithHybridTable` improved from 25 exceptions to 5 right and no exceptions. Both setup-library pages pass (1 and 2 right). `HashTableWithHtmlContent` and `TestPageWithInclude` pass with 1 right each. Both Sleep pages pass (1 and 9 right); as these run against the already connected server, they do not independently validate startup-time runner flags. `TestChineseWords` passes with 1 right. `TestSequentialArgumentProcessing` passes with 8 right. `TestTryingParameterizationIsntTooGreedy` passes with 1 right. `TestDetailedDiff` passes all 22 outer assertions while confirming the nested page's intentional 25 pass, 50 fail, and 1 ignored counts. `SymbolsInTableTableManagedByTheFixture` now passes with 15 right; it exercises the fixture-managed symbol path. All 31 pages that were conformant at the start remain conformant. The complete 50-page comparison will be recorded after the final fixture increment.
+The 13 newly conformant pages are `DefineAliasTest`, `HybridDecisionTable.ImplementDynamicDecisionTableWithHybridTable`, both `LibraryInSetUpSuite` pages, `HashTableTests.HashTableWithHtmlContent`, `TestPageWithInclude`, both Sleep pages, `TestChineseWords`, `TestSequentialArgumentProcessing`, `TestTryingParameterizationIsntTooGreedy`, `TestDetailedDiff`, and `TableTableSuite.SymbolsInTableTableManagedByTheFixture`. All 31 pages that were conformant at the start remain conformant. The page-by-page comparison is in the [JSON inventory](fitnesse-slim-acceptance-baseline.json).
 
-The 6 remaining non-conformant pages comprise 1 fixture gap, 4 FitNesse harness/rendering limitations, and 1 environment-limited timeout page. The remaining fixture gap is `TestSlimWithConverter`.
+The 6 remaining non-conformant pages comprise 1 engine gap, 4 FitNesse harness/rendering limitations, and 1 environment-limited timeout page. `TestCustomConverter` depends on the missing `TestSlimWithConverter` fixture and on a converter engine that preserves declared method return types, applies converters to actual runtime classes, and converts arguments through the selected converter's `fromString` method. The Perl executor currently has no such converter registry or method type metadata. Reproducing this page correctly requires a broader invocation/serialization change, so the fixture was not replaced with page-specific output strings.
 
-The fixture-managed-symbol executor path mirrors upstream `StatementExecutorConsumer`: fixtures receive the current executor, can register a method-name regex for symbol handling, and restore normal replacement when finished. The focused engine regression and TableTable fixture regression pass. `bin/test-dev` passes with 39 files and 407 tests. The TableTable page did not require the separately named TestQuery fixture because its script checks are handled by the existing TestSlim.echoInt method.
+The original 14 fixture-gap pages grouped into AddUpChange (2 pages), library setup and reused library IDs (2), EchoFixture/HashFixture (hash HTML and include pages, 2), Sleep (2), and five one-page fixture families: EchoScript, TestSlim concatenation, LoginDialogDriver, DetailedDiff, and TableTableIncFirstCol. AddUpChange ranked first because one shared fixture removed a large cascade of failed setup calls; the other two-page groups followed by coverage. The standalone fixtures each covered one page. TableTable required a separate but bounded StatementExecutorConsumer engine increment; it and its fixture now pass. The sixth one-page dependency, TestSlimWithConverter, exposed a broader engine gap and remains blocked on converter support.
+
+The fixture-managed-symbol executor path mirrors upstream `StatementExecutorConsumer`: fixtures receive the current executor, can register a method-name regex for symbol handling, and restore normal replacement when finished. The TableTable page uses the existing `TestSlim.echoInt` method; it does not need a separate TestQuery fixture.
 
 ## Per-page results
 
@@ -92,7 +94,7 @@ The fixture-managed-symbol executor path mirrors upstream `StatementExecutorCons
 | `TestChineseWords` | 1 | 0 | 0 | 0 | conformant | EchoScript echoes the original Unicode value and writes its UTF-8 bytes plus newline to stdout. |
 | `TestComparators` | 26 | 0 | 0 | 0 | conformant | The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server. |
 | `TestCustomComparators` | 1 | 2 | 0 | 0 | harness_limited | The nested response is retrieved, but its output lacks the expected glob comparison; the root-level nested test does not receive the outer suite CustomComparators setup. |
-| `TestCustomConverter` | 0 | 0 | 0 | 17 | fixture_gap | TestSlimWithConverter and its converter-control fixture methods are absent; this run does not establish an engine defect. |
+| `TestCustomConverter` | 0 | 0 | 0 | 17 | engine_gap | The fixture is absent, and its acceptance behavior depends on a converter registry, declared method return types, runtime class converter selection, and converter-based argument parsing. |
 | `TestDetailedDiff` | 22 | 0 | 0 | 0 | conformant | DetailedDiff supplies the expected values; ResponseExaminer confirms the nested page's intentional 25-pass, 50-fail, 1-ignored result and rendered diff markup. |
 | `TestExceptionIsDisplayed` | 19 | 0 | 0 | 0 | conformant | The Perl exception fixtures and TestSlim methods now reproduce the expected upstream exception messages, classes, and stop behavior; all 19 outer checks pass. |
 | `TestOrderedQueryWithDuplicateRows` | 14 | 0 | 0 | 0 | conformant | All page assertions pass. SetContextValue also reports two ignored symbol-assignment cells, which are expected query-table behavior. |
@@ -111,4 +113,4 @@ The fixture-managed-symbol executor path mirrors upstream `StatementExecutorCons
 
 ## Next increment
 
-The final fixture page is TestCustomConverter, which depends on TestSlimWithConverter and its converter behavior.
+The remaining converter work needs a staged design: retain method parameter and return type metadata at invocation; add a per-session converter registry with standard and fixture-registered converters; route argument `fromString` and result `toString` conversion through that registry; then implement TestSlimWithConverter. Keep exact `List` return behavior distinct from implementing collection classes, and add connection-isolation tests for registry changes. This is beyond the bounded fixture increments completed here.
