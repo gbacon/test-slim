@@ -3,6 +3,12 @@ package Fitnesse::Slim::Test::TestSlim;
 use strict;
 use utf8;
 use warnings;
+use Scalar::Util qw(refaddr);
+use overload
+  '""' => 'to_string',
+  '==' => sub { refaddr($_[0]) == refaddr($_[1]) },
+  '!=' => sub { refaddr($_[0]) != refaddr($_[1]) },
+  fallback => 1;
 
 sub new {
   my($class,@args) = @_;
@@ -86,10 +92,15 @@ sub get_string_arg {
   $self->{STRING};
 }
 
+sub to_string {
+  my($self) = @_;
+  "TestSlim: $self->{CTRARG}, " . (defined $self->{STRING} ? $self->{STRING} : "null");
+}
+
 sub is_same {
   my($self,$other) = @_;
   return "false" unless ref $other;
-  $other == $self ? "true" : "false";
+  refaddr($other) == refaddr($self) ? "true" : "false";
 }
 
 1;

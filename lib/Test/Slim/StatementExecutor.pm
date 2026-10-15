@@ -6,15 +6,20 @@ use warnings;
 
 use HTML::TreeBuilder;
 use Test::Slim::Statement;
+use Test::Slim::SlimHelperLibrary;
 
 sub new {
   my($class) = @_;
-  bless {
+  my $self = bless {
     imports  => [],
     instance => {},
-    library  => [],
+    library  => ["__slim_helper_library"],
     symbol   => {},
   } => $class;
+
+  $self->{instance}{__slim_helper_library} =
+    Test::Slim::SlimHelperLibrary->new($self->{instance});
+  $self;
 }
 
 sub add_import {
