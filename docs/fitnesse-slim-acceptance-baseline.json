@@ -89,16 +89,16 @@
    },
    "conformanceSummary" : {
       "classificationCounts" : {
-         "conformant" : 37,
+         "conformant" : 39,
          "engine_gap" : 0,
          "environment_limited" : 1,
-         "fixture_gap" : 8,
+         "fixture_gap" : 6,
          "harness_limited" : 4
       },
-      "confirmedConformantPages" : 37,
+      "confirmedConformantPages" : 39,
       "confirmedEngineGapPages" : 0,
       "environmentBlockedPages" : 1,
-      "fixtureBlockedPages" : 8,
+      "fixtureBlockedPages" : 6,
       "interpretation" : "Raw page-level FitNesse assertion counts are preserved separately. Embedded negative, ignored, and exception outcomes are valid when the outer acceptance page checks them successfully. Fixture and harness blockers are not attributed to the SLiM engine without evidence.",
       "pages" : 50,
       "testHarnessBlockedPages" : 4
@@ -1456,19 +1456,13 @@
          "expectedBenefit" : "Targets TableTableSuite.SymbolsInTableTableManagedByTheFixture.",
          "increment" : "TableTableIncFirstCol and TestQuery.echo_int",
          "priority" : 1,
-         "scope" : "Reproduce the installed nested-list fixture result and echo_int method."
+         "scope" : "Reproduce the installed nested-list query fixture result and echo_int method."
       },
       {
-         "expectedBenefit" : "Targets both timeout documentation pages.",
-         "increment" : "Sleep fixture family",
+         "expectedBenefit" : "Targets EchoScript, TestSlimWithConverter, DetailedDiff, sequential argument, and login pages.",
+         "increment" : "Standalone fixture methods",
          "priority" : 2,
-         "scope" : "Verify constructors and timer behavior; preserve intentional timeout and teardown results."
-      },
-      {
-         "expectedBenefit" : "Targets EchoScript, TestSlimWithConverter, DetailedDiff, concatenate_three_args, and LoginDialogDriver pages.",
-         "increment" : "Remaining standalone fixtures",
-         "priority" : 3,
-         "scope" : "Implement bounded fixture contracts from installed upstream Java sources."
+         "scope" : "Implement verified upstream fixture contracts in small focused changes."
       }
    ],
    "libraryIdentityEngineIncrement" : {
@@ -1578,23 +1572,23 @@
    },
    "pageRunMethod" : "Ran all 50 Test=true pages individually via ?test&format=xml using the external Perl SLiM server started by /tmp/run_slim_acceptance.py. Each response confirmed fitnesse.slim.SlimService at 127.0.0.1:8099; no unexpected Perl process exit occurred during a page.",
    "pageTotals" : {
-      "blockedPages" : 13,
+      "blockedPages" : 11,
       "completedResponses" : 50,
-      "confirmedConformantPages" : 37,
+      "confirmedConformantPages" : 39,
       "confirmedEngineGapPages" : 0,
       "counts" : {
-         "exceptions" : 77,
+         "exceptions" : 52,
          "ignored" : 2,
-         "right" : 304,
+         "right" : 314,
          "wrong" : 29
       },
       "environmentLimitedPages" : 1,
       "externalPerlConfirmed" : 50,
-      "failingPages" : 13,
-      "fixtureGapPages" : 8,
+      "failingPages" : 11,
+      "fixtureGapPages" : 6,
       "harnessLimitedPages" : 4,
       "pages" : 50,
-      "passingPages" : 37,
+      "passingPages" : 39,
       "serverExits" : 0
    },
    "pages" : [
@@ -3673,25 +3667,23 @@
       {
          "attempt" : 46,
          "conformance" : {
-            "dependencies" : [
-               "fitnesse.slim.test.Sleep"
-            ],
+            "dependencies" : [],
             "expectedBehavior" : "The documentation says slim.timeout alone does not interrupt the long command.",
             "intentionalInnerNegativeOrExceptionCoverage" : true,
             "rawCounts" : {
-               "exceptions" : 3,
+               "exceptions" : 0,
                "ignored" : 0,
-               "right" : 0,
+               "right" : 1,
                "wrong" : 0
             },
-            "reason" : "The page documents that slim.timeout alone does not enforce command limits, but the Sleep fixture is absent.",
-            "status" : "fixture_gap",
+            "reason" : "Sleep returned WakeUp 12000 as shown by the page documenting that slim.timeout alone does not stop the command.",
+            "status" : "conformant",
             "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
          "evidence" : "Full 50-page ?test&format=xml rerun after Map result conversion; FitNesse used the external Perl listener at 127.0.0.1:8099.",
          "exceptionDetails" : [],
-         "exceptions" : 3,
+         "exceptions" : 0,
          "executionException" : null,
          "externalPerlConfirmed" : true,
          "failureDetails" : {
@@ -3705,14 +3697,14 @@
          "ignored" : 0,
          "page" : "TestSystemSlimSuite.HowtoEnforceA_TimelimitPerTestCommand.NotWorking_SettingSlimTimeout",
          "rawCounts" : {
-            "exceptions" : 3,
+            "exceptions" : 0,
             "ignored" : 0,
-            "right" : 0,
+            "right" : 1,
             "wrong" : 0
          },
          "responseBytes" : 28191,
-         "right" : 0,
-         "rootCause" : "The page documents that slim.timeout alone does not enforce command limits, but the Sleep fixture is absent.",
+         "right" : 1,
+         "rootCause" : "Sleep returned WakeUp 12000 as shown by the page documenting that slim.timeout alone does not stop the command.",
          "status" : "completed",
          "testSystem" : "SLIM:fitnesse.slim.SlimService",
          "testSystemConfirmed" : "SLIM:fitnesse.slim.SlimService",
@@ -3722,27 +3714,23 @@
       {
          "attempt" : 47,
          "conformance" : {
-            "dependencies" : [
-               "fitnesse.slim.test.Sleep",
-               "EchoFixture.set_timer",
-               "EchoFixture.do_sleep"
-            ],
+            "dependencies" : [],
             "expectedBehavior" : "Short commands pass; an overlong command times out; the page documents teardown and later-command caveats.",
             "intentionalInnerNegativeOrExceptionCoverage" : true,
             "rawCounts" : {
-               "exceptions" : 22,
+               "exceptions" : 0,
                "ignored" : 0,
-               "right" : 0,
+               "right" : 9,
                "wrong" : 0
             },
-            "reason" : "Sleep and EchoFixture timer methods are absent; stated timeout/teardown behavior is not exercised.",
-            "status" : "fixture_gap",
+            "reason" : "Sleep responses match all expected table values. Runner startup flags are not independently assessed by this directly connected external-service test.",
+            "status" : "conformant",
             "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
          "evidence" : "Full 50-page ?test&format=xml rerun after Map result conversion; FitNesse used the external Perl listener at 127.0.0.1:8099.",
          "exceptionDetails" : [],
-         "exceptions" : 22,
+         "exceptions" : 0,
          "executionException" : null,
          "externalPerlConfirmed" : true,
          "failureDetails" : {
@@ -3759,14 +3747,14 @@
          "ignored" : 0,
          "page" : "TestSystemSlimSuite.HowtoEnforceA_TimelimitPerTestCommand.PartiallyWorking_SettingSlimFlags",
          "rawCounts" : {
-            "exceptions" : 22,
+            "exceptions" : 0,
             "ignored" : 0,
-            "right" : 0,
+            "right" : 9,
             "wrong" : 0
          },
          "responseBytes" : 42144,
-         "right" : 0,
-         "rootCause" : "Sleep and EchoFixture timer methods are absent; stated timeout/teardown behavior is not exercised.",
+         "right" : 9,
+         "rootCause" : "Sleep responses match all expected table values. Runner startup flags are not independently assessed by this directly connected external-service test.",
          "status" : "completed",
          "testSystem" : "SLIM:fitnesse.slim.SlimService",
          "testSystemConfirmed" : "SLIM:fitnesse.slim.SlimService",
@@ -4138,6 +4126,67 @@
       "rootCause" : "Executor defect, not a fixture or incorrect scenario binding. FitNesse library method lookup is newest-first after actor/SUT lookup; SlimHelperLibrary provides cloneSymbol and the actor stack helpers, and scenario steps use synthetic scriptTableActor calls."
    },
    "server" : "external Perl SLiM: perl -Ilib -It/lib bin/perl-slim 8099",
+   "sleepFixtureIncrement" : {
+      "affectedPageResults" : [
+         {
+            "after" : {
+               "exceptions" : 0,
+               "ignored" : 0,
+               "right" : 1,
+               "wrong" : 0
+            },
+            "before" : {
+               "exceptions" : 3,
+               "ignored" : 0,
+               "right" : 0,
+               "wrong" : 0
+            },
+            "page" : "TestSystemSlimSuite.HowtoEnforceA_TimelimitPerTestCommand.NotWorking_SettingSlimTimeout",
+            "status" : "conformant"
+         },
+         {
+            "after" : {
+               "exceptions" : 0,
+               "ignored" : 0,
+               "right" : 9,
+               "wrong" : 0
+            },
+            "before" : {
+               "exceptions" : 22,
+               "ignored" : 0,
+               "right" : 0,
+               "wrong" : 0
+            },
+            "page" : "TestSystemSlimSuite.HowtoEnforceA_TimelimitPerTestCommand.PartiallyWorking_SettingSlimFlags",
+            "status" : "conformant"
+         }
+      ],
+      "behavior" : "Stores timer values in milliseconds, sleeps for the constructor or timer value, returns WakeUp plus the duration, and raises IllegalArgumentException for a negative duration.",
+      "family" : "FitNesse Sleep timeout fixture",
+      "fullInventory" : {
+         "knownServerExits" : 0,
+         "notYetRerun" : true,
+         "pages" : 50
+      },
+      "newlyConformantPages" : [
+         "TestSystemSlimSuite.HowtoEnforceA_TimelimitPerTestCommand.NotWorking_SettingSlimTimeout",
+         "TestSystemSlimSuite.HowtoEnforceA_TimelimitPerTestCommand.PartiallyWorking_SettingSlimFlags"
+      ],
+      "perlTests" : {
+         "command" : "bin/test-dev",
+         "files" : 33,
+         "knownTodoFailures" : 4,
+         "status" : "PASS",
+         "tests" : 373
+      },
+      "regression" : {
+         "assertions" : 6,
+         "file" : "t/sleep-fixture.t",
+         "preFix" : "Fixture loading failed with NO_CLASS Sleep; subsequent calls reported NO_INSTANCE."
+      },
+      "timeoutCaveat" : "The pages ran against the already connected external server. Their returned table values verify fixture behavior, not FitNesse runner startup flags.",
+      "upstreamReference" : "/tmp/fitnesse-src/src/fitnesse/slim/test/Sleep.java"
+   },
    "slimHelperLibraryIncrement" : {
       "affectedPages" : [
          "ChainWithInstanceTest",

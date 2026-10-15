@@ -46,11 +46,11 @@ The Perl engine previously returned a plain hash reference from `StatementExecut
 
 ## Current acceptance results
 
-The latest targeted runs report **37 conformant pages**; all 50 pages will be rerun after the remaining fixture increments. Raw page totals currently combine the latest affected-page results with the last full inventory: **304 right, 29 wrong, 2 ignored, and 77 exceptions**. The affected pages ran through the external Perl service at `127.0.0.1:8099`, with **zero server exits**.
+The latest targeted runs report **39 conformant pages**; all 50 pages will be rerun after the remaining fixture increments. Raw page totals currently combine the latest affected-page results with the last full inventory: **314 right, 29 wrong, 2 ignored, and 52 exceptions**. The affected pages ran through the external Perl service at `127.0.0.1:8099`, with **zero server exits**.
 
-`DefineAliasTest` improved from 8 right and 67 exceptions to 22 right and no exceptions. `HybridDecisionTable.ImplementDynamicDecisionTableWithHybridTable` improved from 25 exceptions to 5 right and no exceptions. Both setup-library pages pass (1 and 2 right). `HashTableWithHtmlContent` and `TestPageWithInclude` each now pass with 1 right and no exceptions. All 31 pages that were conformant at the start remain conformant. The complete 50-page comparison will be recorded after the fixture phase.
+`DefineAliasTest` improved from 8 right and 67 exceptions to 22 right and no exceptions. `HybridDecisionTable.ImplementDynamicDecisionTableWithHybridTable` improved from 25 exceptions to 5 right and no exceptions. Both setup-library pages pass (1 and 2 right). `HashTableWithHtmlContent` and `TestPageWithInclude` pass with 1 right each. Both Sleep pages now pass: `NotWorking_SettingSlimTimeout` (1 right) and `PartiallyWorking_SettingSlimFlags` (9 right). These runs validate the fixture responses; because FitNesse is connected directly to a persistent external server, they do not independently validate startup-time runner flags. All 31 pages that were conformant at the start remain conformant. The complete 50-page comparison will be recorded after the fixture phase.
 
-The 13 remaining non-conformant pages comprise 8 fixture gaps, 4 FitNesse harness/rendering limitations, and 1 environment-limited timeout page. Remaining fixture gaps are TableTableIncFirstCol/TestQuery.echo_int, EchoScript Unicode output, TestSlimWithConverter, DetailedDiff, TestSlim.concatenate_three_args, two Sleep timeout pages, and LoginDialogDriver.
+The 11 remaining non-conformant pages comprise 6 fixture gaps, 4 FitNesse harness/rendering limitations, and 1 environment-limited timeout page. Remaining fixture gaps are TableTableIncFirstCol/TestQuery.echo_int, EchoScript Unicode output, TestSlimWithConverter, DetailedDiff, TestSlim.concatenate_three_args, and LoginDialogDriver.
 
 ## Per-page results
 
@@ -101,12 +101,12 @@ The 13 remaining non-conformant pages comprise 8 fixture gaps, 4 FitNesse harnes
 | `TestSubsetQuery` | 11 | 0 | 0 | 0 | conformant | All page assertions pass. SetContextValue also reports two ignored symbol-assignment cells, which are expected query-table behavior. |
 | `TestSystemSlimSuite.ErrorSituationsDuringSlimServerStartup.B_TimeoutAsSlimServerDiesBeforeConnecting` | 2 | 1 | 0 | 0 | harness_limited | PageDriver retrieves a 200 response, but the body does not contain the expected dead-test-runner message; the child test runner setup behavior remains unverified. |
 | `TestSystemSlimSuite.ErrorSituationsDuringSlimServerStartup.C_TimeoutAsNoServerAtGivenSocket` | 3 | 1 | 0 | 0 | environment_limited | The test expects port 8099 unbound, but the inventory server occupies it; content_matches and PageDriver support are also missing. |
-| `TestSystemSlimSuite.HowtoEnforceA_TimelimitPerTestCommand.NotWorking_SettingSlimTimeout` | 0 | 0 | 0 | 3 | fixture_gap | The page documents that slim.timeout alone does not enforce command limits, but the Sleep fixture is absent. |
-| `TestSystemSlimSuite.HowtoEnforceA_TimelimitPerTestCommand.PartiallyWorking_SettingSlimFlags` | 0 | 0 | 0 | 22 | fixture_gap | Sleep and EchoFixture timer methods are absent; stated timeout/teardown behavior is not exercised. |
+| `TestSystemSlimSuite.HowtoEnforceA_TimelimitPerTestCommand.NotWorking_SettingSlimTimeout` | 1 | 0 | 0 | 0 | conformant | Sleep returned `WakeUp 12000` as shown by this page documenting that `slim.timeout` alone does not stop the command. |
+| `TestSystemSlimSuite.HowtoEnforceA_TimelimitPerTestCommand.PartiallyWorking_SettingSlimFlags` | 9 | 0 | 0 | 0 | conformant | Sleep responses match the page's expected table values. Runner startup flags are not independently assessed by this directly connected external-service test. |
 | `TestSystemSlimSuite.TimeoutInSlimTestSystem` | 4 | 0 | 0 | 0 | conformant | The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server. |
 | `TestTryingParameterizationIsntTooGreedy` | 0 | 0 | 0 | 2 | fixture_gap | LoginDialogDriver and its login method are absent, so scenario selection is not assessed. |
 | `TestTwoIdenticalTablesOnPageDontConflict` | 1 | 0 | 0 | 0 | conformant | The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server. |
 
 ## Next increment
 
-The next coherent family is TableTableIncFirstCol with TestQuery.echo_int, which supplies the remaining table-table page's missing fixture methods. Sleep is another shared family across two timeout pages; inspect its fixture and timeout expectations separately.
+The next coherent family is TableTableIncFirstCol with TestQuery.echo_int, which supplies the remaining table-table page's missing fixture methods. Other remaining standalone dependencies include EchoScript, TestSlimWithConverter, DetailedDiff, TestSlim.concatenate_three_args, and LoginDialogDriver.
