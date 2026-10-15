@@ -46,11 +46,11 @@ The Perl engine previously returned a plain hash reference from `StatementExecut
 
 ## Current acceptance results
 
-The latest targeted runs report **39 conformant pages**; all 50 pages will be rerun after the remaining fixture increments. Raw page totals currently combine the latest affected-page results with the last full inventory: **314 right, 29 wrong, 2 ignored, and 52 exceptions**. The affected pages ran through the external Perl service at `127.0.0.1:8099`, with **zero server exits**.
+The latest targeted runs report **40 conformant pages**; all 50 pages will be rerun after the remaining fixture increments. Raw page totals currently combine the latest affected-page results with the last full inventory: **315 right, 29 wrong, 2 ignored, and 51 exceptions**. The affected page ran through the external Perl service at `127.0.0.1:8099`, with **zero server exits**.
 
-`DefineAliasTest` improved from 8 right and 67 exceptions to 22 right and no exceptions. `HybridDecisionTable.ImplementDynamicDecisionTableWithHybridTable` improved from 25 exceptions to 5 right and no exceptions. Both setup-library pages pass (1 and 2 right). `HashTableWithHtmlContent` and `TestPageWithInclude` pass with 1 right each. Both Sleep pages now pass: `NotWorking_SettingSlimTimeout` (1 right) and `PartiallyWorking_SettingSlimFlags` (9 right). These runs validate the fixture responses; because FitNesse is connected directly to a persistent external server, they do not independently validate startup-time runner flags. All 31 pages that were conformant at the start remain conformant. The complete 50-page comparison will be recorded after the fixture phase.
+`DefineAliasTest` improved from 8 right and 67 exceptions to 22 right and no exceptions. `HybridDecisionTable.ImplementDynamicDecisionTableWithHybridTable` improved from 25 exceptions to 5 right and no exceptions. Both setup-library pages pass (1 and 2 right). `HashTableWithHtmlContent` and `TestPageWithInclude` pass with 1 right each. Both Sleep pages pass (1 and 9 right); as these run against the already connected server, they do not independently validate startup-time runner flags. `TestChineseWords` now passes with 1 right after EchoScript gained UTF-8 stdout behavior. All 31 pages that were conformant at the start remain conformant. The complete 50-page comparison will be recorded after the fixture phase.
 
-The 11 remaining non-conformant pages comprise 6 fixture gaps, 4 FitNesse harness/rendering limitations, and 1 environment-limited timeout page. Remaining fixture gaps are TableTableIncFirstCol/TestQuery.echo_int, EchoScript Unicode output, TestSlimWithConverter, DetailedDiff, TestSlim.concatenate_three_args, and LoginDialogDriver.
+The 10 remaining non-conformant pages comprise 5 fixture gaps, 4 FitNesse harness/rendering limitations, and 1 environment-limited timeout page. Remaining fixture gaps are TableTableIncFirstCol/TestQuery.echo_int, TestSlimWithConverter, DetailedDiff, TestSlim.concatenate_three_args, and LoginDialogDriver.
 
 ## Per-page results
 
@@ -87,7 +87,7 @@ The 11 remaining non-conformant pages comprise 6 fixture gaps, 4 FitNesse harnes
 | `StopTest` | 6 | 0 | 0 | 0 | conformant | ConstructorThrows raises the upstream StopTest exception; the executor returns ABORT_SLIM_TEST and FitNesse continues with later pages and teardown. |
 | `StopTestInSuiteSetUp` | 7 | 0 | 0 | 0 | conformant | The stop exception is returned with ABORT_SLIM_TEST; FitNesse skips suite tests and still executes suite teardown. |
 | `TableTableSuite.SymbolsInTableTableManagedByTheFixture` | 0 | 1 | 0 | 9 | fixture_gap | TableTableIncFirstCol and TestQuery.echo_int are absent. |
-| `TestChineseWords` | 0 | 0 | 0 | 1 | fixture_gap | EchoScript.echo_to_stdout is absent, so Unicode stdout behavior is not reached. |
+| `TestChineseWords` | 1 | 0 | 0 | 0 | conformant | EchoScript echoes the original Unicode value and writes its UTF-8 bytes plus newline to stdout. |
 | `TestComparators` | 26 | 0 | 0 | 0 | conformant | The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server. |
 | `TestCustomComparators` | 1 | 2 | 0 | 0 | harness_limited | The nested response is retrieved, but its output lacks the expected glob comparison; the root-level nested test does not receive the outer suite CustomComparators setup. |
 | `TestCustomConverter` | 0 | 0 | 0 | 17 | fixture_gap | TestSlimWithConverter and its converter-control fixture methods are absent; this run does not establish an engine defect. |
