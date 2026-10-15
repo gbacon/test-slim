@@ -1,12 +1,12 @@
 # FitNesse SLiM acceptance baseline
 
-Updated 2026-10-15 on `codex/complete-slim`, after implementing upstream stop and exception fixtures. The installed FitNesse distribution is v20251025.
+Updated 2026-10-15 on `codex/complete-slim`, after adding FitNesse-compatible hash result conversion. The installed FitNesse distribution is v20251025.
 
 FitNesse ran all pages against the external Perl SLiM server at `127.0.0.1:8099`. Every page response identified `fitnesse.slim.SlimService` and the external connection; all 50 returned HTTP 200. The Perl server exited zero times.
 
 ## Perl tests
 
-`bin/test-dev`: **PASS**, 27 files and 328 tests. Four known TODO-marked failures remain (three boilerplate checks and one Unicode-return case). The 17 focused stop/exception regressions cover ordinary exception continuation, stop-test and stop-suite markers, current-batch suppression, next-batch reset, constructor errors, and decision-table SlimError methods.
+`bin/test-dev`: **PASS**, 28 files and 338 tests. Four known TODO-marked failures remain (three boilerplate checks and one Unicode-return case). The 10 focused map-result regressions cover ordered hash-table output, HTML escaping, valid markup, nulls, nested maps/lists, Unicode wire round-tripping, explicit object stringification, and reference identity. Existing tests also cover stop/exception behavior, Unicode transport, symbols, and nested lists.
 
 ## PageDriver behavior implemented
 
@@ -38,13 +38,19 @@ The installed FitNesse v20251025 implementations of `ConstructorThrows`, `Decisi
 
 `StopSuite`, `StopTest`, `StopTestInSuiteSetUp`, and `TestExceptionIsDisplayed` now pass their outer acceptance checks. Their nested tests intentionally contain exceptions; those do not count as outer failures because the pages inspect and accept them. `IgnoredTestsShouldColorGray` verifies the one nested stop exception and that later script statements are not run. Two of its outer checks remain incompatible with the installed renderer: they expect `class="ignore">Not Executed...`, while FitNesse v20251025 emits `class="slimRowColor3"><td>Not Executed... <span class="ignore">Test not run</span>`. This is a rendering/acceptance markup mismatch; stop behavior itself is correct.
 
+## Hash/map result conversion implemented
+
+The installed FitNesse v20251025 `HashFixture.hash()` returns a sorted `TreeMap`. `MethodExecutionResult` converts that map with `MapConverter` before `SlimSerializer` serializes the SLiM response. The converter emits `table.hash_table` rows with `hash_key` and `hash_value` cells, escapes ordinary text, and retains valid HTML cell content.
+
+The Perl engine previously returned a plain hash reference from `StatementExecutor::call`. Since `Test::Slim::List` serializes arrays recursively but does not encode hashes, the reference reached the wire as `HASH(0x...)`. `Test::Slim::MapResult` now converts only plain hash-reference method results into the upstream table form before response serialization. It sorts keys, handles nulls and nested map/list values, and uses explicit object string methods inside maps; other executor references and list behavior remain unchanged. The regression first failed with `HASH(0x6401465af600)` and now checks the full output and identity preservation in `t/hash-results.t`.
+
 ## Current acceptance results
 
-The page-by-page XML inventory reports **30 conformant pages and 20 non-conformant pages**. Raw page assertion totals are **280 right, 30 wrong, 2 ignored, and 177 exceptions**. All 50 pages completed through the external Perl service at `127.0.0.1:8099`; FitNesse identified `slim:fitnesse.slim.SlimService` and the configured connection on every page. The Perl listener remained available, with **zero server exits**.
+The page-by-page XML inventory reports **31 conformant pages and 19 non-conformant pages**. Raw page assertion totals are **281 right, 29 wrong, 2 ignored, and 177 exceptions**. All 50 pages completed through the external Perl service at `127.0.0.1:8099`; FitNesse identified `slim:fitnesse.slim.SlimService` and the configured connection on every page. The Perl listener remained available, with **zero server exits**.
 
-The four newly conformant pages are `StopSuite`, `StopTest`, `StopTestInSuiteSetUp`, and `TestExceptionIsDisplayed`. All 26 pages that were conformant before this increment remain conformant. Compared with the immediately prior baseline, right assertions increased from 251 to 280 and wrong assertions fell from 59 to 30; ignored assertions stayed at 2 and exceptions stayed at 177. These are raw page assertions, not the nested exception outcomes that the pages intentionally verify. The full before-and-after status for all 50 pages is recorded in the [machine-readable JSON inventory](fitnesse-slim-acceptance-baseline.json).
+The newly conformant page is `HashTableTests.ShouldReturnHashTable` (1 right assertion). All 30 pages that were conformant before this increment remain conformant. Compared with the immediately prior baseline, right assertions increased from 280 to 281 and wrong assertions fell from 30 to 29; ignored assertions stayed at 2 and exceptions stayed at 177. These are raw page assertions, not the nested exception outcomes that the pages intentionally verify. The full before-and-after status for all 50 pages is recorded in the [machine-readable JSON inventory](fitnesse-slim-acceptance-baseline.json).
 
-The 20 remaining non-conformant pages comprise 14 fixture gaps, 4 FitNesse harness/rendering limitations, 1 confirmed hash-reference engine gap, and 1 environment-limited timeout page. The stop fixture increment closes four of its five target pages. `IgnoredTestsShouldColorGray` now exercises the intended exception and not-run state; its two remaining failures are caused by changed rendered CSS markup in FitNesse v20251025 rather than missing fixture behavior.
+The 19 remaining non-conformant pages comprise 14 fixture gaps, 4 FitNesse harness/rendering limitations, and 1 environment-limited timeout page. The confirmed hash-reference engine gap is resolved. The stop fixture increment closes four of its five target pages. `IgnoredTestsShouldColorGray` now exercises the intended exception and not-run state; its two remaining failures are caused by changed rendered CSS markup in FitNesse v20251025 rather than missing fixture behavior.
 
 ## Per-page results
 
@@ -60,7 +66,7 @@ The 20 remaining non-conformant pages comprise 14 fixture gaps, 4 FitNesse harne
 | `DefineAliasInPluginTest` | 2 | 0 | 0 | 0 | conformant | The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server. |
 | `DefineAliasTest` | 8 | 0 | 0 | 67 | fixture_gap | AddUpChange is missing. The helper now reports NO_INSTANCE scriptTableActor when the missing fixture prevents the actor from being created; these follow-on errors cascade from fixture construction. |
 | `HashTableTests.HashTableWithHtmlContent` | 0 | 0 | 0 | 2 | fixture_gap | Hash input conversion works, but hash_is and echo_and_log fixture methods are absent. |
-| `HashTableTests.ShouldReturnHashTable` | 0 | 1 | 0 | 0 | engine_gap | The Perl hashref is returned as HASH(0x...), a process-specific pointer string rather than a FitNesse-compatible hash value. |
+| `HashTableTests.ShouldReturnHashTable` | 1 | 0 | 0 | 0 | conformant | MapResult converts the returned map to sorted FitNesse hash-table HTML before SLiM list serialization. |
 | `HybridDecisionTable.ImplementDynamicDecisionTableWithHybridTable` | 0 | 0 | 0 | 25 | fixture_gap | AddUpChange is absent, so hybrid getter/setter dispatch is not reached. |
 | `IgnoredTestsShouldColorGray` | 5 | 2 | 0 | 0 | harness_limited | StopTest now produces the expected nested exception and ignored execution state. The two remaining outer regex checks expect class="ignore" immediately before the script input text; FitNesse v20251025 renders the row as class="slimRowColor3" and marks the result with <span class="ignore">Test not run</span>. This is a FitNesse rendering/acceptance-version mismatch, not a SLiM stop defect. |
 | `LibrarySuite.HowToAddFixturesWithParametersToTheLibrary` | 5 | 0 | 0 | 0 | conformant | The page passes with automatic getFixture, pushFixture, and popFixture support. |
@@ -105,4 +111,4 @@ The 20 remaining non-conformant pages comprise 14 fixture gaps, 4 FitNesse harne
 
 1. **AddUpChange fixture.** This fixture is required by `DefineAliasTest` and `HybridDecisionTable.ImplementDynamicDecisionTableWithHybridTable`. The repeated `NO_INSTANCE scriptTableActor` messages in `DefineAliasTest` cascade after AddUpChange construction fails.
 2. **LibraryInSetUp behavior.** Both pages under `LibrarySuite.LibraryInSetUpSuite` need the upstream setup-library fixture and call tracking.
-3. **Hash fixture and hash result handling.** `HashTableTests.HashTableWithHtmlContent` needs `hash_is` and `echo_and_log`; `HashTableTests.ShouldReturnHashTable` separately exposes the confirmed Perl hash-reference serialization gap. Keep fixture behavior and engine result encoding as distinct test targets.
+3. **Remaining hash fixture methods.** `HashTableTests.HashTableWithHtmlContent` needs `hash_is` and `echo_and_log`; the Map result conversion is complete and covered independently.

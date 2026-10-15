@@ -7,6 +7,7 @@ use warnings;
 use HTML::TreeBuilder;
 use Test::Slim::Statement;
 use Test::Slim::SlimHelperLibrary;
+use Test::Slim::MapResult;
 
 sub new {
   my($class) = @_;
@@ -224,6 +225,8 @@ sub call {
     $result = $obj->$method(
       $self->replace_tables_with_hashes($self->replace_symbols(@args))
     );
+    $result = Test::Slim::MapResult->convert($result)
+      if ref($result) eq "HASH";
   };
   unless ($@) {
     return "null" unless defined $result;
