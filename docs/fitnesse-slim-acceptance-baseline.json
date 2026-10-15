@@ -7,8 +7,8 @@
   "unitBaseline": {
     "command": "bin/test-dev",
     "status": "PASS",
-    "files": 22,
-    "tests": 241,
+    "files": 23,
+    "tests": 270,
     "knownTodoFailures": 4
   },
   "suiteResponderAttempt": {
@@ -27,21 +27,21 @@
   "pageTotals": {
     "pages": 50,
     "completedResponses": 50,
-    "passingPages": 19,
-    "failingPages": 31,
+    "passingPages": 20,
+    "failingPages": 30,
     "counts": {
       "right": 183,
       "wrong": 62,
       "ignored": 0,
-      "exceptions": 291
+      "exceptions": 218
     },
     "serverExits": 0,
     "externalPerlConfirmed": 50,
-    "confirmedConformantPages": 19,
+    "confirmedConformantPages": 20,
     "confirmedEngineGapPages": 2,
-    "blockedPages": 31,
-    "fixtureGapPages": 21,
-    "harnessLimitedPages": 7,
+    "blockedPages": 30,
+    "fixtureGapPages": 24,
+    "harnessLimitedPages": 3,
     "environmentLimitedPages": 1
   },
   "pages": [
@@ -65,7 +65,7 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
+      "evidence": "Full 50-page ?test&format=xml rerun after the ResponseExaminer increment; FitNesse was configured for the external Perl SLiM listener on 127.0.0.1:8099.",
       "rawCounts": {
         "right": 10,
         "wrong": 0,
@@ -77,7 +77,7 @@
         "reason": "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
         "dependencies": [],
         "expectedBehavior": "The page completed without wrong assertions or exceptions.",
-        "verification": "Rerun from the full page-by-page XML inventory; the testSystem and Perl connection are recorded in this entry.",
+        "verification": "Full 50-page XML inventory rerun after ResponseExaminer; the request completed through the external Perl SLiM service.",
         "intentionalInnerNegativeOrExceptionCoverage": false
       },
       "externalPerlConfirmed": true,
@@ -103,7 +103,7 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
+      "evidence": "Full 50-page ?test&format=xml rerun after the ResponseExaminer increment; FitNesse was configured for the external Perl SLiM listener on 127.0.0.1:8099.",
       "rawCounts": {
         "right": 7,
         "wrong": 0,
@@ -115,7 +115,7 @@
         "reason": "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
         "dependencies": [],
         "expectedBehavior": "The page completed without wrong assertions or exceptions.",
-        "verification": "Rerun from the full page-by-page XML inventory; the testSystem and Perl connection are recorded in this entry.",
+        "verification": "Full 50-page XML inventory rerun after ResponseExaminer; the request completed through the external Perl SLiM service.",
         "intentionalInnerNegativeOrExceptionCoverage": false
       },
       "externalPerlConfirmed": true,
@@ -141,7 +141,7 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
+      "evidence": "Full 50-page ?test&format=xml rerun after the ResponseExaminer increment; FitNesse was configured for the external Perl SLiM listener on 127.0.0.1:8099.",
       "rawCounts": {
         "right": 10,
         "wrong": 0,
@@ -153,7 +153,7 @@
         "reason": "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
         "dependencies": [],
         "expectedBehavior": "The page completed without wrong assertions or exceptions.",
-        "verification": "Rerun from the full page-by-page XML inventory; the testSystem and Perl connection are recorded in this entry.",
+        "verification": "Full 50-page XML inventory rerun after ResponseExaminer; the request completed through the external Perl SLiM service.",
         "intentionalInnerNegativeOrExceptionCoverage": false
       },
       "externalPerlConfirmed": true,
@@ -168,36 +168,35 @@
       "right": 8,
       "wrong": 0,
       "ignored": 0,
-      "exceptions": 17,
+      "exceptions": 0,
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
       "responseBytes": 97631,
-      "rootCause": "PageDriver now runs the nested test; the outer page remains blocked by Could not find class ResponseExaminer. Later scriptTableActor errors cascade from that failed scenario construction.",
+      "rootCause": "ResponseExaminer extracts nested assertion totals and rendered cells; every outer assertion passes. The embedded target page intentionally contains two wrong and two ignored checks.",
       "failureDetails": {
-        "exceptionMessages": [
-          "Could not find class ResponseExaminer",
-          "The instance scriptTableActor does not exist"
-        ],
+        "exceptionMessages": [],
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
+      "evidence": "Full 50-page ?test&format=xml rerun after the ResponseExaminer increment; FitNesse was configured for the external Perl SLiM listener on 127.0.0.1:8099.",
       "rawCounts": {
         "right": 8,
         "wrong": 0,
         "ignored": 0,
-        "exceptions": 17
+        "exceptions": 0
       },
       "conformance": {
-        "status": "harness_limited",
-        "reason": "PageDriver now runs the nested test; the outer page remains blocked by Could not find class ResponseExaminer. Later scriptTableActor errors cascade from that failed scenario construction.",
+        "status": "conformant",
+        "reason": "ResponseExaminer extracts nested assertion totals and rendered cells; every outer assertion passes. The embedded target page intentionally contains two wrong and two ignored checks.",
         "dependencies": [
           "PageDriver.make_a_test_page",
-          "ResponseExaminer"
+          "ResponseExaminer.contents",
+          "ResponseExaminer.pageHtml",
+          "ResponseExaminer.extractMatch"
         ],
-        "expectedBehavior": "Embedded page expects 8 right, 2 wrong, 2 ignored, 0 exceptions; outer page checks those counts and rendered cells.",
-        "verification": "Current page XML includes the nested response and recorded failure evidence.",
+        "expectedBehavior": "The nested page has 8 right, 2 wrong, 2 ignored, and 0 exceptions; the outer page verifies totals and representative cell classes.",
+        "verification": "Full 50-page XML inventory rerun after ResponseExaminer; the request completed through the external Perl SLiM service.",
         "intentionalInnerNegativeOrExceptionCoverage": true
       },
       "externalPerlConfirmed": true,
@@ -223,7 +222,7 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
+      "evidence": "Full 50-page ?test&format=xml rerun after the ResponseExaminer increment; FitNesse was configured for the external Perl SLiM listener on 127.0.0.1:8099.",
       "rawCounts": {
         "right": 17,
         "wrong": 0,
@@ -235,7 +234,7 @@
         "reason": "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
         "dependencies": [],
         "expectedBehavior": "The page completed without wrong assertions or exceptions.",
-        "verification": "Rerun from the full page-by-page XML inventory; the testSystem and Perl connection are recorded in this entry.",
+        "verification": "Full 50-page XML inventory rerun after ResponseExaminer; the request completed through the external Perl SLiM service.",
         "intentionalInnerNegativeOrExceptionCoverage": false
       },
       "externalPerlConfirmed": true,
@@ -266,7 +265,7 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
+      "evidence": "Full 50-page ?test&format=xml rerun after the ResponseExaminer increment; FitNesse was configured for the external Perl SLiM listener on 127.0.0.1:8099.",
       "rawCounts": {
         "right": 4,
         "wrong": 1,
@@ -282,7 +281,7 @@
           "SlimHelperLibrary.popFixture"
         ],
         "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
-        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "verification": "Full 50-page XML inventory rerun after ResponseExaminer; the request completed through the external Perl SLiM service.",
         "intentionalInnerNegativeOrExceptionCoverage": false
       },
       "externalPerlConfirmed": true,
@@ -312,7 +311,7 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
+      "evidence": "Full 50-page ?test&format=xml rerun after the ResponseExaminer increment; FitNesse was configured for the external Perl SLiM listener on 127.0.0.1:8099.",
       "rawCounts": {
         "right": 5,
         "wrong": 1,
@@ -327,7 +326,7 @@
           "PageDriver response HTML"
         ],
         "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
-        "verification": "Current page XML includes the nested response and recorded failure evidence.",
+        "verification": "Full 50-page XML rerun; failure remains in nested page setup/configuration rather than response inspection.",
         "intentionalInnerNegativeOrExceptionCoverage": false
       },
       "externalPerlConfirmed": true,
@@ -356,7 +355,7 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
+      "evidence": "Full 50-page ?test&format=xml rerun after the ResponseExaminer increment; FitNesse was configured for the external Perl SLiM listener on 127.0.0.1:8099.",
       "rawCounts": {
         "right": 2,
         "wrong": 0,
@@ -368,7 +367,7 @@
         "reason": "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
         "dependencies": [],
         "expectedBehavior": "The page completed without wrong assertions or exceptions.",
-        "verification": "Rerun from the full page-by-page XML inventory; the testSystem and Perl connection are recorded in this entry.",
+        "verification": "Full 50-page XML inventory rerun after ResponseExaminer; the request completed through the external Perl SLiM service.",
         "intentionalInnerNegativeOrExceptionCoverage": false
       },
       "externalPerlConfirmed": true,
@@ -407,7 +406,7 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
+      "evidence": "Full 50-page ?test&format=xml rerun after the ResponseExaminer increment; FitNesse was configured for the external Perl SLiM listener on 127.0.0.1:8099.",
       "rawCounts": {
         "right": 0,
         "wrong": 0,
@@ -422,7 +421,7 @@
           "SlimHelperLibrary.getFixture"
         ],
         "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
-        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "verification": "Full 50-page XML inventory rerun after ResponseExaminer; the request completed through the external Perl SLiM service.",
         "intentionalInnerNegativeOrExceptionCoverage": false
       },
       "externalPerlConfirmed": true,
@@ -451,7 +450,7 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
+      "evidence": "Full 50-page ?test&format=xml rerun after the ResponseExaminer increment; FitNesse was configured for the external Perl SLiM listener on 127.0.0.1:8099.",
       "rawCounts": {
         "right": 0,
         "wrong": 0,
@@ -466,7 +465,7 @@
           "EchoFixture.echo_and_log"
         ],
         "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
-        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "verification": "Full 50-page XML inventory rerun after ResponseExaminer; the request completed through the external Perl SLiM service.",
         "intentionalInnerNegativeOrExceptionCoverage": false
       },
       "externalPerlConfirmed": true,
@@ -492,7 +491,7 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
+      "evidence": "Full 50-page ?test&format=xml rerun after the ResponseExaminer increment; FitNesse was configured for the external Perl SLiM listener on 127.0.0.1:8099.",
       "rawCounts": {
         "right": 0,
         "wrong": 1,
@@ -506,7 +505,7 @@
           "hash-reference response conversion"
         ],
         "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
-        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "verification": "Full 50-page XML inventory rerun after ResponseExaminer; the request completed through the external Perl SLiM service.",
         "intentionalInnerNegativeOrExceptionCoverage": false
       },
       "externalPerlConfirmed": true,
@@ -535,7 +534,7 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
+      "evidence": "Full 50-page ?test&format=xml rerun after the ResponseExaminer increment; FitNesse was configured for the external Perl SLiM listener on 127.0.0.1:8099.",
       "rawCounts": {
         "right": 0,
         "wrong": 0,
@@ -549,7 +548,7 @@
           "AddUpChange"
         ],
         "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
-        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "verification": "Full 50-page XML inventory rerun after ResponseExaminer; the request completed through the external Perl SLiM service.",
         "intentionalInnerNegativeOrExceptionCoverage": false
       },
       "externalPerlConfirmed": true,
@@ -564,18 +563,14 @@
       "right": 3,
       "wrong": 4,
       "ignored": 0,
-      "exceptions": 16,
+      "exceptions": 0,
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
       "responseBytes": 88501,
-      "rootCause": "The page runs nested content, but ConstructorThrows is missing and ResponseExaminer cannot be constructed, so its expected inner ignore rendering cannot be checked.",
+      "rootCause": "ResponseExaminer is available, but the nested stop-and-ignore scenario depends on the missing ConstructorThrows fixture. The outer page reports 4 wrong checks and does not verify the intended ignore rendering.",
       "failureDetails": {
-        "exceptionMessages": [
-          "Could not find class ConstructorThrows",
-          "The instance scriptTableActor does not exist",
-          "Could not find class ResponseExaminer"
-        ],
+        "exceptionMessages": [],
         "wrongAssertionMessages": [
           "then",
           "\\d",
@@ -594,22 +589,23 @@
         ]
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
+      "evidence": "Full 50-page ?test&format=xml rerun after the ResponseExaminer increment; FitNesse was configured for the external Perl SLiM listener on 127.0.0.1:8099.",
       "rawCounts": {
         "right": 3,
         "wrong": 4,
         "ignored": 0,
-        "exceptions": 16
+        "exceptions": 0
       },
       "conformance": {
-        "status": "harness_limited",
-        "reason": "The page runs nested content, but ConstructorThrows is missing and ResponseExaminer cannot be constructed, so its expected inner ignore rendering cannot be checked.",
+        "status": "fixture_gap",
+        "reason": "ResponseExaminer is available, but the nested stop-and-ignore scenario depends on the missing ConstructorThrows fixture. The outer page reports 4 wrong checks and does not verify the intended ignore rendering.",
         "dependencies": [
-          "PageDriver nested-page execution",
-          "ResponseExaminer"
+          "PageDriver.make_a_test_page",
+          "ResponseExaminer",
+          "ConstructorThrows"
         ],
-        "expectedBehavior": "Embedded StopTest raises one exception and later script steps render as ignored; outer assertions verify the markup.",
-        "verification": "Current page XML includes the nested response and recorded failure evidence.",
+        "expectedBehavior": "The nested page should throw once, then mark the stopped script statements as ignored; its outer checks should verify counts and row classes.",
+        "verification": "Full 50-page XML inventory rerun after ResponseExaminer; the request completed through the external Perl SLiM service.",
         "intentionalInnerNegativeOrExceptionCoverage": true
       },
       "externalPerlConfirmed": true,
@@ -639,7 +635,7 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
+      "evidence": "Full 50-page ?test&format=xml rerun after the ResponseExaminer increment; FitNesse was configured for the external Perl SLiM listener on 127.0.0.1:8099.",
       "rawCounts": {
         "right": 4,
         "wrong": 0,
@@ -654,7 +650,7 @@
           "EchoFixture.get_string_arg"
         ],
         "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
-        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "verification": "Full 50-page XML inventory rerun after ResponseExaminer; the request completed through the external Perl SLiM service.",
         "intentionalInnerNegativeOrExceptionCoverage": true
       },
       "externalPerlConfirmed": true,
@@ -680,7 +676,7 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
+      "evidence": "Full 50-page ?test&format=xml rerun after the ResponseExaminer increment; FitNesse was configured for the external Perl SLiM listener on 127.0.0.1:8099.",
       "rawCounts": {
         "right": 2,
         "wrong": 0,
@@ -692,7 +688,7 @@
         "reason": "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
         "dependencies": [],
         "expectedBehavior": "The page completed without wrong assertions or exceptions.",
-        "verification": "Rerun from the full page-by-page XML inventory; the testSystem and Perl connection are recorded in this entry.",
+        "verification": "Full 50-page XML inventory rerun after ResponseExaminer; the request completed through the external Perl SLiM service.",
         "intentionalInnerNegativeOrExceptionCoverage": false
       },
       "externalPerlConfirmed": true,
@@ -721,7 +717,7 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
+      "evidence": "Full 50-page ?test&format=xml rerun after the ResponseExaminer increment; FitNesse was configured for the external Perl SLiM listener on 127.0.0.1:8099.",
       "rawCounts": {
         "right": 1,
         "wrong": 0,
@@ -736,7 +732,7 @@
           "LibraryFixture call tracking"
         ],
         "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
-        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "verification": "Full 50-page XML inventory rerun after ResponseExaminer; the request completed through the external Perl SLiM service.",
         "intentionalInnerNegativeOrExceptionCoverage": false
       },
       "externalPerlConfirmed": true,
@@ -765,7 +761,7 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
+      "evidence": "Full 50-page ?test&format=xml rerun after the ResponseExaminer increment; FitNesse was configured for the external Perl SLiM listener on 127.0.0.1:8099.",
       "rawCounts": {
         "right": 0,
         "wrong": 0,
@@ -780,7 +776,7 @@
           "LibraryFixture call tracking"
         ],
         "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
-        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "verification": "Full 50-page XML inventory rerun after ResponseExaminer; the request completed through the external Perl SLiM service.",
         "intentionalInnerNegativeOrExceptionCoverage": false
       },
       "externalPerlConfirmed": true,
@@ -806,7 +802,7 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
+      "evidence": "Full 50-page ?test&format=xml rerun after the ResponseExaminer increment; FitNesse was configured for the external Perl SLiM listener on 127.0.0.1:8099.",
       "rawCounts": {
         "right": 1,
         "wrong": 0,
@@ -818,7 +814,7 @@
         "reason": "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
         "dependencies": [],
         "expectedBehavior": "The page completed without wrong assertions or exceptions.",
-        "verification": "Rerun from the full page-by-page XML inventory; the testSystem and Perl connection are recorded in this entry.",
+        "verification": "Full 50-page XML inventory rerun after ResponseExaminer; the request completed through the external Perl SLiM service.",
         "intentionalInnerNegativeOrExceptionCoverage": false
       },
       "externalPerlConfirmed": true,
@@ -846,7 +842,7 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
+      "evidence": "Full 50-page ?test&format=xml rerun after the ResponseExaminer increment; FitNesse was configured for the external Perl SLiM listener on 127.0.0.1:8099.",
       "rawCounts": {
         "right": 0,
         "wrong": 2,
@@ -860,7 +856,7 @@
           "SplitFixture"
         ],
         "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
-        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "verification": "Full 50-page XML inventory rerun after ResponseExaminer; the request completed through the external Perl SLiM service.",
         "intentionalInnerNegativeOrExceptionCoverage": false
       },
       "externalPerlConfirmed": true,
@@ -888,7 +884,7 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
+      "evidence": "Full 50-page ?test&format=xml rerun after the ResponseExaminer increment; FitNesse was configured for the external Perl SLiM listener on 127.0.0.1:8099.",
       "rawCounts": {
         "right": 0,
         "wrong": 0,
@@ -902,7 +898,7 @@
           "SplitFixture"
         ],
         "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
-        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "verification": "Full 50-page XML inventory rerun after ResponseExaminer; the request completed through the external Perl SLiM service.",
         "intentionalInnerNegativeOrExceptionCoverage": false
       },
       "externalPerlConfirmed": true,
@@ -928,7 +924,7 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
+      "evidence": "Full 50-page ?test&format=xml rerun after the ResponseExaminer increment; FitNesse was configured for the external Perl SLiM listener on 127.0.0.1:8099.",
       "rawCounts": {
         "right": 6,
         "wrong": 0,
@@ -940,7 +936,7 @@
         "reason": "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
         "dependencies": [],
         "expectedBehavior": "The page completed without wrong assertions or exceptions.",
-        "verification": "Rerun from the full page-by-page XML inventory; the testSystem and Perl connection are recorded in this entry.",
+        "verification": "Full 50-page XML inventory rerun after ResponseExaminer; the request completed through the external Perl SLiM service.",
         "intentionalInnerNegativeOrExceptionCoverage": false
       },
       "externalPerlConfirmed": true,
@@ -966,7 +962,7 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
+      "evidence": "Full 50-page ?test&format=xml rerun after the ResponseExaminer increment; FitNesse was configured for the external Perl SLiM listener on 127.0.0.1:8099.",
       "rawCounts": {
         "right": 4,
         "wrong": 0,
@@ -978,7 +974,7 @@
         "reason": "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
         "dependencies": [],
         "expectedBehavior": "The page completed without wrong assertions or exceptions.",
-        "verification": "Rerun from the full page-by-page XML inventory; the testSystem and Perl connection are recorded in this entry.",
+        "verification": "Full 50-page XML inventory rerun after ResponseExaminer; the request completed through the external Perl SLiM service.",
         "intentionalInnerNegativeOrExceptionCoverage": false
       },
       "externalPerlConfirmed": true,
@@ -1004,7 +1000,7 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
+      "evidence": "Full 50-page ?test&format=xml rerun after the ResponseExaminer increment; FitNesse was configured for the external Perl SLiM listener on 127.0.0.1:8099.",
       "rawCounts": {
         "right": 2,
         "wrong": 0,
@@ -1016,7 +1012,7 @@
         "reason": "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
         "dependencies": [],
         "expectedBehavior": "The page completed without wrong assertions or exceptions.",
-        "verification": "Rerun from the full page-by-page XML inventory; the testSystem and Perl connection are recorded in this entry.",
+        "verification": "Full 50-page XML inventory rerun after ResponseExaminer; the request completed through the external Perl SLiM service.",
         "intentionalInnerNegativeOrExceptionCoverage": false
       },
       "externalPerlConfirmed": true,
@@ -1042,7 +1038,7 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
+      "evidence": "Full 50-page ?test&format=xml rerun after the ResponseExaminer increment; FitNesse was configured for the external Perl SLiM listener on 127.0.0.1:8099.",
       "rawCounts": {
         "right": 8,
         "wrong": 0,
@@ -1054,7 +1050,7 @@
         "reason": "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
         "dependencies": [],
         "expectedBehavior": "The page completed without wrong assertions or exceptions.",
-        "verification": "Rerun from the full page-by-page XML inventory; the testSystem and Perl connection are recorded in this entry.",
+        "verification": "Full 50-page XML inventory rerun after ResponseExaminer; the request completed through the external Perl SLiM service.",
         "intentionalInnerNegativeOrExceptionCoverage": false
       },
       "externalPerlConfirmed": true,
@@ -1080,7 +1076,7 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
+      "evidence": "Full 50-page ?test&format=xml rerun after the ResponseExaminer increment; FitNesse was configured for the external Perl SLiM listener on 127.0.0.1:8099.",
       "rawCounts": {
         "right": 12,
         "wrong": 0,
@@ -1092,7 +1088,7 @@
         "reason": "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
         "dependencies": [],
         "expectedBehavior": "The page completed without wrong assertions or exceptions.",
-        "verification": "Rerun from the full page-by-page XML inventory; the testSystem and Perl connection are recorded in this entry.",
+        "verification": "Full 50-page XML inventory rerun after ResponseExaminer; the request completed through the external Perl SLiM service.",
         "intentionalInnerNegativeOrExceptionCoverage": false
       },
       "externalPerlConfirmed": true,
@@ -1118,7 +1114,7 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
+      "evidence": "Full 50-page ?test&format=xml rerun after the ResponseExaminer increment; FitNesse was configured for the external Perl SLiM listener on 127.0.0.1:8099.",
       "rawCounts": {
         "right": 5,
         "wrong": 0,
@@ -1130,7 +1126,7 @@
         "reason": "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
         "dependencies": [],
         "expectedBehavior": "The page completed without wrong assertions or exceptions.",
-        "verification": "Rerun from the full page-by-page XML inventory; the testSystem and Perl connection are recorded in this entry.",
+        "verification": "Full 50-page XML inventory rerun after ResponseExaminer; the request completed through the external Perl SLiM service.",
         "intentionalInnerNegativeOrExceptionCoverage": false
       },
       "externalPerlConfirmed": true,
@@ -1156,7 +1152,7 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
+      "evidence": "Full 50-page ?test&format=xml rerun after the ResponseExaminer increment; FitNesse was configured for the external Perl SLiM listener on 127.0.0.1:8099.",
       "rawCounts": {
         "right": 18,
         "wrong": 0,
@@ -1168,7 +1164,7 @@
         "reason": "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
         "dependencies": [],
         "expectedBehavior": "The page completed without wrong assertions or exceptions.",
-        "verification": "Rerun from the full page-by-page XML inventory; the testSystem and Perl connection are recorded in this entry.",
+        "verification": "Full 50-page XML inventory rerun after ResponseExaminer; the request completed through the external Perl SLiM service.",
         "intentionalInnerNegativeOrExceptionCoverage": false
       },
       "externalPerlConfirmed": true,
@@ -1203,7 +1199,7 @@
         ]
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
+      "evidence": "Full 50-page ?test&format=xml rerun after the ResponseExaminer increment; FitNesse was configured for the external Perl SLiM listener on 127.0.0.1:8099.",
       "rawCounts": {
         "right": 2,
         "wrong": 4,
@@ -1218,7 +1214,7 @@
           "generated test-page table fixtures"
         ],
         "expectedBehavior": "StopSuite skips remaining tests while test and suite teardown still execute.",
-        "verification": "Current page XML includes generated nested test output and the missing fixture class message.",
+        "verification": "Full 50-page XML inventory rerun after ResponseExaminer; the request completed through the external Perl SLiM service.",
         "intentionalInnerNegativeOrExceptionCoverage": true
       },
       "externalPerlConfirmed": true,
@@ -1252,7 +1248,7 @@
         ]
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
+      "evidence": "Full 50-page ?test&format=xml rerun after the ResponseExaminer increment; FitNesse was configured for the external Perl SLiM listener on 127.0.0.1:8099.",
       "rawCounts": {
         "right": 3,
         "wrong": 3,
@@ -1267,7 +1263,7 @@
           "generated test-page table fixtures"
         ],
         "expectedBehavior": "StopTest skips the current page remainder, allows the next test, and still runs teardown.",
-        "verification": "Current page XML includes generated nested test output and the missing fixture class message.",
+        "verification": "Full 50-page XML inventory rerun after ResponseExaminer; the request completed through the external Perl SLiM service.",
         "intentionalInnerNegativeOrExceptionCoverage": true
       },
       "externalPerlConfirmed": true,
@@ -1303,7 +1299,7 @@
         ]
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
+      "evidence": "Full 50-page ?test&format=xml rerun after the ResponseExaminer increment; FitNesse was configured for the external Perl SLiM listener on 127.0.0.1:8099.",
       "rawCounts": {
         "right": 2,
         "wrong": 5,
@@ -1318,7 +1314,7 @@
           "generated test-page table fixtures"
         ],
         "expectedBehavior": "StopTest in SuiteSetUp skips suite tests but still runs teardown.",
-        "verification": "Current page XML includes generated nested test output and the missing fixture class message.",
+        "verification": "Full 50-page XML inventory rerun after ResponseExaminer; the request completed through the external Perl SLiM service.",
         "intentionalInnerNegativeOrExceptionCoverage": true
       },
       "externalPerlConfirmed": true,
@@ -1347,7 +1343,7 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
+      "evidence": "Full 50-page ?test&format=xml rerun after the ResponseExaminer increment; FitNesse was configured for the external Perl SLiM listener on 127.0.0.1:8099.",
       "rawCounts": {
         "right": 0,
         "wrong": 1,
@@ -1362,7 +1358,7 @@
           "TestQuery.echo_int"
         ],
         "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
-        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "verification": "Full 50-page XML inventory rerun after ResponseExaminer; the request completed through the external Perl SLiM service.",
         "intentionalInnerNegativeOrExceptionCoverage": false
       },
       "externalPerlConfirmed": true,
@@ -1390,7 +1386,7 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
+      "evidence": "Full 50-page ?test&format=xml rerun after the ResponseExaminer increment; FitNesse was configured for the external Perl SLiM listener on 127.0.0.1:8099.",
       "rawCounts": {
         "right": 0,
         "wrong": 0,
@@ -1404,7 +1400,7 @@
           "EchoScript.echo_to_stdout"
         ],
         "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
-        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "verification": "Full 50-page XML inventory rerun after ResponseExaminer; the request completed through the external Perl SLiM service.",
         "intentionalInnerNegativeOrExceptionCoverage": false
       },
       "externalPerlConfirmed": true,
@@ -1430,7 +1426,7 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
+      "evidence": "Full 50-page ?test&format=xml rerun after the ResponseExaminer increment; FitNesse was configured for the external Perl SLiM listener on 127.0.0.1:8099.",
       "rawCounts": {
         "right": 26,
         "wrong": 0,
@@ -1442,7 +1438,7 @@
         "reason": "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
         "dependencies": [],
         "expectedBehavior": "The page completed without wrong assertions or exceptions.",
-        "verification": "Rerun from the full page-by-page XML inventory; the testSystem and Perl connection are recorded in this entry.",
+        "verification": "Full 50-page XML inventory rerun after ResponseExaminer; the request completed through the external Perl SLiM service.",
         "intentionalInnerNegativeOrExceptionCoverage": false
       },
       "externalPerlConfirmed": true,
@@ -1474,7 +1470,7 @@
         ]
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
+      "evidence": "Full 50-page ?test&format=xml rerun after the ResponseExaminer increment; FitNesse was configured for the external Perl SLiM listener on 127.0.0.1:8099.",
       "rawCounts": {
         "right": 1,
         "wrong": 2,
@@ -1489,7 +1485,7 @@
           "glob comparator setup"
         ],
         "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
-        "verification": "Current page XML includes the nested response and recorded failure evidence.",
+        "verification": "Full 50-page XML rerun; failure remains in nested page setup/configuration rather than response inspection.",
         "intentionalInnerNegativeOrExceptionCoverage": false
       },
       "externalPerlConfirmed": true,
@@ -1518,7 +1514,7 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
+      "evidence": "Full 50-page ?test&format=xml rerun after the ResponseExaminer increment; FitNesse was configured for the external Perl SLiM listener on 127.0.0.1:8099.",
       "rawCounts": {
         "right": 0,
         "wrong": 0,
@@ -1533,7 +1529,7 @@
           "custom converter fixture methods"
         ],
         "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
-        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "verification": "Full 50-page XML inventory rerun after ResponseExaminer; the request completed through the external Perl SLiM service.",
         "intentionalInnerNegativeOrExceptionCoverage": false
       },
       "externalPerlConfirmed": true,
@@ -1548,25 +1544,14 @@
       "right": 1,
       "wrong": 21,
       "ignored": 0,
-      "exceptions": 12,
+      "exceptions": 0,
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
       "responseBytes": 191894,
-      "rootCause": "Nested HTTP execution works, but the page cannot inspect its response because ResponseExaminer and the DetailedDiff fixture are absent; downstream scriptTableActor errors cascade.",
+      "rootCause": "ResponseExaminer retrieves and inspects the nested HTML. The DetailedDiff fixture is missing, so the nested diff output expected by the outer page is not generated.",
       "failureDetails": {
-        "exceptionMessages": [
-          "Could not find class DetailedDiff",
-          "The instance decisionTable_1 does not exist",
-          "The instance decisionTable_2 does not exist",
-          "The instance decisionTable_3 does not exist",
-          "The instance decisionTable_4 does not exist",
-          "The instance decisionTable_5 does not exist",
-          "The instance decisionTable_6 does not exist",
-          "The instance decisionTable_7 does not exist",
-          "The instance scriptTableActor does not exist",
-          "Could not find class ResponseExaminer"
-        ],
+        "exceptionMessages": [],
         "wrongAssertionMessages": [
           "then",
           "25",
@@ -1580,23 +1565,23 @@
         ]
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
+      "evidence": "Full 50-page ?test&format=xml rerun after the ResponseExaminer increment; FitNesse was configured for the external Perl SLiM listener on 127.0.0.1:8099.",
       "rawCounts": {
         "right": 1,
         "wrong": 21,
         "ignored": 0,
-        "exceptions": 12
+        "exceptions": 0
       },
       "conformance": {
-        "status": "harness_limited",
-        "reason": "Nested HTTP execution works, but the page cannot inspect its response because ResponseExaminer and the DetailedDiff fixture are absent; downstream scriptTableActor errors cascade.",
+        "status": "fixture_gap",
+        "reason": "ResponseExaminer retrieves and inspects the nested HTML. The DetailedDiff fixture is missing, so the nested diff output expected by the outer page is not generated.",
         "dependencies": [
-          "PageDriver nested-page execution",
+          "PageDriver.make_a_test_page",
           "ResponseExaminer",
-          "EchoFixture page helpers"
+          "DetailedDiff"
         ],
-        "expectedBehavior": "Embedded page intentionally expects 25 right, 50 wrong, 1 ignored, 0 exceptions; outer page verifies diff markup.",
-        "verification": "Current page XML includes the nested response and recorded failure evidence.",
+        "expectedBehavior": "The outer page verifies detailed diff markup for equal, unequal, symbol, and scenario results from the embedded page.",
+        "verification": "Full 50-page XML inventory rerun after ResponseExaminer; the request completed through the external Perl SLiM service.",
         "intentionalInnerNegativeOrExceptionCoverage": true
       },
       "externalPerlConfirmed": true,
@@ -1611,25 +1596,14 @@
       "right": 4,
       "wrong": 15,
       "ignored": 0,
-      "exceptions": 28,
+      "exceptions": 0,
       "testSystem": "slim:fitnesse.slim.SlimService",
       "connection": "Connection to running SlimService: 127.0.0.1:8099",
       "executionException": null,
       "responseBytes": 149085,
-      "rootCause": "Nested HTTP execution works, but the page lacks ResponseExaminer, DecisionTableExecuteThrows, ConstructorThrows, and TestSlim exception methods needed to build and inspect the expected response.",
+      "rootCause": "ResponseExaminer retrieves the nested HTML. The required DecisionTableExecuteThrows and ConstructorThrows fixtures and TestSlim exception methods are missing, leaving 15 outer assertions wrong.",
       "failureDetails": {
-        "exceptionMessages": [
-          "Method throw_normal[0] not found in Fitnesse::Slim::Test::TestSlim",
-          "Method throw_exception_with_message[0] not found in Fitnesse::Slim::Test::TestSlim",
-          "Could not find class Fitnesse::Slim::Test::DecisionTableExecuteThrows",
-          "The instance decisionTable_3 does not exist",
-          "Could not find class ConstructorThrows",
-          "The instance decisionTable_4 does not exist",
-          "The instance decisionTable_5 does not exist",
-          "The instance decisionTable_6 does not exist",
-          "The instance scriptTableActor does not exist",
-          "Could not find class ResponseExaminer"
-        ],
+        "exceptionMessages": [],
         "wrongAssertionMessages": [
           "then",
           "8",
@@ -1654,24 +1628,25 @@
         ]
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
+      "evidence": "Full 50-page ?test&format=xml rerun after the ResponseExaminer increment; FitNesse was configured for the external Perl SLiM listener on 127.0.0.1:8099.",
       "rawCounts": {
         "right": 4,
         "wrong": 15,
         "ignored": 0,
-        "exceptions": 28
+        "exceptions": 0
       },
       "conformance": {
-        "status": "harness_limited",
-        "reason": "Nested HTTP execution works, but the page lacks ResponseExaminer, DecisionTableExecuteThrows, ConstructorThrows, and TestSlim exception methods needed to build and inspect the expected response.",
+        "status": "fixture_gap",
+        "reason": "ResponseExaminer retrieves the nested HTML. The required DecisionTableExecuteThrows and ConstructorThrows fixtures and TestSlim exception methods are missing, leaving 15 outer assertions wrong.",
         "dependencies": [
-          "PageDriver nested-page execution",
+          "PageDriver.make_a_test_page",
           "ResponseExaminer",
           "DecisionTableExecuteThrows",
-          "ConstructorThrows"
+          "ConstructorThrows",
+          "TestSlim exception methods"
         ],
-        "expectedBehavior": "Embedded page intentionally expects 8 right, 1 wrong, 0 ignored, 18 exceptions; outer page verifies exception text and placement.",
-        "verification": "Current page XML includes the nested response and recorded failure evidence.",
+        "expectedBehavior": "The nested page emits method, constructor, table-hook, and stop-test exceptions; the outer page checks their rendered exception, diff, and ignored markup.",
+        "verification": "Full 50-page XML inventory rerun after ResponseExaminer; the request completed through the external Perl SLiM service.",
         "intentionalInnerNegativeOrExceptionCoverage": true
       },
       "externalPerlConfirmed": true,
@@ -1699,7 +1674,7 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
+      "evidence": "Full 50-page ?test&format=xml rerun after the ResponseExaminer increment; FitNesse was configured for the external Perl SLiM listener on 127.0.0.1:8099.",
       "rawCounts": {
         "right": 0,
         "wrong": 0,
@@ -1713,7 +1688,7 @@
           "DuplicateRows"
         ],
         "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
-        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "verification": "Full 50-page XML inventory rerun after ResponseExaminer; the request completed through the external Perl SLiM service.",
         "intentionalInnerNegativeOrExceptionCoverage": false
       },
       "externalPerlConfirmed": true,
@@ -1742,7 +1717,7 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
+      "evidence": "Full 50-page ?test&format=xml rerun after the ResponseExaminer increment; FitNesse was configured for the external Perl SLiM listener on 127.0.0.1:8099.",
       "rawCounts": {
         "right": 0,
         "wrong": 0,
@@ -1757,7 +1732,7 @@
           "EchoFixture.name"
         ],
         "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
-        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "verification": "Full 50-page XML inventory rerun after ResponseExaminer; the request completed through the external Perl SLiM service.",
         "intentionalInnerNegativeOrExceptionCoverage": false
       },
       "externalPerlConfirmed": true,
@@ -1783,7 +1758,7 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
+      "evidence": "Full 50-page ?test&format=xml rerun after the ResponseExaminer increment; FitNesse was configured for the external Perl SLiM listener on 127.0.0.1:8099.",
       "rawCounts": {
         "right": 2,
         "wrong": 0,
@@ -1795,7 +1770,7 @@
         "reason": "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
         "dependencies": [],
         "expectedBehavior": "The page completed without wrong assertions or exceptions.",
-        "verification": "Rerun from the full page-by-page XML inventory; the testSystem and Perl connection are recorded in this entry.",
+        "verification": "Full 50-page XML inventory rerun after ResponseExaminer; the request completed through the external Perl SLiM service.",
         "intentionalInnerNegativeOrExceptionCoverage": false
       },
       "externalPerlConfirmed": true,
@@ -1821,7 +1796,7 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
+      "evidence": "Full 50-page ?test&format=xml rerun after the ResponseExaminer increment; FitNesse was configured for the external Perl SLiM listener on 127.0.0.1:8099.",
       "rawCounts": {
         "right": 3,
         "wrong": 0,
@@ -1833,7 +1808,7 @@
         "reason": "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
         "dependencies": [],
         "expectedBehavior": "The page completed without wrong assertions or exceptions.",
-        "verification": "Rerun from the full page-by-page XML inventory; the testSystem and Perl connection are recorded in this entry.",
+        "verification": "Full 50-page XML inventory rerun after ResponseExaminer; the request completed through the external Perl SLiM service.",
         "intentionalInnerNegativeOrExceptionCoverage": false
       },
       "externalPerlConfirmed": true,
@@ -1861,7 +1836,7 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
+      "evidence": "Full 50-page ?test&format=xml rerun after the ResponseExaminer increment; FitNesse was configured for the external Perl SLiM listener on 127.0.0.1:8099.",
       "rawCounts": {
         "right": 0,
         "wrong": 0,
@@ -1875,7 +1850,7 @@
           "TestSlim.concatenate_three_args"
         ],
         "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
-        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "verification": "Full 50-page XML inventory rerun after ResponseExaminer; the request completed through the external Perl SLiM service.",
         "intentionalInnerNegativeOrExceptionCoverage": false
       },
       "externalPerlConfirmed": true,
@@ -1903,7 +1878,7 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
+      "evidence": "Full 50-page ?test&format=xml rerun after the ResponseExaminer increment; FitNesse was configured for the external Perl SLiM listener on 127.0.0.1:8099.",
       "rawCounts": {
         "right": 0,
         "wrong": 0,
@@ -1917,7 +1892,7 @@
           "DuplicateRows"
         ],
         "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
-        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "verification": "Full 50-page XML inventory rerun after ResponseExaminer; the request completed through the external Perl SLiM service.",
         "intentionalInnerNegativeOrExceptionCoverage": false
       },
       "externalPerlConfirmed": true,
@@ -1943,7 +1918,7 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "SLIM:fitnesse.slim.SlimService",
-      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
+      "evidence": "Full 50-page ?test&format=xml rerun after the ResponseExaminer increment; FitNesse was configured for the external Perl SLiM listener on 127.0.0.1:8099.",
       "rawCounts": {
         "right": 2,
         "wrong": 1,
@@ -1957,7 +1932,7 @@
           "PageDriver nested-page execution"
         ],
         "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
-        "verification": "Current page XML includes the nested response and recorded failure evidence.",
+        "verification": "Full 50-page XML rerun; failure remains in nested page setup/configuration rather than response inspection.",
         "intentionalInnerNegativeOrExceptionCoverage": true
       },
       "externalPerlConfirmed": true,
@@ -1983,7 +1958,7 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "SLIM:fitnesse.slim.SlimService",
-      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
+      "evidence": "Full 50-page ?test&format=xml rerun after the ResponseExaminer increment; FitNesse was configured for the external Perl SLiM listener on 127.0.0.1:8099.",
       "rawCounts": {
         "right": 3,
         "wrong": 1,
@@ -1999,7 +1974,7 @@
           "PageDriver nested-page execution"
         ],
         "expectedBehavior": "Nested debug request fails quickly only when its target port is unbound and reports elapsed time.",
-        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "verification": "Full 50-page XML inventory rerun after ResponseExaminer; the request completed through the external Perl SLiM service.",
         "intentionalInnerNegativeOrExceptionCoverage": true
       },
       "externalPerlConfirmed": true,
@@ -2028,7 +2003,7 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "SLIM:fitnesse.slim.SlimService",
-      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
+      "evidence": "Full 50-page ?test&format=xml rerun after the ResponseExaminer increment; FitNesse was configured for the external Perl SLiM listener on 127.0.0.1:8099.",
       "rawCounts": {
         "right": 0,
         "wrong": 0,
@@ -2042,7 +2017,7 @@
           "fitnesse.slim.test.Sleep"
         ],
         "expectedBehavior": "The documentation says slim.timeout alone does not interrupt the long command.",
-        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "verification": "Full 50-page XML inventory rerun after ResponseExaminer; the request completed through the external Perl SLiM service.",
         "intentionalInnerNegativeOrExceptionCoverage": true
       },
       "externalPerlConfirmed": true,
@@ -2074,7 +2049,7 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "SLIM:fitnesse.slim.SlimService",
-      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
+      "evidence": "Full 50-page ?test&format=xml rerun after the ResponseExaminer increment; FitNesse was configured for the external Perl SLiM listener on 127.0.0.1:8099.",
       "rawCounts": {
         "right": 0,
         "wrong": 0,
@@ -2090,7 +2065,7 @@
           "EchoFixture.do_sleep"
         ],
         "expectedBehavior": "Short commands pass; an overlong command times out; the page documents teardown and later-command caveats.",
-        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "verification": "Full 50-page XML inventory rerun after ResponseExaminer; the request completed through the external Perl SLiM service.",
         "intentionalInnerNegativeOrExceptionCoverage": true
       },
       "externalPerlConfirmed": true,
@@ -2118,7 +2093,7 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
+      "evidence": "Full 50-page ?test&format=xml rerun after the ResponseExaminer increment; FitNesse was configured for the external Perl SLiM listener on 127.0.0.1:8099.",
       "rawCounts": {
         "right": 4,
         "wrong": 0,
@@ -2130,7 +2105,7 @@
         "reason": "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
         "dependencies": [],
         "expectedBehavior": "The page completed without wrong assertions or exceptions.",
-        "verification": "Rerun from the full page-by-page XML inventory; the testSystem and Perl connection are recorded in this entry.",
+        "verification": "Full 50-page XML inventory rerun after ResponseExaminer; the request completed through the external Perl SLiM service.",
         "intentionalInnerNegativeOrExceptionCoverage": true
       },
       "externalPerlConfirmed": true,
@@ -2159,7 +2134,7 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
+      "evidence": "Full 50-page ?test&format=xml rerun after the ResponseExaminer increment; FitNesse was configured for the external Perl SLiM listener on 127.0.0.1:8099.",
       "rawCounts": {
         "right": 0,
         "wrong": 0,
@@ -2174,7 +2149,7 @@
           "TestSlim.login_with_username_and_password"
         ],
         "expectedBehavior": "See the page content and its listed fixture dependencies; raw nonzero counts alone do not establish an engine defect.",
-        "verification": "Run the unchanged page after its listed dependencies exist; isolate ports where stated and inspect the expected outer assertions.",
+        "verification": "Full 50-page XML inventory rerun after ResponseExaminer; the request completed through the external Perl SLiM service.",
         "intentionalInnerNegativeOrExceptionCoverage": false
       },
       "externalPerlConfirmed": true,
@@ -2200,7 +2175,7 @@
         "wrongAssertionMessages": []
       },
       "testSystemConfirmed": "slim:fitnesse.slim.SlimService",
-      "evidence": "Individual ?test&format=xml request after the PageDriver increment; external Perl SLiM connection confirmed.",
+      "evidence": "Full 50-page ?test&format=xml rerun after the ResponseExaminer increment; FitNesse was configured for the external Perl SLiM listener on 127.0.0.1:8099.",
       "rawCounts": {
         "right": 1,
         "wrong": 0,
@@ -2212,7 +2187,7 @@
         "reason": "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
         "dependencies": [],
         "expectedBehavior": "The page completed without wrong assertions or exceptions.",
-        "verification": "Rerun from the full page-by-page XML inventory; the testSystem and Perl connection are recorded in this entry.",
+        "verification": "Full 50-page XML inventory rerun after ResponseExaminer; the request completed through the external Perl SLiM service.",
         "intentionalInnerNegativeOrExceptionCoverage": false
       },
       "externalPerlConfirmed": true,
@@ -2233,7 +2208,7 @@
     "countsMeaning": "Per-page outcome markers summed across the inventory, not raw page assertion totals; see remainingPageClassification.previousCountCaveat."
   },
   "postFixVerification": {
-    "increment": "PageDriver HTTP behavior",
+    "increment": "ResponseExaminer over PageDriver response context",
     "pagesExercised": 50,
     "completedResponses": 50,
     "serverExits": 0,
@@ -2242,18 +2217,17 @@
       "right": 183,
       "wrong": 62,
       "ignored": 0,
-      "exceptions": 291
+      "exceptions": 218
     },
     "conformanceStatuses": {
-      "conformant": 19,
-      "harness_limited": 7,
+      "conformant": 20,
       "engine_gap": 2,
-      "fixture_gap": 21,
+      "harness_limited": 3,
+      "fixture_gap": 24,
       "environment_limited": 1
     },
     "newlyConformantPages": [
-      "DefineAliasInPluginTest",
-      "TestSystemSlimSuite.TimeoutInSlimTestSystem"
+      "BaseLineDecisionTable.TestFailuresAreMarked"
     ],
     "nestedExecutionEvidence": {
       "test": "RUN_PAGE_DRIVER_INTEGRATION=1 perl t/page-driver-integration.t",
@@ -2270,7 +2244,7 @@
         "right": 183,
         "wrong": 62,
         "ignored": 0,
-        "exceptions": 291
+        "exceptions": 218
       },
       "serverExits": 0
     },
@@ -2450,25 +2424,25 @@
   ],
   "conformanceSummary": {
     "pages": 50,
-    "confirmedConformantPages": 17,
+    "confirmedConformantPages": 20,
     "confirmedEngineGapPages": 2,
-    "fixtureBlockedPages": 18,
-    "testHarnessBlockedPages": 12,
+    "fixtureBlockedPages": 24,
+    "testHarnessBlockedPages": 3,
     "environmentBlockedPages": 1,
     "classificationCounts": {
-      "conformant": 17,
+      "conformant": 20,
       "engine_gap": 2,
       "environment_limited": 1,
-      "fixture_gap": 18,
-      "harness_limited": 12
+      "fixture_gap": 24,
+      "harness_limited": 3
     },
-    "interpretation": "Raw page-level FitNesse counts are preserved separately. Pages with intentional wrong cells, exceptions, or ignored rows inside embedded tests are not considered conformant until their outer pages verify those outcomes. Fixture and harness blockers are not attributed to the SLiM engine without evidence."
+    "interpretation": "Raw page-level FitNesse assertion counts are preserved separately. Embedded negative, ignored, and exception outcomes are valid when the outer acceptance page checks them successfully. Fixture and harness blockers are not attributed to the SLiM engine without evidence."
   },
   "classificationMethod": "Each page retains raw right/wrong/ignored/exception counts. Conformance classification uses page content, inherited setup, embedded expected counts, current Perl fixtures, and upstream FitNesse documentation. Negative examples are evaluated by their outer assertions, not by assuming every inner failure is a defect.",
   "remainingPageClassification": {
-    "sourceReviewed": "All 50 individual page XML responses rerun after PageDriver implementation; result counts are assertions from the page-level <result><counts> element.",
+    "sourceReviewed": "All 50 individual page XML responses rerun after ResponseExaminer; raw assertion counts come from each page-level <result><counts> element.",
     "sharedSuiteSetup": "SuiteSlimTests/SetUp imports fitnesse.fixtures and registers PageDriver and EchoFixture libraries. HTTP-backed PageDriver now creates pages with saveData, marks Test pages with saveProperties, and requests page/test/suite/execution-log routes. The external nested page request does not inherit all outer suite plugin/comparator settings.",
-    "intentionalCoverage": "Several pages assert intentionally failing, ignored, exception, stopped, or timed-out results inside nested pages. Those inner outcomes are visible in returned HTML only where fixture setup and ResponseExaminer dependencies allow the outer test to inspect them.",
+    "intentionalCoverage": "Several pages assert intentionally failing, ignored, exception, stopped, or timed-out outcomes inside nested pages. ResponseExaminer now exposes nested HTTP response content and rendered HTML so outer pages can verify those outcomes.",
     "confirmedEngineGaps": [
       "ChainWithInstanceTest: automatic SlimHelperLibrary getFixture/pushFixture/popFixture behavior is absent.",
       "HashTableTests.ShouldReturnHashTable: returned Perl hash reference becomes HASH(0x...), not a FitNesse-compatible hash value."
@@ -2477,24 +2451,21 @@
       "StopSuite, StopTest, and StopTestInSuiteSetUp now execute their nested suites; they fail on missing ConstructorThrows and generated fixture classes. Other fixture gaps are detailed per page."
     ],
     "harnessLimited": [
-      "BaseLineDecisionTable.TestFailuresAreMarked",
-      "CustomTableRenderingAddedByPluginTest",
-      "IgnoredTestsShouldColorGray",
-      "TestCustomComparators",
-      "TestDetailedDiff",
-      "TestExceptionIsDisplayed",
-      "TestSystemSlimSuite.ErrorSituationsDuringSlimServerStartup.B_TimeoutAsSlimServerDiesBeforeConnecting"
+      "CustomTableRenderingAddedByPluginTest: root-level nested page does not inherit the outer suite custom table alias/rendering setup.",
+      "TestCustomComparators: root-level nested page does not inherit the outer suite custom comparator configuration.",
+      "TestSystemSlimSuite.ErrorSituationsDuringSlimServerStartup.B_TimeoutAsSlimServerDiesBeforeConnecting: nested runner configuration does not yield the expected dead-runner response text."
     ],
-    "rawFailurePages": 31,
-    "blockedOrUnassessablePages": 31,
+    "rawFailurePages": 30,
+    "blockedOrUnassessablePages": 30,
     "classificationCounts": {
-      "conformant": 19,
-      "harness_limited": 7,
+      "conformant": 20,
       "engine_gap": 2,
-      "fixture_gap": 21,
+      "harness_limited": 3,
+      "fixture_gap": 24,
       "environment_limited": 1
     },
-    "previousCountCaveat": "The pre-PageDriver baseline summed one page outcome marker per page (17 right, 14 wrong, 19 exceptions), not the assertion counts returned by the page-level XML. Current raw assertion totals are freshly parsed from all 50 XML responses and should not be subtracted from those markers."
+    "previousCountCaveat": "The pre-PageDriver baseline summed one page outcome marker per page (17 right, 14 wrong, 19 exceptions), not the assertion counts returned by the page-level XML. Current raw assertion totals are freshly parsed from all 50 XML responses and should not be subtracted from those markers.",
+    "responseExaminerResult": "BaseLineDecisionTable.TestFailuresAreMarked is newly conformant. IgnoredTestsShouldColorGray, TestDetailedDiff, and TestExceptionIsDisplayed now reach their intended result inspection but remain fixture gaps."
   },
   "implementationPlan": [
     {
@@ -2521,48 +2492,44 @@
   ],
   "additionalConfirmedDefect": "HashFixture map-return serialization is a confirmed one-page engine gap; add a focused regression and fix as a separate targeted increment after the highest-coverage shared increments.",
   "harnessInvestigation": {
-    "status": "concurrent_session_prerequisite_complete",
+    "status": "response_examiner_implemented; three nested setup limitations remain",
     "fitNesseVersion": "20251025",
     "installedClasses": [
       "fitnesse.fixtures.PageDriver",
       "fitnesse.fixtures.ResponseExaminer"
     ],
     "observedFlow": [
-      "PageDriver creates page content and marks pages as tests through FitNesse responders.",
-      "request_page calls ?test, ?suite, or ?executionLog and retains status/response content.",
-      "ResponseExaminer reads the current response or page HTML, applies multiline/dotall regular expressions, and returns the selected capture group.",
-      "Outer pages inspect embedded pass/fail/ignore/exception markup, counts, startup errors, and timeout output."
+      "PageDriver creates pages and marks them as tests through FitNesse responders.",
+      "request_page calls ?test, ?suite, or ?executionLog and retains status and response content.",
+      "ResponseExaminer reads the retained status/body, exposes rendered HTML, and applies multiline/dotall matching and capture extraction.",
+      "Outer pages inspect nested pass/fail/ignore/exception markup and aggregate counts."
     ],
     "upstreamArchitecture": "The Java fixtures use FitNesse in-process fixture context and helpers. The Perl equivalent must use HTTP and retain response body/source HTML in test-harness fixture state outside lib/Test/Slim.",
     "blockingDependency": {
-      "type": "http_harness_fixtures_remain_unimplemented",
-      "evidence": "Fork-per-connection workers now allow nested FitNesse test executions to open a second SLiM session while the outer PageDriver call waits. PageDriver and ResponseExaminer still require the separate HTTP-backed fixture implementation.",
-      "classification": "remaining test-harness limitation; no protocol defect observed"
+      "type": "nested_page_setup_configuration",
+      "evidence": "Response inspection now works. Three pages remain limited by nested suite plugin/comparator setup or a startup-dead-runner response dependency.",
+      "classification": "test harness setup limitation; no protocol defect observed"
     },
     "recommendation": [
-      "Implement HTTP PageDriver operations used by the acceptance pages: page creation, test marking, page/suite/execution-log requests, and response/source-content capture.",
-      "Implement ResponseExaminer over retained response/page content with contents/pageHtml, multiline/dotall regex matching, capture group and no-match semantics.",
-      "Run affected pages and all 50 inventory pages; classify independent missing fixture families separately."
+      "Resolve the plugin and custom comparator setup required by their nested test pages without changing upstream expectations.",
+      "Investigate the startup test-runner configuration that should produce the expected dead-runner message.",
+      "Implement the separately classified target fixtures for ignored-test flow, DetailedDiff, and exception rendering."
     ],
     "verification": {
       "concurrencyRegression": "t/server-concurrency.t PASS, 13 tests; pre-fix run failed when connection B did not receive a greeting while A remained open.",
-      "unitTests": "bin/test-dev PASS, 20 files, 216 tests; four existing TODO failures remain.",
-      "acceptanceRerun": "50/50 pages completed through the external Perl SLiM service; page assertion counts and classifications exactly matched the prior baseline.",
-      "serverStability": "0 unexpected Perl server exits; all 50 pages confirmed 127.0.0.1:8099; malformed-input and disconnect regressions passed."
+      "unitTests": "bin/test-dev PASS, 23 files, 270 tests; four existing TODO failures remain.",
+      "acceptanceRerun": "50/50 pages completed through external Perl SLiM; 183 right, 62 wrong, 0 ignored, 218 exceptions; 20 conformant pages.",
+      "serverStability": "0 unexpected Perl server exits during all 50 pages; FitNesse and Perl SLiM remained running.",
+      "responseExaminerTests": "t/response-examiner.t PASS, 29 assertions; nested PageDriver integration PASS, 3 assertions."
     },
     "affectedBaselinePages": [
       "BaseLineDecisionTable.TestFailuresAreMarked",
       "CustomTableRenderingAddedByPluginTest",
-      "DefineAliasInPluginTest",
       "IgnoredTestsShouldColorGray",
-      "StopSuite",
-      "StopTest",
-      "StopTestInSuiteSetUp",
       "TestCustomComparators",
       "TestDetailedDiff",
       "TestExceptionIsDisplayed",
-      "TestSystemSlimSuite.ErrorSituationsDuringSlimServerStartup.B_TimeoutAsSlimServerDiesBeforeConnecting",
-      "TestSystemSlimSuite.TimeoutInSlimTestSystem"
+      "TestSystemSlimSuite.ErrorSituationsDuringSlimServerStartup.B_TimeoutAsSlimServerDiesBeforeConnecting"
     ]
   },
   "concurrencyVerification": {
@@ -2597,5 +2564,100 @@
     "tests": 203,
     "todoFailures": 4,
     "todoDescription": "Three boilerplate TODOs and one Unicode-return TODO; all marked TODO and suite exits PASS."
+  },
+  "responseExaminerIncrement": {
+    "family": "Response inspection over PageDriver response context",
+    "upstreamReference": "Installed FitNesse v20251025 fitnesse.fixtures.ResponseExaminer; acceptance shared scenarios call setType, setPattern, setGroup, found, and extractMatch(pattern,type,group).",
+    "perlBehavior": "Reads status, content, and rendered response HTML from Fitnesse::Fixtures::ResponseContext. Implements contents, html, fullContents, rawContents, pageContents, pageHtml, status, headers, multiline/dotall matching, matchCount, found, extractMatch, line access, and upstream fixture errors for unsupported types. No separate HTTP client or duplicate response state is introduced.",
+    "focusedTests": {
+      "file": "t/response-examiner.t",
+      "assertions": 29,
+      "status": "PASS"
+    },
+    "unitTests": {
+      "command": "bin/test-dev",
+      "status": "PASS",
+      "files": 23,
+      "tests": 270,
+      "knownTodoFailures": 4
+    },
+    "integrationTest": {
+      "command": "RUN_PAGE_DRIVER_INTEGRATION=1 perl t/page-driver-integration.t",
+      "status": "PASS",
+      "assertions": 3
+    },
+    "affectedPages": [
+      {
+        "page": "BaseLineDecisionTable.TestFailuresAreMarked",
+        "right": 8,
+        "wrong": 0,
+        "ignored": 0,
+        "exceptions": 0,
+        "conformance": "conformant"
+      },
+      {
+        "page": "CustomTableRenderingAddedByPluginTest",
+        "right": 5,
+        "wrong": 1,
+        "ignored": 0,
+        "exceptions": 0,
+        "conformance": "harness_limited"
+      },
+      {
+        "page": "IgnoredTestsShouldColorGray",
+        "right": 3,
+        "wrong": 4,
+        "ignored": 0,
+        "exceptions": 0,
+        "conformance": "fixture_gap"
+      },
+      {
+        "page": "TestCustomComparators",
+        "right": 1,
+        "wrong": 2,
+        "ignored": 0,
+        "exceptions": 0,
+        "conformance": "harness_limited"
+      },
+      {
+        "page": "TestDetailedDiff",
+        "right": 1,
+        "wrong": 21,
+        "ignored": 0,
+        "exceptions": 0,
+        "conformance": "fixture_gap"
+      },
+      {
+        "page": "TestExceptionIsDisplayed",
+        "right": 4,
+        "wrong": 15,
+        "ignored": 0,
+        "exceptions": 0,
+        "conformance": "fixture_gap"
+      },
+      {
+        "page": "TestSystemSlimSuite.ErrorSituationsDuringSlimServerStartup.B_TimeoutAsSlimServerDiesBeforeConnecting",
+        "right": 2,
+        "wrong": 1,
+        "ignored": 0,
+        "exceptions": 0,
+        "conformance": "harness_limited"
+      }
+    ],
+    "fullInventory": {
+      "pages": 50,
+      "completedResponses": 50,
+      "conformantPages": 20,
+      "nonConformantPages": 30,
+      "rawAssertionCounts": {
+        "right": 183,
+        "wrong": 62,
+        "ignored": 0,
+        "exceptions": 218
+      },
+      "externalPerlConfirmed": 50,
+      "serverExits": 0
+    },
+    "serverStability": "FitNesse and the external Perl SLiM server remained running after the complete 50-page run."
   }
 }

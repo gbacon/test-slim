@@ -1,12 +1,12 @@
 # FitNesse SLiM acceptance baseline
 
-Updated 2026-10-15 on `codex/complete-slim`, after the PageDriver increment. The installed FitNesse distribution is v20251025.
+Updated 2026-10-15 on `codex/complete-slim`, after the ResponseExaminer increment. The installed FitNesse distribution is v20251025.
 
 FitNesse ran all pages against the external Perl SLiM server at `127.0.0.1:8099`. Every page response identified `fitnesse.slim.SlimService` and the external connection; all 50 returned HTTP 200. The Perl server exited zero times.
 
 ## Perl tests
 
-`bin/test-dev`: **PASS**, 22 files and 241 tests. Four known TODO failures remain (three boilerplate checks and one Unicode-return case). The PageDriver unit tests passed, and the live integration regression passed all three checks.
+`bin/test-dev`: **PASS**, 23 files and 270 tests. Four known TODO failures remain (three boilerplate checks and one Unicode-return case). The PageDriver unit tests passed, the ResponseExaminer tests passed all 29 checks, and the live nested-execution integration regression passed all three checks.
 
 ## PageDriver behavior implemented
 
@@ -18,15 +18,15 @@ The response context is process-local. The external Perl server forks one worker
 
 `RUN_PAGE_DRIVER_INTEGRATION=1 perl t/page-driver-integration.t` passed against the live FitNesse server and Perl SLiM listener. It created and marked a generated test page, FitNesse executed that page over a second Perl SLiM connection, and the original outer connection then successfully executed another fixture statement. The upstream `ScenarioLibraryTestSuite.ScenarioLibraryShouldIncludeVariables` page also passed separately (6 right, 0 wrong, 0 ignored, 0 exceptions) through the Perl server; it is not one of the 50 Test=true inventory pages. Focused HTTP request, status, encoding, response-retention, and error tests are in `t/page-driver.t` (25 assertions).
 
-ResponseExaminer remains unimplemented. The shared context retains the most recent response for that later fixture, but this increment does not inspect or extract response HTML through ResponseExaminer.
+The Perl ResponseExaminer now reads the current `ResponseContext` created by PageDriver. It implements response status and body access, raw and escaped content selectors, rendered response HTML, line access, multiline/dotall regex matching, match counts, and configured capture extraction. The acceptance scenario also calls `extractMatch(pattern, type, group)`, which selects a source and capture in one operation. Unknown source types, invalid patterns, and a missing response raise fixture errors; a valid pattern without a match returns null, matching upstream `found` behavior. The focused cases include nested failure, ignored markup, and exception-detail extraction.
 
 ## Current acceptance results
 
-The page-by-page XML inventory reports **19 conformant pages and 31 non-conformant pages**. Raw page assertion totals are **183 right, 62 wrong, 0 ignored, and 291 exceptions**. All 50 pages completed through the external Perl service, with zero server exits.
+The page-by-page XML inventory reports **20 conformant pages and 30 non-conformant pages**. Raw page assertion totals are **183 right, 62 wrong, 0 ignored, and 218 exceptions**. All 50 pages completed through the external Perl service, with zero server exits.
 
-Two pages became conformant in this increment: `DefineAliasInPluginTest` and `TestSystemSlimSuite.TimeoutInSlimTestSystem`. The final repeat after the last code changes produced identical page counts, completed all 50 responses, confirmed the external Perl connection 50 times, and recorded zero request errors or server exits. The page results and current failure evidence are listed below and stored in the [machine-readable JSON inventory](fitnesse-slim-acceptance-baseline.json).
+Three pages became conformant across the PageDriver and ResponseExaminer increments: `DefineAliasInPluginTest`, `TestSystemSlimSuite.TimeoutInSlimTestSystem`, and `BaseLineDecisionTable.TestFailuresAreMarked`. The latest run completed all 50 responses against the configured external Perl SLiM server on port 8099 and recorded zero Perl server exits. The 73-exception reduction reflects successful fixture construction and nested checks; wrong counts did not increase. The page results and current failure evidence are listed below and stored in the [machine-readable JSON inventory](fitnesse-slim-acceptance-baseline.json).
 
-Failure classifications group 31 pages by primary cause: 2 confirmed engine gaps, 21 fixture gaps, 7 harness or nested-setup limitations, and 1 environment-limited page. These categories do not imply 31 independent protocol defects. StopSuite, StopTest, and StopTestInSuiteSetUp now execute the nested suite and expose missing `ConstructorThrows`/generated fixture classes; those are fixture gaps, not PageDriver failures. The custom rendering and comparator pages receive HTTP responses but their root-level nested pages do not receive all outer suite plugin/comparator setup. Several other nested pages cannot inspect results because `ResponseExaminer` and target-specific fixtures are missing.
+Failure classifications group 30 pages by primary cause: 2 confirmed engine gaps, 24 fixture gaps, 3 harness or nested-setup limitations, and 1 environment-limited page. These categories do not imply 30 independent protocol defects. StopSuite, StopTest, and StopTestInSuiteSetUp execute nested suites and expose missing `ConstructorThrows`/generated fixture classes; those are fixture gaps, not PageDriver failures. The custom rendering and comparator pages receive HTTP responses but their root-level nested pages do not receive all outer suite plugin/comparator setup. The remaining startup-timeout harness page receives a 200 response without the expected dead-runner message. Response inspection now works; the remaining `IgnoredTestsShouldColorGray`, `TestDetailedDiff`, and `TestExceptionIsDisplayed` failures are caused by missing target fixtures or methods.
 
 The previously committed baseline’s aggregate 17-right/14-wrong/19-exception values were page outcome markers (one marker per page), not assertion totals from page XML. They remain useful for historical page classification, but should not be subtracted from the current raw assertion totals. The JSON records this distinction.
 
@@ -37,7 +37,7 @@ The previously committed baseline’s aggregate 17-right/14-wrong/19-exception v
 | `BaseLineDecisionTable.ComparatorsAreSupported` | 10 | 0 | 0 | 0 | conformant | The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server. |
 | `BaseLineDecisionTable.MakingTheBaselineTableTheDefaultDecisionTable` | 7 | 0 | 0 | 0 | conformant | The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server. |
 | `BaseLineDecisionTable.ScenariosAreSupported` | 10 | 0 | 0 | 0 | conformant | The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server. |
-| `BaseLineDecisionTable.TestFailuresAreMarked` | 8 | 0 | 0 | 17 | harness_limited | PageDriver now runs the nested test; the outer page remains blocked by Could not find class ResponseExaminer. Later scriptTableActor errors cascade from that failed scenario construction. |
+| `BaseLineDecisionTable.TestFailuresAreMarked` | 8 | 0 | 0 | 0 | conformant | ResponseExaminer extracts nested assertion counts and rendered result cells; all outer checks pass. The embedded test intentionally contains two wrong and two ignored cells, which the outer page verifies. |
 | `BaseLineDecisionTable` | 17 | 0 | 0 | 0 | conformant | The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server. |
 | `ChainWithInstanceTest` | 4 | 1 | 0 | 6 | engine_gap | Automatic SlimHelperLibrary actor-stack operations getFixture, pushFixture, and popFixture are absent. |
 | `CustomTableRenderingAddedByPluginTest` | 5 | 1 | 0 | 0 | harness_limited | The nested page runs, but FitNesse output reports Could not find class MyUseCase/MyFixture. The custom alias/rendering setup from the outer suite is not available to this root-level HTTP test page. |
@@ -46,7 +46,7 @@ The previously committed baseline’s aggregate 17-right/14-wrong/19-exception v
 | `HashTableTests.HashTableWithHtmlContent` | 0 | 0 | 0 | 2 | fixture_gap | Hash input conversion works, but hash_is and echo_and_log fixture methods are absent. |
 | `HashTableTests.ShouldReturnHashTable` | 0 | 1 | 0 | 0 | engine_gap | The Perl hashref is returned as HASH(0x...), a process-specific pointer string rather than a FitNesse-compatible hash value. |
 | `HybridDecisionTable.ImplementDynamicDecisionTableWithHybridTable` | 0 | 0 | 0 | 25 | fixture_gap | AddUpChange is absent, so hybrid getter/setter dispatch is not reached. |
-| `IgnoredTestsShouldColorGray` | 3 | 4 | 0 | 16 | harness_limited | The page runs nested content, but ConstructorThrows is missing and ResponseExaminer cannot be constructed, so its expected inner ignore rendering cannot be checked. |
+| `IgnoredTestsShouldColorGray` | 3 | 4 | 0 | 0 | fixture_gap | ResponseExaminer now runs. The nested page still cannot exercise its expected stop-and-ignore flow because the `ConstructorThrows` fixture is missing. |
 | `LibrarySuite.HowToAddFixturesWithParametersToTheLibrary` | 4 | 0 | 0 | 3 | fixture_gap | Implicit getFixture and EchoFixture.get_string_arg are missing; the page also has an explanatory negative query example. |
 | `LibrarySuite.LastLibraryPreceedsEarlierLibraryTest` | 2 | 0 | 0 | 0 | conformant | The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server. |
 | `LibrarySuite.LibraryInSetUpSuite.LibraryInSetUpAndPageTest` | 1 | 0 | 0 | 2 | fixture_gap | LibraryInSetUp and setup-library call tracking are absent. |
@@ -69,8 +69,8 @@ The previously committed baseline’s aggregate 17-right/14-wrong/19-exception v
 | `TestComparators` | 26 | 0 | 0 | 0 | conformant | The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server. |
 | `TestCustomComparators` | 1 | 2 | 0 | 0 | harness_limited | The nested response is retrieved, but its output lacks the expected glob comparison; the root-level nested test does not receive the outer suite CustomComparators setup. |
 | `TestCustomConverter` | 0 | 0 | 0 | 17 | fixture_gap | TestSlimWithConverter and its converter-control fixture methods are absent; this run does not establish an engine defect. |
-| `TestDetailedDiff` | 1 | 21 | 0 | 12 | harness_limited | Nested HTTP execution works, but the page cannot inspect its response because ResponseExaminer and the DetailedDiff fixture are absent; downstream scriptTableActor errors cascade. |
-| `TestExceptionIsDisplayed` | 4 | 15 | 0 | 28 | harness_limited | Nested HTTP execution works, but the page lacks ResponseExaminer, DecisionTableExecuteThrows, ConstructorThrows, and TestSlim exception methods needed to build and inspect the expected response. |
+| `TestDetailedDiff` | 1 | 21 | 0 | 0 | fixture_gap | ResponseExaminer extracts the nested response. The `DetailedDiff` fixture is absent, so expected detailed-diff output is not produced. |
+| `TestExceptionIsDisplayed` | 4 | 15 | 0 | 0 | fixture_gap | ResponseExaminer inspects the nested response. The page remains blocked by missing `DecisionTableExecuteThrows`, `ConstructorThrows`, and `TestSlim` exception methods. |
 | `TestOrderedQueryWithDuplicateRows` | 0 | 0 | 0 | 4 | fixture_gap | DuplicateRows is absent, so ordered-query behavior is not reached. |
 | `TestPageWithInclude` | 0 | 0 | 0 | 2 | fixture_gap | EchoFixture.set_name and name are absent. |
 | `TestScriptTable` | 2 | 0 | 0 | 0 | conformant | The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server. |
@@ -87,6 +87,6 @@ The previously committed baseline’s aggregate 17-right/14-wrong/19-exception v
 
 ## Next increment
 
-The highest-impact next step is ResponseExaminer over the response retained by PageDriver. It should implement only the source types and regex/capture behavior used by the acceptance scenarios, with separate fixture tests. Several blocked pages will then still require missing target fixtures or explicit propagation of outer suite setup.
+The highest-impact next step is to resolve the three remaining nested-setup limitations: the suite plugin configuration required by `CustomTableRenderingAddedByPluginTest`, the custom comparator configuration required by `TestCustomComparators`, and the dead-runner response expected by the startup-timeout page. `IgnoredTestsShouldColorGray`, `TestDetailedDiff`, and `TestExceptionIsDisplayed` now need their separately classified missing target fixtures and methods.
 
 Other confirmed gaps remain tracked in the per-page inventory: automatic SlimHelperLibrary actor-stack methods, hash-result conversion, query fixtures, and several page-specific fixtures. Do not treat the intentionally wrong or exceptional inner rows as outer conformance failures; the outer acceptance page must inspect and verify those results.
