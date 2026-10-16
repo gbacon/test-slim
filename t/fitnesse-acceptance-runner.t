@@ -6,6 +6,7 @@ use Test::More;
 use lib 't/lib';
 use Test::Slim::FitNesseAcceptance qw(
   bounded_request
+  compare_page_counts
   compare_inventory
   missing_wiki_pages
   parse_page_result
@@ -87,6 +88,21 @@ is_deeply($parsed->{counts}, { right => 3, wrong => 1, ignored => 2, exceptions 
   'primary assertion totals are parsed');
 is($parsed->{conformance}, 'nonconformant', 'wrong assertions affect conformance');
 ok($parsed->{externalPerlConfirmed}, 'execution log confirms external Perl connection');
+
+my $pipe_xml = $xml;
+$pipe_xml =~ s{<testSystem>.*?</testSystem>}{<testSystem>slim:/repo/bin/perl-slim</testSystem>}s;
+$pipe_xml =~ s{<command>.*?</command>}{<command>/repo/bin/perl-slim 1</command>}s;
+my $pipe_result = parse_page_result($pipe_xml,200,'127.0.0.1',8099,'pipe','/repo/bin/perl-slim');
+ok($pipe_result->{perlExecutionConfirmed}, 'pipe execution log confirms the Perl child command');
+ok(!$pipe_result->{externalPerlConfirmed}, 'a child process is not mislabeled as an external listener');
+
+my @count_baseline = ({ page => 'P', rawCounts => { right => 2, wrong => 1, ignored => 0, exceptions => 0 } });
+my $same_counts = compare_page_counts(\@count_baseline,
+  { P => { counts => { right => 2, wrong => 1, ignored => 0, exceptions => 0 } } });
+ok(!$same_counts->{failed}, 'per-page exact tuple comparison accepts the baseline');
+my $changed_counts = compare_page_counts(\@count_baseline,
+  { P => { counts => { right => 3, wrong => 0, ignored => 0, exceptions => 0 } } });
+ok($changed_counts->{failed}, 'per-page tuple comparison catches count shifts with equal aggregate total');
 
 my $uppercase_system_xml = $xml;
 $uppercase_system_xml =~ s/<testSystem>slim:/<testSystem>SLIM:/;

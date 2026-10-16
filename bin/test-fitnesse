@@ -4,15 +4,19 @@ use strict;
 use warnings;
 
 use Cwd qw(abs_path);
-use File::Path qw(make_path);
+use File::Path qw(make_path remove_tree);
+use File::Temp qw(tempdir);
 use FindBin qw($Bin);
+use Getopt::Long qw(GetOptions);
 use HTTP::Tiny;
+use IO::Socket::INET;
 use JSON::PP qw(decode_json);
 use POSIX qw(WNOHANG setpgid);
 use Time::HiRes qw(sleep time);
 use lib "$Bin/../t/lib";
 use Test::Slim::FitNesseAcceptance qw(
   bounded_request
+  compare_page_counts
   compare_inventory
   missing_wiki_pages
   parse_page_result
@@ -20,16 +24,23 @@ use Test::Slim::FitNesseAcceptance qw(
   preserve_exit_status
   true_property_pages_in_wiki
 );
+use Test::Slim::FitNesseSuiteAcceptance qw(configure_pipe_wiki extract_wiki_from_jar);
 
 $| = 1;
 my $ROOT = abs_path("$Bin/..");
 my @OWNED;
 my %REAPED;
 my $LOG_DIR = "$ROOT/.runtime";
+my $TEMP_ROOT;
 
 $SIG{INT} = sub { die "Interrupted\n" };
 $SIG{TERM} = sub { die "Terminated\n" };
-END { preserve_exit_status(\&stop_owned_processes) }
+END {
+  preserve_exit_status(sub {
+    stop_owned_processes();
+    remove_tree($TEMP_ROOT) if defined($TEMP_ROOT) && -d $TEMP_ROOT;
+  });
+}
 
 my $exit = eval { main(); 1 };
 unless ($exit) {
@@ -41,6 +52,12 @@ unless ($exit) {
 exit 0;
 
 sub main {
+  my $transport = 'pipe';
+  GetOptions('transport=s' => \$transport)
+    or die "usage: bin/test-fitnesse [--transport pipe|tcp]\n";
+  die "unsupported transport '$transport' (choose pipe or tcp)\n"
+    unless $transport eq 'pipe' || $transport eq 'tcp';
+  print "Acceptance transport: $transport\n";
   my $baseline_file = "$ROOT/docs/fitnesse-slim-acceptance-baseline.json";
   open my $baseline_fh, '<', $baseline_file or die "read $baseline_file: $!";
   my $baseline_text = do { local $/; <$baseline_fh> };
@@ -52,24 +69,33 @@ sub main {
   die "baseline must contain 45 conformant pages (found $baseline_passes)"
     unless $baseline_passes == 45;
 
-  my $fitnesse_url = $ENV{TEST_SLIM_FITNESSE_URL} || 'http://127.0.0.1:8080';
-  my($fitnesse_host,$fitnesse_port) = $fitnesse_url =~ m{^http://([^/:]+)(?::(\d+))?/?$}
-    or die "TEST_SLIM_FITNESSE_URL must be an HTTP origin (got $fitnesse_url)";
-  $fitnesse_port ||= 80;
+  my $fitnesse_host = '127.0.0.1';
+  my $fitnesse_port = free_port($fitnesse_host);
+  my $fitnesse_url = "http://$fitnesse_host:$fitnesse_port";
   my $slim_host = $ENV{TEST_SLIM_HOST} || '127.0.0.1';
-  my $slim_port = $ENV{TEST_SLIM_PORT} || 8099;
+  my $slim_port = $transport eq 'tcp' ? free_port($slim_host) : 1;
   my $page_timeout = $ENV{TEST_SLIM_PAGE_TIMEOUT} || 90;
   my $total_timeout = $ENV{TEST_SLIM_TOTAL_TIMEOUT} || 2400;
   my $started_at = time;
   my $http = HTTP::Tiny->new(timeout => $page_timeout, agent => 'test-slim-acceptance/1.0');
-  my $probe_http = HTTP::Tiny->new(timeout => 2, agent => 'test-slim-readiness/1.0');
   make_path($LOG_DIR);
 
-  ensure_slim($slim_host,$slim_port);
-  ensure_fitnesse($probe_http,$fitnesse_url,$fitnesse_host,$fitnesse_port,
-    $slim_host,$slim_port);
+  my $jar = $ENV{FITNESSE_JAR} || '/opt/fitnesse/fitnesse.jar';
+  die "FitNesse jar not found at $jar" unless -f $jar;
+  $TEMP_ROOT = tempdir('test-slim-individual-XXXXXX', TMPDIR => 1, CLEANUP => 0);
+  my $wiki_root = "$TEMP_ROOT/FitNesseRoot";
+  extract_wiki_from_jar($jar,$wiki_root);
+  $ENV{TEST_SLIM_FITNESSE_URL} = $fitnesse_url;
+  if ($transport eq 'pipe') {
+    configure_pipe_wiki($wiki_root,"$ROOT/bin/perl-slim");
+    $ENV{PERL5LIB} = join ':', "$ROOT/lib", "$ROOT/t/lib",
+      grep { length } split /:/, ($ENV{PERL5LIB} // '');
+  } else {
+    ensure_slim($slim_host,$slim_port);
+  }
+  start_fitnesse($transport,$jar,$fitnesse_url,$fitnesse_port,$slim_host,$slim_port,
+    "$LOG_DIR/fitnesse.log");
 
-  my $wiki_root = $ENV{FITNESSE_WIKI_ROOT} || "$ROOT/FitNesseRoot";
   my $suite_wiki = "$wiki_root/FitNesse/SuiteAcceptanceTests/SuiteSlimTests";
   my $missing_wiki = missing_wiki_pages($suite_wiki,$pages);
   my %baseline_pages = map { $_->{page} => 1 } @$pages;
@@ -120,12 +146,13 @@ sub main {
       push @service_errors, "FitNesse request timed out or failed on $page";
       last;
     }
-    my $result = parse_page_result($response->{content},$response->{status},$slim_host,$slim_port);
+    my $result = parse_page_result($response->{content},$response->{status},$slim_host,$slim_port,
+      $transport,$transport eq 'pipe' ? "$ROOT/bin/perl-slim" : undef);
     $result->{http} = $response->{status};
     $result->{url} = $url;
     $observed{$page} = $result;
 
-    unless (slim_is_alive($slim_host,$slim_port)) {
+    unless ($transport eq 'pipe' || slim_is_alive($slim_host,$slim_port)) {
       push @service_errors, "Perl SLiM listener stopped responding after $page";
       last;
     }
@@ -139,26 +166,36 @@ sub main {
   }
 
   my $comparison = compare_inventory($pages,\%observed);
-  push @service_errors, map { "external Perl SLiM was not verified for $_" }
+  my $tuple_comparison = compare_page_counts($pages,\%observed);
+  push @service_errors, map {
+    $_->{error} ? "baseline count metadata missing for $_->{page}"
+      : "count deviation for $_->{page} $_->{count}: expected $_->{expected}, actual $_->{actual}"
+  } @{$tuple_comparison->{changes}};
+  push @service_errors, map { "missing per-page result: $_" } @{$tuple_comparison->{missing}};
+  push @service_errors, map { "unexpected per-page result: $_" } @{$tuple_comparison->{unexpected}};
+  push @service_errors, map { "Perl execution backend was not verified for $_" }
     @{$comparison->{serviceFailures}};
-  my $listener_ok = slim_is_alive($slim_host,$slim_port);
-  push @service_errors, 'Perl SLiM listener is not ready at completion' unless $listener_ok;
+  my $listener_ok = $transport eq 'pipe' || slim_is_alive($slim_host,$slim_port);
+  push @service_errors, 'Perl SLiM listener is not ready at completion'
+    if $transport eq 'tcp' && !$listener_ok;
 
-  my($right,$wrong,$ignored,$exceptions,$conformant,$executed,$external) = (0,0,0,0,0,0,0);
+  my($right,$wrong,$ignored,$exceptions,$conformant,$executed,$perl_verified) = (0,0,0,0,0,0,0);
   for my $result (values %observed) {
     next unless ($result->{status} // '') eq 'completed' && $result->{counts};
     $executed++;
-    $external++ if $result->{externalPerlConfirmed};
+    $perl_verified++ if $result->{perlExecutionConfirmed};
     $right += $result->{counts}{right};
     $wrong += $result->{counts}{wrong};
     $ignored += $result->{counts}{ignored};
     $exceptions += $result->{counts}{exceptions};
-    $conformant++ if $result->{conformance} eq 'conformant' && $result->{externalPerlConfirmed};
+    $conformant++ if $result->{conformance} eq 'conformant' && $result->{perlExecutionConfirmed};
   }
 
-  my $failed = $comparison->{failed} || @$missing_wiki || @unexpected_wiki_pages || @service_errors;
+  my $failed = $comparison->{failed} || $tuple_comparison->{failed}
+    || @$missing_wiki || @unexpected_wiki_pages || @service_errors;
   my $report = {
-    pages => scalar(@$pages), executed => $executed, externalPerlConfirmed => $external,
+    transport => $transport,
+    pages => scalar(@$pages), executed => $executed, perlExecutionVerified => $perl_verified,
     conformant => $conformant,
     rawCounts => { right => $right, wrong => $wrong, ignored => $ignored, exceptions => $exceptions },
     regressions => $comparison->{regressions}, newlyConformant => $comparison->{newlyConformant},
@@ -169,6 +206,7 @@ sub main {
     serviceFailures => \@service_errors, serverCrashes => scalar(grep { /stopped|exited/ } @service_errors),
     failed => $failed ? JSON::PP::true : JSON::PP::false,
     pageResults => \%observed,
+    tupleComparison => $tuple_comparison,
   };
   my $report_file = "$LOG_DIR/fitnesse-acceptance-results.json";
   open my $report_fh, '>', $report_file or die "write $report_file: $!";
@@ -176,8 +214,8 @@ sub main {
   close $report_fh or die "close $report_file: $!";
 
   print "\nFitNesse SLiM acceptance results\n";
-  printf "Pages: %d/%d executed; %d/%d used the external Perl SLiM service; %d/50 conformant\n",
-    $executed, scalar(@$pages), $external, scalar(@$pages), $conformant;
+  printf "Pages: %d/%d executed; %d/%d verified the Perl execution backend; %d/50 conformant\n",
+    $executed, scalar(@$pages), $perl_verified, scalar(@$pages), $conformant;
   printf "Assertions: %d right, %d wrong, %d ignored, %d exceptions\n",
     $right, $wrong, $ignored, $exceptions;
   printf "Regressions: %d; newly conformant: %d; known non-conformant: %d; unexecuted: %d; server crashes: %d\n",
@@ -219,28 +257,32 @@ sub ensure_slim {
   print "Started Perl SLiM on $host:$port\n";
 }
 
-sub ensure_fitnesse {
-  my($http,$url,$host,$port,$slim_host,$slim_port) = @_;
-  my $probe = fitnesse_probe($http,$url);
-  return if $probe->{ready};
-  die "port $port is occupied but is not a ready FitNesse HTTP service"
-    if $probe->{reachable};
+sub free_port {
+  my($host) = @_;
+  my $socket = IO::Socket::INET->new(LocalAddr => $host, LocalPort => 0,
+    Proto => 'tcp', Listen => 1, ReuseAddr => 1) or die "allocate local port: $!";
+  my $port = $socket->sockport;
+  close $socket;
+  return $port;
+}
 
-  my $jar = $ENV{FITNESSE_JAR} || '/opt/fitnesse/fitnesse.jar';
-  die "FitNesse jar not found at $jar" unless -f $jar;
-  my $wiki_home = $ENV{FITNESSE_HOME} || $ROOT;
+sub start_fitnesse {
+  my($transport,$jar,$url,$port,$slim_host,$slim_port,$log_file) = @_;
   my $java = $ENV{JAVA} || 'java';
-  start_owned_process($java,
-    "-Dslim.port=$slim_port", "-Dslim.host=$slim_host",
-    '-Dslim.pool.size=1', '-Dmanually.start.test.runner=true',
-    '-jar', $jar, '-p', $port, '-d', $wiki_home,
-    { log_file => "$LOG_DIR/fitnesse.log", cwd => $ROOT });
-  wait_until("FitNesse at $url", 30, sub {
-    my $ready = fitnesse_probe($http,$url);
-    die "FitNesse exited before readiness" if owned_process_exited();
+  my @args = ();
+  push @args, "-Dslim.port=$slim_port", "-Dslim.host=$slim_host",
+    '-Dmanually.start.test.runner=true' if $transport eq 'tcp';
+  push @args, '-Dslim.pool.size=1', '-jar', $jar, '-p', $port,
+    '-d', $TEMP_ROOT, '-r', 'FitNesseRoot',
+    { log_file => $log_file, cwd => $ROOT };
+  start_owned_process($java,@args);
+  my $url_http = HTTP::Tiny->new(timeout => 2, agent => 'test-slim-readiness/1.0');
+  wait_until("FitNesse $transport at $url",30,sub {
+    my $ready = fitnesse_probe($url_http,$url);
+    die 'FitNesse exited before readiness' if owned_process_exited();
     return $ready->{ready};
   });
-  print "Started FitNesse on $host:$port\n";
+  print "Started isolated FitNesse $transport service at $url\n";
 }
 
 sub fitnesse_probe {
@@ -330,6 +372,6 @@ sub result_label {
   return "ERROR: $result->{error}" if $result->{status} ne 'completed';
   my $c = $result->{counts};
   return sprintf('%s (%d right, %d wrong, %d exceptions)',
-    $result->{externalPerlConfirmed} ? $result->{conformance} : 'UNVERIFIED',
+    $result->{perlExecutionConfirmed} ? $result->{conformance} : 'UNVERIFIED',
     $c->{right},$c->{wrong},$c->{exceptions});
 }

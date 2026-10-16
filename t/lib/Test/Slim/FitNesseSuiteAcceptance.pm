@@ -7,12 +7,15 @@ use Exporter qw(import);
 use File::Basename qw(dirname);
 use File::Path qw(make_path);
 use File::Spec;
+use Cwd qw(abs_path);
 use IO::Uncompress::Unzip qw($UnzipError);
 
 our @EXPORT_OK = qw(
   compare_suite_results
+  configure_pipe_wiki
   extract_wiki_from_jar
   parse_suite_result
+  pipe_query
   verify_perl_trace
   verify_suite_execution_logs
 );
@@ -50,6 +53,23 @@ sub extract_wiki_from_jar {
   die "read FitNesse JAR $jar: $UnzipError" if $status < 0;
   die "FitNesse JAR has no Resources/FitNesseRoot tree: $jar" unless $found;
   return;
+}
+
+sub configure_pipe_wiki {
+  my($wiki_root,$runner) = @_;
+  $runner = abs_path($runner) or die "resolve Perl runner path: $!";
+  open my $fh, '>>', "$wiki_root/content.txt" or die "open FitNesse root content: $!";
+  print {$fh} "\n!define TEST_SYSTEM {slim}\n!define TEST_RUNNER {$runner}\n",
+    "!define COMMAND_PATTERN {%m}\n!define SLIM_PORT {1}\n";
+  close $fh or die "close FitNesse root content: $!";
+  return $runner;
+}
+
+sub pipe_query {
+  my($runner) = @_;
+  $runner = abs_path($runner) or die "resolve Perl runner path: $!";
+  $runner =~ s/([^A-Za-z0-9_.~-])/sprintf('%%%02X',ord($1))/ge;
+  return "&COMMAND_PATTERN=%25m&TEST_RUNNER=$runner&SLIM_PORT=1";
 }
 
 sub parse_suite_result {
@@ -176,23 +196,30 @@ sub compare_suite_results {
 }
 
 sub verify_suite_execution_logs {
-  my($logs,$host,$port,$accepted_labels) = @_;
+  my($logs,$host,$port,$accepted_labels,$transport,$runner) = @_;
   my(@errors,@verified);
   my %accepted = map { $_ => 1 } @$accepted_labels;
   push @errors, 'no SLiM execution logs were returned' unless @$logs;
   for my $index (0 .. $#$logs) {
     my $log = $logs->[$index];
     my $label = $log->{testSystem} // '';
+    my $expected_command = $transport && $transport eq 'pipe'
+      ? "$runner 1" : "Connection to running SlimService: $host:$port";
+    my $is_expected_system = $transport && $transport eq 'pipe'
+      ? defined($runner) && (lc($label) eq lc("slim:$runner")
+          || lc($label) eq lc("slim:remote_debug:$runner"))
+      : $accepted{$label};
     push @errors, "unexpected test-system label in execution log $index: $label"
-      unless $accepted{$label};
-    my $expected_command = "Connection to running SlimService: $host:$port";
-    push @errors, "SLiM execution log $index did not connect to the Perl listener"
+      unless $is_expected_system;
+    push @errors, "SLiM execution log $index did not select the expected Perl command"
       unless defined($log->{command}) && $log->{command} eq $expected_command;
+    push @errors, "unexpected pipe test-system label in execution log $index: $label"
+      if $transport && $transport eq 'pipe' && !$is_expected_system;
     push @errors, "SLiM execution log $index exited with " . ($log->{exitCode} // 'no status')
       unless defined($log->{exitCode}) && $log->{exitCode} eq '0';
     push @errors, "SLiM execution log $index contains a test-system exception"
       if @{$log->{exceptions} || []};
-    push @verified, $label if $accepted{$label}
+    push @verified, $label if $is_expected_system
       && defined($log->{command}) && $log->{command} eq $expected_command
       && defined($log->{exitCode}) && $log->{exitCode} eq '0'
       && !@{$log->{exceptions} || []};

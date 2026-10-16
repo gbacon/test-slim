@@ -155,15 +155,20 @@ Do not modify upstream acceptance pages to manufacture passing results.
 
 Record the acceptance-test baseline before implementing additional features.
 
-For a reproducible, baseline-checked run of all 50 upstream SLiM acceptance pages, use:
+The individual and native acceptance runners accept `--transport pipe|tcp`; pipe is their selected default, and TCP remains available as an explicitly selected external listener mode. For example:
 
 ```sh
-bin/test-fitnesse
+bin/test-fitnesse --transport tcp
+bin/test-fitnesse --transport pipe
+bin/test-fitnesse-suite --transport tcp
+bin/test-fitnesse-suite --transport pipe
 ```
+
+The isolated TCP commands currently reproduce the committed 50-page and 93-page baselines. Pipe mode positively launches Perl children but currently reports the documented baseline deviations and the unsupported `SLIM_FLAGS` child arguments in [`docs/fitnesse-acceptance-pipe-migration.md`](docs/fitnesse-acceptance-pipe-migration.md). Do not weaken or regenerate either baseline to hide them.
 
 This 50-page individual-page inventory is not the same selection as the complete native `FitNesse.SuiteAcceptanceTests.SuiteSlimTests?suite` responder. The native responder uses suite traversal, Test properties, pruning, legacy wiki headers, and referenced pages; suite context can also affect nested-page results. Do not infer its backend from displayed command labels. Attribute the backend from execution logs plus process or connection evidence. The v20251025 audit and exact page reconciliation are in [`docs/fitnesse-native-suite-audit.md`](docs/fitnesse-native-suite-audit.md) and `docs/fitnesse-native-suite-audit.json`. Keep the existing 50-page gate until a separately scoped native inventory has established page applicability, expected outcomes, backend, and reproducibility.
 
-The runner starts FitNesse and the Perl SLiM listener only when their configured ports are free, verifies FitNesse HTTP readiness and the SLiM protocol greeting, and checks each page's XML execution log for the external Perl connection. It clears generated `MySuite` pages before each page request, compares conformance against `docs/fitnesse-slim-acceptance-baseline.json`, permits the five documented non-conformant pages, and fails on a missing/unexecuted page, a regression, or an unverified Perl connection. It writes detailed per-page output to ignored `.runtime/fitnesse-acceptance-results.json`. Runner settings can be overridden with `TEST_SLIM_FITNESSE_URL`, `TEST_SLIM_HOST`, `TEST_SLIM_PORT`, `TEST_SLIM_PAGE_TIMEOUT`, `TEST_SLIM_TOTAL_TIMEOUT`, `FITNESSE_JAR`, `FITNESSE_HOME`, and `FITNESSE_WIKI_ROOT`. Processes started by the runner are stopped when it exits; pre-existing services are left running.
+The individual runner extracts a fresh pinned wiki, starts isolated FitNesse and (in TCP mode) Perl services, and clears generated `MySuite` pages before each request. It compares both conformance and exact per-page assertion tuples with `docs/fitnesse-slim-acceptance-baseline.json`, and verifies the actual runner command for the selected transport. It writes detailed per-page output to ignored `.runtime/fitnesse-acceptance-results.json`. FitNesse ports and timeouts are allocated by the runner; `FITNESSE_JAR`, `TEST_SLIM_PAGE_TIMEOUT`, and `TEST_SLIM_TOTAL_TIMEOUT` remain configurable. Processes and temporary wiki roots owned by the runner are cleaned up at exit.
 
 For the complete native `?suite` selection, run the separate gate:
 
@@ -171,7 +176,7 @@ For the complete native `?suite` selection, run the separate gate:
 bin/test-fitnesse-suite
 ```
 
-`bin/test-fitnesse-suite` extracts a fresh wiki from `Resources/FitNesseRoot` in the pinned FitNesse JAR, excludes generated `MySuite`, and starts isolated FitNesse and Perl services on temporary ports. It executes `FitNesse.SuiteAcceptanceTests.SuiteSlimTests?suite&format=xml`, checks the JAR/response version, and uses each result's full `pageHistoryLink` plus exact per-page right/wrong/ignored/exception counts against `docs/fitnesse-slim-native-suite-baseline.json`. It also checks suite final counts and positive backend evidence: all execution-log commands must target the runner-owned Perl port with one of the three audited labels and exit 0, and the Perl log must show balanced SLiM request/response traffic. A matching result is a no-regression result against the audited native baseline, not a claim that all selected pages conform to Perl. Known wrong and exception counts remain visible and classified in the baseline. Output and diagnostics are written to ignored `.runtime/fitnesse-native-suite-results.json`, `fitnesse-native-suite-response.xml`, and service logs. Override time limits with `TEST_SLIM_SUITE_TIMEOUT`, `TEST_SLIM_SUITE_TOTAL_TIMEOUT`, and `TEST_SLIM_SUITE_STARTUP_TIMEOUT`; use `TEST_SLIM_SUITE_LOG_DIR` to retain a separate run's artifacts. Baseline edits are never generated automatically: inspect every per-page delta against the upstream page and backend evidence, update the audit and explicit classification, then review the baseline diff. CI runs one native suite pass as a separate gate; run the command twice locally when establishing reproducibility.
+`bin/test-fitnesse-suite` uses the same transport selector and isolated wiki/service lifecycle. It executes `FitNesse.SuiteAcceptanceTests.SuiteSlimTests?suite&format=xml`, checks the JAR/response version, compares each full `pageHistoryLink` and all four counts against `docs/fitnesse-slim-native-suite-baseline.json`, and verifies backend attribution from execution logs plus the TCP request trace or exact Perl child command. A matching result means no regression against the selected transport's reviewed baseline, not complete SLiM conformance. Pipe mode currently differs from the committed TCP baseline; see the migration findings before treating it as a passing gate. Diagnostics remain under ignored `.runtime/`.
 
 Do not merely transliterate Java code to Perl. Use a native Perl style, not verbose, architecture astronautics, FooFactoryFactoryFactory nonsense that is typical to Java cargo culting. Do not write Python or FORTRAN in Perl either. Look for opportunities to exploit Perl's strengths in the design. Write like a Perl expert who is not trying to show off.
 

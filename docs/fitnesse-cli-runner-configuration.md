@@ -85,7 +85,9 @@ FitNesse v20251025 exited 0. The execution XML recorded `testSystem=slim:/worksp
 
 The `PERL5LIB` setting is required in this checkout because the child must find the implementation under `lib/` and acceptance fixtures under `t/lib/`. The existing `bin/test-fitnesse` and `bin/test-fitnesse-suite` remain TCP-based and unchanged; they do not migrate to this CLI path automatically.
 
-The Perl pipe implementation now emits the pinned v20251025 `SOUT`/`SERR` records and FitNesse reconstructs fixture output into separate stdout/stderr execution-log sections. A temporary six-assertion page was verified against the Perl child and Java SlimService; detailed records, behavior, and the prefix-role discrepancy with the published guide are in [`slim-pipe-transport.md`](slim-pipe-transport.md). The existing acceptance runners are still TCP-based at this Phase 1 checkpoint.
+The Perl pipe implementation now emits the pinned v20251025 `SOUT`/`SERR` records and FitNesse reconstructs fixture output into separate stdout/stderr execution-log sections. A temporary six-assertion page was verified against the Perl child and Java SlimService; detailed records, behavior, and the prefix-role discrepancy with the published guide are in [`slim-pipe-transport.md`](slim-pipe-transport.md).
+
+Both acceptance runners now support `--transport pipe|tcp`; pipe is selected by default. The long-lived isolated FitNesse HTTP service is retained so nested PageDriver requests have a live server. Pipe mode applies the verified runner variables as temporary root wiki defaults and, for the native suite responder, query overrides. The `-c` command-line mechanism was verified for direct and suite execution, but its short-lived mode is unsuitable for nested PageDriver pages that call back into a live FitNesse HTTP server. Current transport-specific tuple changes and the unsupported `SLIM_FLAGS` process arguments are documented in [`fitnesse-acceptance-pipe-migration.md`](fitnesse-acceptance-pipe-migration.md); the runner reports them as failures and does not update the TCP baselines.
 
 ## Conclusions by status
 

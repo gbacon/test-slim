@@ -13,6 +13,7 @@ use Time::HiRes qw(alarm time);
 
 our @EXPORT_OK = qw(
   bounded_request
+  compare_page_counts
   compare_inventory
   missing_wiki_pages
   parse_page_result
@@ -48,7 +49,8 @@ sub bounded_request {
 }
 
 sub parse_page_result {
-  my($body,$http_status,$host,$port) = @_;
+  my($body,$http_status,$host,$port,$transport,$perl_runner) = @_;
+  $transport ||= 'tcp';
   return { status => 'execution_error', error => "HTTP $http_status" }
     unless defined($http_status) && $http_status == 200;
   return { status => 'execution_error', error => 'empty FitNesse response' }
@@ -72,6 +74,13 @@ sub parse_page_result {
   my($command) = defined($log) ? $log =~ m{<command>(.*?)</command>}s : ();
   my($exit_code) = defined($log) ? $log =~ m{<exitCode>(-?\d+)</exitCode>}s : ();
 
+  my $perl_confirmed = $transport eq 'pipe'
+    ? defined($system) && defined($perl_runner) && lc($system) eq lc("slim:$perl_runner")
+      && defined($command) && $command eq "$perl_runner 1"
+      && defined($exit_code) && $exit_code eq '0'
+    : defined($system) && lc($system) eq lc('slim:fitnesse.slim.SlimService')
+      && defined($command) && $command eq "Connection to running SlimService: $host:$port"
+      && defined($exit_code) && $exit_code eq '0';
   return {
     status => 'completed',
     counts => \%counts,
@@ -79,10 +88,37 @@ sub parse_page_result {
     testSystem => $system,
     command => $command,
     exitCode => defined($exit_code) ? 0 + $exit_code : undef,
-    externalPerlConfirmed => defined($system) && lc($system) eq lc('slim:fitnesse.slim.SlimService')
-      && defined($command) && $command eq "Connection to running SlimService: $host:$port"
-      && defined($exit_code) && $exit_code eq '0',
+    perlExecutionConfirmed => $perl_confirmed ? 1 : 0,
+    externalPerlConfirmed => $transport eq 'tcp' && $perl_confirmed ? 1 : 0,
   };
+}
+
+sub compare_page_counts {
+  my($baseline,$observed) = @_;
+  my(@changes,@missing);
+  for my $entry (@$baseline) {
+    my $page = $entry->{page};
+    my $counts = $entry->{rawCounts} || $entry->{conformance}{rawCounts};
+    unless ($counts) {
+      push @changes, { page => $page, error => 'baseline assertion counts missing' };
+      next;
+    }
+    my $actual = $observed->{$page} && $observed->{$page}{counts};
+    unless ($actual) {
+      push @missing, $page;
+      next;
+    }
+    for my $name (qw(right wrong ignored exceptions)) {
+      push @changes, { page => $page, count => $name,
+        expected => $counts->{$name}, actual => $actual->{$name} }
+        if !defined($counts->{$name}) || !defined($actual->{$name})
+          || $counts->{$name} != $actual->{$name};
+    }
+  }
+  my %expected = map { $_->{page} => 1 } @$baseline;
+  my @unexpected = sort grep { !$expected{$_} } keys %$observed;
+  return { changes => \@changes, missing => \@missing, unexpected => \@unexpected,
+    failed => @changes || @missing || @unexpected ? 1 : 0 };
 }
 
 sub compare_inventory {
@@ -104,7 +140,9 @@ sub compare_inventory {
       push @regressions, $page if $expected{$page}{conformance}{status} eq 'conformant';
       next;
     }
-    if (!$result->{externalPerlConfirmed}) {
+    my $perl_confirmed = exists($result->{perlExecutionConfirmed})
+      ? $result->{perlExecutionConfirmed} : $result->{externalPerlConfirmed};
+    if (!$perl_confirmed) {
       push @service_failures, $page;
       push @regressions, $page if $expected{$page}{conformance}{status} eq 'conformant';
       next;

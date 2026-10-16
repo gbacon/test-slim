@@ -11,8 +11,10 @@ use lib 't/lib';
 use Test::Slim::FitNesseAcceptance qw(probe_slim);
 use Test::Slim::FitNesseSuiteAcceptance qw(
   compare_suite_results
+  configure_pipe_wiki
   extract_wiki_from_jar
   parse_suite_result
+  pipe_query
   verify_perl_trace
   verify_suite_execution_logs
 );
@@ -92,6 +94,21 @@ like(join(';',@{parse_suite_result($no_results_xml,200,$suite)->{errors}}),qr/no
 my $logs = $parsed->{executionLogs};
 my $attributed = verify_suite_execution_logs($logs,'127.0.0.1',19099,\@labels);
 ok(!$attributed->{failed},'audited test-system label plus exact Perl socket command confirms backend');
+my $pipe_attributed = verify_suite_execution_logs([
+  { testSystem => 'SLIM:/repo/bin/perl-slim', command => '/repo/bin/perl-slim 1',
+    exitCode => '0', exceptions => [] },
+], '127.0.0.1',1,\@labels,'pipe','/repo/bin/perl-slim');
+ok(!$pipe_attributed->{failed},'pipe execution log confirms the Perl child command and successful exit');
+my $remote_debug_pipe = verify_suite_execution_logs([
+  { testSystem => 'SLIM:remote_debug:/repo/bin/perl-slim', command => '/repo/bin/perl-slim 1',
+    exitCode => '0', exceptions => [] },
+], '127.0.0.1',1,\@labels,'pipe','/repo/bin/perl-slim');
+ok(!$remote_debug_pipe->{failed},'audited remote-debug label is accepted only with the exact Perl child command');
+my $java_pipe = verify_suite_execution_logs([
+  { testSystem => 'slim:fitnesse.slim.SlimService', command => 'java -cp fitnesse.jar ... 1',
+    exitCode => '0', exceptions => [] },
+], '127.0.0.1',1,\@labels,'pipe','/repo/bin/perl-slim');
+ok($java_pipe->{failed},'Java SlimService is not accepted as pipe backend evidence');
 my $wrong_label = verify_suite_execution_logs([
   { %{$logs->[0]}, testSystem => 'slim:fitnesse.slim.JavaSlimService' },
 ], '127.0.0.1',19099,\@labels);
@@ -134,6 +151,15 @@ open my $page, '<', "$destination/Suite/Leaf/content.txt" or die $!;
 is(scalar(<$page>),'kept','clean wiki is extracted from the pinned JAR resources');
 close $page;
 ok(!-e "$destination/MySuite",'JAR extraction excludes generated MySuite content');
+my $runner = abs_path('bin/perl-slim');
+configure_pipe_wiki($destination,$runner);
+open my $root_content, '<', "$destination/content.txt" or die $!;
+my $root_text = do { local $/; <$root_content> };
+close $root_content;
+like($root_text,qr/!define SLIM_PORT \{1\}/,'pipe configuration selects FitNesse port 1');
+like($root_text,qr/\Q$runner\E/,'pipe configuration names the repository Perl executable');
+is(pipe_query($runner), '&COMMAND_PATTERN=%25m&TEST_RUNNER=' . do { my $encoded = $runner; $encoded =~ s/([^A-Za-z0-9_.~-])/sprintf('%%%02X',ord($1))/ge; $encoded } . '&SLIM_PORT=1',
+  'pipe URL query encodes the command pattern and runner path');
 
 SKIP: {
   skip 'pinned FitNesse JAR is unavailable for startup failure fixtures', 6
@@ -156,7 +182,7 @@ SKIP: {
       $ENV{PERL5LIB} = File::Spec->catdir($repo,'lib') . ':' . File::Spec->catdir($repo,'t/lib');
       $ENV{$_} = $extra_env->{$_} for keys %$extra_env;
       chdir $repo or die "chdir $repo: $!";
-      exec {$^X} $^X, $runner;
+      exec {$^X} $^X, $runner, '--transport', 'tcp';
       die "exec $runner: $!";
     }
     waitpid($pid,0);
