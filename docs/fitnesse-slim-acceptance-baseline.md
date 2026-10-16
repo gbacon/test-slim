@@ -1,5 +1,7 @@
 # FitNesse SLiM acceptance baseline
 
+The two `ErrorSituationsDuringSlimServerStartup` failures were reproduced twice each. `B_TimeoutAsSlimServerDiesBeforeConnecting` has 2 right and 1 wrong: the sole failure expects the dead-runner diagnostic, but the nested request inherits FitNesse `manually.start.test.runner=true` and connects to the existing Perl listener at 127.0.0.1:8099 (execution log: connection to running SlimService, exit 0, 0 seconds). `C_TimeoutAsNoServerAtGivenSocket` has 3 right and 1 wrong: its sole failure expects connection refusal at 8099, but the Perl listener is bound there and the nested debug request succeeds (exit 0, 0 seconds); its elapsed-time regex passes. Both pages' HTTP and execution-log assertions pass. The failure boundary is the shared FitNesse harness configuration and occupied test port, rather than the Perl implementation. Faithful coverage requires an isolated FitNesse context with the outer Perl service on another port, 8099 unbound for C, and B's nested request configured to launch its invalid runner. The upstream pages and their assertions remain unchanged.
+
 Updated 2026-10-16 on `codex/complete-slim`, after custom converter support and a full 50-page rerun. The installed FitNesse distribution is v20251025.
 
 FitNesse ran all 50 pages against the external Perl SLiM server at `127.0.0.1:8099`. Every response identified `fitnesse.slim.SlimService` and the external connection; all returned HTTP 200. The listener remained alive throughout the inventory, with zero unexpected server exits.
