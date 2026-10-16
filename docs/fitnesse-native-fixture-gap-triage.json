@@ -607,10 +607,16 @@
          },
          "behaviorArea" : "test fixture plus SLiM null result serialization",
          "candidateCapability" : "null_table_fixture",
-         "confidence" : "medium",
+         "confidence" : "high",
          "directPerlCounts" : {
-            "exceptions" : 2,
-            "ignored" : 0,
+            "exceptions" : 0,
+            "ignored" : 1,
+            "right" : 1,
+            "wrong" : 0
+         },
+         "verifiedAfterCounts" : {
+            "exceptions" : 0,
+            "ignored" : 1,
             "right" : 1,
             "wrong" : 0
          },
@@ -634,12 +640,12 @@
          },
          "page" : "FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TableTableSuite.TestReturnsNull",
          "purpose" : "Checks null result handling from a Table Table fixture.",
-         "recommendedDisposition" : "Defer; low gain and would primarily add a one-page test adapter.",
+         "recommendedDisposition" : "Implemented: a minimal fixture returns undef through existing SLiM null serialization; FitNesse records the table result as ignored, matching Java v20251025.",
          "relevantFixtures" : [
-            "missing Fitnesse::Slim::Test::DummyTableTableReturnsNull",
-            "Perl NullFixture covers script getNull/getBlank but not this table fixture"
+            "Fitnesse::Slim::Test::DummyTableTableReturnsNull",
+            "Perl NullFixture separately covers script getNull/getBlank"
          ],
-         "rootCause" : "The table type cannot load (`Could not find class Fitnesse::Slim::Test::DummyTableTableReturnsNull`); two exceptions follow. Java v20251025 reports one right and one ignored, so exact parity is not a pure protocol assertion.",
+         "rootCause" : "The required Perl table fixture was absent, causing fixture construction and its call to fail. The executor and serializer already handled undef correctly; the adapter's undef result yields the same `ignore(No results from table)` result and page counts as Java.",
          "rootCauseClassification" : "missing_fixture_adapter"
       },
       {

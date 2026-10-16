@@ -12,8 +12,8 @@
       "slimBackend" : "External Perl listener at configured loopback address"
    },
    "assertionTotals" : {
-      "exceptions" : 317,
-      "ignored" : 4,
+      "exceptions" : 315,
+      "ignored" : 5,
       "right" : 538,
       "wrong" : 46
    },
@@ -965,14 +965,14 @@
       },
       {
          "classification" : {
-            "assessment" : "Perl run cannot assess the intended Java fixture/test-system behavior; missing Java-side class or runtime capability.",
-            "recommended" : "new native-suite page; see applicability categories in audit",
-            "rootCause" : null,
-            "scopeCategory" : "Java fixture or test-system behavior"
+            "assessment" : "The Perl fixture now returns the same null table result as Java SlimService; FitNesse records the empty table as ignored.",
+            "recommended" : "fixture compatibility verified against Java v20251025",
+            "rootCause" : "The required DummyTableTableReturnsNull fixture adapter was absent; the existing executor and serializer correctly handled its undefined result.",
+            "scopeCategory" : "Perl fixture adapter"
          },
          "counts" : {
-            "exceptions" : 2,
-            "ignored" : 0,
+            "exceptions" : 0,
+            "ignored" : 1,
             "right" : 1,
             "wrong" : 0
          },
@@ -1415,9 +1415,9 @@
       }
    ],
    "expectedSuiteFinalCounts" : {
-      "exceptions" : 12,
+      "exceptions" : 11,
       "ignores" : 1,
-      "right" : 71,
+      "right" : 72,
       "wrong" : 9
    },
    "expectedPageCount" : 93,
