@@ -91,7 +91,7 @@ test {
   add_statement "inv1", "invalidOperation";
 
   my $invalid =
-    expect_exception 'INVALID_STATEMENT: ' .
+    expect_exception 'MALFORMED_INSTRUCTION ' .
                      '\["inv1", "invalidOperation"]>>';
 
   check_results "inv1", $invalid, "can't execute an invalid operation";

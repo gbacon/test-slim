@@ -11,23 +11,36 @@ use Test::Slim::List;
 use Test::Slim::ListExecutor;
 
 sub new {
-  my($class) = @_;
+  my($class,%options) = @_;
 
   my $self = bless {} => $class;
+  my $max_frame = defined $options{max_frame_bytes}
+    ? $options{max_frame_bytes}
+    : defined $ENV{TEST_SLIM_MAX_FRAME_BYTES}
+      ? $ENV{TEST_SLIM_MAX_FRAME_BYTES} : 67_108_864;
+  die "invalid TEST_SLIM_MAX_FRAME_BYTES"
+    unless defined($max_frame) && $max_frame =~ /\A[1-9][0-9]*\z/
+      && (length($max_frame) < 10
+        || length($max_frame) == 10 && $max_frame le '1073741824');
+  $self->{MAX_FRAME_BYTES} = 0 + $max_frame;
   $self->{EXEC} = Test::Slim::ListExecutor->new;
 
   $self;
 }
 
-sub _read {
-  my($self,$fh,$length) = @_;
+sub _read_exact {
+  my($self,$fh,$length,$where,$clean_eof) = @_;
 
   my $result = "";
+  my $wanted = $length;
   while ($length > 0) {
     my $status = sysread $fh, my($buf), $length;
 
     if (defined $status) {
-      last if $status == 0;
+      if ($status == 0) {
+        return if $clean_eof && $result eq "";
+        die "truncated $where ($wanted bytes expected, " . length($result) . " received)";
+      }
       $result .= $buf;
       $length -= $status;
     }
@@ -37,7 +50,6 @@ sub _read {
     }
   }
 
-  #warn "got $result...\n";
   $result;
 }
 
@@ -45,7 +57,6 @@ sub _write {
   my($self,$fh,$buf) = @_;
 
   return unless defined $buf;
-  #warn "writing $buf...\n";
   my $length = length $buf;
   while ($length > 0) {
     my $status = syswrite $fh, $buf;
@@ -67,22 +78,25 @@ sub _read_message {
 
   my $digits = "";
   while (1) {
-    my $char = $self->_read($fh, 1);
-    return if !defined($char) || $char eq "" && $digits eq "";
-    die "incomplete message length '$digits'" if $char eq "";
+    my $char = $self->_read_exact($fh,1,"message length",$digits eq "");
+    return unless defined $char;
     last if $char eq ":";
 
-    die "expected message length, but got '$digits$char'"
-      unless $char =~ /\A[0-9]\z/ && length($digits) < 10;
+    die "invalid message length prefix"
+      unless $char =~ /\A[0-9]\z/ && length($digits) < 32;
     $digits .= $char;
   }
 
-  die "expected message length of at least six digits, but got '$digits'"
-    unless $digits =~ /\A[0-9]{6,10}\z/;
-  die "message length exceeds SLiM integer range: '$digits'"
-    if $digits > 2_147_483_647;
+  die "invalid message length prefix"
+    unless $digits =~ /\A[0-9]{6,}\z/;
+  (my $significant = $digits) =~ s/^0+//;
+  $significant = '0' unless length $significant;
+  my $maximum = "$self->{MAX_FRAME_BYTES}";
+  die "resource limit: message frame exceeds configured maximum"
+    if length($significant) > length($maximum)
+      || length($significant) == length($maximum) && $significant gt $maximum;
 
-  return $self->_read($fh, 0 + $digits);
+  return $self->_read_exact($fh,0 + $significant,"message payload",0);
 }
 
 sub process {
@@ -114,13 +128,17 @@ sub _process {
       return;
     }
     else {
-      warn "command=[$command]";
-      my @instructions = Test::Slim::List->new($command)->list;
+      warn "command=[" . length($command) . " bytes]\n";
+      my @instructions = Test::Slim::List->new(
+        $command, limits => { frame_bytes => $self->{MAX_FRAME_BYTES} }
+      )->list;
       my @results = $self->execute(@instructions);
 
       my $response = Test::Slim::List->new(\@results)->serialize;
-      warn "response=[$response]";
       my $octets = encode "UTF-8", $response;
+      die "resource limit: response frame exceeds configured maximum"
+        if length($octets) > $self->{MAX_FRAME_BYTES};
+      warn "response=[" . length($octets) . " bytes]\n";
       $self->_write($fh, sprintf "%06d:%s", length($octets), $octets);
     }
   }

@@ -271,7 +271,6 @@ sub _call {
   unless ($has_instance) {
     for my $lib_id (reverse @{ $self->{library} }) {
       my $lib = $lib_id->{object};
-      warn "trying [$method] in library [$lib_id->{id}]";
       next unless $lib && ref $lib;
       if ($lib->can($method)) {
         $obj = $lib;
@@ -287,7 +286,6 @@ sub _call {
   unless ($method_obj && $method_obj->can($method)) {
     for my $lib_id (reverse @{ $self->{library} }) {
       my $lib = $lib_id->{object};
-      warn "trying [$method] in library [$lib_id->{id}]";
       next unless $lib && ref $lib;
       if ($lib->can($method)) {
         $method_obj = $lib;

@@ -73,6 +73,10 @@ The container normally starts FitNesse automatically. Do not launch a duplicate 
 
 ## Known protocol concerns
 
+### Malformed transport and serialized input
+
+`bin/perl-slim` accepts six-or-more-digit byte-length prefixes. The configurable frame cap defaults to 64 MiB and is set with `TEST_SLIM_MAX_FRAME_BYTES` (allowed range 1 byte to 1 GiB). The parser also limits nesting to 128 lists, decoded elements to 1,000,000 per request, each item to 16,777,216 UTF-16 code units, and the decimal outer prefix to 32 digits. These are defensive Perl policies, not SLiM protocol requirements. A full request is deserialized before execution. Invalid framing, malformed serialized data, strict UTF-8 errors, truncation, and limit violations close only the affected connection; no recovery response is defined for them. A validly serialized malformed instruction uses the standard `MALFORMED_INSTRUCTION` exception response. Clean EOF at a frame boundary ends the Perl session. See [`docs/slim-protocol-malformed-input.md`](docs/slim-protocol-malformed-input.md) before changing these boundaries.
+
 ### Encoding
 
 The SLiM socket frame length counts transmitted bytes. SLiM list-string lengths follow Java UTF-16 code-unit semantics. These must not be conflated.

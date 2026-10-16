@@ -26,7 +26,12 @@ sub exec {
   my($self,$executor) = @_;
 
   my($id,$instr,@args) = $self->statement;
-  { local $" = "]["; warn "exec: [$id][$instr][@args]\n" }
+  my %arity = (import => [1,1], make => [2,undef], call => [2,undef],
+               callAndAssign => [3,undef], assign => [2,2]);
+  my $valid = defined($id) && !ref($id) && defined($instr) && !ref($instr)
+    && exists($arity{$instr}) && @args >= $arity{$instr}[0]
+    && (!defined($arity{$instr}[1]) || @args <= $arity{$instr}[1]);
+  return $self->malformed_instruction($id) unless $valid;
   my $meth = "do_" . $instr;
   my $result = eval { $self->$meth($executor, $id, @args) };
   return $result if $@ eq "";
@@ -83,7 +88,20 @@ sub do_assign {
 sub malformed_instruction {
   my($self,$id) = @_;
 
-  my $statement = join ", ", map qq["$_"], $self->statement;
+  my @parts;
+  my $size = 0;
+  for my $word ($self->statement) {
+    my $value = defined($word) && !ref($word) ? $word : "";
+    $value = substr($value,0,128) . "..." if length($value) > 128;
+    my $part = qq["$value"];
+    if ($size + length($part) > 512) {
+      push @parts, '...';
+      last;
+    }
+    push @parts,$part;
+    $size += length($part) + 2;
+  }
+  my $statement = join ", ", @parts;
   [ $id => $Test::Slim::Statement::EXCEPTION_TAG
              . "message:<<MALFORMED_INSTRUCTION [$statement]>>" ];
 }

@@ -6,7 +6,7 @@ use warnings;
 use File::Temp qw(tempfile);
 use lib 'lib';
 
-use Test::More tests => 5;
+use Test::More;
 use Test::Slim::Server;
 
 my $server = Test::Slim::Server->new;
@@ -31,5 +31,28 @@ is(substr($long_message, 0, 1), 'x', 'long frame begins with its payload');
 is(substr($long_message, -1), 'x', 'long frame contains the complete payload');
 
 my $short = eval { read_framed_file('00001:x'); 1 };
-ok(!$short && $@ =~ /at least six digits/, 'rejects a frame header shorter than six digits');
+ok(!$short && $@ =~ /invalid message length prefix/,
+  'rejects a frame header shorter than six digits');
+
+my $expanded = read_framed_file('0000006:hello!');
+is($expanded, 'hello!', 'accepts leading zeroes in an expanded length field');
+
+for my $invalid (
+  ['abcdef:', qr/invalid message length prefix/, 'rejects nonnumeric lengths'],
+  ['-00001:', qr/invalid message length prefix/, 'rejects negative lengths'],
+  ['000001x', qr/invalid message length prefix/, 'rejects a missing colon'],
+  ['123', qr/truncated message length/, 'rejects an incomplete prefix'],
+  ['999999999999999999999999999999999:', qr/invalid message length prefix/,
+    'rejects an excessive prefix without numeric overflow'],
+  ['2147483648:', qr/configured maximum/, 'rejects a frame declaration above the limit'],
+  ['000020:short', qr/truncated message payload/, 'reports a truncated payload'],
+) {
+  my($wire,$error,$name) = @$invalid;
+  my $ok = eval { read_framed_file($wire); 1 };
+  ok(!$ok && $@ =~ $error,$name);
+}
+
+is(read_framed_file('000000:'),'','accepts a syntactically valid zero-byte frame');
+
+done_testing;
 
