@@ -2257,7 +2257,7 @@
     {
       "backendAttribution": "external Perl confirmed for direct run; native suite endpoint evidence confirms the same external listener",
       "expectedBehavior": null,
-      "expectedBehaviorAssessment": "Does not match installed Java SlimService behavior: Java reference passes 30 assertions; Perl has 21 wrong assertions.",
+      "expectedBehaviorAssessment": "Known difference in FitNesse's documented table-expression feature: Java SlimService passes 30 assertions; Perl preserves the 21 expression arguments as text. Expressions are not part of the SLiM protocol specification.",
       "inIndividual50": false,
       "inNativeSuite": true,
       "individualCurrentRun": null,
@@ -2282,10 +2282,10 @@
         "page": "FitNesse.SuiteAcceptanceTests.SuiteSlimTests.SlimSymbols.SlimSymbolsCanBeExpressionsToEvaluate"
       },
       "page": "FitNesse.SuiteAcceptanceTests.SuiteSlimTests.SlimSymbols.SlimSymbolsCanBeExpressionsToEvaluate",
-      "recommendedClassification": "new native-suite page; see applicability categories in audit",
-      "rootCause": null,
-      "scopeCategory": "Applicable: confirmed Perl interoperability gap",
-      "scopeClassification": "Confirmed backend-specific expression value gap: Java reference 30/30; Perl 9 right, 21 wrong"
+      "recommendedClassification": "Keep as a known FitNesse table-expression compatibility difference; do not treat as a SLiM protocol defect or alter upstream assertions",
+      "rootCause": "FitNesse v20251025 Java VariableStore evaluates backtick expression arguments through Nashorn and converts serialized maps/lists to Java objects. Perl implements protocol $NAME substitution and returns these non-protocol expressions unchanged.",
+      "scopeCategory": "Documented FitNesse feature with Java-specific server implementation",
+      "scopeClassification": "FitNesse table expressions are outside the SLiM protocol; Java reference 30/30; Perl 9 right, 21 wrong"
     },
     {
       "backendAttribution": "external Perl confirmed for direct run; native suite endpoint evidence confirms the same external listener",

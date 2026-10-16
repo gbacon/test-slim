@@ -800,10 +800,10 @@
       },
       {
          "classification" : {
-            "assessment" : "Does not match installed Java SlimService behavior: Java reference passes 30 assertions; Perl has 21 wrong assertions.",
-            "recommended" : "new native-suite page; see applicability categories in audit",
-            "rootCause" : null,
-            "scopeCategory" : "Applicable: confirmed Perl interoperability gap"
+            "assessment" : "Known difference in FitNesse's documented table-expression feature: Java SlimService passes 30 assertions; Perl preserves the 21 expression arguments as text. Expressions are not part of the SLiM protocol specification.",
+            "recommended" : "Keep as a known FitNesse table-expression compatibility difference; do not treat as a SLiM protocol defect or alter upstream assertions",
+            "rootCause" : "FitNesse v20251025 Java VariableStore evaluates backtick expression arguments through Nashorn and converts serialized maps/lists to Java objects. Perl implements protocol $NAME substitution and returns these non-protocol expressions unchanged.",
+            "scopeCategory" : "Documented FitNesse feature with Java-specific server implementation"
          },
          "counts" : {
             "exceptions" : 0,
