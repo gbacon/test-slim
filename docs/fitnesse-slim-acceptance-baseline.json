@@ -107,7 +107,7 @@
    },
    "additionalConfirmedDefect" : "The HashFixture map-return serialization gap has been fixed by a map-specific FitNesse-compatible result converter; HashTableTests.ShouldReturnHashTable now passes.",
    "branch" : "codex/complete-slim",
-   "classificationMethod" : "Each page retains raw right/wrong/ignored/exception counts. Conformance classification uses page content, inherited setup, embedded expected counts, current Perl fixtures, and upstream FitNesse documentation. Negative examples are evaluated by their outer assertions, not by assuming every inner failure is a defect. Current raw totals use the primary result/counts XML node; finalCounts is a separate FitNesse aggregate.",
+   "classificationMethod" : "Each Test=true page is requested individually through FitNesse and classified from the primary result/counts XML node. The harness deletes the generated MySuite subtree before each request to isolate PageDriver-created pages. Conformance is based on the outer assertions and upstream expected behavior; intentional inner failures and ignored rows are classified separately.",
    "concurrencyVerification" : {
       "acceptanceRun" : {
          "completed" : 50,
@@ -135,17 +135,17 @@
    },
    "conformanceSummary" : {
       "classificationCounts" : {
-         "conformant" : 43,
-         "engine_gap" : 2,
+         "conformant" : 45,
+         "engine_gap" : 0,
          "environment_limited" : 1,
          "fixture_gap" : 0,
          "harness_limited" : 4
       },
-      "confirmedConformantPages" : 43,
-      "confirmedEngineGapPages" : 2,
+      "confirmedConformantPages" : 45,
+      "confirmedEngineGapPages" : 0,
       "environmentBlockedPages" : 1,
       "fixtureBlockedPages" : 0,
-      "interpretation" : "Raw counts use each page response primary result/counts node. Conformance uses outer assertions and upstream expectations. StopTest and StopSuite failures reproduce under the previous committed engine snapshot and are not converter regressions.",
+      "interpretation" : "Raw counts use each page response primary result/counts node after isolating generated MySuite pages before every request. StopTest and StopSuite are conformant; their prior wrong counts came from stale PageDriver-created suite setup state.",
       "pages" : 50,
       "testHarnessBlockedPages" : 4
    },
@@ -338,12 +338,49 @@
          "StopSuite",
          "StopTest"
       ],
-      "classificationChanges" : 3,
+      "baselineDiscrepancyExplanation" : "Both raw failures reproduce on source snapshot dc7561e only when the generated MySuite.SuiteSetUp is present. The prior full inventory happened to run the stop pages before StopTestInSuiteSetUp; isolated reruns inherited its stale page. They are harness-order artifacts, not engine gaps.",
+      "classificationChanges" : 1,
+      "cleanStatePageStatusChanges" : [
+         {
+            "afterRawCounts" : {
+               "exceptions" : 0,
+               "ignored" : 0,
+               "right" : 6,
+               "wrong" : 0
+            },
+            "afterStatus" : "conformant",
+            "beforeRawCounts" : {
+               "exceptions" : 0,
+               "ignored" : 0,
+               "right" : 5,
+               "wrong" : 1
+            },
+            "beforeStatus" : "engine_gap",
+            "page" : "StopSuite"
+         },
+         {
+            "afterRawCounts" : {
+               "exceptions" : 0,
+               "ignored" : 0,
+               "right" : 6,
+               "wrong" : 0
+            },
+            "afterStatus" : "conformant",
+            "beforeRawCounts" : {
+               "exceptions" : 0,
+               "ignored" : 0,
+               "right" : 4,
+               "wrong" : 2
+            },
+            "beforeStatus" : "engine_gap",
+            "page" : "StopTest"
+         }
+      ],
       "comparisonFile" : "statusComparison is recorded inline in this JSON inventory.",
       "completedResponses" : 50,
       "conformanceCounts" : {
-         "conformant" : 43,
-         "engine_gap" : 2,
+         "conformant" : 45,
+         "engine_gap" : 0,
          "environment_limited" : 1,
          "fixture_gap" : 0,
          "harness_limited" : 4
@@ -365,14 +402,14 @@
          "TableTableSuite.SymbolsInTableTableManagedByTheFixture",
          "TestCustomConverter"
       ],
-      "pageStatusMatchesPriorInventory" : 47,
+      "pageStatusMatchesPriorInventory" : 49,
       "pages" : 50,
       "preservedInitialConformantPages" : 31,
       "rawAssertionCounts" : {
          "exceptions" : 0,
          "ignored" : 2,
-         "right" : 370,
-         "wrong" : 10
+         "right" : 373,
+         "wrong" : 7
       },
       "regressions" : 0,
       "serverExits" : 0,
@@ -393,6 +430,7 @@
             },
             "beforeStatus" : "conformant",
             "classificationChanged" : false,
+            "newlyConformant" : false,
             "page" : "BaseLineDecisionTable.ComparatorsAreSupported",
             "rawCountsUnchanged" : true,
             "regression" : false
@@ -413,6 +451,7 @@
             },
             "beforeStatus" : "conformant",
             "classificationChanged" : false,
+            "newlyConformant" : false,
             "page" : "BaseLineDecisionTable.MakingTheBaselineTableTheDefaultDecisionTable",
             "rawCountsUnchanged" : true,
             "regression" : false
@@ -433,6 +472,7 @@
             },
             "beforeStatus" : "conformant",
             "classificationChanged" : false,
+            "newlyConformant" : false,
             "page" : "BaseLineDecisionTable.ScenariosAreSupported",
             "rawCountsUnchanged" : true,
             "regression" : false
@@ -453,6 +493,7 @@
             },
             "beforeStatus" : "conformant",
             "classificationChanged" : false,
+            "newlyConformant" : false,
             "page" : "BaseLineDecisionTable.TestFailuresAreMarked",
             "rawCountsUnchanged" : true,
             "regression" : false
@@ -473,6 +514,7 @@
             },
             "beforeStatus" : "conformant",
             "classificationChanged" : false,
+            "newlyConformant" : false,
             "page" : "BaseLineDecisionTable",
             "rawCountsUnchanged" : true,
             "regression" : false
@@ -493,6 +535,7 @@
             },
             "beforeStatus" : "conformant",
             "classificationChanged" : false,
+            "newlyConformant" : false,
             "page" : "ChainWithInstanceTest",
             "rawCountsUnchanged" : true,
             "regression" : false
@@ -513,6 +556,7 @@
             },
             "beforeStatus" : "harness_limited",
             "classificationChanged" : false,
+            "newlyConformant" : false,
             "page" : "CustomTableRenderingAddedByPluginTest",
             "rawCountsUnchanged" : true,
             "regression" : false
@@ -533,6 +577,7 @@
             },
             "beforeStatus" : "conformant",
             "classificationChanged" : false,
+            "newlyConformant" : false,
             "page" : "DefineAliasInPluginTest",
             "rawCountsUnchanged" : true,
             "regression" : false
@@ -553,6 +598,7 @@
             },
             "beforeStatus" : "conformant",
             "classificationChanged" : false,
+            "newlyConformant" : false,
             "page" : "DefineAliasTest",
             "rawCountsUnchanged" : true,
             "regression" : false
@@ -573,6 +619,7 @@
             },
             "beforeStatus" : "conformant",
             "classificationChanged" : false,
+            "newlyConformant" : false,
             "page" : "HashTableTests.HashTableWithHtmlContent",
             "rawCountsUnchanged" : true,
             "regression" : false
@@ -593,6 +640,7 @@
             },
             "beforeStatus" : "conformant",
             "classificationChanged" : false,
+            "newlyConformant" : false,
             "page" : "HashTableTests.ShouldReturnHashTable",
             "rawCountsUnchanged" : true,
             "regression" : false
@@ -613,6 +661,7 @@
             },
             "beforeStatus" : "conformant",
             "classificationChanged" : false,
+            "newlyConformant" : false,
             "page" : "HybridDecisionTable.ImplementDynamicDecisionTableWithHybridTable",
             "rawCountsUnchanged" : true,
             "regression" : false
@@ -633,6 +682,7 @@
             },
             "beforeStatus" : "harness_limited",
             "classificationChanged" : false,
+            "newlyConformant" : false,
             "page" : "IgnoredTestsShouldColorGray",
             "rawCountsUnchanged" : true,
             "regression" : false
@@ -653,6 +703,7 @@
             },
             "beforeStatus" : "conformant",
             "classificationChanged" : false,
+            "newlyConformant" : false,
             "page" : "LibrarySuite.HowToAddFixturesWithParametersToTheLibrary",
             "rawCountsUnchanged" : true,
             "regression" : false
@@ -673,6 +724,7 @@
             },
             "beforeStatus" : "conformant",
             "classificationChanged" : false,
+            "newlyConformant" : false,
             "page" : "LibrarySuite.LastLibraryPreceedsEarlierLibraryTest",
             "rawCountsUnchanged" : true,
             "regression" : false
@@ -693,6 +745,7 @@
             },
             "beforeStatus" : "conformant",
             "classificationChanged" : false,
+            "newlyConformant" : false,
             "page" : "LibrarySuite.LibraryInSetUpSuite.LibraryInSetUpAndPageTest",
             "rawCountsUnchanged" : true,
             "regression" : false
@@ -713,6 +766,7 @@
             },
             "beforeStatus" : "conformant",
             "classificationChanged" : false,
+            "newlyConformant" : false,
             "page" : "LibrarySuite.LibraryInSetUpSuite.LibraryInSetUpTest",
             "rawCountsUnchanged" : true,
             "regression" : false
@@ -733,6 +787,7 @@
             },
             "beforeStatus" : "conformant",
             "classificationChanged" : false,
+            "newlyConformant" : false,
             "page" : "LibrarySuite.OneLibraryTest",
             "rawCountsUnchanged" : true,
             "regression" : false
@@ -753,6 +808,7 @@
             },
             "beforeStatus" : "conformant",
             "classificationChanged" : false,
+            "newlyConformant" : false,
             "page" : "QueryTableSuite.SetContextValue",
             "rawCountsUnchanged" : true,
             "regression" : false
@@ -773,6 +829,7 @@
             },
             "beforeStatus" : "conformant",
             "classificationChanged" : false,
+            "newlyConformant" : false,
             "page" : "QueryTableSuite.TestMatching",
             "rawCountsUnchanged" : true,
             "regression" : false
@@ -793,6 +850,7 @@
             },
             "beforeStatus" : "conformant",
             "classificationChanged" : false,
+            "newlyConformant" : false,
             "page" : "ScenarioTestSuite.ScenarioWithOutputParametersInDecisionTables",
             "rawCountsUnchanged" : true,
             "regression" : false
@@ -813,6 +871,7 @@
             },
             "beforeStatus" : "conformant",
             "classificationChanged" : false,
+            "newlyConformant" : false,
             "page" : "ScenarioTestSuite.ScenarioWithOutputParametersInScripts",
             "rawCountsUnchanged" : true,
             "regression" : false
@@ -833,6 +892,7 @@
             },
             "beforeStatus" : "conformant",
             "classificationChanged" : false,
+            "newlyConformant" : false,
             "page" : "ScenarioTestSuite.ScriptSubclassUsedForDecisionTable",
             "rawCountsUnchanged" : true,
             "regression" : false
@@ -853,6 +913,7 @@
             },
             "beforeStatus" : "conformant",
             "classificationChanged" : false,
+            "newlyConformant" : false,
             "page" : "ScenarioTestSuite.UsingConstructorArgumentsFromDecisionTablesInScenarios",
             "rawCountsUnchanged" : true,
             "regression" : false
@@ -873,6 +934,7 @@
             },
             "beforeStatus" : "conformant",
             "classificationChanged" : false,
+            "newlyConformant" : false,
             "page" : "SegregationOfRequirementsAndImplementation",
             "rawCountsUnchanged" : true,
             "regression" : false
@@ -893,6 +955,7 @@
             },
             "beforeStatus" : "conformant",
             "classificationChanged" : false,
+            "newlyConformant" : false,
             "page" : "SlimSymbols.NamingConvention",
             "rawCountsUnchanged" : true,
             "regression" : false
@@ -913,6 +976,7 @@
             },
             "beforeStatus" : "conformant",
             "classificationChanged" : false,
+            "newlyConformant" : false,
             "page" : "SlimSymbols.SlimSymbolManipulation",
             "rawCountsUnchanged" : true,
             "regression" : false
@@ -921,10 +985,10 @@
             "afterRawCounts" : {
                "exceptions" : 0,
                "ignored" : 0,
-               "right" : 5,
-               "wrong" : 1
+               "right" : 6,
+               "wrong" : 0
             },
-            "afterStatus" : "engine_gap",
+            "afterStatus" : "conformant",
             "beforeRawCounts" : {
                "exceptions" : 0,
                "ignored" : 0,
@@ -932,19 +996,20 @@
                "wrong" : 0
             },
             "beforeStatus" : "conformant",
-            "classificationChanged" : true,
+            "classificationChanged" : false,
+            "newlyConformant" : false,
             "page" : "StopSuite",
-            "rawCountsUnchanged" : false,
+            "rawCountsUnchanged" : true,
             "regression" : false
          },
          {
             "afterRawCounts" : {
                "exceptions" : 0,
                "ignored" : 0,
-               "right" : 4,
-               "wrong" : 2
+               "right" : 6,
+               "wrong" : 0
             },
-            "afterStatus" : "engine_gap",
+            "afterStatus" : "conformant",
             "beforeRawCounts" : {
                "exceptions" : 0,
                "ignored" : 0,
@@ -952,9 +1017,10 @@
                "wrong" : 0
             },
             "beforeStatus" : "conformant",
-            "classificationChanged" : true,
+            "classificationChanged" : false,
+            "newlyConformant" : false,
             "page" : "StopTest",
-            "rawCountsUnchanged" : false,
+            "rawCountsUnchanged" : true,
             "regression" : false
          },
          {
@@ -973,6 +1039,7 @@
             },
             "beforeStatus" : "conformant",
             "classificationChanged" : false,
+            "newlyConformant" : false,
             "page" : "StopTestInSuiteSetUp",
             "rawCountsUnchanged" : true,
             "regression" : false
@@ -993,6 +1060,7 @@
             },
             "beforeStatus" : "conformant",
             "classificationChanged" : false,
+            "newlyConformant" : false,
             "page" : "TableTableSuite.SymbolsInTableTableManagedByTheFixture",
             "rawCountsUnchanged" : true,
             "regression" : false
@@ -1013,6 +1081,7 @@
             },
             "beforeStatus" : "conformant",
             "classificationChanged" : false,
+            "newlyConformant" : false,
             "page" : "TestChineseWords",
             "rawCountsUnchanged" : true,
             "regression" : false
@@ -1033,6 +1102,7 @@
             },
             "beforeStatus" : "conformant",
             "classificationChanged" : false,
+            "newlyConformant" : false,
             "page" : "TestComparators",
             "rawCountsUnchanged" : true,
             "regression" : false
@@ -1053,6 +1123,7 @@
             },
             "beforeStatus" : "harness_limited",
             "classificationChanged" : false,
+            "newlyConformant" : false,
             "page" : "TestCustomComparators",
             "rawCountsUnchanged" : true,
             "regression" : false
@@ -1073,6 +1144,7 @@
             },
             "beforeStatus" : "engine_gap",
             "classificationChanged" : true,
+            "newlyConformant" : true,
             "page" : "TestCustomConverter",
             "rawCountsUnchanged" : false,
             "regression" : false
@@ -1093,6 +1165,7 @@
             },
             "beforeStatus" : "conformant",
             "classificationChanged" : false,
+            "newlyConformant" : false,
             "page" : "TestDetailedDiff",
             "rawCountsUnchanged" : true,
             "regression" : false
@@ -1113,6 +1186,7 @@
             },
             "beforeStatus" : "conformant",
             "classificationChanged" : false,
+            "newlyConformant" : false,
             "page" : "TestExceptionIsDisplayed",
             "rawCountsUnchanged" : true,
             "regression" : false
@@ -1133,6 +1207,7 @@
             },
             "beforeStatus" : "conformant",
             "classificationChanged" : false,
+            "newlyConformant" : false,
             "page" : "TestOrderedQueryWithDuplicateRows",
             "rawCountsUnchanged" : true,
             "regression" : false
@@ -1153,6 +1228,7 @@
             },
             "beforeStatus" : "conformant",
             "classificationChanged" : false,
+            "newlyConformant" : false,
             "page" : "TestPageWithInclude",
             "rawCountsUnchanged" : true,
             "regression" : false
@@ -1173,6 +1249,7 @@
             },
             "beforeStatus" : "conformant",
             "classificationChanged" : false,
+            "newlyConformant" : false,
             "page" : "TestScriptTable",
             "rawCountsUnchanged" : true,
             "regression" : false
@@ -1193,6 +1270,7 @@
             },
             "beforeStatus" : "conformant",
             "classificationChanged" : false,
+            "newlyConformant" : false,
             "page" : "TestScriptTableDisplayParameterValue",
             "rawCountsUnchanged" : true,
             "regression" : false
@@ -1213,6 +1291,7 @@
             },
             "beforeStatus" : "conformant",
             "classificationChanged" : false,
+            "newlyConformant" : false,
             "page" : "TestSequentialArgumentProcessing",
             "rawCountsUnchanged" : true,
             "regression" : false
@@ -1233,6 +1312,7 @@
             },
             "beforeStatus" : "conformant",
             "classificationChanged" : false,
+            "newlyConformant" : false,
             "page" : "TestSubsetQuery",
             "rawCountsUnchanged" : true,
             "regression" : false
@@ -1253,6 +1333,7 @@
             },
             "beforeStatus" : "harness_limited",
             "classificationChanged" : false,
+            "newlyConformant" : false,
             "page" : "TestSystemSlimSuite.ErrorSituationsDuringSlimServerStartup.B_TimeoutAsSlimServerDiesBeforeConnecting",
             "rawCountsUnchanged" : true,
             "regression" : false
@@ -1273,6 +1354,7 @@
             },
             "beforeStatus" : "environment_limited",
             "classificationChanged" : false,
+            "newlyConformant" : false,
             "page" : "TestSystemSlimSuite.ErrorSituationsDuringSlimServerStartup.C_TimeoutAsNoServerAtGivenSocket",
             "rawCountsUnchanged" : true,
             "regression" : false
@@ -1293,6 +1375,7 @@
             },
             "beforeStatus" : "conformant",
             "classificationChanged" : false,
+            "newlyConformant" : false,
             "page" : "TestSystemSlimSuite.HowtoEnforceA_TimelimitPerTestCommand.NotWorking_SettingSlimTimeout",
             "rawCountsUnchanged" : true,
             "regression" : false
@@ -1313,6 +1396,7 @@
             },
             "beforeStatus" : "conformant",
             "classificationChanged" : false,
+            "newlyConformant" : false,
             "page" : "TestSystemSlimSuite.HowtoEnforceA_TimelimitPerTestCommand.PartiallyWorking_SettingSlimFlags",
             "rawCountsUnchanged" : true,
             "regression" : false
@@ -1333,6 +1417,7 @@
             },
             "beforeStatus" : "conformant",
             "classificationChanged" : false,
+            "newlyConformant" : false,
             "page" : "TestSystemSlimSuite.TimeoutInSlimTestSystem",
             "rawCountsUnchanged" : true,
             "regression" : false
@@ -1353,6 +1438,7 @@
             },
             "beforeStatus" : "conformant",
             "classificationChanged" : false,
+            "newlyConformant" : false,
             "page" : "TestTryingParameterizationIsntTooGreedy",
             "rawCountsUnchanged" : true,
             "regression" : false
@@ -1373,6 +1459,7 @@
             },
             "beforeStatus" : "conformant",
             "classificationChanged" : false,
+            "newlyConformant" : false,
             "page" : "TestTwoIdenticalTablesOnPageDontConflict",
             "rawCountsUnchanged" : true,
             "regression" : false
@@ -2938,23 +3025,23 @@
    },
    "pageRunMethod" : "Ran all 50 Test=true pages individually via ?test&format=xml. Raw counts were extracted from each primary result/counts node. All 50 execution logs confirmed fitnesse.slim.SlimService connected to 127.0.0.1:8099; zero unexpected Perl server exits.",
    "pageTotals" : {
-      "blockedPages" : 7,
+      "blockedPages" : 5,
       "completedResponses" : 50,
-      "confirmedConformantPages" : 43,
-      "confirmedEngineGapPages" : 2,
+      "confirmedConformantPages" : 45,
+      "confirmedEngineGapPages" : 0,
       "counts" : {
          "exceptions" : 0,
          "ignored" : 2,
-         "right" : 370,
-         "wrong" : 10
+         "right" : 373,
+         "wrong" : 7
       },
       "environmentLimitedPages" : 1,
       "externalPerlConfirmed" : 50,
-      "failingPages" : 7,
+      "failingPages" : 5,
       "fixtureGapPages" : 0,
       "harnessLimitedPages" : 4,
       "pages" : 50,
-      "passingPages" : 43,
+      "passingPages" : 45,
       "serverExits" : 0
    },
    "pages" : [
@@ -2975,7 +3062,7 @@
             "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
-         "evidence" : "Full 50-page ?test&format=xml rerun after Map result conversion; FitNesse used the external Perl listener at 127.0.0.1:8099.",
+         "evidence" : "Full 50-page page-level run with generated MySuite data cleared before each request; FitNesse execution log confirmed the external Perl SlimService.",
          "exceptionDetails" : [],
          "exceptions" : 0,
          "executionException" : null,
@@ -2998,7 +3085,7 @@
          "rootCause" : "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
          "status" : "completed",
          "testSystem" : "slim:fitnesse.slim.SlimService",
-         "testSystemConfirmed" : "slim:fitnesse.slim.SlimService",
+         "testSystemConfirmed" : "fitnesse.slim.SlimService",
          "url" : "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.BaseLineDecisionTable.ComparatorsAreSupported?test&format=xml",
          "wrong" : 0
       },
@@ -3019,7 +3106,7 @@
             "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
-         "evidence" : "Full 50-page ?test&format=xml rerun after Map result conversion; FitNesse used the external Perl listener at 127.0.0.1:8099.",
+         "evidence" : "Full 50-page page-level run with generated MySuite data cleared before each request; FitNesse execution log confirmed the external Perl SlimService.",
          "exceptionDetails" : [],
          "exceptions" : 0,
          "executionException" : null,
@@ -3037,12 +3124,12 @@
             "right" : 7,
             "wrong" : 0
          },
-         "responseBytes" : 46068,
+         "responseBytes" : 46070,
          "right" : 7,
          "rootCause" : "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
          "status" : "completed",
          "testSystem" : "slim:fitnesse.slim.SlimService",
-         "testSystemConfirmed" : "slim:fitnesse.slim.SlimService",
+         "testSystemConfirmed" : "fitnesse.slim.SlimService",
          "url" : "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.BaseLineDecisionTable.MakingTheBaselineTableTheDefaultDecisionTable?test&format=xml",
          "wrong" : 0
       },
@@ -3063,7 +3150,7 @@
             "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
-         "evidence" : "Full 50-page ?test&format=xml rerun after Map result conversion; FitNesse used the external Perl listener at 127.0.0.1:8099.",
+         "evidence" : "Full 50-page page-level run with generated MySuite data cleared before each request; FitNesse execution log confirmed the external Perl SlimService.",
          "exceptionDetails" : [],
          "exceptions" : 0,
          "executionException" : null,
@@ -3086,7 +3173,7 @@
          "rootCause" : "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
          "status" : "completed",
          "testSystem" : "slim:fitnesse.slim.SlimService",
-         "testSystemConfirmed" : "slim:fitnesse.slim.SlimService",
+         "testSystemConfirmed" : "fitnesse.slim.SlimService",
          "url" : "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.BaseLineDecisionTable.ScenariosAreSupported?test&format=xml",
          "wrong" : 0
       },
@@ -3112,7 +3199,7 @@
             "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
-         "evidence" : "Full 50-page ?test&format=xml rerun after Map result conversion; FitNesse used the external Perl listener at 127.0.0.1:8099.",
+         "evidence" : "Full 50-page page-level run with generated MySuite data cleared before each request; FitNesse execution log confirmed the external Perl SlimService.",
          "exceptionDetails" : [],
          "exceptions" : 0,
          "executionException" : null,
@@ -3130,12 +3217,12 @@
             "right" : 8,
             "wrong" : 0
          },
-         "responseBytes" : 148454,
+         "responseBytes" : 148452,
          "right" : 8,
          "rootCause" : "ResponseExaminer extracts nested assertion totals and rendered cells; every outer assertion passes. The embedded target page intentionally contains two wrong and two ignored checks.",
          "status" : "completed",
          "testSystem" : "slim:fitnesse.slim.SlimService",
-         "testSystemConfirmed" : "slim:fitnesse.slim.SlimService",
+         "testSystemConfirmed" : "fitnesse.slim.SlimService",
          "url" : "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.BaseLineDecisionTable.TestFailuresAreMarked?test&format=xml",
          "wrong" : 0
       },
@@ -3156,7 +3243,7 @@
             "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
-         "evidence" : "Full 50-page ?test&format=xml rerun after Map result conversion; FitNesse used the external Perl listener at 127.0.0.1:8099.",
+         "evidence" : "Full 50-page page-level run with generated MySuite data cleared before each request; FitNesse execution log confirmed the external Perl SlimService.",
          "exceptionDetails" : [],
          "exceptions" : 0,
          "executionException" : null,
@@ -3179,7 +3266,7 @@
          "rootCause" : "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
          "status" : "completed",
          "testSystem" : "slim:fitnesse.slim.SlimService",
-         "testSystemConfirmed" : "slim:fitnesse.slim.SlimService",
+         "testSystemConfirmed" : "fitnesse.slim.SlimService",
          "url" : "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.BaseLineDecisionTable?test&format=xml",
          "wrong" : 0
       },
@@ -3200,7 +3287,7 @@
             "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
-         "evidence" : "Full 50-page ?test&format=xml rerun after Map result conversion; FitNesse used the external Perl listener at 127.0.0.1:8099.",
+         "evidence" : "Full 50-page page-level run with generated MySuite data cleared before each request; FitNesse execution log confirmed the external Perl SlimService.",
          "exceptionDetails" : [],
          "exceptions" : 0,
          "executionException" : null,
@@ -3223,7 +3310,7 @@
          "rootCause" : "The page now passes with automatic SlimHelperLibrary actor-stack support.",
          "status" : "completed",
          "testSystem" : "slim:fitnesse.slim.SlimService",
-         "testSystemConfirmed" : "slim:fitnesse.slim.SlimService",
+         "testSystemConfirmed" : "fitnesse.slim.SlimService",
          "url" : "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.ChainWithInstanceTest?test&format=xml",
          "wrong" : 0
       },
@@ -3247,7 +3334,7 @@
             "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
-         "evidence" : "Full 50-page ?test&format=xml rerun after Map result conversion; FitNesse used the external Perl listener at 127.0.0.1:8099.",
+         "evidence" : "Full 50-page page-level run with generated MySuite data cleared before each request; FitNesse execution log confirmed the external Perl SlimService.",
          "exceptionDetails" : [],
          "exceptions" : 0,
          "executionException" : null,
@@ -3269,12 +3356,12 @@
             "right" : 5,
             "wrong" : 1
          },
-         "responseBytes" : 73776,
+         "responseBytes" : 73774,
          "right" : 5,
          "rootCause" : "The nested page runs, but FitNesse output reports Could not find class MyUseCase/MyFixture. The custom alias/rendering setup from the outer suite is not available to this root-level HTTP test page.",
          "status" : "completed",
          "testSystem" : "slim:fitnesse.slim.SlimService",
-         "testSystemConfirmed" : "slim:fitnesse.slim.SlimService",
+         "testSystemConfirmed" : "fitnesse.slim.SlimService",
          "url" : "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.CustomTableRenderingAddedByPluginTest?test&format=xml",
          "wrong" : 1
       },
@@ -3295,7 +3382,7 @@
             "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
-         "evidence" : "Full 50-page ?test&format=xml rerun after Map result conversion; FitNesse used the external Perl listener at 127.0.0.1:8099.",
+         "evidence" : "Full 50-page page-level run with generated MySuite data cleared before each request; FitNesse execution log confirmed the external Perl SlimService.",
          "exceptionDetails" : [],
          "exceptions" : 0,
          "executionException" : null,
@@ -3316,12 +3403,12 @@
             "right" : 2,
             "wrong" : 0
          },
-         "responseBytes" : 50629,
+         "responseBytes" : 50627,
          "right" : 2,
          "rootCause" : "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
          "status" : "completed",
          "testSystem" : "slim:fitnesse.slim.SlimService",
-         "testSystemConfirmed" : "slim:fitnesse.slim.SlimService",
+         "testSystemConfirmed" : "fitnesse.slim.SlimService",
          "url" : "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.DefineAliasInPluginTest?test&format=xml",
          "wrong" : 0
       },
@@ -3342,7 +3429,7 @@
             "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
-         "evidence" : "Full 50-page ?test&format=xml rerun after Map result conversion; FitNesse used the external Perl listener at 127.0.0.1:8099.",
+         "evidence" : "Full 50-page page-level run with generated MySuite data cleared before each request; FitNesse execution log confirmed the external Perl SlimService.",
          "exceptionDetails" : [
             "Could not find class AddUpChange",
             "Could not find class Fitnesse::Slim::Test::AddUpChange",
@@ -3373,7 +3460,7 @@
          "rootCause" : "Upstream AddUpChange coin accumulation resolves all alias examples; the prior missing-class cascade is gone.",
          "status" : "completed",
          "testSystem" : "slim:fitnesse.slim.SlimService",
-         "testSystemConfirmed" : "slim:fitnesse.slim.SlimService",
+         "testSystemConfirmed" : "fitnesse.slim.SlimService",
          "url" : "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.DefineAliasTest?test&format=xml",
          "wrong" : 0
       },
@@ -3394,7 +3481,7 @@
             "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
-         "evidence" : "Full 50-page ?test&format=xml rerun after Map result conversion; FitNesse used the external Perl listener at 127.0.0.1:8099.",
+         "evidence" : "Full 50-page page-level run with generated MySuite data cleared before each request; FitNesse execution log confirmed the external Perl SlimService.",
          "exceptionDetails" : [],
          "exceptions" : 0,
          "executionException" : null,
@@ -3420,7 +3507,7 @@
          "rootCause" : "HashFixture.hash_is and EchoFixture.echo_and_log reproduce the upstream stored-value return and output behavior; nested HTML content passes unchanged.",
          "status" : "completed",
          "testSystem" : "slim:fitnesse.slim.SlimService",
-         "testSystemConfirmed" : "slim:fitnesse.slim.SlimService",
+         "testSystemConfirmed" : "fitnesse.slim.SlimService",
          "url" : "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.HashTableTests.HashTableWithHtmlContent?test&format=xml",
          "wrong" : 0
       },
@@ -3441,7 +3528,7 @@
             "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
-         "evidence" : "Full 50-page ?test&format=xml rerun after Map result conversion; FitNesse used the external Perl listener at 127.0.0.1:8099.",
+         "evidence" : "Full 50-page page-level run with generated MySuite data cleared before each request; FitNesse execution log confirmed the external Perl SlimService.",
          "exceptionDetails" : [],
          "exceptions" : 0,
          "executionException" : null,
@@ -3464,7 +3551,7 @@
          "rootCause" : "The fixture returns its Map as a deterministic FitNesse hash_table representation via MapResult; the unchanged page now passes.",
          "status" : "completed",
          "testSystem" : "slim:fitnesse.slim.SlimService",
-         "testSystemConfirmed" : "slim:fitnesse.slim.SlimService",
+         "testSystemConfirmed" : "fitnesse.slim.SlimService",
          "url" : "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.HashTableTests.ShouldReturnHashTable?test&format=xml",
          "wrong" : 0
       },
@@ -3485,7 +3572,7 @@
             "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
-         "evidence" : "Full 50-page ?test&format=xml rerun after Map result conversion; FitNesse used the external Perl listener at 127.0.0.1:8099.",
+         "evidence" : "Full 50-page page-level run with generated MySuite data cleared before each request; FitNesse execution log confirmed the external Perl SlimService.",
          "exceptionDetails" : [],
          "exceptions" : 0,
          "executionException" : null,
@@ -3511,7 +3598,7 @@
          "rootCause" : "Upstream AddUpChange state and getter/setter behavior satisfy the hybrid decision table.",
          "status" : "completed",
          "testSystem" : "slim:fitnesse.slim.SlimService",
-         "testSystemConfirmed" : "slim:fitnesse.slim.SlimService",
+         "testSystemConfirmed" : "fitnesse.slim.SlimService",
          "url" : "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.HybridDecisionTable.ImplementDynamicDecisionTableWithHybridTable?test&format=xml",
          "wrong" : 0
       },
@@ -3534,7 +3621,7 @@
             "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
-         "evidence" : "Full 50-page ?test&format=xml rerun after Map result conversion; FitNesse used the external Perl listener at 127.0.0.1:8099.",
+         "evidence" : "Full 50-page page-level run with generated MySuite data cleared before each request; FitNesse execution log confirmed the external Perl SlimService.",
          "exceptionDetails" : [],
          "exceptions" : 0,
          "executionException" : null,
@@ -3555,12 +3642,12 @@
             "right" : 5,
             "wrong" : 2
          },
-         "responseBytes" : 111811,
+         "responseBytes" : 111809,
          "right" : 5,
          "rootCause" : "StopTest now produces the expected nested exception and ignored execution state. The two remaining outer regex checks expect class=\"ignore\" immediately before the script input text; FitNesse v20251025 renders the row as class=\"slimRowColor3\" and marks the result with <span class=\"ignore\">Test not run</span>. This is a FitNesse rendering/acceptance-version mismatch, not a SLiM stop defect.",
          "status" : "completed",
          "testSystem" : "slim:fitnesse.slim.SlimService",
-         "testSystemConfirmed" : "slim:fitnesse.slim.SlimService",
+         "testSystemConfirmed" : "fitnesse.slim.SlimService",
          "url" : "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.IgnoredTestsShouldColorGray?test&format=xml",
          "wrong" : 2
       },
@@ -3581,7 +3668,7 @@
             "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
-         "evidence" : "Full 50-page ?test&format=xml rerun after Map result conversion; FitNesse used the external Perl listener at 127.0.0.1:8099.",
+         "evidence" : "Full 50-page page-level run with generated MySuite data cleared before each request; FitNesse execution log confirmed the external Perl SlimService.",
          "exceptionDetails" : [],
          "exceptions" : 0,
          "executionException" : null,
@@ -3604,7 +3691,7 @@
          "rootCause" : "The page now passes with automatic SlimHelperLibrary actor-stack support.",
          "status" : "completed",
          "testSystem" : "slim:fitnesse.slim.SlimService",
-         "testSystemConfirmed" : "slim:fitnesse.slim.SlimService",
+         "testSystemConfirmed" : "fitnesse.slim.SlimService",
          "url" : "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.LibrarySuite.HowToAddFixturesWithParametersToTheLibrary?test&format=xml",
          "wrong" : 0
       },
@@ -3625,7 +3712,7 @@
             "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
-         "evidence" : "Full 50-page ?test&format=xml rerun after Map result conversion; FitNesse used the external Perl listener at 127.0.0.1:8099.",
+         "evidence" : "Full 50-page page-level run with generated MySuite data cleared before each request; FitNesse execution log confirmed the external Perl SlimService.",
          "exceptionDetails" : [],
          "exceptions" : 0,
          "executionException" : null,
@@ -3648,7 +3735,7 @@
          "rootCause" : "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
          "status" : "completed",
          "testSystem" : "slim:fitnesse.slim.SlimService",
-         "testSystemConfirmed" : "slim:fitnesse.slim.SlimService",
+         "testSystemConfirmed" : "fitnesse.slim.SlimService",
          "url" : "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.LibrarySuite.LastLibraryPreceedsEarlierLibraryTest?test&format=xml",
          "wrong" : 0
       },
@@ -3669,7 +3756,7 @@
             "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
-         "evidence" : "Full 50-page ?test&format=xml rerun after Map result conversion; FitNesse used the external Perl listener at 127.0.0.1:8099.",
+         "evidence" : "Full 50-page page-level run with generated MySuite data cleared before each request; FitNesse execution log confirmed the external Perl SlimService.",
          "exceptionDetails" : [],
          "exceptions" : 0,
          "executionException" : null,
@@ -3695,7 +3782,7 @@
          "rootCause" : "The registry retains both objects when setup and page libraries reuse library1; fallback dispatch finds the page library first and the setup library when its method is absent.",
          "status" : "completed",
          "testSystem" : "slim:fitnesse.slim.SlimService",
-         "testSystemConfirmed" : "slim:fitnesse.slim.SlimService",
+         "testSystemConfirmed" : "fitnesse.slim.SlimService",
          "url" : "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.LibrarySuite.LibraryInSetUpSuite.LibraryInSetUpAndPageTest?test&format=xml",
          "wrong" : 0
       },
@@ -3716,7 +3803,7 @@
             "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
-         "evidence" : "Full 50-page ?test&format=xml rerun after Map result conversion; FitNesse used the external Perl listener at 127.0.0.1:8099.",
+         "evidence" : "Full 50-page page-level run with generated MySuite data cleared before each request; FitNesse execution log confirmed the external Perl SlimService.",
          "exceptionDetails" : [],
          "exceptions" : 0,
          "executionException" : null,
@@ -3742,7 +3829,7 @@
          "rootCause" : "LibraryInSetUp tracks delegated echo calls on its own instance.",
          "status" : "completed",
          "testSystem" : "slim:fitnesse.slim.SlimService",
-         "testSystemConfirmed" : "slim:fitnesse.slim.SlimService",
+         "testSystemConfirmed" : "fitnesse.slim.SlimService",
          "url" : "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.LibrarySuite.LibraryInSetUpSuite.LibraryInSetUpTest?test&format=xml",
          "wrong" : 0
       },
@@ -3763,7 +3850,7 @@
             "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
-         "evidence" : "Full 50-page ?test&format=xml rerun after Map result conversion; FitNesse used the external Perl listener at 127.0.0.1:8099.",
+         "evidence" : "Full 50-page page-level run with generated MySuite data cleared before each request; FitNesse execution log confirmed the external Perl SlimService.",
          "exceptionDetails" : [],
          "exceptions" : 0,
          "executionException" : null,
@@ -3786,7 +3873,7 @@
          "rootCause" : "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
          "status" : "completed",
          "testSystem" : "slim:fitnesse.slim.SlimService",
-         "testSystemConfirmed" : "slim:fitnesse.slim.SlimService",
+         "testSystemConfirmed" : "fitnesse.slim.SlimService",
          "url" : "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.LibrarySuite.OneLibraryTest?test&format=xml",
          "wrong" : 0
       },
@@ -3807,7 +3894,7 @@
             "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
-         "evidence" : "Full 50-page ?test&format=xml rerun after Map result conversion; FitNesse used the external Perl listener at 127.0.0.1:8099.",
+         "evidence" : "Full 50-page page-level run with generated MySuite data cleared before each request; FitNesse execution log confirmed the external Perl SlimService.",
          "exceptionDetails" : [],
          "exceptions" : 0,
          "executionException" : null,
@@ -3830,7 +3917,7 @@
          "rootCause" : "The upstream query fixture now returns its expected column/value rows; both query matching and duplicate-row checks pass through the external Perl SLiM server.",
          "status" : "completed",
          "testSystem" : "slim:fitnesse.slim.SlimService",
-         "testSystemConfirmed" : "slim:fitnesse.slim.SlimService",
+         "testSystemConfirmed" : "fitnesse.slim.SlimService",
          "url" : "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.QueryTableSuite.SetContextValue?test&format=xml",
          "wrong" : 0
       },
@@ -3851,7 +3938,7 @@
             "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
-         "evidence" : "Full 50-page ?test&format=xml rerun after Map result conversion; FitNesse used the external Perl listener at 127.0.0.1:8099.",
+         "evidence" : "Full 50-page page-level run with generated MySuite data cleared before each request; FitNesse execution log confirmed the external Perl SlimService.",
          "exceptionDetails" : [],
          "exceptions" : 0,
          "executionException" : null,
@@ -3874,7 +3961,7 @@
          "rootCause" : "The upstream query fixture now returns its expected column/value rows; both query matching and duplicate-row checks pass through the external Perl SLiM server.",
          "status" : "completed",
          "testSystem" : "slim:fitnesse.slim.SlimService",
-         "testSystemConfirmed" : "slim:fitnesse.slim.SlimService",
+         "testSystemConfirmed" : "fitnesse.slim.SlimService",
          "url" : "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.QueryTableSuite.TestMatching?test&format=xml",
          "wrong" : 0
       },
@@ -3895,7 +3982,7 @@
             "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
-         "evidence" : "Full 50-page ?test&format=xml rerun after Map result conversion; FitNesse used the external Perl listener at 127.0.0.1:8099.",
+         "evidence" : "Full 50-page page-level run with generated MySuite data cleared before each request; FitNesse execution log confirmed the external Perl SlimService.",
          "exceptionDetails" : [],
          "exceptions" : 0,
          "executionException" : null,
@@ -3918,7 +4005,7 @@
          "rootCause" : "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
          "status" : "completed",
          "testSystem" : "slim:fitnesse.slim.SlimService",
-         "testSystemConfirmed" : "slim:fitnesse.slim.SlimService",
+         "testSystemConfirmed" : "fitnesse.slim.SlimService",
          "url" : "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.ScenarioTestSuite.ScenarioWithOutputParametersInDecisionTables?test&format=xml",
          "wrong" : 0
       },
@@ -3939,7 +4026,7 @@
             "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
-         "evidence" : "Full 50-page ?test&format=xml rerun after Map result conversion; FitNesse used the external Perl listener at 127.0.0.1:8099.",
+         "evidence" : "Full 50-page page-level run with generated MySuite data cleared before each request; FitNesse execution log confirmed the external Perl SlimService.",
          "exceptionDetails" : [],
          "exceptions" : 0,
          "executionException" : null,
@@ -3962,7 +4049,7 @@
          "rootCause" : "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
          "status" : "completed",
          "testSystem" : "slim:fitnesse.slim.SlimService",
-         "testSystemConfirmed" : "slim:fitnesse.slim.SlimService",
+         "testSystemConfirmed" : "fitnesse.slim.SlimService",
          "url" : "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.ScenarioTestSuite.ScenarioWithOutputParametersInScripts?test&format=xml",
          "wrong" : 0
       },
@@ -3983,7 +4070,7 @@
             "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
-         "evidence" : "Full 50-page ?test&format=xml rerun after Map result conversion; FitNesse used the external Perl listener at 127.0.0.1:8099.",
+         "evidence" : "Full 50-page page-level run with generated MySuite data cleared before each request; FitNesse execution log confirmed the external Perl SlimService.",
          "exceptionDetails" : [],
          "exceptions" : 0,
          "executionException" : null,
@@ -4006,7 +4093,7 @@
          "rootCause" : "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
          "status" : "completed",
          "testSystem" : "slim:fitnesse.slim.SlimService",
-         "testSystemConfirmed" : "slim:fitnesse.slim.SlimService",
+         "testSystemConfirmed" : "fitnesse.slim.SlimService",
          "url" : "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.ScenarioTestSuite.ScriptSubclassUsedForDecisionTable?test&format=xml",
          "wrong" : 0
       },
@@ -4027,7 +4114,7 @@
             "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
-         "evidence" : "Full 50-page ?test&format=xml rerun after Map result conversion; FitNesse used the external Perl listener at 127.0.0.1:8099.",
+         "evidence" : "Full 50-page page-level run with generated MySuite data cleared before each request; FitNesse execution log confirmed the external Perl SlimService.",
          "exceptionDetails" : [],
          "exceptions" : 0,
          "executionException" : null,
@@ -4050,7 +4137,7 @@
          "rootCause" : "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
          "status" : "completed",
          "testSystem" : "slim:fitnesse.slim.SlimService",
-         "testSystemConfirmed" : "slim:fitnesse.slim.SlimService",
+         "testSystemConfirmed" : "fitnesse.slim.SlimService",
          "url" : "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.ScenarioTestSuite.UsingConstructorArgumentsFromDecisionTablesInScenarios?test&format=xml",
          "wrong" : 0
       },
@@ -4071,7 +4158,7 @@
             "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
-         "evidence" : "Full 50-page ?test&format=xml rerun after Map result conversion; FitNesse used the external Perl listener at 127.0.0.1:8099.",
+         "evidence" : "Full 50-page page-level run with generated MySuite data cleared before each request; FitNesse execution log confirmed the external Perl SlimService.",
          "exceptionDetails" : [],
          "exceptions" : 0,
          "executionException" : null,
@@ -4094,7 +4181,7 @@
          "rootCause" : "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
          "status" : "completed",
          "testSystem" : "slim:fitnesse.slim.SlimService",
-         "testSystemConfirmed" : "slim:fitnesse.slim.SlimService",
+         "testSystemConfirmed" : "fitnesse.slim.SlimService",
          "url" : "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.SegregationOfRequirementsAndImplementation?test&format=xml",
          "wrong" : 0
       },
@@ -4115,7 +4202,7 @@
             "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
-         "evidence" : "Full 50-page ?test&format=xml rerun after Map result conversion; FitNesse used the external Perl listener at 127.0.0.1:8099.",
+         "evidence" : "Full 50-page page-level run with generated MySuite data cleared before each request; FitNesse execution log confirmed the external Perl SlimService.",
          "exceptionDetails" : [],
          "exceptions" : 0,
          "executionException" : null,
@@ -4133,12 +4220,12 @@
             "right" : 5,
             "wrong" : 0
          },
-         "responseBytes" : 43008,
+         "responseBytes" : 43010,
          "right" : 5,
          "rootCause" : "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
          "status" : "completed",
          "testSystem" : "slim:fitnesse.slim.SlimService",
-         "testSystemConfirmed" : "slim:fitnesse.slim.SlimService",
+         "testSystemConfirmed" : "fitnesse.slim.SlimService",
          "url" : "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.SlimSymbols.NamingConvention?test&format=xml",
          "wrong" : 0
       },
@@ -4159,7 +4246,7 @@
             "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
-         "evidence" : "Full 50-page ?test&format=xml rerun after Map result conversion; FitNesse used the external Perl listener at 127.0.0.1:8099.",
+         "evidence" : "Full 50-page page-level run with generated MySuite data cleared before each request; FitNesse execution log confirmed the external Perl SlimService.",
          "exceptionDetails" : [],
          "exceptions" : 0,
          "executionException" : null,
@@ -4182,7 +4269,7 @@
          "rootCause" : "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
          "status" : "completed",
          "testSystem" : "slim:fitnesse.slim.SlimService",
-         "testSystemConfirmed" : "slim:fitnesse.slim.SlimService",
+         "testSystemConfirmed" : "fitnesse.slim.SlimService",
          "url" : "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.SlimSymbols.SlimSymbolManipulation?test&format=xml",
          "wrong" : 0
       },
@@ -4190,29 +4277,27 @@
          "attempt" : 28,
          "conformance" : {
             "dependencies" : [],
-            "expectedBehavior" : "StopSuite skips remaining suite tests while test and suite teardown execute.",
+            "expectedBehavior" : "StopSuite skips remaining suite tests while running the required per-test and suite teardown.",
             "intentionalInnerNegativeOrExceptionCoverage" : true,
             "rawCounts" : {
                "exceptions" : 0,
                "ignored" : 0,
-               "right" : 5,
-               "wrong" : 1
+               "right" : 6,
+               "wrong" : 0
             },
-            "reason" : "Nested suite response marks the per-test TearDown result ignored. The same failure was reproduced against the previous committed implementation snapshot dc7561e, so it is a pre-existing baseline discrepancy rather than a converter regression.",
-            "status" : "engine_gap",
-            "verification" : "Focused rerun against the current branch and temporary source snapshot dc7561e produced the same raw counts."
+            "reason" : "The page passes when generated MySuite pages are isolated. A prior MySuite.SuiteSetUp left by StopTestInSuiteSetUp contaminated later HTTP page runs; this is acceptance-harness state, not a SLiM stop defect.",
+            "status" : "conformant",
+            "verification" : "Repeated in both page orders and twice consecutively after clearing generated MySuite data; 6 right, 0 wrong, 0 ignored, 0 exceptions."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
-         "evidence" : "Current ?test XML shows per-test TearDown as ignored; previous committed engine snapshot reproduced the same counts.",
+         "evidence" : "Full 50-page page-level run with generated MySuite data cleared before each request; FitNesse execution log confirmed the external Perl SlimService.",
          "exceptionDetails" : [],
          "exceptions" : 0,
          "executionException" : null,
          "externalPerlConfirmed" : true,
          "failureDetails" : {
             "exceptionMessages" : [],
-            "wrongAssertionMessages" : [
-               "Per-test TearDown expectation is rendered as ignored rather than passed."
-            ]
+            "wrongAssertionMessages" : []
          },
          "http" : 200,
          "ignored" : 0,
@@ -4220,45 +4305,43 @@
          "rawCounts" : {
             "exceptions" : 0,
             "ignored" : 0,
-            "right" : 5,
-            "wrong" : 1
+            "right" : 6,
+            "wrong" : 0
          },
-         "responseBytes" : 74863,
-         "right" : 5,
-         "rootCause" : "Nested suite response marks the per-test TearDown result ignored. The same failure was reproduced against the previous committed implementation snapshot dc7561e, so it is a pre-existing baseline discrepancy rather than a converter regression.",
+         "responseBytes" : 72695,
+         "right" : 6,
+         "rootCause" : "PageDriver-created wiki state persisted between page requests. StopTestInSuiteSetUp leaves MySuite.SuiteSetUp; clearing the generated subtree before this page restores the expected per-test teardown rows.",
          "status" : "completed",
          "testSystem" : "slim:fitnesse.slim.SlimService",
-         "testSystemConfirmed" : "slim:fitnesse.slim.SlimService",
+         "testSystemConfirmed" : "fitnesse.slim.SlimService",
          "url" : "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.StopSuite?test&format=xml",
-         "wrong" : 1
+         "wrong" : 0
       },
       {
          "attempt" : 29,
          "conformance" : {
             "dependencies" : [],
-            "expectedBehavior" : "StopTest skips the remainder of the current test, allows the next test, and runs teardown.",
+            "expectedBehavior" : "StopTest skips the remainder of the current test, allows the next test, and runs per-test and suite teardown.",
             "intentionalInnerNegativeOrExceptionCoverage" : true,
             "rawCounts" : {
                "exceptions" : 0,
                "ignored" : 0,
-               "right" : 4,
-               "wrong" : 2
+               "right" : 6,
+               "wrong" : 0
             },
-            "reason" : "Nested suite response marks the per-test TearDown result ignored. The same failure was reproduced against the previous committed implementation snapshot dc7561e, so it is a pre-existing baseline discrepancy rather than a converter regression.",
-            "status" : "engine_gap",
-            "verification" : "Focused rerun against the current branch and temporary source snapshot dc7561e produced the same raw counts."
+            "reason" : "The page passes when generated MySuite pages are isolated. A prior MySuite.SuiteSetUp left by StopTestInSuiteSetUp contaminated later HTTP page runs; this is acceptance-harness state, not a SLiM stop defect.",
+            "status" : "conformant",
+            "verification" : "Repeated in both page orders and twice consecutively after clearing generated MySuite data; 6 right, 0 wrong, 0 ignored, 0 exceptions."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
-         "evidence" : "Current ?test XML shows per-test TearDown as ignored; previous committed engine snapshot reproduced the same counts.",
+         "evidence" : "Full 50-page page-level run with generated MySuite data cleared before each request; FitNesse execution log confirmed the external Perl SlimService.",
          "exceptionDetails" : [],
          "exceptions" : 0,
          "executionException" : null,
          "externalPerlConfirmed" : true,
          "failureDetails" : {
             "exceptionMessages" : [],
-            "wrongAssertionMessages" : [
-               "Per-test TearDown expectation is rendered as ignored rather than passed."
-            ]
+            "wrongAssertionMessages" : []
          },
          "http" : 200,
          "ignored" : 0,
@@ -4266,17 +4349,17 @@
          "rawCounts" : {
             "exceptions" : 0,
             "ignored" : 0,
-            "right" : 4,
-            "wrong" : 2
+            "right" : 6,
+            "wrong" : 0
          },
-         "responseBytes" : 75101,
-         "right" : 4,
-         "rootCause" : "Nested suite response marks the per-test TearDown result ignored. The same failure was reproduced against the previous committed implementation snapshot dc7561e, so it is a pre-existing baseline discrepancy rather than a converter regression.",
+         "responseBytes" : 72854,
+         "right" : 6,
+         "rootCause" : "PageDriver-created wiki state persisted between page requests. StopTestInSuiteSetUp leaves MySuite.SuiteSetUp; clearing the generated subtree before this page restores the expected per-test teardown rows.",
          "status" : "completed",
          "testSystem" : "slim:fitnesse.slim.SlimService",
-         "testSystemConfirmed" : "slim:fitnesse.slim.SlimService",
+         "testSystemConfirmed" : "fitnesse.slim.SlimService",
          "url" : "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.StopTest?test&format=xml",
-         "wrong" : 2
+         "wrong" : 0
       },
       {
          "attempt" : 30,
@@ -4295,7 +4378,7 @@
             "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
-         "evidence" : "Full 50-page ?test&format=xml rerun after Map result conversion; FitNesse used the external Perl listener at 127.0.0.1:8099.",
+         "evidence" : "Full 50-page page-level run with generated MySuite data cleared before each request; FitNesse execution log confirmed the external Perl SlimService.",
          "exceptionDetails" : [],
          "exceptions" : 0,
          "executionException" : null,
@@ -4313,12 +4396,12 @@
             "right" : 7,
             "wrong" : 0
          },
-         "responseBytes" : 77789,
+         "responseBytes" : 77787,
          "right" : 7,
          "rootCause" : "The stop exception is returned with ABORT_SLIM_TEST; FitNesse skips suite tests and still executes suite teardown.",
          "status" : "completed",
          "testSystem" : "slim:fitnesse.slim.SlimService",
-         "testSystemConfirmed" : "slim:fitnesse.slim.SlimService",
+         "testSystemConfirmed" : "fitnesse.slim.SlimService",
          "url" : "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.StopTestInSuiteSetUp?test&format=xml",
          "wrong" : 0
       },
@@ -4339,7 +4422,7 @@
             "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
-         "evidence" : "Full 50-page ?test&format=xml rerun after Map result conversion; FitNesse used the external Perl listener at 127.0.0.1:8099.",
+         "evidence" : "Full 50-page page-level run with generated MySuite data cleared before each request; FitNesse execution log confirmed the external Perl SlimService.",
          "exceptionDetails" : [],
          "exceptions" : 0,
          "executionException" : null,
@@ -4365,7 +4448,7 @@
          "rootCause" : "TableTableIncFirstCol increments values, assigns symbols inside the table through StatementExecutorConsumer, and restores normal symbol substitution afterward.",
          "status" : "completed",
          "testSystem" : "slim:fitnesse.slim.SlimService",
-         "testSystemConfirmed" : "slim:fitnesse.slim.SlimService",
+         "testSystemConfirmed" : "fitnesse.slim.SlimService",
          "url" : "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TableTableSuite.SymbolsInTableTableManagedByTheFixture?test&format=xml",
          "wrong" : 0
       },
@@ -4386,7 +4469,7 @@
             "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
-         "evidence" : "Full 50-page ?test&format=xml rerun after Map result conversion; FitNesse used the external Perl listener at 127.0.0.1:8099.",
+         "evidence" : "Full 50-page page-level run with generated MySuite data cleared before each request; FitNesse execution log confirmed the external Perl SlimService.",
          "exceptionDetails" : [],
          "exceptions" : 0,
          "executionException" : null,
@@ -4411,7 +4494,7 @@
          "rootCause" : "EchoScript echoes the original Unicode value and writes UTF-8 bytes plus newline to stdout.",
          "status" : "completed",
          "testSystem" : "slim:fitnesse.slim.SlimService",
-         "testSystemConfirmed" : "slim:fitnesse.slim.SlimService",
+         "testSystemConfirmed" : "fitnesse.slim.SlimService",
          "url" : "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestChineseWords?test&format=xml",
          "wrong" : 0
       },
@@ -4432,7 +4515,7 @@
             "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
-         "evidence" : "Full 50-page ?test&format=xml rerun after Map result conversion; FitNesse used the external Perl listener at 127.0.0.1:8099.",
+         "evidence" : "Full 50-page page-level run with generated MySuite data cleared before each request; FitNesse execution log confirmed the external Perl SlimService.",
          "exceptionDetails" : [],
          "exceptions" : 0,
          "executionException" : null,
@@ -4455,7 +4538,7 @@
          "rootCause" : "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
          "status" : "completed",
          "testSystem" : "slim:fitnesse.slim.SlimService",
-         "testSystemConfirmed" : "slim:fitnesse.slim.SlimService",
+         "testSystemConfirmed" : "fitnesse.slim.SlimService",
          "url" : "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestComparators?test&format=xml",
          "wrong" : 0
       },
@@ -4479,7 +4562,7 @@
             "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
-         "evidence" : "Full 50-page ?test&format=xml rerun after Map result conversion; FitNesse used the external Perl listener at 127.0.0.1:8099.",
+         "evidence" : "Full 50-page page-level run with generated MySuite data cleared before each request; FitNesse execution log confirmed the external Perl SlimService.",
          "exceptionDetails" : [],
          "exceptions" : 0,
          "executionException" : null,
@@ -4503,12 +4586,12 @@
             "right" : 1,
             "wrong" : 2
          },
-         "responseBytes" : 53266,
+         "responseBytes" : 53264,
          "right" : 1,
          "rootCause" : "The nested response is retrieved, but its output lacks the expected glob comparison; the root-level nested test does not receive the outer suite CustomComparators setup.",
          "status" : "completed",
          "testSystem" : "slim:fitnesse.slim.SlimService",
-         "testSystemConfirmed" : "slim:fitnesse.slim.SlimService",
+         "testSystemConfirmed" : "fitnesse.slim.SlimService",
          "url" : "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestCustomComparators?test&format=xml",
          "wrong" : 2
       },
@@ -4535,7 +4618,7 @@
             "verification" : "Final full 50-page rerun through external Perl SLiM; 13 right, 0 wrong, 0 ignored, 0 exceptions."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
-         "evidence" : "Final 50-page XML inventory; FitNesse confirmed SlimService connection to 127.0.0.1:8099.",
+         "evidence" : "Full 50-page page-level run with generated MySuite data cleared before each request; FitNesse execution log confirmed the external Perl SlimService.",
          "exceptionDetails" : [],
          "exceptions" : 0,
          "executionException" : null,
@@ -4558,7 +4641,7 @@
          "rootCause" : "Per-executor converter registration and explicit fixture method signatures reproduce upstream declared-type and runtime-class conversion, including custom List fromString and toString behavior.",
          "status" : "completed",
          "testSystem" : "slim:fitnesse.slim.SlimService",
-         "testSystemConfirmed" : "slim:fitnesse.slim.SlimService",
+         "testSystemConfirmed" : "fitnesse.slim.SlimService",
          "url" : "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestCustomConverter?test&format=xml",
          "wrong" : 0
       },
@@ -4579,7 +4662,7 @@
             "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
-         "evidence" : "Full 50-page ?test&format=xml rerun after Map result conversion; FitNesse used the external Perl listener at 127.0.0.1:8099.",
+         "evidence" : "Full 50-page page-level run with generated MySuite data cleared before each request; FitNesse execution log confirmed the external Perl SlimService.",
          "exceptionDetails" : [],
          "exceptions" : 0,
          "executionException" : null,
@@ -4607,12 +4690,12 @@
             "right" : 22,
             "wrong" : 0
          },
-         "responseBytes" : 424629,
+         "responseBytes" : 424627,
          "right" : 22,
          "rootCause" : "DetailedDiff supplies expected values; ResponseExaminer confirms the nested page intentional 25-pass, 50-fail, 1-ignored result and rendered diff markup.",
          "status" : "completed",
          "testSystem" : "slim:fitnesse.slim.SlimService",
-         "testSystemConfirmed" : "slim:fitnesse.slim.SlimService",
+         "testSystemConfirmed" : "fitnesse.slim.SlimService",
          "url" : "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestDetailedDiff?test&format=xml",
          "wrong" : 0
       },
@@ -4633,7 +4716,7 @@
             "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
-         "evidence" : "Full 50-page ?test&format=xml rerun after Map result conversion; FitNesse used the external Perl listener at 127.0.0.1:8099.",
+         "evidence" : "Full 50-page page-level run with generated MySuite data cleared before each request; FitNesse execution log confirmed the external Perl SlimService.",
          "exceptionDetails" : [],
          "exceptions" : 0,
          "executionException" : null,
@@ -4651,12 +4734,12 @@
             "right" : 19,
             "wrong" : 0
          },
-         "responseBytes" : 215241,
+         "responseBytes" : 215239,
          "right" : 19,
          "rootCause" : "The Perl exception fixtures and TestSlim methods now reproduce the expected upstream exception messages, classes, and stop behavior; all 19 outer checks pass.",
          "status" : "completed",
          "testSystem" : "slim:fitnesse.slim.SlimService",
-         "testSystemConfirmed" : "slim:fitnesse.slim.SlimService",
+         "testSystemConfirmed" : "fitnesse.slim.SlimService",
          "url" : "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestExceptionIsDisplayed?test&format=xml",
          "wrong" : 0
       },
@@ -4677,7 +4760,7 @@
             "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
-         "evidence" : "Full 50-page ?test&format=xml rerun after Map result conversion; FitNesse used the external Perl listener at 127.0.0.1:8099.",
+         "evidence" : "Full 50-page page-level run with generated MySuite data cleared before each request; FitNesse execution log confirmed the external Perl SlimService.",
          "exceptionDetails" : [],
          "exceptions" : 0,
          "executionException" : null,
@@ -4700,7 +4783,7 @@
          "rootCause" : "The upstream query fixture now returns its expected column/value rows; both query matching and duplicate-row checks pass through the external Perl SLiM server.",
          "status" : "completed",
          "testSystem" : "slim:fitnesse.slim.SlimService",
-         "testSystemConfirmed" : "slim:fitnesse.slim.SlimService",
+         "testSystemConfirmed" : "fitnesse.slim.SlimService",
          "url" : "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestOrderedQueryWithDuplicateRows?test&format=xml",
          "wrong" : 0
       },
@@ -4721,7 +4804,7 @@
             "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
-         "evidence" : "Full 50-page ?test&format=xml rerun after Map result conversion; FitNesse used the external Perl listener at 127.0.0.1:8099.",
+         "evidence" : "Full 50-page page-level run with generated MySuite data cleared before each request; FitNesse execution log confirmed the external Perl SlimService.",
          "exceptionDetails" : [],
          "exceptions" : 0,
          "executionException" : null,
@@ -4747,7 +4830,7 @@
          "rootCause" : "EchoFixture stores and returns the name set by the included page.",
          "status" : "completed",
          "testSystem" : "slim:fitnesse.slim.SlimService",
-         "testSystemConfirmed" : "slim:fitnesse.slim.SlimService",
+         "testSystemConfirmed" : "fitnesse.slim.SlimService",
          "url" : "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestPageWithInclude?test&format=xml",
          "wrong" : 0
       },
@@ -4768,7 +4851,7 @@
             "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
-         "evidence" : "Full 50-page ?test&format=xml rerun after Map result conversion; FitNesse used the external Perl listener at 127.0.0.1:8099.",
+         "evidence" : "Full 50-page page-level run with generated MySuite data cleared before each request; FitNesse execution log confirmed the external Perl SlimService.",
          "exceptionDetails" : [],
          "exceptions" : 0,
          "executionException" : null,
@@ -4791,7 +4874,7 @@
          "rootCause" : "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
          "status" : "completed",
          "testSystem" : "slim:fitnesse.slim.SlimService",
-         "testSystemConfirmed" : "slim:fitnesse.slim.SlimService",
+         "testSystemConfirmed" : "fitnesse.slim.SlimService",
          "url" : "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestScriptTable?test&format=xml",
          "wrong" : 0
       },
@@ -4812,7 +4895,7 @@
             "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
-         "evidence" : "Full 50-page ?test&format=xml rerun after Map result conversion; FitNesse used the external Perl listener at 127.0.0.1:8099.",
+         "evidence" : "Full 50-page page-level run with generated MySuite data cleared before each request; FitNesse execution log confirmed the external Perl SlimService.",
          "exceptionDetails" : [],
          "exceptions" : 0,
          "executionException" : null,
@@ -4835,7 +4918,7 @@
          "rootCause" : "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
          "status" : "completed",
          "testSystem" : "slim:fitnesse.slim.SlimService",
-         "testSystemConfirmed" : "slim:fitnesse.slim.SlimService",
+         "testSystemConfirmed" : "fitnesse.slim.SlimService",
          "url" : "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestScriptTableDisplayParameterValue?test&format=xml",
          "wrong" : 0
       },
@@ -4856,7 +4939,7 @@
             "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
-         "evidence" : "Full 50-page ?test&format=xml rerun after Map result conversion; FitNesse used the external Perl listener at 127.0.0.1:8099.",
+         "evidence" : "Full 50-page page-level run with generated MySuite data cleared before each request; FitNesse execution log confirmed the external Perl SlimService.",
          "exceptionDetails" : [],
          "exceptions" : 0,
          "executionException" : null,
@@ -4881,7 +4964,7 @@
          "rootCause" : "TestSlim concatenates its three supplied values with spaces; the upstream page verifies sequential and mixed argument processing.",
          "status" : "completed",
          "testSystem" : "slim:fitnesse.slim.SlimService",
-         "testSystemConfirmed" : "slim:fitnesse.slim.SlimService",
+         "testSystemConfirmed" : "fitnesse.slim.SlimService",
          "url" : "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestSequentialArgumentProcessing?test&format=xml",
          "wrong" : 0
       },
@@ -4902,7 +4985,7 @@
             "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
-         "evidence" : "Full 50-page ?test&format=xml rerun after Map result conversion; FitNesse used the external Perl listener at 127.0.0.1:8099.",
+         "evidence" : "Full 50-page page-level run with generated MySuite data cleared before each request; FitNesse execution log confirmed the external Perl SlimService.",
          "exceptionDetails" : [],
          "exceptions" : 0,
          "executionException" : null,
@@ -4925,7 +5008,7 @@
          "rootCause" : "The upstream query fixture now returns its expected column/value rows; both query matching and duplicate-row checks pass through the external Perl SLiM server.",
          "status" : "completed",
          "testSystem" : "slim:fitnesse.slim.SlimService",
-         "testSystemConfirmed" : "slim:fitnesse.slim.SlimService",
+         "testSystemConfirmed" : "fitnesse.slim.SlimService",
          "url" : "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestSubsetQuery?test&format=xml",
          "wrong" : 0
       },
@@ -4948,7 +5031,7 @@
             "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
-         "evidence" : "Full 50-page ?test&format=xml rerun after Map result conversion; FitNesse used the external Perl listener at 127.0.0.1:8099.",
+         "evidence" : "Full 50-page page-level run with generated MySuite data cleared before each request; FitNesse execution log confirmed the external Perl SlimService.",
          "exceptionDetails" : [],
          "exceptions" : 0,
          "executionException" : null,
@@ -4966,12 +5049,12 @@
             "right" : 2,
             "wrong" : 1
          },
-         "responseBytes" : 52016,
+         "responseBytes" : 52014,
          "right" : 2,
          "rootCause" : "PageDriver retrieves a 200 response, but the body does not contain the expected dead-test-runner message; the child test runner setup behavior remains unverified.",
          "status" : "completed",
          "testSystem" : "SLIM:fitnesse.slim.SlimService",
-         "testSystemConfirmed" : "SLIM:fitnesse.slim.SlimService",
+         "testSystemConfirmed" : "fitnesse.slim.SlimService",
          "url" : "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestSystemSlimSuite.ErrorSituationsDuringSlimServerStartup.B_TimeoutAsSlimServerDiesBeforeConnecting?test&format=xml",
          "wrong" : 1
       },
@@ -4996,7 +5079,7 @@
             "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
-         "evidence" : "Full 50-page ?test&format=xml rerun after Map result conversion; FitNesse used the external Perl listener at 127.0.0.1:8099.",
+         "evidence" : "Full 50-page page-level run with generated MySuite data cleared before each request; FitNesse execution log confirmed the external Perl SlimService.",
          "exceptionDetails" : [],
          "exceptions" : 0,
          "executionException" : null,
@@ -5014,12 +5097,12 @@
             "right" : 3,
             "wrong" : 1
          },
-         "responseBytes" : 52903,
+         "responseBytes" : 52901,
          "right" : 3,
          "rootCause" : "The test expects port 8099 unbound, but the inventory server occupies it; content_matches and PageDriver support are also missing.",
          "status" : "completed",
          "testSystem" : "SLIM:fitnesse.slim.SlimService",
-         "testSystemConfirmed" : "SLIM:fitnesse.slim.SlimService",
+         "testSystemConfirmed" : "fitnesse.slim.SlimService",
          "url" : "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestSystemSlimSuite.ErrorSituationsDuringSlimServerStartup.C_TimeoutAsNoServerAtGivenSocket?test&format=xml",
          "wrong" : 1
       },
@@ -5040,7 +5123,7 @@
             "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
-         "evidence" : "Full 50-page ?test&format=xml rerun after Map result conversion; FitNesse used the external Perl listener at 127.0.0.1:8099.",
+         "evidence" : "Full 50-page page-level run with generated MySuite data cleared before each request; FitNesse execution log confirmed the external Perl SlimService.",
          "exceptionDetails" : [],
          "exceptions" : 0,
          "executionException" : null,
@@ -5066,7 +5149,7 @@
          "rootCause" : "Sleep returned WakeUp 12000 as shown by the page documenting that slim.timeout alone does not stop the command.",
          "status" : "completed",
          "testSystem" : "SLIM:fitnesse.slim.SlimService",
-         "testSystemConfirmed" : "SLIM:fitnesse.slim.SlimService",
+         "testSystemConfirmed" : "fitnesse.slim.SlimService",
          "url" : "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestSystemSlimSuite.HowtoEnforceA_TimelimitPerTestCommand.NotWorking_SettingSlimTimeout?test&format=xml",
          "wrong" : 0
       },
@@ -5087,7 +5170,7 @@
             "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
-         "evidence" : "Full 50-page ?test&format=xml rerun after Map result conversion; FitNesse used the external Perl listener at 127.0.0.1:8099.",
+         "evidence" : "Full 50-page page-level run with generated MySuite data cleared before each request; FitNesse execution log confirmed the external Perl SlimService.",
          "exceptionDetails" : [],
          "exceptions" : 0,
          "executionException" : null,
@@ -5116,7 +5199,7 @@
          "rootCause" : "Sleep responses match all expected table values. Runner startup flags are not independently assessed by this directly connected external-service test.",
          "status" : "completed",
          "testSystem" : "SLIM:fitnesse.slim.SlimService",
-         "testSystemConfirmed" : "SLIM:fitnesse.slim.SlimService",
+         "testSystemConfirmed" : "fitnesse.slim.SlimService",
          "url" : "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestSystemSlimSuite.HowtoEnforceA_TimelimitPerTestCommand.PartiallyWorking_SettingSlimFlags?test&format=xml",
          "wrong" : 0
       },
@@ -5137,7 +5220,7 @@
             "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
-         "evidence" : "Full 50-page ?test&format=xml rerun after Map result conversion; FitNesse used the external Perl listener at 127.0.0.1:8099.",
+         "evidence" : "Full 50-page page-level run with generated MySuite data cleared before each request; FitNesse execution log confirmed the external Perl SlimService.",
          "exceptionDetails" : [],
          "exceptions" : 0,
          "executionException" : null,
@@ -5162,7 +5245,7 @@
          "rootCause" : "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
          "status" : "completed",
          "testSystem" : "slim:fitnesse.slim.SlimService",
-         "testSystemConfirmed" : "slim:fitnesse.slim.SlimService",
+         "testSystemConfirmed" : "fitnesse.slim.SlimService",
          "url" : "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestSystemSlimSuite.TimeoutInSlimTestSystem?test&format=xml",
          "wrong" : 0
       },
@@ -5183,7 +5266,7 @@
             "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
-         "evidence" : "Full 50-page ?test&format=xml rerun after Map result conversion; FitNesse used the external Perl listener at 127.0.0.1:8099.",
+         "evidence" : "Full 50-page page-level run with generated MySuite data cleared before each request; FitNesse execution log confirmed the external Perl SlimService.",
          "exceptionDetails" : [],
          "exceptions" : 0,
          "executionException" : null,
@@ -5209,7 +5292,7 @@
          "rootCause" : "LoginDialogDriver accepts the shared username/password scenario and records the upstream message and attempt count.",
          "status" : "completed",
          "testSystem" : "slim:fitnesse.slim.SlimService",
-         "testSystemConfirmed" : "slim:fitnesse.slim.SlimService",
+         "testSystemConfirmed" : "fitnesse.slim.SlimService",
          "url" : "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestTryingParameterizationIsntTooGreedy?test&format=xml",
          "wrong" : 0
       },
@@ -5230,7 +5313,7 @@
             "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
-         "evidence" : "Full 50-page ?test&format=xml rerun after Map result conversion; FitNesse used the external Perl listener at 127.0.0.1:8099.",
+         "evidence" : "Full 50-page page-level run with generated MySuite data cleared before each request; FitNesse execution log confirmed the external Perl SlimService.",
          "exceptionDetails" : [],
          "exceptions" : 0,
          "executionException" : null,
@@ -5253,7 +5336,7 @@
          "rootCause" : "The acceptance page completed with no wrong assertions or exceptions through the external Perl SLiM server.",
          "status" : "completed",
          "testSystem" : "slim:fitnesse.slim.SlimService",
-         "testSystemConfirmed" : "slim:fitnesse.slim.SlimService",
+         "testSystemConfirmed" : "fitnesse.slim.SlimService",
          "url" : "http://127.0.0.1:8080/FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestTwoIdenticalTablesOnPageDontConflict?test&format=xml",
          "wrong" : 0
       }
@@ -7556,6 +7639,81 @@
       },
       "rendererLimitedPage" : "IgnoredTestsShouldColorGray",
       "upstreamReference" : "Installed FitNesse v20251025 source: fitnesse.slim.test.ConstructorThrows, fitnesse.slim.test.DecisionTableExecuteThrows, fitnesse.slim.SlimException, SlimServer, ListExecutor, and StatementExecutor."
+   },
+   "stopPageOrderInvestigation" : {
+      "cleanCounts" : {
+         "StopSuite" : {
+            "exceptions" : 0,
+            "ignored" : 0,
+            "right" : 6,
+            "wrong" : 0
+         },
+         "StopTest" : {
+            "exceptions" : 0,
+            "ignored" : 0,
+            "right" : 6,
+            "wrong" : 0
+         },
+         "StopTestInSuiteSetUp" : {
+            "exceptions" : 0,
+            "ignored" : 0,
+            "right" : 7,
+            "wrong" : 0
+         }
+      },
+      "contaminatedCounts" : {
+         "StopSuite" : {
+            "exceptions" : 0,
+            "ignored" : 0,
+            "right" : 5,
+            "wrong" : 1
+         },
+         "StopTest" : {
+            "exceptions" : 0,
+            "ignored" : 0,
+            "right" : 4,
+            "wrong" : 2
+         }
+      },
+      "exactContaminatedAssertions" : {
+         "StopSuite" : [
+            "ensure | content contains | <span class=\"pass\">tear down after <a href=\"MySuite.TestPageA\">TestPageA</a></span>"
+         ],
+         "StopTest" : [
+            "ensure | content contains | <span class=\"pass\">tear down after <a href=\"MySuite.TestPageA\">TestPageA</a></span>",
+            "ensure | content contains | <span class=\"pass\">tear down after <a href=\"MySuite.TestPageB\">TestPageB</a></span>"
+         ]
+      },
+      "fullInventory" : {
+         "conformant" : 45,
+         "externalPerlConfirmed" : 50,
+         "pages" : 50,
+         "rawCounts" : {
+            "exceptions" : 0,
+            "ignored" : 2,
+            "right" : 373,
+            "wrong" : 7
+         },
+         "serverExits" : 0
+      },
+      "harnessIsolation" : "Before each page request, POST confirmed=yes to /MySuite?deletePage. Use the deletePage responder in the URL; a POST without the responder query is not the correct cleanup request.",
+      "previousCommitComparison" : "A temporary source snapshot of dc7561e reproduced the same failure only when the generated SuiteSetUp persisted. No stop implementation changed between that snapshot and the current commit; the older full inventory passed because it ran the stop pages before the setup page.",
+      "regressionTest" : {
+         "assertions" : 45,
+         "command" : "RUN_STOP_PAGE_INTEGRATION=1 prove -v t/stop-page-order.t",
+         "file" : "t/stop-page-order.t",
+         "status" : "PASS"
+      },
+      "repeatedRunEvidence" : "The opt-in t/stop-page-order.t run first reproduced the contaminated results, then repeated StopTest twice and StopSuite twice after resetting MySuite; all isolated StopTest and StopSuite runs were 6/0. It also ran StopSuite then StopTest in reverse order; both were 6/0.",
+      "rootCause" : "FitNesse stores PageDriver-created pages between individual HTTP test requests. StopTestInSuiteSetUp creates MySuite.SuiteSetUp and does not remove it. If it runs first, that stale setup throws StopTest for later MySuite-based pages, causing per-test TearDown rows to be ignored. The earlier full inventory ran StopSuite and StopTest before StopTestInSuiteSetUp, so its 6/0 counts were order-dependent, not false XML parsing or an SLiM engine pass.",
+      "unitTests" : {
+         "command" : "bin/test-dev",
+         "files" : 41,
+         "knownTodoFailures" : 4,
+         "status" : "PASS",
+         "tests" : 426
+      },
+      "upstreamBehavior" : "FitNesse SlimTestSystem consumes ABORT_SLIM_TEST and ABORT_SLIM_SUITE, applies stop state to subsequent tables, and runs applicable TearDown and SuiteTearDown tables. With no stale SuiteSetUp, the existing Perl exception markers produce the expected page behavior."
    },
    "suiteResponderAttempt" : {
       "httpStatus" : 200,
