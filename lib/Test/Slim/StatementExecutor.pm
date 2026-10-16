@@ -8,6 +8,7 @@ use HTML::TreeBuilder;
 use Test::Slim::Statement;
 use Test::Slim::SlimHelperLibrary;
 use Test::Slim::MapResult;
+use Test::Slim::ConverterRegistry;
 
 my $FIXTURE_HANDLES_SYMBOLS = "SLIM_AGENT_FIXTURE_HANDLES_SYMBOLS";
 
@@ -20,6 +21,7 @@ sub new {
     symbol   => {},
     fixture_symbol_pattern => undef,
     stop_requested => undef,
+    converters => Test::Slim::ConverterRegistry->new,
   } => $class;
 
   $self->{instance}{__slim_helper_library} =
@@ -204,6 +206,22 @@ sub get_symbol {
   $self->{symbol}{$symbol};
 }
 
+sub add_converter {
+  my ($self, @args) = @_;
+  $self->{converters}->add_converter(@args);
+}
+
+sub get_converter {
+  my ($self, @args) = @_;
+  $self->{converters}->get_converter(@args);
+}
+
+sub reset_converters {
+  my ($self) = @_;
+  $self->{converters}->reset;
+  return;
+}
+
 sub call {
   my($self,$instance,$method,@args) = @_;
 
@@ -266,9 +284,16 @@ sub call {
         && "$instance.$requested_method" =~ /\A(?:$self->{fixture_symbol_pattern})\z/) {
       @call_args = $self->replace_symbols(@call_args);
     }
-    $result = $obj->$method(
-      $self->replace_tables_with_hashes(@call_args)
-    );
+    @call_args = $self->replace_tables_with_hashes(@call_args);
+    my $signature = $obj->can('slim_method_signature')
+      ? $obj->slim_method_signature($method)
+      : undef;
+    @call_args = $self->{converters}->convert_arguments(
+      $signature, $requested_method, @call_args
+    ) if $signature;
+    $result = $obj->$method(@call_args);
+    ($result) = $self->{converters}->convert_result($signature, $result)
+      if $signature;
     $result = Test::Slim::MapResult->convert($result)
       if ref($result) eq "HASH";
   };
@@ -284,6 +309,9 @@ sub call {
 sub exception_result {
   my($self,$error,$pretty_print) = @_;
   chomp $error;
+
+  return $Test::Slim::Statement::EXCEPTION_TAG . $error
+    if $error =~ /^message:<<.*?>>\nTried to invoke: .*$/s;
 
   return $Test::Slim::Statement::EXCEPTION_TAG . $error
     if $error =~ /^message:<<.*>>$/s;
