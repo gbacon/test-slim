@@ -102,26 +102,39 @@ sub _read_message {
 sub process {
   my($self,$fh) = @_;
 
+  $self->_process_session($fh,$fh,'V0.4',1);
+}
+
+sub process_pipe {
+  my($self,$input,$output) = @_;
+
+  local $SIG{PIPE} = 'IGNORE';
+  $self->_process_session($input,$output,'V0.5',0);
+}
+
+sub _process_session {
+  my($self,$input,$output,$version,$close_input) = @_;
+
   my $ok;
   my $error;
   {
     local $self->{EXEC} = Test::Slim::ListExecutor->new;
-    $ok = eval { $self->_process($fh); 1 };
+    $ok = eval { $self->_process($input,$output,$version); 1 };
     $error = $@;
   }
 
-  close $fh if defined fileno($fh);
+  close $input if $close_input && defined fileno($input);
   die $error unless $ok;
   return;
 }
 
 sub _process {
-  my($self,$fh) = @_;
+  my($self,$input,$output,$version) = @_;
 
-  $self->_write($fh, "Slim -- V0.4\n");
+  $self->_write($output, "Slim -- $version\n");
 
   while (1) {
-    my $command = $self->_read_message($fh);
+    my $command = $self->_read_message($input);
     return unless defined $command;
 
     if (lc($command) eq "bye") {
@@ -139,7 +152,7 @@ sub _process {
       die "resource limit: response frame exceeds configured maximum"
         if length($octets) > $self->{MAX_FRAME_BYTES};
       warn "response=[" . length($octets) . " bytes]\n";
-      $self->_write($fh, sprintf "%06d:%s", length($octets), $octets);
+      $self->_write($output, sprintf "%06d:%s", length($octets), $octets);
     }
   }
 }
@@ -151,6 +164,8 @@ sub execute {
 
 sub run {
   my($self,$port) = @_;
+
+  return $self->run_pipe if defined($port) && $port eq '1';
 
   my $lsn = IO::Socket::INET->new(ReuseAddr => 1,
                                   Listen    => 16,
@@ -200,6 +215,29 @@ sub run {
       }
     }
   }
+}
+
+sub run_pipe {
+  my($self) = @_;
+
+  open my $protocol_output, '>&', \*STDOUT
+    or die "$0: duplicate SLiM stdout failed: $!\n";
+  binmode $protocol_output or die "$0: binary SLiM stdout failed: $!\n";
+  binmode STDIN or die "$0: binary SLiM stdin failed: $!\n";
+
+  # Keep fd 1 away from SLiM framing even when a fixture, child process, or
+  # native routine writes directly to stdout. The saved handle remains the
+  # only protocol-output path. FitNesse collects this diagnostic stream.
+  open STDOUT, '>&', STDERR
+    or die "$0: redirect fixture stdout failed: $!\n";
+  binmode STDOUT or die "$0: binary fixture stdout redirection failed: $!\n";
+  my $selected = select STDOUT;
+  $| = 1;
+  select $selected;
+
+  $self->process_pipe(\*STDIN,$protocol_output);
+  close $protocol_output or die "$0: close SLiM stdout failed: $!\n";
+  return;
 }
 
 1;

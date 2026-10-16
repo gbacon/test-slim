@@ -72,14 +72,23 @@ Both modes honor the query overrides. The direct test used a page with a page-de
 
 ## Implication for a Perl pipe runner
 
-**Verified:** FitNesse v20251025 can be directed, entirely by the `-c` URL, to use a chosen executable, a chosen command pattern, and `SLIM_PORT=1`. It overrides page and inherited wiki values in the tested cases. The wrapper invocation, child command, and test results provide evidence that this is actual process selection rather than a page that passed under its original runner.
+**Verified:** FitNesse v20251025 can be directed, entirely by the `-c` URL, to use a chosen executable, command pattern, and `SLIM_PORT=1`. The query values override page and inherited wiki values in the tested cases. The earlier wrapper experiment established process selection; a subsequent implementation now proves actual Perl pipe interoperability. In a fresh wiki extracted from the pinned JAR, this command launched the repository's executable directly:
 
-**Not established:** These experiments do not show that the current Perl server supports stdin/stdout transport, that it can be launched as a child process with the required framing, or that FitNesse's stdout/stderr handling is compatible with Perl diagnostics. Every wrapper in this experiment delegated to Java SlimService. The existing acceptance runners launch/use the external Perl listener and do not gain pipe support merely by adding query parameters; a future pipe-mode runner would need a deliberate `-c` execution path and a Perl child executable implementing that transport.
+```sh
+PERL5LIB="$PWD/lib:$PWD/t/lib" java -Dslim.pool.size=1 \
+  -jar /opt/fitnesse/fitnesse.jar \
+  -d "$TASK_ROOT" -r FitNesseRoot -p 19321 -b "$TASK_ROOT/result.xml" \
+  -c 'FitNesse.SuiteAcceptanceTests.SuiteSlimTests.SlimSymbols.NamingConvention?test&format=xml&COMMAND_PATTERN=%25m&TEST_RUNNER=%2Fworkspaces%2Ftest-slim%2Fbin%2Fperl-slim&SLIM_PORT=1'
+```
 
-The smallest future configuration experiment is therefore to keep the isolated `-c` setup and substitute a Perl pipe-mode executable for `TEST_RUNNER`. That follow-up should first verify the process command, handshake, bidirectional request traffic, exit behavior, and separation of diagnostics from protocol output. No such implementation or runner change is made here.
+FitNesse v20251025 exited 0. The execution XML recorded `testSystem=slim:/workspaces/test-slim/bin/perl-slim`, command `/workspaces/test-slim/bin/perl-slim 1`, and 5 right, 0 wrong, 0 ignored, 0 exceptions. A second symbol page recorded the same child command and 18 right, 0 wrong, 0 ignored, 0 exceptions. The Perl child selected the pipe branch before any TCP listener is created. Process-level tests separately verified its `Slim -- V0.5` greeting and framing.
+
+The `PERL5LIB` setting is required in this checkout because the child must find the implementation under `lib/` and acceptance fixtures under `t/lib/`. The existing `bin/test-fitnesse` and `bin/test-fitnesse-suite` remain TCP-based and unchanged; they do not migrate to this CLI path automatically.
+
+**Still unverified/incomplete:** This implementation does not yet send the v0.5 `SOUT`/`SERR` line prefixes or reconstruct separate stdout/stderr sections in FitNesse's execution log. Fixture and diagnostic text is redirected to the child's stderr, safely away from protocol stdout. Multiline output-tunneling fidelity remains incomplete; see [`slim-pipe-transport.md`](slim-pipe-transport.md). No runner migration was made here.
 
 ## Conclusions by status
 
 - **Verified working:** `COMMAND_PATTERN`, `TEST_RUNNER`, and `SLIM_PORT` can be supplied as `-c` URL query parameters; query values override page definitions for all three in tested cases; query `SLIM_PORT` overrides an inherited value; the tested suite propagates the overrides; `SLIM_PORT=1` selects the documented pipe mode.
 - **Verified not working:** Supplying only `TEST_RUNNER` does not make that value an executable command under the default Java command pattern. A matching `COMMAND_PATTERN` is required to select a custom executable.
-- **Unverified:** Precedence against JVM system properties or plugin configuration; all suite/nested responder variants; running the Perl implementation through pipes; actual Perl pipe transport and output tunneling.
+- **Unverified:** Precedence against JVM system properties or plugin configuration; all suite/nested responder variants; complete Perl `SOUT`/`SERR` output tunneling and execution-log reconstruction.

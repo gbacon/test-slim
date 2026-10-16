@@ -5,7 +5,7 @@ use warnings;
 
 use Test::Slim::Server;
 
-sub usage { "Usage: $0 port\n" }
+sub usage { "Usage: $0 port (1 uses stdin/stdout pipes)\n" }
 
 die usage unless @ARGV == 1;
 my $port = shift;
