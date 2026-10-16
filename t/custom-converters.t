@@ -13,8 +13,8 @@ my $executor = Test::Slim::StatementExecutor->new;
 my $fixture = Fitnesse::Slim::Test::TestSlimWithConverter->new;
 $executor->create('converter', $fixture, []);
 
-is($executor->call('converter', 'set_list_converter'), 'null',
-  'fixture can register a converter in its executor');
+is($executor->call('converter', 'set_list_converter'), '/__VOID__/',
+  'fixture can register a converter and reports its declared void result');
 is($executor->call('converter', 'get_object'), '{a, b, c}',
   'broad declared result type uses runtime-class converter');
 is_deeply($executor->call('converter', 'get_list'), ['a', 'b', 'c'],
@@ -27,8 +27,8 @@ $executor->add_converter('java.util.List', DyingConverter->new);
 my $bad = $executor->call('converter', 'same_list', '{a, b, c}');
 like($bad, qr/EXCEPTION.*conversion error.*Tried to invoke: same_list/s,
   'converter exceptions become SLiM errors with invocation context');
-is($executor->call('converter', 'remove_list_converter'), 'null',
-  'fixture restores the previous standard converter');
+is($executor->call('converter', 'remove_list_converter'), '/__VOID__/',
+  'fixture restores the previous standard converter and reports void');
 is($executor->call('converter', 'same_list', '[a, b, c]'), 'true',
   'standard collection converter remains active for standard syntax');
 $executor->set_symbol('items', [qw(a b c)]);
@@ -45,6 +45,9 @@ my ($null, $converted) = $registry->convert_result(
   { return => 'java.util.ArrayList' }, undef
 );
 ok(!defined($null) && $converted, 'declared return converter receives null results');
+my ($void_result) = $registry->convert_result({ return => 'void' }, undef);
+is($void_result, '/__VOID__/',
+  'void return converter emits the upstream SLiM void marker');
 my ($fallback, $used) = $registry->convert_result(
   { return => 'example.Unregistered' }, [qw(x y)]
 );
@@ -64,6 +67,10 @@ is($registry->get_converter('boolean')->from_string(''), 0,
   'primitive boolean conversion uses its false default');
 is($registry->get_converter('boolean')->from_string('yes'), 1,
   'boolean conversion accepts upstream yes syntax');
+my $boxed_boolean = $registry->get_converter('java.lang.Boolean');
+is($boxed_boolean->to_string(1), 'true', 'boxed Boolean results use lowercase true text');
+is($boxed_boolean->to_string(0), 'false', 'boxed Boolean results preserve numeric zero');
+ok(!defined($boxed_boolean->to_string(undef)), 'boxed Boolean null results remain null');
 my $no_converter = eval {
   $registry->convert_arguments(
     { parameters => ['example.UnknownType'] }, 'unknown_argument', 'value'

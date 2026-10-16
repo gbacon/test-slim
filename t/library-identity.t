@@ -11,6 +11,27 @@ my $executor = Test::Slim::StatementExecutor->new;
 $executor->add_import('fitnesse.slim.test.library');
 
 is_deeply(
+    Test::Slim::Statement->execute($executor, 'custom-actor', 'make', 'customActor', 'LibraryFixture'),
+    ['custom-actor', 'OK'],
+    'make actor for prefixed library ID coverage',
+);
+is_deeply(
+    Test::Slim::Statement->execute($executor, 'custom-library', 'make', 'libraryCustom', 'EchoSupport'),
+    ['custom-library', 'OK'],
+    'register library with a nonnumeric suffix',
+);
+is_deeply(
+    Test::Slim::Statement->execute($executor, 'custom-library-call', 'call', 'customActor', 'echo'),
+    ['custom-library-call', 'null'],
+    'method lookup includes library IDs that begin with library',
+);
+is_deeply(
+    Test::Slim::Statement->execute($executor, 'custom-library-state', 'call', 'customActor', 'echoSupportCalled'),
+    ['custom-library-state', 'true'],
+    'prefixed library receives the delegated call',
+);
+
+is_deeply(
     Test::Slim::Statement->execute($executor, 'actor', 'make', 'actor', 'LibraryFixture'),
     ['actor', 'OK'],
     'make a fixture actor',

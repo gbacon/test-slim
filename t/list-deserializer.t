@@ -6,7 +6,7 @@ use warnings;
 
 use Encode qw/ decode is_utf8 /;
 
-use Test::More tests => 16;
+use Test::More tests => 17;
 
 my $have_test_exception;
 BEGIN {
@@ -90,3 +90,9 @@ is_deeply $decoded_statement,
   [ "scriptTable_42_0/scriptTable_2_0/scriptTable_1_1",
     "callAndAssign", "CONTENT", "scriptTableActor", "echo", "" ],
   "deserialize nested script-table statement with empty argument";
+
+my $long_value = 'x' x 1_000_000;
+my $long_wire = '[000001:1000000:' . $long_value . ':]';
+my @long_list = Test::Slim::List->new($long_wire)->list;
+is_deeply \@long_list, [$long_value],
+  'deserialize v0.4 list string with a length wider than six digits';

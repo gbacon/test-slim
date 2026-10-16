@@ -88,7 +88,7 @@ sub create {
   eval {
     ($class) = $self->replace_symbols($class);
 
-    my $is_library = $id =~ /^library[0-9]+$/;
+    my $is_library = $id =~ /^library/;
     my $object;
     if (ref $class) {
       $object = $class;
@@ -135,12 +135,16 @@ sub replace_symbols {
       push @result, [ $self->replace_symbols(@$_) ];
     }
     elsif (defined($_) && !ref($_) && /^\$(\w+)\z/) {
-      my $sym = $self->get_symbol($1);
-      push @result, defined($sym) ? $sym : $_;
+      my $name = $1;
+      push @result, exists $self->{symbol}{$name}
+        ? $self->{symbol}{$name}
+        : $_;
     }
     else {
       s{ (?<orig> \$ (?<sym> \w+ ) ) } [
-        $self->get_symbol($+{sym}) // $+{orig}
+        exists $self->{symbol}{$+{sym}}
+          ? (defined $self->{symbol}{$+{sym}} ? $self->{symbol}{$+{sym}} : 'null')
+          : $+{orig}
       ]gex;
       push @result, $_;
     }
@@ -180,7 +184,7 @@ sub replace_table_with_hash {
 sub instance {
   my($self,$id) = @_;
   return $self->{instance}{$id} if exists $self->{instance}{$id};
-  if ($id =~ /^library[0-9]+$/) {
+  if ($id =~ /^library/) {
     for my $library (@{ $self->{library} }) {
       return $library->{object} if $library->{id} eq $id;
     }
@@ -223,6 +227,19 @@ sub reset_converters {
 }
 
 sub call {
+  my($self,@args) = @_;
+  my $result = $self->_call(@args);
+  return defined($result) ? $result : "null";
+}
+
+sub call_and_assign {
+  my($self,$symbol,@args) = @_;
+  my $result = $self->_call(@args);
+  $self->set_symbol($symbol, $result);
+  return defined($result) ? $result : "null";
+}
+
+sub _call {
   my($self,$instance,$method,@args) = @_;
 
   my $requested_method = $method;
@@ -235,7 +252,7 @@ sub call {
 
   my $has_instance = exists $self->{instance}{$instance};
   my $obj = $self->{instance}{$instance};
-  if (!$has_instance && $instance =~ /^library[0-9]+$/) {
+  if (!$has_instance && $instance =~ /^library/) {
     for my $library (@{ $self->{library} }) {
       if ($library->{id} eq $instance) {
         $obj = $library->{object};
@@ -298,8 +315,7 @@ sub call {
       if ref($result) eq "HASH";
   };
   unless ($@) {
-    return "null" unless defined $result;
-    $result =~ s/\s+$// unless ref $result;
+    $result =~ s/\s+$// if defined($result) && !ref($result);
     return $result;
   }
 

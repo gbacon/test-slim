@@ -19,6 +19,7 @@ sub reset {
     'java.lang.String' => bless({}, 'Test::Slim::ConverterRegistry::String'),
     'java.lang.Boolean' => bless({}, 'Test::Slim::ConverterRegistry::Boolean'),
     'boolean' => bless({}, 'Test::Slim::ConverterRegistry::PrimitiveBoolean'),
+    'void' => bless({}, 'Test::Slim::ConverterRegistry::Void'),
     'java.util.List' => Test::Slim::ConverterRegistry::List->new($self),
     'java.util.Collection' => Test::Slim::ConverterRegistry::List->new($self),
   };
@@ -126,6 +127,10 @@ sub from_string {
   return undef if $_[1] =~ /\A\s*\z/;
   return $_[1] =~ /\A(?:true|yes)\z/i ? 1 : 0;
 }
+sub to_string {
+  return undef unless defined $_[1];
+  return $_[1] ? 'true' : 'false';
+}
 
 package Test::Slim::ConverterRegistry::PrimitiveBoolean;
 use strict;
@@ -139,6 +144,12 @@ sub to_string {
   return undef unless defined $_[1];
   return $_[1] ? 'true' : 'false';
 }
+
+package Test::Slim::ConverterRegistry::Void;
+use strict;
+use warnings;
+sub from_string { undef }
+sub to_string { '/__VOID__/' }
 
 package Test::Slim::ConverterRegistry::List;
 use strict;

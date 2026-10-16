@@ -62,6 +62,29 @@ sub _write {
   }
 }
 
+sub _read_message {
+  my($self,$fh) = @_;
+
+  my $digits = "";
+  while (1) {
+    my $char = $self->_read($fh, 1);
+    return if !defined($char) || $char eq "" && $digits eq "";
+    die "incomplete message length '$digits'" if $char eq "";
+    last if $char eq ":";
+
+    die "expected message length, but got '$digits$char'"
+      unless $char =~ /\A[0-9]\z/ && length($digits) < 10;
+    $digits .= $char;
+  }
+
+  die "expected message length of at least six digits, but got '$digits'"
+    unless $digits =~ /\A[0-9]{6,10}\z/;
+  die "message length exceeds SLiM integer range: '$digits'"
+    if $digits > 2_147_483_647;
+
+  return $self->_read($fh, 0 + $digits);
+}
+
 sub process {
   my($self,$fh) = @_;
 
@@ -84,13 +107,8 @@ sub _process {
   $self->_write($fh, "Slim -- V0.4\n");
 
   while (1) {
-    my $length = $self->_read($fh, 7);
-    return unless defined($length) && $length ne "";
-
-    $length =~ s/^([0-9]{6}):$/$1/
-      or die "expected length, but got '$length'";
-
-    my $command = $self->_read($fh, $length);
+    my $command = $self->_read_message($fh);
+    return unless defined $command;
 
     if (lc($command) eq "bye") {
       return;

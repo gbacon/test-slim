@@ -32,6 +32,16 @@ BEGIN {
       "[000001:000001:1:]",
     ],
 
+    [ "serialize numeric zero without treating it as null",
+      [0],
+      "[000001:000001:0:]",
+    ],
+
+    [ "serialize an empty string as a zero-length item",
+      [""],
+      "[000001:000000::]",
+    ],
+
     [ "serialize an undefined element",
       [undef],
       "[000001:000004:null:]",
@@ -45,6 +55,11 @@ BEGIN {
     [ "serialize a string with UTF8",
       ["Espa\303\261ol"],
       "[000001:000007:Espa\303\261ol:]",
+    ],
+
+    [ "serialize a supplementary Unicode character using UTF-16 code-unit length",
+      ["\x{1F600}"],
+      "[000001:000002:\x{1F600}:]",
     ],
 
     [ "serialize a string with a trailing newline",

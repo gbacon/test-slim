@@ -67,8 +67,7 @@ sub do_callAndAssign {
   return $self->malformed_instruction($id)
     if grep !defined($_), $symbol, $instance, $f;
 
-  [ $id => $executor->set_symbol($symbol,
-             $executor->call($instance, $f, @args)) ];
+  [ $id => $executor->call_and_assign($symbol, $instance, $f, @args) ];
 }
 
 sub do_assign {

@@ -14,22 +14,22 @@ sub _utf16_code_units_length {
 
 sub _take_utf16_units {
   my ($s, $units) = @_;
-  my $out = "";
+  my $position = 0;
   my $count = 0;
 
-  while ($count < $units && length $s) {
-    my $ch = substr($s, 0, 1, "");
+  while ($count < $units && $position < length $s) {
+    my $ch = substr($s, $position++, 1);
     my $u = _utf16_code_units_length($ch);
     last if $count + $u > $units;
-    $out .= $ch;
     $count += $u;
     last if $count == $units;
   }
 
-  die "syntax error: no item of length $units ($out$s)"
+  my $out = substr($s, 0, $position);
+  die "syntax error: no item of length $units (" . substr($s, 0, 80) . "...)"
     unless $count == $units;
 
-  return ($out, $s);
+  return ($out, substr($s, $position));
 }
 
 sub new {
@@ -59,12 +59,12 @@ sub list {
     unless s/\]$//;
 
   die "syntax error: missing list-length ($_)"
-    unless s/^([0-9]{6})://;
+    unless s/^([0-9]{6,})://;
 
   my @l;
   for (my $length = $1; $length > 0; --$length) {
     die "syntax error: missing item-length ($_)"
-      unless s/^([0-9]{6})://;
+      unless s/^([0-9]{6,})://;
 
     (my $item_len = $1) =~ s/^0+//;
     $item_len = 0 if $item_len eq "";
