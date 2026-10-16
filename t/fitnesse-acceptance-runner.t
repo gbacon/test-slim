@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use File::Temp qw(tempdir);
+use File::Temp qw(tempdir tempfile);
 use Test::More;
 use lib 't/lib';
 use Test::Slim::FitNesseAcceptance qw(
@@ -10,6 +10,7 @@ use Test::Slim::FitNesseAcceptance qw(
   missing_wiki_pages
   parse_page_result
   probe_slim
+  preserve_exit_status
 );
 
 sub baseline_page {
@@ -137,5 +138,38 @@ close $wrong_listener;
 waitpid($wrong_pid,0);
 ok($wrong_probe->{reachable}, 'wrong protocol listener is detected as reachable');
 ok(!$wrong_probe->{ready}, 'HTTP listener is not accepted as a SLiM service');
+
+for my $requested_status (0, 1) {
+  my($status_fh, $wait_status_file) = tempfile();
+  close $status_fh;
+  my $script = <<'PERL';
+use strict;
+use warnings;
+use POSIX qw(:sys_wait_h);
+use lib 't/lib';
+use Test::Slim::FitNesseAcceptance qw(preserve_exit_status);
+my $pid = fork();
+die "fork cleanup child: $!" unless defined $pid;
+if (!$pid) { sleep 30; exit 0 }
+END {
+  preserve_exit_status(sub {
+    kill 'TERM', $pid;
+    waitpid($pid, 0);
+    open my $fh, '>', $ARGV[1] or die "open wait status: $!";
+    print {$fh} $?;
+    close $fh;
+  });
+}
+exit $ARGV[0];
+PERL
+  my $status = system($^X, '-e', $script, $requested_status, $wait_status_file);
+  is($status >> 8, $requested_status,
+    "cleanup preserves requested runner exit status $requested_status");
+  is($status & 127, 0, 'runner process exits normally after terminating its child');
+  open my $wait_fh, '<', $wait_status_file or die $!;
+  my $child_status = <$wait_fh>;
+  close $wait_fh;
+  is($child_status, 15, 'cleanup reaps the child terminated with SIGTERM');
+}
 
 done_testing();

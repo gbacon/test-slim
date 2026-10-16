@@ -17,6 +17,7 @@ use Test::Slim::FitNesseAcceptance qw(
   missing_wiki_pages
   parse_page_result
   probe_slim
+  preserve_exit_status
 );
 
 $| = 1;
@@ -27,7 +28,7 @@ my $LOG_DIR = "$ROOT/.runtime";
 
 $SIG{INT} = sub { die "Interrupted\n" };
 $SIG{TERM} = sub { die "Terminated\n" };
-END { stop_owned_processes() }
+END { preserve_exit_status(\&stop_owned_processes) }
 
 my $exit = eval { main(); 1 };
 unless ($exit) {

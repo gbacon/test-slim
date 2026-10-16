@@ -14,7 +14,16 @@ our @EXPORT_OK = qw(
   missing_wiki_pages
   parse_page_result
   probe_slim
+  preserve_exit_status
 );
+
+sub preserve_exit_status {
+  my($cleanup) = @_;
+  my $status = $?;
+  $cleanup->();
+  $? = $status;
+  return;
+}
 
 sub bounded_request {
   my($seconds,$request) = @_;
