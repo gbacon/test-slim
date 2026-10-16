@@ -2607,9 +2607,9 @@
       },
       "page": "FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TableTableSuite.SymbolsInTableTable",
       "recommendedClassification": "new native-suite page; see applicability categories in audit",
-      "rootCause": null,
+      "rootCause": "The page imports fitnesse.slim.test and requests the ordinary TableTableIncFirstCol fixture, which is absent. A related fixture exists under statementexecutorconsumer but explicitly manages symbols within the table; it is not a drop-in substitute because this page checks ordinary substitution and row isolation. Four exceptions and five wrong checks cascade from the missing ordinary fixture. The managed-fixture page passes 15 assertions; Java v20251025 passes 13.",
       "scopeCategory": "Perl fixture/adaptor coverage needed",
-      "scopeClassification": "TableTableIncFirstCol absent; result failures follow fixture load failure"
+      "scopeClassification": "Ordinary TableTableIncFirstCol adapter absent; existing consumer-managed fixture tests a distinct symbol mode"
     },
     {
       "backendAttribution": "external Perl confirmed for direct run; native suite endpoint evidence confirms the same external listener",

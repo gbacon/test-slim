@@ -112,7 +112,7 @@
          "classification" : {
             "assessment" : "Not assessed as protocol conformance: the page cannot reach its intended assertions without its named fixture/adapter.",
             "recommended" : "new native-suite page; see applicability categories in audit",
-            "rootCause" : null,
+            "rootCause" : "The page requests an ordinary TableTableIncFirstCol fixture under fitnesse.slim.test, which is absent. The related Perl StatementExecutorConsumer fixture explicitly manages symbols and is a distinct mode, not a safe alias. Four exceptions and five wrong checks cascade from the missing ordinary fixture; the Java v20251025 reference passes 13 assertions.",
             "scopeCategory" : "Perl fixture/adaptor coverage needed"
          },
          "counts" : {
