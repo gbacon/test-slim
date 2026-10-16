@@ -556,13 +556,47 @@
          },
          "page" : "FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TableTableSuite.SymbolsInTableTable",
          "purpose" : "Checks ordinary symbol substitution and assignment around a Table Table fixture, without fixture-managed symbol handling.",
-         "recommendedDisposition" : "Best next increment: investigate and add a dedicated fixture for the upstream ordinary symbol mode; do not alias the fixture-managed implementation or change general import lookup.",
+         "recommendedDisposition" : "Implemented as a separate ordinary-mode fixture; the consumer-managed fixture remains distinct.",
          "relevantFixtures" : [
-            "requested Fitnesse::Slim::Test::TableTableIncFirstCol absent",
+            "implemented Fitnesse::Slim::Test::TableTableIncFirstCol for ordinary symbol handling",
             "existing Fitnesse::Slim::Test::Statementexecutorconsumer::TableTableIncFirstCol"
          ],
-         "rootCause" : "The page imports `fitnesse.slim.test` and requests the ordinary TableTableIncFirstCol fixture, which is absent. A related fixture exists under statementexecutorconsumer but explicitly manages symbols within the table; it is not a drop-in substitute because this page checks ordinary substitution and row isolation. Four exceptions and five wrong checks cascade from the missing ordinary fixture. The managed-fixture page passes 15 assertions. Java v20251025 passes 13 assertions.",
-         "rootCauseClassification" : "missing_fixture_adapter"
+         "rootCause" : "The ordinary TableTableIncFirstCol fixture was absent. Once added, imports of fitnesse.slim.test could mask the more specific statementexecutorconsumer fixture because the page also imports the parent package from included content. Preferring the most-specific imported package resolves the managed fixture without aliasing modes. Ordinary row inputs are substituted by the existing executor before one doTable call; FitNesse applies output-cell symbol assignments after the returned rows, so same-table assignments do not affect later rows.",
+         "rootCauseClassification" : "missing_fixture_adapter_and_nested_import_precedence",
+         "implementationResults" : {
+            "perlCounts" : {
+               "exceptions" : 0,
+               "ignored" : 0,
+               "right" : 13,
+               "wrong" : 0
+            },
+            "managedFixturePageCounts" : {
+               "exceptions" : 0,
+               "ignored" : 0,
+               "right" : 15,
+               "wrong" : 0
+            },
+            "javaCounts" : {
+               "exceptions" : 0,
+               "ignored" : 0,
+               "right" : 13,
+               "wrong" : 0
+            },
+            "nativeSuiteAggregateAfter" : {
+               "exceptions" : 317,
+               "ignored" : 4,
+               "right" : 538,
+               "wrong" : 46
+            },
+            "recoveredFailureOutcomes" : 9,
+            "rightAssertions" : 13,
+            "fixtureClasses" : [
+               "Fitnesse::Slim::Test::TableTableIncFirstCol",
+               "Fitnesse::Slim::Test::Statementexecutorconsumer::TableTableIncFirstCol"
+            ],
+            "perlProtocolTrace" : "724 requests and 724 responses; no server errors",
+            "baselineReviewed" : true
+         }
       },
       {
          "baselineCounts" : {

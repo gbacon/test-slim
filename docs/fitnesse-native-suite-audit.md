@@ -195,7 +195,7 @@ The JSON artifact stores all 93 fully qualified paths in native execution order 
 | 59 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.StopTestInSuiteSetUp` | Test property: true | 7/0/0/0 | 7/0/0/0 | Current 50-page baseline |
 | 60 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.SystemExitIsPrevented` | Test property: empty/self-closing | 0/0/0/12 | 0/0/0/11 | Java fixture or test-system behavior |
 | 61 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.SystemUnderTestTest` | Test property: empty/self-closing | 0/0/0/8 | 0/0/0/8 | Java fixture or test-system behavior |
-| 62 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TableTableSuite.SymbolsInTableTable` | Test property: empty/self-closing | 0/5/0/4 | 0/5/0/4 | Perl fixture/adaptor coverage needed |
+| 62 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TableTableSuite.SymbolsInTableTable` | Test property: empty/self-closing | 0/5/0/4 | 0/5/0/4 | Historical audit result; ordinary fixture subsequently implemented |
 | 63 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TableTableSuite.SymbolsInTableTableManagedByTheFixture` | Test property: true | 15/0/0/0 | 15/0/0/0 | Current 50-page baseline |
 | 64 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TableTableSuite.TestReturnsNull` | Test property: empty/self-closing | 1/0/0/2 | 1/0/0/2 | Java fixture or test-system behavior |
 | 65 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestChineseWords` | Test property: true | 1/0/0/0 | 1/0/0/0 | Current 50-page baseline |
@@ -227,3 +227,11 @@ The JSON artifact stores all 93 fully qualified paths in native execution order 
 | 91 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestSystemSlimSuite.ErrorSituationsDuringSlimServerStartup.B_TimeoutAsSlimServerDiesBeforeConnecting` | Test property: true | 2/1/0/0 | 2/1/0/0 | Current 50-page baseline |
 | 92 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestSystemSlimSuite.ErrorSituationsDuringSlimServerStartup.C_TimeoutAsNoServerAtGivenSocket` | Test property: true | 3/1/0/0 | 3/1/0/0 | Current 50-page baseline |
 | 93 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestSystemSlimSuite.TextBeforeSlimHeaderIsIgnored` | legacy wiki Test header | 2/0/0/0 | 2/0/0/0 | Candidate direct Perl interoperability |
+
+## Subsequent Table Table fixture update
+
+The original audit above records the 525/51/4/321 run. The dedicated ordinary fixture implementation later changed exactly one page: `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TableTableSuite.SymbolsInTableTable` moved from 0/5/0/4 to 13/0/0/0. A clean pinned-JAR Java reference run also reports 13/0/0/0. The neighboring `SymbolsInTableTableManagedByTheFixture` page remains 15/0/0/0 in both Java and Perl.
+
+The target execution log records the A/B/C assignments, `make TableTableIncFirstCol`, one `doTable` call with three symbol-bearing rows, and subsequent checks of 100, 6, and 15. Its included row-isolation case confirms Z=45 rather than 201. FitNesse applies output-symbol assignments after the table call returns. The Perl fixture has no row mutation; the consumer fixture continues to update symbols inside each row. A parent import from included page content masked the nested consumer fixture, so class lookup now tries more-specific imported package paths first.
+
+The first native-suite run intentionally failed the old exact baseline comparison with only this page's three count changes. All other 92 pages remained identical. After review against the Java reference and both direct fixture tests, the baseline was changed only for this page. Updated assertion totals are 538 right, 46 wrong, 4 ignored, and 317 exceptions. FitNesse's suite final counts are 71 right, 9 wrong, 1 ignore, and 12 exceptions. A clean rerun selected all 93 pages, matched every per-page baseline count and these final counts, and verified 724 external Perl requests with 724 responses and no service errors. The separate 50-page individual acceptance gate remains unchanged.

@@ -64,8 +64,11 @@ sub resolve_class {
 
   my $class = $self->slim_to_perl_class($name);
 
+  # A nested import must remain usable when a page also imports its parent
+  # package (for example, table fixtures for fixture-managed symbols).
+  my @imports = reverse @{ $self->{imports} };
   my @candidates = (
-      map("${_}::${class}", @{ $self->{imports} }),
+      (map("${_}::${class}", sort { length($b) <=> length($a) } @imports)),
       $class,
   );
 

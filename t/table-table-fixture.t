@@ -10,6 +10,7 @@ use Test::Slim::Statement;
 my $executor = Test::Slim::StatementExecutor->new;
 $executor->add_import('fitnesse.slim.test');
 $executor->add_import('fitnesse.slim.test.statementexecutorconsumer');
+$executor->add_import('fitnesse.slim.test');
 
 is_deeply(
     Test::Slim::Statement->execute($executor, 'actor', 'make', 'scriptTableActor', 'TestSlim'),

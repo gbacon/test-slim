@@ -12,10 +12,10 @@
       "slimBackend" : "External Perl listener at configured loopback address"
    },
    "assertionTotals" : {
-      "exceptions" : 321,
+      "exceptions" : 317,
       "ignored" : 4,
-      "right" : 525,
-      "wrong" : 51
+      "right" : 538,
+      "wrong" : 46
    },
    "expectedPages" : [
       {
@@ -935,16 +935,16 @@
       },
       {
          "classification" : {
-            "assessment" : "Not assessed as protocol conformance: the page cannot reach its intended assertions without its named fixture/adapter.",
-            "recommended" : "new native-suite page; see applicability categories in audit",
-            "rootCause" : null,
-            "scopeCategory" : "Perl fixture/adaptor coverage needed"
+            "assessment" : "The ordinary Table Table fixture now matches Java v20251025 for all page assertions; this remains fixture compatibility evidence, not a new protocol feature.",
+            "recommended" : "native Perl fixture compatibility: implemented and verified",
+            "rootCause" : "The missing ordinary fixture and parent-package import masking are fixed. Perl's existing statement executor substitutes each row before one doTable call; FitNesse applies output-cell symbol assignments after the returned table. The ordinary fixture has no row state.",
+            "scopeCategory" : "Perl fixture compatibility verified"
          },
          "counts" : {
-            "exceptions" : 4,
+            "exceptions" : 0,
             "ignored" : 0,
-            "right" : 0,
-            "wrong" : 5
+            "right" : 13,
+            "wrong" : 0
          },
          "page" : "FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TableTableSuite.SymbolsInTableTable"
       },
@@ -1417,8 +1417,8 @@
    "expectedSuiteFinalCounts" : {
       "exceptions" : 12,
       "ignores" : 1,
-      "right" : 70,
-      "wrong" : 10
+      "right" : 71,
+      "wrong" : 9
    },
    "expectedPageCount" : 93,
    "baselineSource" : "docs/fitnesse-native-suite-audit.json; two independently initialized FitNesse v20251025 runs",
