@@ -85,10 +85,10 @@ FitNesse v20251025 exited 0. The execution XML recorded `testSystem=slim:/worksp
 
 The `PERL5LIB` setting is required in this checkout because the child must find the implementation under `lib/` and acceptance fixtures under `t/lib/`. The existing `bin/test-fitnesse` and `bin/test-fitnesse-suite` remain TCP-based and unchanged; they do not migrate to this CLI path automatically.
 
-**Still unverified/incomplete:** This implementation does not yet send the v0.5 `SOUT`/`SERR` line prefixes or reconstruct separate stdout/stderr sections in FitNesse's execution log. Fixture and diagnostic text is redirected to the child's stderr, safely away from protocol stdout. Multiline output-tunneling fidelity remains incomplete; see [`slim-pipe-transport.md`](slim-pipe-transport.md). No runner migration was made here.
+The Perl pipe implementation now emits the pinned v20251025 `SOUT`/`SERR` records and FitNesse reconstructs fixture output into separate stdout/stderr execution-log sections. A temporary six-assertion page was verified against the Perl child and Java SlimService; detailed records, behavior, and the prefix-role discrepancy with the published guide are in [`slim-pipe-transport.md`](slim-pipe-transport.md). The existing acceptance runners are still TCP-based at this Phase 1 checkpoint.
 
 ## Conclusions by status
 
 - **Verified working:** `COMMAND_PATTERN`, `TEST_RUNNER`, and `SLIM_PORT` can be supplied as `-c` URL query parameters; query values override page definitions for all three in tested cases; query `SLIM_PORT` overrides an inherited value; the tested suite propagates the overrides; `SLIM_PORT=1` selects the documented pipe mode.
 - **Verified not working:** Supplying only `TEST_RUNNER` does not make that value an executable command under the default Java command pattern. A matching `COMMAND_PATTERN` is required to select a custom executable.
-- **Unverified:** Precedence against JVM system properties or plugin configuration; all suite/nested responder variants; complete Perl `SOUT`/`SERR` output tunneling and execution-log reconstruction.
+- **Unverified:** Precedence against JVM system properties or plugin configuration; all suite/nested responder variants; inherited pipe transport across every nested PageDriver responder path.

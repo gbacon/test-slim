@@ -4,6 +4,7 @@ use strict;
 use warnings;
 
 use Encode qw/ encode /;
+use File::Temp qw/ tempfile /;
 use IO::Select;
 use IO::Socket::INET;
 use POSIX qw/ WNOHANG /;
@@ -106,20 +107,20 @@ sub process {
 }
 
 sub process_pipe {
-  my($self,$input,$output) = @_;
+  my($self,$input,$output,$diagnostic_output) = @_;
 
   local $SIG{PIPE} = 'IGNORE';
-  $self->_process_session($input,$output,'V0.5',0);
+  $self->_process_session($input,$output,'V0.5',0,$diagnostic_output);
 }
 
 sub _process_session {
-  my($self,$input,$output,$version,$close_input) = @_;
+  my($self,$input,$output,$version,$close_input,$diagnostic_output) = @_;
 
   my $ok;
   my $error;
   {
     local $self->{EXEC} = Test::Slim::ListExecutor->new;
-    $ok = eval { $self->_process($input,$output,$version); 1 };
+    $ok = eval { $self->_process($input,$output,$version,$diagnostic_output); 1 };
     $error = $@;
   }
 
@@ -129,7 +130,7 @@ sub _process_session {
 }
 
 sub _process {
-  my($self,$input,$output,$version) = @_;
+  my($self,$input,$output,$version,$diagnostic_output) = @_;
 
   $self->_write($output, "Slim -- $version\n");
 
@@ -141,20 +142,143 @@ sub _process {
       return;
     }
     else {
-      warn "command=[" . length($command) . " bytes]\n";
+      warn "command=[" . length($command) . " bytes]\n" unless $diagnostic_output;
       my @instructions = Test::Slim::List->new(
         $command, limits => { frame_bytes => $self->{MAX_FRAME_BYTES} }
       )->list;
-      my @results = $self->execute(@instructions);
+      my @results = defined($diagnostic_output)
+        ? $self->_execute_with_tunneling($diagnostic_output, @instructions)
+        : $self->execute(@instructions);
 
       my $response = Test::Slim::List->new(\@results)->serialize;
       my $octets = encode "UTF-8", $response;
       die "resource limit: response frame exceeds configured maximum"
         if length($octets) > $self->{MAX_FRAME_BYTES};
-      warn "response=[" . length($octets) . " bytes]\n";
+      warn "response=[" . length($octets) . " bytes]\n" unless $diagnostic_output;
       $self->_write($output, sprintf "%06d:%s", length($octets), $octets);
     }
   }
+}
+
+sub _execute_with_tunneling {
+  my($self,$diagnostic_output,@instructions) = @_;
+  my($stdout_capture,$stdout_path) = tempfile(UNLINK => 1);
+  my($stderr_capture,$stderr_path) = tempfile(UNLINK => 1);
+  binmode $stdout_capture or die "binary stdout capture failed: $!";
+  binmode $stderr_capture or die "binary stderr capture failed: $!";
+  open my $stdout_reader, '<:raw', $stdout_path
+    or die "open stdout capture reader failed: $!";
+  open my $stderr_reader, '<:raw', $stderr_path
+    or die "open stderr capture reader failed: $!";
+
+  open my $saved_stdout, '>&', \*STDOUT
+    or die "duplicate fixture stdout failed: $!";
+  open my $saved_stderr, '>&', \*STDERR
+    or die "duplicate fixture stderr failed: $!";
+  binmode $saved_stdout or die "binary saved stdout failed: $!";
+  binmode $saved_stderr or die "binary saved stderr failed: $!";
+
+  my $selected = select;
+  select STDOUT;
+  my $stdout_autoflush = $|;
+  select STDERR;
+  my $stderr_autoflush = $|;
+
+  my(@results,$execution_error,@tunnel_errors);
+  my $executed = eval {
+    open STDOUT, '>&', $stdout_capture or die "redirect fixture stdout failed: $!";
+    open STDERR, '>&', $stderr_capture or die "redirect fixture stderr failed: $!";
+    binmode STDOUT or die "binary fixture stdout failed: $!";
+    binmode STDERR or die "binary fixture stderr failed: $!";
+    select STDOUT; $| = 1;
+    select STDERR; $| = 1;
+    select $selected;
+    @results = $self->{EXEC}->execute_with(sub {
+      for my $capture ([$stdout_capture,$stdout_reader,'SOUT'],
+                       [$stderr_capture,$stderr_reader,'SERR']) {
+        my($writer,$reader,$channel) = @$capture;
+        my $ok = eval { $self->_tunnel_capture($diagnostic_output,$writer,$reader,$channel); 1 };
+        push @tunnel_errors, "$channel: $@" unless $ok;
+      }
+    }, @instructions);
+    1;
+  };
+  $execution_error = $@ unless $executed;
+
+  my $restored = eval {
+    open STDOUT, '>&', $saved_stdout or die "restore fixture stdout failed: $!";
+    open STDERR, '>&', $saved_stderr or die "restore fixture stderr failed: $!";
+    select STDOUT; $| = $stdout_autoflush;
+    select STDERR; $| = $stderr_autoflush;
+    select $selected;
+    1;
+  };
+  my $restore_error = $@ unless $restored;
+  die $restore_error if defined $restore_error;
+
+  for my $capture ([$stdout_capture,$stdout_reader,'SOUT'],
+                   [$stderr_capture,$stderr_reader,'SERR']) {
+    my($writer,$reader,$channel) = @$capture;
+    my $ok = eval { $self->_tunnel_capture($diagnostic_output,$writer,$reader,$channel); 1 };
+    push @tunnel_errors, "$channel: $@" unless $ok;
+  }
+  warn "$0: could not forward tunneled output ($_\n" for @tunnel_errors;
+  close $stdout_reader or die "close stdout capture reader failed: $!";
+  close $stderr_reader or die "close stderr capture reader failed: $!";
+  close $stdout_capture or die "close stdout capture failed: $!";
+  close $stderr_capture or die "close stderr capture failed: $!";
+  die $execution_error if defined $execution_error;
+  return @results;
+}
+
+sub _tunnel_capture {
+  my($self,$output,$writer,$capture,$channel) = @_;
+  my $first_line = 1;
+  my $line_started = 0;
+
+  my $offset = tell $capture;
+  my @stat = stat $writer;
+  die "stat fixture output capture failed: $!" unless @stat;
+  my $available = $stat[7] - $offset;
+  return if $available <= 0;
+  if ($available == 1) {
+    my $byte = '';
+    my $read = sysread $capture, $byte, 1;
+    die "read fixture output capture failed: $!" unless defined($read) && $read == 1;
+    return if $byte eq "\n";
+    $self->_write($output, "$channel.:");
+    $self->_write($output, $byte);
+    $self->_write($output, "\n");
+    return;
+  }
+
+  while (1) {
+    my $read = sysread $capture, my($bytes), 8192;
+    die "read fixture output capture failed: $!" unless defined $read;
+    last if $read == 0;
+
+    while (length $bytes) {
+      unless ($line_started) {
+        $self->_write($output, $channel . ($first_line ? '.:' : ' :'));
+        $line_started = 1;
+      }
+      my $newline = index($bytes, "\n");
+      if ($newline < 0) {
+        $self->_write($output, $bytes);
+        $bytes = '';
+      }
+      else {
+        my $line = substr($bytes, 0, $newline + 1, '');
+        $self->_write($output, $line);
+        $line_started = 0;
+        $first_line = 0;
+      }
+    }
+  }
+
+  # Tunnel partial output as a terminated record so FitNesse can reconstruct it.
+  $self->_write($output, "\n") if $line_started;
+  return;
 }
 
 sub execute {
@@ -222,7 +346,10 @@ sub run_pipe {
 
   open my $protocol_output, '>&', \*STDOUT
     or die "$0: duplicate SLiM stdout failed: $!\n";
+  open my $diagnostic_output, '>&', \*STDERR
+    or die "$0: duplicate diagnostic stderr failed: $!\n";
   binmode $protocol_output or die "$0: binary SLiM stdout failed: $!\n";
+  binmode $diagnostic_output or die "$0: binary diagnostic stderr failed: $!\n";
   binmode STDIN or die "$0: binary SLiM stdin failed: $!\n";
 
   # Keep fd 1 away from SLiM framing even when a fixture, child process, or
@@ -235,8 +362,9 @@ sub run_pipe {
   $| = 1;
   select $selected;
 
-  $self->process_pipe(\*STDIN,$protocol_output);
+  $self->process_pipe(\*STDIN,$protocol_output,$diagnostic_output);
   close $protocol_output or die "$0: close SLiM stdout failed: $!\n";
+  close $diagnostic_output or die "$0: close diagnostic stderr failed: $!\n";
   return;
 }
 

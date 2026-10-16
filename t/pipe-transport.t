@@ -21,7 +21,8 @@ sub start_child {
   my $pid = open3(my $input, my $output, $error,
     $^X, '-Ilib', '-It/lib', 'bin/perl-slim', '1');
   binmode $_ for ($input, $output, $error);
-  my $child = { pid => $pid, input => $input, output => $output, error => $error };
+  my $child = { pid => $pid, input => $input, output => $output, error => $error,
+    error_open => 1, diagnostics => '' };
   push @children, $child;
   return $child;
 }
@@ -48,43 +49,55 @@ sub stop_child {
 }
 
 sub read_exact {
-  my($fh,$length,$timeout) = @_;
+  my($fh,$length,$timeout,$child) = @_;
   my $select = IO::Select->new($fh);
+  $select->add($child->{error}) if $child && $child->{error_open};
   my $deadline = time + $timeout;
   my $result = '';
   while (length($result) < $length) {
     my $remaining = $deadline - time;
-    die "timed out reading $length bytes" if $remaining <= 0
-      || !$select->can_read($remaining);
-    my $got = sysread($fh, my $buffer, $length - length($result));
-    die "unexpected EOF after " . length($result) . " of $length bytes"
-      unless defined($got) && $got > 0;
-    $result .= $buffer;
+    die "timed out reading $length bytes" if $remaining <= 0;
+    my @ready = $select->can_read($remaining);
+    die "timed out reading $length bytes" unless @ready;
+    for my $ready (@ready) {
+      my $is_output = fileno($ready) == fileno($fh);
+      my $got = sysread($ready, my $buffer,
+        $is_output ? $length - length($result) : 16_384);
+      die "read failed: $!" unless defined $got;
+      if ($got == 0) {
+        die "unexpected EOF after " . length($result) . " of $length bytes" if $is_output;
+        $select->remove($ready);
+        $child->{error_open} = 0 if $child;
+        next;
+      }
+      if ($is_output) { $result .= $buffer }
+      else { $child->{diagnostics} .= $buffer }
+    }
   }
   return $result;
 }
 
 sub read_line {
-  my($fh) = @_;
+  my($fh,$child) = @_;
   my $line = '';
   my $deadline = time + 5;
   while (length($line) < 64) {
-    $line .= read_exact($fh,1,$deadline - time);
+    $line .= read_exact($fh,1,$deadline - time,$child);
     return $line if $line =~ /\n\z/;
   }
   die 'oversized handshake';
 }
 
 sub read_frame {
-  my($fh) = @_;
+  my($fh,$child) = @_;
   my $header = '';
   my $deadline = time + 5;
   while (length($header) < 33) {
-    $header .= read_exact($fh,1,$deadline - time);
+    $header .= read_exact($fh,1,$deadline - time,$child);
     last if $header =~ /:\z/;
   }
   die "invalid frame prefix: $header" unless $header =~ /\A([0-9]{6,}):\z/;
-  return read_exact($fh,0 + $1,5);
+  return read_exact($fh,0 + $1,5,$child);
 }
 
 sub write_all {
@@ -106,12 +119,31 @@ sub send_frame {
 sub request {
   my($child,$instructions) = @_;
   send_frame($child,Test::Slim::List->new($instructions)->serialize);
-  my $wire = decode('UTF-8',read_frame($child->{output}),FB_CROAK);
+  my $wire = decode('UTF-8',read_frame($child->{output},$child),FB_CROAK);
   return [Test::Slim::List->new($wire)->list];
 }
 
+sub tunnel_records {
+  my($child,$offset) = @_;
+  if ($child->{error_open}) {
+    my $select = IO::Select->new($child->{error});
+    my $deadline = time + 0.05;
+    while (time < $deadline && $select->can_read(0.01)) {
+      my $got = sysread($child->{error},my $buffer,16_384);
+      if (!defined($got) || $got == 0) {
+        $child->{error_open} = 0;
+        last;
+      }
+      $child->{diagnostics} .= $buffer;
+    }
+  }
+  my $text = substr($child->{diagnostics},$offset);
+  return [grep { /\A(?:SOUT :|SOUT\.:|SERR :|SERR\.:)/ }
+    split /(?<=\n)/, $text];
+}
+
 my $child = start_child();
-is(read_line($child->{output}),"Slim -- V0.5\n",'port 1 selects the v0.5 stdin/stdout handshake');
+is(read_line($child->{output},$child),"Slim -- V0.5\n",'port 1 selects the v0.5 stdin/stdout handshake');
 
 my $unicode = 'München / Tartu õun / Mae govannen / 😀 é';
 my $first = request($child,[
@@ -135,31 +167,99 @@ my $second = request($child,[
 is_deeply($second,[[echo => $unicode],[previous => $unicode]],
   'the fixture and symbol state persist across pipe request batches');
 
+my $diagnostic_offset = length $child->{diagnostics};
 my $output_test = request($child,[[out => call => actor => 'writeStdout' => 'fixture-stdout-marker']]);
 is_deeply($output_test,[[out => 'fixture-stdout-marker']],
   'fixture stdout does not corrupt the next framed protocol response');
-my $error_select = IO::Select->new($child->{error});
-my $error_text = '';
-my $error_deadline = time + 2;
-while (time < $error_deadline && $error_text !~ /fixture-stdout-marker/) {
-  next unless $error_select->can_read(0.1);
-  my $got = sysread($child->{error},my $buffer,4096);
-  last unless defined($got) && $got > 0;
-  $error_text .= $buffer;
-}
-like($error_text,qr/fixture-stdout-marker/,'fixture stdout is redirected away from protocol stdout');
+is_deeply(tunnel_records($child,$diagnostic_offset),["SOUT.:fixture-stdout-marker\n"],
+  'a complete stdout line uses the pinned FitNesse first-line prefix');
 
+$diagnostic_offset = length $child->{diagnostics};
+request($child,[[explicit => call => actor => 'writeExplicitStdout' => 'explicit-stdout']]);
+is_deeply(tunnel_records($child,$diagnostic_offset),["SOUT.:explicit-stdout\n"],
+  'explicit print STDOUT is tunneled');
+
+$diagnostic_offset = length $child->{diagnostics};
+request($child,[
+  [first => call => actor => 'writeStdout' => 'first-print'],
+  [second => call => actor => 'writeStdout' => 'second-print'],
+]);
+is_deeply(tunnel_records($child,$diagnostic_offset),
+  ["SOUT.:first-print\n","SOUT.:second-print\n"],
+  'each fixture call is a separate output message within one instruction batch');
+
+$diagnostic_offset = length $child->{diagnostics};
 my $stderr_test = request($child,[[err => call => actor => 'writeStderr' => 'fixture-stderr-marker']]);
 is_deeply($stderr_test,[[err => 'fixture-stderr-marker']],
   'fixture stderr does not corrupt protocol responses');
-my $stderr_deadline = time + 2;
-while (time < $stderr_deadline && $error_text !~ /fixture-stderr-marker/) {
-  next unless $error_select->can_read(0.1);
-  my $got = sysread($child->{error},my $buffer,4096);
-  last unless defined($got) && $got > 0;
-  $error_text .= $buffer;
-}
-like($error_text,qr/fixture-stderr-marker/,'fixture stderr remains on the diagnostic stream');
+is_deeply(tunnel_records($child,$diagnostic_offset),["SERR.:fixture-stderr-marker\n"],
+  'a complete stderr line uses the pinned FitNesse first-line prefix');
+
+$diagnostic_offset = length $child->{diagnostics};
+request($child,[[explicit => call => actor => 'writeExplicitStderr' => 'explicit-stderr']]);
+is_deeply(tunnel_records($child,$diagnostic_offset),["SERR.:explicit-stderr\n"],
+  'explicit print STDERR is tunneled separately');
+
+$diagnostic_offset = length $child->{diagnostics};
+request($child,[[multi => call => actor => 'writeStdoutBytes' => "line one\nline two"]]);
+is_deeply(tunnel_records($child,$diagnostic_offset),
+  ["SOUT.:line one\n","SOUT :line two\n"],
+  'multiline output uses continuation prefixes and terminates a partial final line');
+
+$diagnostic_offset = length $child->{diagnostics};
+request($child,[[partial => call => actor => 'writeStdoutBytes' => 'partial-line']]);
+is_deeply(tunnel_records($child,$diagnostic_offset),["SOUT.:partial-line\n"],
+  'a partial line is terminated as one tunnel record');
+
+$diagnostic_offset = length $child->{diagnostics};
+request($child,[[blank => call => actor => 'writeStdoutBytes' => "\n"]]);
+is_deeply(tunnel_records($child,$diagnostic_offset),[],
+  'a one-line empty message follows the pinned logger and does not create a blank record');
+
+$diagnostic_offset = length $child->{diagnostics};
+request($child,[[blank => call => actor => 'writeStdoutBytes' => "before\n\nafter\n"]]);
+is_deeply(tunnel_records($child,$diagnostic_offset),
+  ["SOUT.:before\n","SOUT :\n","SOUT :after\n"],
+  'an empty line inside a multi-line message is preserved');
+
+my $unicode_output = 'Grüße / Tartu õun / Mae govannen 😀';
+$diagnostic_offset = length $child->{diagnostics};
+request($child,[[unicode => call => actor => 'writeStdoutBytes' => $unicode_output]]);
+is_deeply(tunnel_records($child,$diagnostic_offset),
+  ["SOUT.:" . encode('UTF-8', $unicode_output) . "\n"],
+  'Unicode output stays UTF-8 across tunnel framing');
+
+$diagnostic_offset = length $child->{diagnostics};
+request($child,[[alternating => call => actor => 'writeAlternating']]);
+my $alternating_records = tunnel_records($child,$diagnostic_offset);
+is_deeply([grep { /^SOUT/ } @$alternating_records],
+  ["SOUT.:first-out\n","SOUT :last-out\n"],
+  'stdout retains its independent channel and line sequence');
+is_deeply([grep { /^SERR/ } @$alternating_records],
+  ["SERR.:middle-err\n"],
+  'stderr retains its independent channel');
+
+$diagnostic_offset = length $child->{diagnostics};
+my $large_result = request($child,[[large => call => actor => 'writeLargeStdout' => 1_048_576]]);
+is_deeply($large_result,[[large => 1_048_576]],'large fixture output does not block the protocol session');
+my $large_records = tunnel_records($child,$diagnostic_offset);
+is(scalar(@$large_records),1,'a large one-line diagnostic remains one valid record');
+is(length($large_records->[0]),1_048_583,'large diagnostics are streamed without truncation');
+like($large_records->[0],qr/\ASOUT\.:x+\n\z/,'large record retains its prefix and terminator');
+
+$diagnostic_offset = length $child->{diagnostics};
+my $child_result = request($child,[[child => call => actor => 'writeChildOutput']]);
+is_deeply($child_result,[[child => 'child complete']],
+  'a synchronous fixture subprocess inherits safe output capture descriptors');
+is_deeply(tunnel_records($child,$diagnostic_offset),
+  ["SOUT.:child-out\n","SERR.:child-err\n"],
+  'subprocess stdout and stderr are tunneled to their independent channels');
+
+$diagnostic_offset = length $child->{diagnostics};
+my $exception_result = request($child,[[exception => call => actor => 'writeStdoutThenDie']]);
+like($exception_result->[0][1],qr/^__EXCEPTION__:/,'fixture exception remains a SLiM exception');
+is_deeply(tunnel_records($child,$diagnostic_offset),["SOUT.:before-exception\n"],
+  'output immediately before a fixture exception is tunneled before its response');
 
 send_frame($child,'bye');
 my $readable = IO::Select->new($child->{output})->can_read(5);
@@ -170,14 +270,29 @@ close $child->{input};
 stop_child($child);
 is($child->{status} >> 8,0,'bye terminates the pipe child successfully');
 
+my $closed_diagnostics = start_child();
+read_line($closed_diagnostics->{output},$closed_diagnostics);
+close $closed_diagnostics->{error};
+$closed_diagnostics->{error_open} = 0;
+my $after_closed_diagnostics = request($closed_diagnostics,
+  [[i => import => 'fitnesse.slim.test'],[m => make => actor => 'PipeTransportFixture'],
+   [write => call => actor => 'writeStdout' => 'diagnostics closed']]);
+is($after_closed_diagnostics->[-1][1],'diagnostics closed',
+  'a closed diagnostic stream does not prevent a valid protocol response');
+send_frame($closed_diagnostics,'bye');
+close $closed_diagnostics->{input};
+stop_child($closed_diagnostics);
+is($closed_diagnostics->{status} >> 8,0,
+  'a closed diagnostic stream is nonfatal to pipe session cleanup');
+
 my $eof_child = start_child();
-is(read_line($eof_child->{output}),"Slim -- V0.5\n",'a second child starts a separate pipe session');
+is(read_line($eof_child->{output},$eof_child),"Slim -- V0.5\n",'a second child starts a separate pipe session');
 close $eof_child->{input};
 stop_child($eof_child);
 is($eof_child->{status} >> 8,0,'clean EOF terminates the pipe child successfully');
 
 my $truncated = start_child();
-read_line($truncated->{output});
+read_line($truncated->{output},$truncated);
 write_all($truncated->{input},'000020:[');
 close $truncated->{input};
 stop_child($truncated);
@@ -193,7 +308,7 @@ isnt($malformed->{status} >> 8,0,'invalid frame prefix fails the pipe child');
 my $marker_path = "/tmp/test-slim-pipe-atomic-$$";
 unlink $marker_path;
 my $bad_list = start_child();
-read_line($bad_list->{output});
+read_line($bad_list->{output},$bad_list);
 my $serialized = Test::Slim::List->new([
   [i => import => 'fitnesse.slim.test'],
   [m => make => actor => 'PipeTransportFixture'],
@@ -209,7 +324,7 @@ isnt($bad_list->{status} >> 8,0,'corrupt serialized payload terminates only its 
 unlink $marker_path;
 
 my $bad_instruction = start_child();
-read_line($bad_instruction->{output});
+read_line($bad_instruction->{output},$bad_instruction);
 my $bad_response = request($bad_instruction,[['bad','unknownOperation']]);
 like($bad_response->[0][1],qr/^__EXCEPTION__:message:<<MALFORMED_INSTRUCTION/,
   'valid framing with malformed instruction returns the protocol exception');
@@ -222,7 +337,7 @@ stop_child($bad_instruction);
 is($bad_instruction->{status} >> 8,0,'malformed instruction does not poison session shutdown');
 
 my $broken_output = start_child();
-read_line($broken_output->{output});
+read_line($broken_output->{output},$broken_output);
 close $broken_output->{output};
 send_frame($broken_output,Test::Slim::List->new([[ok => import => 'fitnesse.slim.test']])->serialize);
 close $broken_output->{input};
