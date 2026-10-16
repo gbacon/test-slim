@@ -3656,7 +3656,7 @@
          "wrong" : 0
       },
       {
-         "attempt" : 13,
+         "attempt" : 14,
          "conformance" : {
             "dependencies" : [
                "FitNesse v20251025 script-row rendering"
@@ -3669,9 +3669,9 @@
                "right" : 5,
                "wrong" : 2
             },
-            "reason" : "StopTest now produces the expected nested exception and ignored execution state. The two remaining outer regex checks expect class=\"ignore\" immediately before the script input text; FitNesse v20251025 renders the row as class=\"slimRowColor3\" and marks the result with <span class=\"ignore\">Test not run</span>. This is a FitNesse rendering/acceptance-version mismatch, not a SLiM stop defect.",
+            "reason" : "Two direct runs each produced 5 right, 2 wrong, 0 ignored, 0 exceptions. StopTest, skipped execution, and ignored-status checks pass. The two wrong outer regex checks expect class=\"ignore\">Not Executed and should be ignored< and class=\"ignore\">Not Executed and should be ignored as well<. FitNesse v20251025 renders rows with class=\"slimRowColor3\" or class=\"slimRowColor5\", and places class=\"ignore\" on the trailing <span>Test not run</span>. This is an obsolete HTML expectation, not a Perl SLiM or ResponseExaminer defect. Update the upstream checks to assert the ignore-result markup and status.",
             "status" : "harness_limited",
-            "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
+            "verification" : "Two direct HTTP XML runs reproduced both failed markup assertions; the installed FitNesse v20251025 HtmlTable.Cell class contains the current ignore-span renderer, and the full inventory confirms the unchanged baseline."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
          "evidence" : "Full 50-page page-level run with generated MySuite data cleared before each request; FitNesse execution log confirmed the external Perl SlimService.",
@@ -3682,8 +3682,8 @@
          "failureDetails" : {
             "exceptionMessages" : [],
             "wrongAssertionMessages" : [
-               "Expected class=\"ignore\">Not Executed and should be ignored<; received class=\"slimRowColor3\"><td>Not Executed and should be ignored <span class=\"ignore\">Test not run</span></td>.",
-               "Expected class=\"ignore\">Not Executed and should be ignored as well<; received class=\"slimRowColor5\"><td>Not Executed and should be ignored as well <span class=\"ignore\">Test not run</span></td>."
+               "Expected HTML: class=\"ignore\">Not Executed and should be ignored<; actual: <tr class=\"slimRowColor3\"><td>Not Executed and should be ignored <span class=\"ignore\">Test not run</span></td></tr>.",
+               "Expected HTML: class=\"ignore\">Not Executed and should be ignored as well<; actual: <tr class=\"slimRowColor5\"><td>Not Executed and should be ignored as well <span class=\"ignore\">Test not run</span></td></tr>."
             ]
          },
          "http" : 200,
@@ -3697,7 +3697,7 @@
          },
          "responseBytes" : 111809,
          "right" : 5,
-         "rootCause" : "StopTest now produces the expected nested exception and ignored execution state. The two remaining outer regex checks expect class=\"ignore\" immediately before the script input text; FitNesse v20251025 renders the row as class=\"slimRowColor3\" and marks the result with <span class=\"ignore\">Test not run</span>. This is a FitNesse rendering/acceptance-version mismatch, not a SLiM stop defect.",
+         "rootCause" : "Two direct runs each produced 5 right, 2 wrong, 0 ignored, 0 exceptions. StopTest, skipped execution, and ignored-status checks pass. The two wrong outer regex checks expect class=\"ignore\">Not Executed and should be ignored< and class=\"ignore\">Not Executed and should be ignored as well<. FitNesse v20251025 renders rows with class=\"slimRowColor3\" or class=\"slimRowColor5\", and places class=\"ignore\" on the trailing <span>Test not run</span>. This is an obsolete HTML expectation, not a Perl SLiM or ResponseExaminer defect. Update the upstream checks to assert the ignore-result markup and status.",
          "status" : "completed",
          "testSystem" : "slim:fitnesse.slim.SlimService",
          "testSystemConfirmed" : "fitnesse.slim.SlimService",
