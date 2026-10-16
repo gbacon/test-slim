@@ -4608,7 +4608,7 @@
                "right" : 1,
                "wrong" : 2
             },
-            "reason" : "The nested response is retrieved, but its output lacks the expected glob comparison; the root-level nested test does not receive the outer suite CustomComparators setup.",
+            "reason" : "The HTTP-based Perl PageDriver runs the generated nested TestPage on the main FitNesse server instead of the FitnesseFixtureContext configured by the upstream SetUp constructor. Its CustomComparatorRegistry therefore has no glob comparator, so both checks compare actual 'test' with literal expected 'glob:t*t'. The fixture and SLiM response are correct.",
             "status" : "harness_limited",
             "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
          },
@@ -4639,7 +4639,7 @@
          },
          "responseBytes" : 53264,
          "right" : 1,
-         "rootCause" : "The nested response is retrieved, but its output lacks the expected glob comparison; the root-level nested test does not receive the outer suite CustomComparators setup.",
+         "rootCause" : "The HTTP-based Perl PageDriver runs the generated nested TestPage on the main FitNesse server instead of the FitnesseFixtureContext configured by the upstream SetUp constructor. Its CustomComparatorRegistry therefore has no glob comparator, so both checks compare actual 'test' with literal expected 'glob:t*t'. The fixture and SLiM response are correct.",
          "status" : "completed",
          "testSystem" : "slim:fitnesse.slim.SlimService",
          "testSystemConfirmed" : "fitnesse.slim.SlimService",
