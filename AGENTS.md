@@ -180,7 +180,7 @@ Before a substantial architectural change, document the proposed change and why 
 
 Never commit credentials, generated wiki state, temporary logs, or downloaded dependencies.
 
-After each work unit, report:
+After each work unit, report (with a copy to `/tmp/codex-results.md`):
 
 - Behavior implemented
 - Tests added

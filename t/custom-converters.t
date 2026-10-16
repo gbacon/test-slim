@@ -80,6 +80,59 @@ my $no_converter = eval {
 like($@, qr/NO_CONVERTER_FOR_ARGUMENT_NUMBER example\.UnknownType/,
   'missing argument converters report the upstream error category');
 
+for my $type (qw(java.lang.Integer int java.lang.Long long java.lang.Double double)) {
+  ok($registry->get_converter($type), "$type has a standard converter");
+}
+is($registry->get_converter('java.lang.Integer')->from_string('-2147483648'),
+  -2147483648, 'boxed integer converter accepts the minimum value');
+is($registry->get_converter('java.lang.Integer')->from_string('2147483647'),
+  2147483647, 'boxed integer converter accepts the maximum value');
+ok(!defined($registry->get_converter('java.lang.Integer')->from_string('  ')),
+  'boxed integer blank input becomes null');
+is($registry->get_converter('int')->from_string(''), 0,
+  'primitive integer blank input defaults to zero');
+my $integer_error = eval {
+  $registry->get_converter('java.lang.Integer')->from_string('2147483648');
+  '';
+};
+like($@, qr/Can't convert 2147483648 to integer/,
+  'boxed integer rejects values beyond the Java range');
+is($registry->get_converter('java.lang.Long')->from_string('9223372036854775807'),
+  9223372036854775807, 'boxed long accepts the maximum Java long');
+is($registry->get_converter('java.lang.Long')->from_string('-9223372036854775808'),
+  -9223372036854775808, 'boxed long accepts the minimum Java long');
+my $long_error = eval {
+  $registry->get_converter('long')->from_string('9223372036854775808');
+  '';
+};
+like($@, qr/Can't convert 9223372036854775808 to long/,
+  'primitive long rejects values beyond the Java range');
+is($registry->get_converter('java.lang.Double')->to_string(
+    $registry->get_converter('java.lang.Double')->from_string('2.5e2')),
+  '250.0', 'double results use Java-style decimal text');
+ok(!defined($registry->get_converter('java.lang.Double')->from_string('')),
+  'boxed double blank input becomes null');
+is($registry->get_converter('double')->from_string(''), 0,
+  'primitive double blank input defaults to zero');
+my @typed_numbers = $registry->convert_arguments(
+  { parameters => ['java.lang.Integer', 'long', 'java.lang.Double'] },
+  'typed_numbers', '12', '-4', '0.125'
+);
+is_deeply(\@typed_numbers, [12, -4, 0.125],
+  'declared numeric fixture parameters receive converted Perl scalars');
+my $bad_number = eval {
+  $registry->convert_arguments(
+    { parameters => ['int'] }, 'bad_number', 'not-a-number'
+  );
+  '';
+};
+like($@, qr/Can't convert not-a-number to integer.*Tried to invoke: bad_number/s,
+  'numeric conversion errors retain invocation context');
+my ($typed_result) = $registry->convert_result(
+  { return => 'java.lang.Integer' }, 42
+);
+is($typed_result, '42', 'declared numeric results use the standard converter');
+
 done_testing;
 
 package DyingConverter;

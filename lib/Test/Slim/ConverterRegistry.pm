@@ -19,6 +19,12 @@ sub reset {
     'java.lang.String' => bless({}, 'Test::Slim::ConverterRegistry::String'),
     'java.lang.Boolean' => bless({}, 'Test::Slim::ConverterRegistry::Boolean'),
     'boolean' => bless({}, 'Test::Slim::ConverterRegistry::PrimitiveBoolean'),
+    'java.lang.Integer' => bless({}, 'Test::Slim::ConverterRegistry::Integer'),
+    int => bless({}, 'Test::Slim::ConverterRegistry::PrimitiveInteger'),
+    'java.lang.Long' => bless({}, 'Test::Slim::ConverterRegistry::Long'),
+    long => bless({}, 'Test::Slim::ConverterRegistry::PrimitiveLong'),
+    'java.lang.Double' => bless({}, 'Test::Slim::ConverterRegistry::Double'),
+    double => bless({}, 'Test::Slim::ConverterRegistry::PrimitiveDouble'),
     'void' => bless({}, 'Test::Slim::ConverterRegistry::Void'),
     'java.util.List' => Test::Slim::ConverterRegistry::List->new($self),
     'java.util.Collection' => Test::Slim::ConverterRegistry::List->new($self),
@@ -144,6 +150,80 @@ sub to_string {
   return undef unless defined $_[1];
   return $_[1] ? 'true' : 'false';
 }
+
+package Test::Slim::ConverterRegistry::Integer;
+use strict;
+use warnings;
+sub from_string {
+  my ($self, $value) = @_;
+  return undef unless defined $value && $value !~ /\A\s*\z/;
+  die "message:<<Can't convert $value to integer.>>" unless $value =~ /\A[+-]?[0-9]+\z/;
+  my $digits = $value;
+  $digits =~ s/\A[+-]//;
+  $digits =~ s/\A0+(?=.)//;
+  my $negative = $value =~ /\A-/;
+  my $limit = $negative ? '2147483648' : '2147483647';
+  die "message:<<Can't convert $value to integer.>>"
+    if length($digits) > length($limit)
+      || (length($digits) == length($limit) && $digits gt $limit);
+  return 0 + $value;
+}
+sub to_string { defined $_[1] ? "$_[1]" : undef }
+
+package Test::Slim::ConverterRegistry::PrimitiveInteger;
+use strict;
+use warnings;
+our @ISA = ('Test::Slim::ConverterRegistry::Integer');
+sub from_string { $_[0]->SUPER::from_string($_[1]) // 0 }
+
+package Test::Slim::ConverterRegistry::Long;
+use strict;
+use warnings;
+sub from_string {
+  my ($self, $value) = @_;
+  return undef unless defined $value && $value !~ /\A\s*\z/;
+  die "message:<<Can't convert $value to long.>>" unless $value =~ /\A[+-]?[0-9]+\z/;
+  my $digits = $value;
+  $digits =~ s/\A[+-]//;
+  $digits =~ s/\A0+(?=.)//;
+  my $negative = $value =~ /\A-/;
+  my $limit = $negative ? '9223372036854775808' : '9223372036854775807';
+  die "message:<<Can't convert $value to long.>>"
+    if length($digits) > length($limit)
+      || (length($digits) == length($limit) && $digits gt $limit);
+  return 0 + $value;
+}
+sub to_string { defined $_[1] ? "$_[1]" : undef }
+
+package Test::Slim::ConverterRegistry::PrimitiveLong;
+use strict;
+use warnings;
+our @ISA = ('Test::Slim::ConverterRegistry::Long');
+sub from_string { $_[0]->SUPER::from_string($_[1]) // 0 }
+
+package Test::Slim::ConverterRegistry::Double;
+use strict;
+use warnings;
+sub from_string {
+  my ($self, $value) = @_;
+  return undef unless defined $value && $value !~ /\A\s*\z/;
+  die "message:<<Can't convert $value to double.>>"
+    unless $value =~ /\A[+-]?(?:(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)(?:[eE][+-]?[0-9]+)?)\z/;
+  return 0 + $value;
+}
+sub to_string {
+  my ($self, $value) = @_;
+  return undef unless defined $value;
+  my $string = "$value";
+  $string .= '.0' unless $string =~ /[.eE]/;
+  return $string;
+}
+
+package Test::Slim::ConverterRegistry::PrimitiveDouble;
+use strict;
+use warnings;
+our @ISA = ('Test::Slim::ConverterRegistry::Double');
+sub from_string { $_[0]->SUPER::from_string($_[1]) // 0 }
 
 package Test::Slim::ConverterRegistry::Void;
 use strict;
