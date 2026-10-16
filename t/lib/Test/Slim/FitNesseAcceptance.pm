@@ -4,6 +4,9 @@ use strict;
 use warnings;
 
 use Exporter qw(import);
+use File::Basename qw(basename);
+use File::Find qw(find);
+use File::Spec;
 use IO::Select;
 use IO::Socket::INET;
 use Time::HiRes qw(alarm time);
@@ -15,6 +18,7 @@ our @EXPORT_OK = qw(
   parse_page_result
   probe_slim
   preserve_exit_status
+  true_property_pages_in_wiki
 );
 
 sub preserve_exit_status {
@@ -144,6 +148,26 @@ sub missing_wiki_pages {
       unless $xml =~ m{<Test>\s*true\s*</Test>}i;
   }
   return \@missing;
+}
+
+sub true_property_pages_in_wiki {
+  my($wiki_root) = @_;
+  my @pages;
+  find({
+    no_chdir => 1,
+    wanted => sub {
+      return unless basename($_) eq 'properties.xml' && -f $_;
+      open my $fh, '<', $_ or return;
+      local $/;
+      my $xml = <$fh> // '';
+      close $fh;
+      return unless $xml =~ m{<Test>\s*true\s*</Test>}i;
+      my $relative = File::Spec->abs2rel($File::Find::dir, $wiki_root);
+      $relative =~ s{\\}{/}g;
+      push @pages, join '.', split m{/}, $relative;
+    },
+  }, $wiki_root);
+  return [ sort @pages ];
 }
 
 sub probe_slim {

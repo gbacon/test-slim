@@ -11,6 +11,7 @@ use Test::Slim::FitNesseAcceptance qw(
   parse_page_result
   probe_slim
   preserve_exit_status
+  true_property_pages_in_wiki
 );
 
 sub baseline_page {
@@ -112,6 +113,15 @@ is_deeply(missing_wiki_pages($tmp, [ baseline_page('Suite.LeafPage','conformant'
   'wiki page is recognized only when its Test property is true');
 is_deeply(missing_wiki_pages($tmp, [ baseline_page('Suite.Missing','conformant') ]), ['Suite.Missing'],
   'missing required wiki page is reported');
+File::Path::make_path("$tmp/Suite/ExtraPage", "$tmp/Suite/NotATest");
+open my $extra_properties, '>', "$tmp/Suite/ExtraPage/properties.xml" or die $!;
+print {$extra_properties} "<properties><Test>true</Test><Suites>slim</Suites></properties>\n";
+close $extra_properties;
+open my $not_test_properties, '>', "$tmp/Suite/NotATest/properties.xml" or die $!;
+print {$not_test_properties} "<properties><Test>false</Test></properties>\n";
+close $not_test_properties;
+is_deeply(true_property_pages_in_wiki($tmp), ['Suite.ExtraPage', 'Suite.LeafPage'],
+  'baseline inventory detects explicit Test=true pages');
 
 my $unbound = IO::Socket::INET->new(LocalAddr => '127.0.0.1', LocalPort => 0,
   Proto => 'tcp', Listen => 1, ReuseAddr => 1) or die "bind test socket: $!";

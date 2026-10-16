@@ -1,0 +1,217 @@
+# Native FitNesse SLiM suite audit
+
+## Summary
+
+FitNesse **v20251025** selected and executed **93 page results** for `FitNesse.SuiteAcceptanceTests.SuiteSlimTests?suite`. The existing `bin/test-fitnesse` inventory remains a separate 50-page, page-by-page external-Perl gate. The exact set comparison is 48 shared pages, 45 native-suite-only pages, and 2 individual-inventory-only pages (95 distinct pages in the union). Machine-readable per-page data, including fully qualified paths, selection evidence, both controlled-run results, direct individual-page results, current baseline observations, and backend attribution, is in [`fitnesse-native-suite-audit.json`](fitnesse-native-suite-audit.json).
+
+The controlled native suite was run twice on independently copied FitNesse wiki roots. Both runs selected the same 93 paths in the same order, with identical per-page counts. Crucially, **both native suite runs used the external Perl SLiM listener**. Their log labels included `slim:fitnesse.slim.SlimService`, `SLIM:fitnesse.slim.SlimService`, and `SLIM:remote_debug:fitnesse.slim.SlimService`, but the command logged for each was a connection to the configured Perl listener. FitNesse process tracing showed no Java SlimService child process. The separate Java-reference run described below was explicitly configured to start Java SLiM and is not part of either native suite run.
+
+## Selection and reconciliation
+
+FitNesse v20251025 `SuiteResponder` delegates selection to `SuiteContentsFinder` and `SuiteFilter`. With this `?suite` request there was no supplied suite-filter tag, so the `<Suites>` values on the root and nested pages did not limit selection. `SuiteContentsFinder` traverses test pages, observes `<Prune/>`, reads legacy wiki Test headers, and adds referenced pages. An empty `<Test/>` property is enabled in FitNesse's page model; it is distinct from a missing or false Test property.
+
+The 93 selected paths break down as follows:
+
+| Selection source | Selected pages |
+| --- | ---: |
+| Explicit `<Test>true</Test>` properties | 48 |
+| Empty/self-closing `<Test/>` properties | 32 |
+| Legacy `.wiki` Test headers | 10 |
+| Referenced/support pages without a local Test marker | 3 |
+| **Total** | **93** |
+
+The wiki contains 50 explicit Test=true markers, 37 empty Test markers, and 10 legacy wiki Test headers. Pruning removes seven property-marked pages from native traversal: the two explicit-Test pages listed below and five empty-Test pages. Thus 80 property-marked pages, 10 legacy-header pages, and 3 referenced pages execute.
+
+The 50-page individual inventory has 48 pages in common with the native run. Its two pages absent from native selection are:
+
+- `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestSystemSlimSuite.HowtoEnforceA_TimelimitPerTestCommand.NotWorking_SettingSlimTimeout`
+- `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestSystemSlimSuite.HowtoEnforceA_TimelimitPerTestCommand.PartiallyWorking_SettingSlimFlags`
+
+Both have `<Test>true</Test>`, but their parent `HowtoEnforceA_TimelimitPerTestCommand` has `<Prune/>`. They pass in the individual Perl baseline. Their omission is native suite pruning, not missing inventory data.
+
+The 45 native-only pages comprise 32 empty Test properties, 10 legacy Test headers, and 3 cross-reference/support pages. Their exact paths and markers are recorded in the JSON inventory. The `bin/test-fitnesse` drift check added in this increment keeps its documented scope explicit: it verifies that the existing 50 pages still have Test=true and that no additional explicit Test=true page has silently appeared. It does not claim to reproduce native selection of empty markers, legacy headers, pruned branches, or cross references.
+
+## Controlled executions and backend evidence
+
+Each counted run used an independent copy of `FitNesseRoot` with any generated `MySuite` directory removed before startup, FitNesse v20251025, an isolated HTTP port (18085 and 18086), and a separately started Perl server (18105 and 18106). Only historical top-level FitNesse version ZIP archives were removed from the copies; they are not page content and made writes to generated pages excessively slow. `TEST_SLIM_FITNESSE_URL` pointed nested PageDriver requests back to the same isolated FitNesse instance. Each native `?suite&format=xml` request returned HTTP 200 with all 93 results. Both FitNesse and Perl processes were started by the controller and terminated after the complete response; the FitNesse trace records the controller's post-run SIGTERM and exit 143, not an in-test crash. The native test-system execution logs all report exit 0. Full logs and traces are retained under `/tmp/slim-native-audit/clean1` and `clean2`.
+
+Both clean native runs selected the same paths in the same order with identical per-page counts. The root page-outcome bins were 70 right, 10 wrong, 1 ignored, and 12 exception-bearing results (93 page results total). Summing per-page assertions instead gives 525 right, 51 wrong, 4 ignored, and 321 exceptions. These are different measures: the root counts are outcome categories for page results, while the latter are assertion totals.
+
+Backend attribution rests on several independent observations:
+
+1. Each native suite XML execution-log entry used one of three test-system labels listed above, and all three logged `Connection to running SlimService` at the run's configured external listener address/port, exit status 0.
+2. `strace -ff -e trace=process,network` of the FitNesse JVM recorded only the FitNesse JVM `execve`, no Java `SlimService` process launch, and SLiM connections to the configured external listener port.
+3. Both external Perl server logs contain the suite's SLiM request/response traffic.
+4. As a separate corroboration, each of the 93 selected pages was also run directly once with `?test`; all 93 page execution logs explicitly confirmed the external Perl listener. These individual direct results are useful for page attribution, but are not interchangeable with native-suite results because the suite shares context and generated wiki state.
+
+The downloaded Java source used to verify selection was FitNesse tag `20251025`, specifically `SuiteResponder`, `SuiteContentsFinder`, and `SuiteFilter`. The source checkout and raw logs remain under `/tmp/slim-native-audit` and are not committed.
+
+The suite root `SetUp` imports `fitnesse.fixtures` and loads `CustomTableAliasPlugin`, `CustomScriptTableRenderingPlugin`, and a `glob` custom comparator; nested pages include additional setup/library pages. `TestSystemSlimSuite` has a `Suites=SLIM` property, and the root suite has `Suites=slim, tag2`, but those tags did not filter this request. Test-system variation labels still connected to the same Perl listener. The suite root has no native `SuiteSetUp`/`SuiteTearDown` page. Several acceptance pages create nested `MySuite` pages through PageDriver. The clean native runs generated `MySuite.SuiteSetUp`, `SuiteTearDown`, `TearDown`, `TestPageA`, and `TestPageB`; the generated `SuiteSetUp` contains the intended StopTest constructor used by stop tests. Two earlier exploratory runs did not explicitly clear MySuite before startup and are excluded from the clean-run reproducibility claim: their page order matched, but four result rows changed in clean runs (two scenario stop pages, StopSuite, and StopTest).
+
+## Native versus direct results
+
+All 48 pages shared with the baseline produced the same assertion counts as their individual Perl baseline. Comparing the clean native suite to the additional per-page direct Perl runs, three native-only pages had different exception totals:
+
+| Page | Native suite | Direct page run | Finding |
+| --- | --- | --- | --- |
+| `HybridDecisionTable` | 14 right, 46 exceptions | 14 right, 44 exceptions | Missing `Properties` fixture in both; suite context adds two exception results. |
+| `HybridDecisionTable.MethodExtractorRuleTest` | 85 exceptions | 94 exceptions | Java method-extractor/configuration fixtures are unavailable in both runs. |
+| `SystemExitIsPrevented` | 12 exceptions | 11 exceptions | JVM `System.exit` prevention is unsupported in this Java 25 / Perl environment. |
+
+All other 90 page counts match between the clean suite results and direct isolated runs. `StopSuite`, `StopTest`, and the two scenario stop pages pass in the clean native run. The four wrong results observed for those pages in the earlier exploratory runs do not recur when generated MySuite state is removed before startup. This is why those initial results were excluded from the controlled-run reproducibility result.
+
+No baseline page changed its conformance classification. In particular, all five established non-conformant pages have the same native and individual result counts:
+
+| Page | Native and individual result | Existing explanation |
+| --- | --- | --- |
+| `CustomTableRenderingAddedByPluginTest` | 5 right, 1 wrong | Nested PageDriver request does not inherit plugin/test context. |
+| `IgnoredTestsShouldColorGray` | 5 right, 2 wrong | Two obsolete HTML rendering expectations against FitNesse v20251025. Stop/ignore behavior itself is exercised. |
+| `TestCustomComparators` | 1 right, 2 wrong | Nested request does not inherit the configured custom comparator. |
+| startup page B | 2 right, 1 wrong | Shared `manually.start.test.runner` configuration bypasses intended invalid child-runner startup. |
+| startup page C | 3 right, 1 wrong | The expected-unused socket is occupied by the already running external Perl service. |
+
+The two startup pages therefore remain harness/environment-limited, not evidence of Perl protocol defects. The native-suite request's configured service was intentionally running for the suite, so those pages could not recreate their no-server/invalid-child-server preconditions.
+
+## Newly selected pages and scope
+
+All 93 native-selected pages were directly executed against Perl one at a time, with the generated `MySuite` page cleared before each request. All 93 direct page responses confirmed a connection to external Perl. Of the 45 additional pages, **28 had zero wrong assertions and zero exceptions**; two further pages (`TestIgnoreAll` and `TestIgnoreInScriptTable`) each had four right assertions and one exception that is intentionally the SLiM ignore control marker. This identifies 30 additional pages with passing visible assertions for a Perl interoperability inventory. The expression page is one more applicable page but has a confirmed gap; the remaining 14 pages need Java-only behavior, fixture/adaptor support, or a controlled harness before they can be classified as protocol tests.
+
+The important exception-heavy and wrong-heavy cases are classified as follows. Counts in the first column are from the native suite; parentheses give the isolated direct Perl result where it differs.
+
+| Page | Native suite result (direct Perl result) | Scope finding |
+| --- | --- | --- |
+| `HybridDecisionTable` | 14 right, 46 exceptions (14 right, 44 exceptions) | Hybrid decision-table semantics are protocol-relevant, but the page imports Java fixtures and this run reports `Could not find class Properties`. The exception count is a fixture-availability failure; it does not isolate a protocol defect. A Perl `Properties` fixture/adapter would be needed before this page can validate the feature. |
+| `HybridDecisionTable.MethodExtractorRuleTest` | 85 exceptions (94 exceptions) | Exercises Java `MethodExtractor`/configuration helper classes. Missing helpers prevent this from measuring general Perl SLiM interoperability. |
+| `SlimSymbols.SlimSymbolsCanBeExpressionsToEvaluate` | 9 right, 21 wrong (same direct result) | A genuine interoperability gap is demonstrated: a separate Java-reference run against the installed FitNesse Java `SlimService` passes 30/30 with zero wrong assertions or exceptions. The Perl run fails 21 expression checks, covering map/list member access, arithmetic, string methods, concatenation, and Java collection expressions. The page's expressions are evaluated by FitNesse's client-side `SlimExpressionEvaluator`; the Java run reconstructs Java map/list objects from Java Slim symbol values, whereas the Perl result path currently does not provide equivalent expression values. This audit records the gap; it does not add speculative expression emulation. |
+| `SystemUnderTestTest` | 8 exceptions | Its `MySystemUnderTestDriver` fixture is Java-specific/unavailable in `t/lib`. The page does not demonstrate that the general Perl SUT-delegation implementation is wrong. |
+| `TableTableSuite.SymbolsInTableTable` | 5 wrong, 4 exceptions | The page cannot load `TableTableIncFirstCol`; its wrong symbol results follow from the missing fixture. The related `SymbolsInTableTableManagedByTheFixture` page passes 15 assertions and validates the available Perl fixture path. |
+| `TestExceptionIsDisplayed.ParameterConversionExceptions` | 14 wrong (same direct result) | The nested page expects Java converter/static method details (`java.time.Instant`, `String.valueOf`, Java primitive conversion text). Perl lacks those Java fixture classes and Java reflection behavior. This is not a fair default protocol-only conformance assertion. |
+| `TestExceptionIsDisplayed.SlimExceptionResult` | 126 exceptions | Its target is FitNesse's Java `SlimExceptionResult` implementation. The page explicitly tests Java class behavior and cannot run as a Perl fixture test without that Java helper. Its nested errors are the behavior under examination, not 126 independent protocol defects. |
+| `DefineTableTypeTest` | 6 exceptions | Requires `TableOrDecisionFixture`, an absent fixture. Table type handling is a candidate feature after adding the intended Perl fixture; current exceptions do not establish a protocol failure. |
+| `DisgracerTest` | 22 exceptions | Calls FitNesse's Java `Disgracer` class. This is test-system name normalization, not behavior owned by the Perl SLiM server. |
+| `SystemExitIsPrevented` | 12 exceptions | The upstream page itself says prevention of `System.exit` should be removed/pruned on Java 21 or later. It tests a JVM security/runtime feature unavailable in Perl, and Java 25 is installed here. |
+| `TestSystemSlimSuite.JavaSlimServer.CallStaticJavaMethod` | 7 exceptions | Tests Java static method invocation (`java.time`/FitNesse utility methods), which is Java test-system functionality. The `Could not find class Instant::Parse` response is not a Perl SLiM protocol failure. |
+| `TestIgnoreAll`, `TestIgnoreInScriptTable` | 4 right, 1 exception each | The upstream page explicitly raises an `ignore all` or `ignore` marker. The exception is the intended SLiM control response; both pages' assertions otherwise pass. Preserve as useful v0.5-ignore interoperability coverage. |
+
+The direct results showed 40 of the 45 native-only pages with no wrong assertions, but that count includes pages with exceptions. The conservatively scoped set includes 28 pages with zero wrong assertions and zero exceptions, 2 additional pages with intentional ignore-marker exceptions, and 1 further applicable page with a confirmed Perl expression gap. Thus, 31 additional pages are directly applicable to Perl interoperability: 30 have no unexpected mismatch, and 1 currently fails. The other 14 are Java-specific, fixture/adaptor-dependent, or require a controlled harness setup. Page-level applicability still depends on whether the page targets the wire protocol, a fixture API, a Java helper, FitNesse rendering, or an environment precondition.
+
+## The Java-reference expression run
+
+To resolve whether expression failures were merely renderer markup differences, an isolated FitNesse v20251025 instance was run without `manually.start.test.runner=true`, with Java SLiM configured on a separate port. `strace` recorded FitNesse launching `java -cp /opt/fitnesse/fitnesse.jar fitnesse.slim.SlimService 18084`; the page execution log showed that process and exited 0. `SlimSymbolsCanBeExpressionsToEvaluate` produced 30 right, 0 wrong, 0 ignored, and 0 exceptions. This is positive Java-backend attribution and proves the same installed client can satisfy the page with Java SLiM. The Perl run's 9/21 result is therefore a real backend-specific compatibility difference. It remains unresolved and should be a focused follow-up, not hidden by changing the acceptance expectation.
+
+## Recommendation
+
+Keep `bin/test-fitnesse` and the committed 45/50 classification as the mandatory Perl regression gate. It has verified explicit execution of all 50 selected pages against Perl, zero regressions, and zero server crashes. Do not substitute the native suite's 70/10/1/12 page outcome bins (525/51/4/321 summed assertions) for that gate: the native suite selects another 45 pages, omits two current baseline pages through pruning, mixes Perl protocol tests with Java fixture/test-system tests, and has shared-state effects.
+
+The runner change in this increment checks that the 50-page inventory still corresponds to explicit Test=true pages and reports any newly appearing explicit Test=true page as inventory drift. The next maintainable step is a checked-in applicability manifest for native-only pages with categories such as direct Perl protocol, Perl fixture required, controlled nested-harness setup, FitNesse client/rendering, Java-only test-system behavior, intentional error/ignore, and unresolved. CI should first check inventory drift and archive optional native suite results with backend evidence; it should not fail on Java-only page exceptions or make the expanded suite mandatory until expected behavior and isolated execution are defined per category.
+
+Remaining uncertainty is limited to unreviewed native-only pages and the exact follow-up implementation for Java-compatible expression values. This audit makes no claim of complete SLiM conformance. It makes no protocol code change and does not alter upstream expectations or the 45/50 baseline.
+
+### Page-level classification notes
+
+Three additional findings illustrate why raw exception totals are not enough:
+
+- `ChainTest` is 3 right and 1 exception in a direct Perl run. The exact exception is `Method echo_boolean[1] not found in Fitnesse::Slim::Test::TestSlim`; the Perl test fixture has no `echo_boolean` method. This is a fixture coverage gap, not evidence of a frame or dispatch protocol defect.
+- `TableTableSuite.TestReturnsNull` is 1 right and 2 exceptions. Its table is `fitnesse.slim.test.DummyTableTableReturnsNull`, which cannot load as the Perl `Fitnesse::Slim::Test::DummyTableTableReturnsNull` fixture. This is also fixture coverage.
+- `TestSystemSlimSuite.ErrorSituationsDuringSlimServerStartup.A_TimeoutAsSlimHeaderNotReceived` and `ManualStartofSlimService` each return 2 right and 2 wrong. Their expected server startup/port conditions are not established when the same external Perl listener is already running on an alternate test port; they need a controlled harness configuration before interpreting those wrong checks.
+
+The machine-readable record assigns every page a scope classification. For pages without a specific diagnosis, it deliberately says “review required” rather than attributing the result to the protocol. Passing a page directly is recorded as a candidate interoperability result, not as proof of broad protocol support.
+
+## Complete native execution inventory
+The JSON artifact stores all 93 fully qualified paths in native execution order and all 95 rows of the set union. Each row includes selection source, native-suite counts, isolated individual counts where measured, external backend evidence, expected-behavior assessment, and a detailed applicability note. The table uses short scope labels; detailed explanations for the notable pages are above. Counts are right/wrong/ignored/exceptions.
+
+| Order | Full page path | Selection source | Native R/W/I/E | Direct Perl R/W/I/E | Scope |
+|---:|---|---|---:|---:|---|
+| 1 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.BaseLineDecisionTable` | Test property: true | 17/0/0/0 | 17/0/0/0 | Current 50-page baseline |
+| 2 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.BaseLineDecisionTable.ComparatorsAreSupported` | Test property: true | 10/0/0/0 | 10/0/0/0 | Current 50-page baseline |
+| 3 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.BaseLineDecisionTable.HowtoIgnoreResultValues` | Test property: empty/self-closing | 1/0/2/0 | 1/0/2/0 | Candidate direct Perl interoperability |
+| 4 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.BaseLineDecisionTable.MakingTheBaselineTableTheDefaultDecisionTable` | Test property: true | 7/0/0/0 | 7/0/0/0 | Current 50-page baseline |
+| 5 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.BaseLineDecisionTable.ScenariosAreSupported` | Test property: true | 10/0/0/0 | 10/0/0/0 | Current 50-page baseline |
+| 6 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.BaseLineDecisionTable.TestFailuresAreMarked` | Test property: true | 8/0/0/0 | 8/0/0/0 | Current 50-page baseline |
+| 7 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.ChainTest` | Test property: empty/self-closing | 3/0/0/1 | 3/0/0/1 | Perl fixture/adaptor coverage needed |
+| 8 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.ChainWithInstanceTest` | Test property: true | 7/0/0/0 | 7/0/0/0 | Current 50-page baseline |
+| 9 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.CustomTableRenderingAddedByPluginTest` | Test property: true | 5/1/0/0 | 5/1/0/0 | Current 50-page baseline |
+| 10 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.DefineAliasInPluginTest` | Test property: true | 2/0/0/0 | 2/0/0/0 | Current 50-page baseline |
+| 11 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.DefineAliasTest` | Test property: true | 22/0/0/0 | 22/0/0/0 | Current 50-page baseline |
+| 12 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.DefineTableTypeTest` | Test property: empty/self-closing | 0/0/0/6 | 0/0/0/6 | Perl fixture/adaptor coverage needed |
+| 13 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.DisgracerTest` | cross-reference/support page (no local Test marker observed) | 0/0/0/22 | 0/0/0/22 | Java fixture or test-system behavior |
+| 14 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.ErikPragtBug` | Test property: empty/self-closing | 3/0/0/0 | 3/0/0/0 | Candidate direct Perl interoperability |
+| 15 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.HashTableTests.HashTableWithHtmlContent` | Test property: true | 1/0/0/0 | 1/0/0/0 | Current 50-page baseline |
+| 16 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.HashTableTests.ShouldConvertHashWidgetToHashTable` | Test property: empty/self-closing | 2/0/0/0 | 2/0/0/0 | Candidate direct Perl interoperability |
+| 17 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.HashTableTests.ShouldReturnHashTable` | Test property: true | 1/0/0/0 | 1/0/0/0 | Current 50-page baseline |
+| 18 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.HybridDecisionTable` | Test property: empty/self-closing | 14/0/0/46 | 14/0/0/44 | Perl fixture/adaptor coverage needed |
+| 19 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.HybridDecisionTable.ImplementDynamicDecisionTableWithHybridTable` | Test property: true | 5/0/0/0 | 5/0/0/0 | Current 50-page baseline |
+| 20 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.HybridDecisionTable.MethodExtractorRuleTest` | Test property: empty/self-closing | 0/0/0/85 | 0/0/0/94 | Java fixture or test-system behavior |
+| 21 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.IgnoredTestsShouldColorGray` | Test property: true | 5/2/0/0 | 5/2/0/0 | Current 50-page baseline |
+| 22 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.LibrarySuite.HowToAddFixturesWithParametersToTheLibrary` | Test property: true | 5/0/0/0 | 5/0/0/0 | Current 50-page baseline |
+| 23 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.LibrarySuite.LastLibraryPreceedsEarlierLibraryTest` | Test property: true | 2/0/0/0 | 2/0/0/0 | Current 50-page baseline |
+| 24 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.LibrarySuite.LibraryInSetUpSuite.LibraryInSetUpAndPageTest` | Test property: true | 2/0/0/0 | 2/0/0/0 | Current 50-page baseline |
+| 25 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.LibrarySuite.LibraryInSetUpSuite.LibraryInSetUpTest` | Test property: true | 1/0/0/0 | 1/0/0/0 | Current 50-page baseline |
+| 26 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.LibrarySuite.OneLibraryTest` | Test property: true | 1/0/0/0 | 1/0/0/0 | Current 50-page baseline |
+| 27 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.MultiByteCharsInSlim` | Test property: empty/self-closing | 2/0/0/0 | 2/0/0/0 | Candidate direct Perl interoperability |
+| 28 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.ParameterizedScenarios` | Test property: empty/self-closing | 15/0/0/0 | 15/0/0/0 | Candidate direct Perl interoperability |
+| 29 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.QueryTableSuite.SetContextValue` | Test property: true | 4/0/2/0 | 4/0/2/0 | Current 50-page baseline |
+| 30 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.QueryTableSuite.TestMatching` | Test property: true | 27/0/0/0 | 27/0/0/0 | Current 50-page baseline |
+| 31 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.RegularExpressionMatching` | Test property: empty/self-closing | 4/0/0/0 | 4/0/0/0 | Candidate direct Perl interoperability |
+| 32 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.ScenarioLibraryTestSuite.BlankCellsInNestedScenariosShouldWork` | Test property: empty/self-closing | 1/0/0/0 | 1/0/0/0 | Candidate direct Perl interoperability |
+| 33 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.ScenarioLibraryTestSuite.BrotherScenarioLibraryIsIncluded` | Test property: empty/self-closing | 2/0/0/0 | 2/0/0/0 | Candidate direct Perl interoperability |
+| 34 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.ScenarioLibraryTestSuite.NoScenarioSectionIfThereAreNone` | Test property: empty/self-closing | 2/0/0/0 | 2/0/0/0 | Candidate direct Perl interoperability |
+| 35 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.ScenarioLibraryTestSuite.ScenarioLibrariesAreIncludedInTheCorrectOrder` | Test property: empty/self-closing | 5/0/0/0 | 5/0/0/0 | Candidate direct Perl interoperability |
+| 36 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.ScenarioLibraryTestSuite.ScenarioLibrariesOnlyIncludedInTestPages` | Test property: empty/self-closing | 2/0/0/0 | 2/0/0/0 | Candidate direct Perl interoperability |
+| 37 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.ScenarioLibraryTestSuite.ScenarioLibrariesOrderTests.ScenarioLibraryOrderSuite.ScenarioLibraryOrderTestParent.ScenarioLibraryOrderIsCorrect` | Test property: empty/self-closing | 3/0/0/0 | 3/0/0/0 | Candidate direct Perl interoperability |
+| 38 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.ScenarioLibraryTestSuite.ScenarioLibraryShouldIncludeIncludedPages` | Test property: empty/self-closing | 0/0/0/0 | 0/0/0/0 | Candidate direct Perl interoperability |
+| 39 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.ScenarioLibraryTestSuite.ScenariosOnlyInSlimTests` | Test property: empty/self-closing | 2/0/0/0 | 2/0/0/0 | Candidate direct Perl interoperability |
+| 40 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.ScenarioLibraryTestSuite.ShouldBeAbleToDealWithPlaceholderScenarios` | Test property: empty/self-closing | 1/0/0/0 | 1/0/0/0 | Candidate direct Perl interoperability |
+| 41 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.ScenarioTestSuite.ScenarioWithOutputParametersInDecisionTables` | Test property: true | 6/0/0/0 | 6/0/0/0 | Current 50-page baseline |
+| 42 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.ScenarioTestSuite.ScenarioWithOutputParametersInScripts` | Test property: true | 4/0/0/0 | 4/0/0/0 | Current 50-page baseline |
+| 43 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.ScenarioTestSuite.ScriptSubclassUsedForDecisionTable` | Test property: true | 2/0/0/0 | 2/0/0/0 | Current 50-page baseline |
+| 44 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.ScenarioTestSuite.StopTestExceptionInDescisionTable` | legacy wiki Test header | 10/0/0/0 | 10/0/0/0 | Candidate direct Perl interoperability |
+| 45 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.ScenarioTestSuite.UnknownOutputParameterInDescisionTable` | legacy wiki Test header | 5/0/0/0 | 5/0/0/0 | Candidate direct Perl interoperability |
+| 46 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.ScenarioTestSuite.UsingConstructorArgumentsFromDecisionTablesInScenarios` | Test property: true | 8/0/0/0 | 8/0/0/0 | Current 50-page baseline |
+| 47 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.SegregationOfRequirementsAndImplementation` | Test property: true | 12/0/0/0 | 12/0/0/0 | Current 50-page baseline |
+| 48 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.SlimSymbols.NamingConvention` | Test property: true | 5/0/0/0 | 5/0/0/0 | Current 50-page baseline |
+| 49 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.SlimSymbols.SlimSymbolCanHoldInstanceUsedAsParameter` | Test property: empty/self-closing | 8/0/0/0 | 8/0/0/0 | Candidate direct Perl interoperability |
+| 50 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.SlimSymbols.SlimSymbolManipulation` | Test property: true | 18/0/0/0 | 18/0/0/0 | Current 50-page baseline |
+| 51 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.SlimSymbols.SlimSymbolShouldShowRawContents` | Test property: empty/self-closing | 4/0/0/0 | 4/0/0/0 | Candidate direct Perl interoperability |
+| 52 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.SlimSymbols.SlimSymbolsCanBeBlankOrNull` | Test property: empty/self-closing | 3/0/0/0 | 3/0/0/0 | Candidate direct Perl interoperability |
+| 53 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.SlimSymbols.SlimSymbolsCanBeExpressionsToEvaluate` | legacy wiki Test header | 9/21/0/0 | 9/21/0/0 | Applicable: confirmed Perl interoperability gap |
+| 54 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.SlimSymbols.SlimSymbolsWithSecretPrefixAreNotExpandedInHtml` | legacy wiki Test header | 3/0/0/0 | 3/0/0/0 | Candidate direct Perl interoperability |
+| 55 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.SlimSymbols.TestCanPassSymbolsIntoConstructors` | Test property: empty/self-closing | 3/0/0/0 | 3/0/0/0 | Candidate direct Perl interoperability |
+| 56 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.SlimSymbols.TestSymbolsDontGetTurnedToStringsInTheOutput` | Test property: empty/self-closing | 2/0/0/0 | 2/0/0/0 | Candidate direct Perl interoperability |
+| 57 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.StopSuite` | Test property: true | 6/0/0/0 | 6/0/0/0 | Current 50-page baseline |
+| 58 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.StopTest` | Test property: true | 6/0/0/0 | 6/0/0/0 | Current 50-page baseline |
+| 59 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.StopTestInSuiteSetUp` | Test property: true | 7/0/0/0 | 7/0/0/0 | Current 50-page baseline |
+| 60 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.SystemExitIsPrevented` | Test property: empty/self-closing | 0/0/0/12 | 0/0/0/11 | Java fixture or test-system behavior |
+| 61 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.SystemUnderTestTest` | Test property: empty/self-closing | 0/0/0/8 | 0/0/0/8 | Java fixture or test-system behavior |
+| 62 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TableTableSuite.SymbolsInTableTable` | Test property: empty/self-closing | 0/5/0/4 | 0/5/0/4 | Perl fixture/adaptor coverage needed |
+| 63 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TableTableSuite.SymbolsInTableTableManagedByTheFixture` | Test property: true | 15/0/0/0 | 15/0/0/0 | Current 50-page baseline |
+| 64 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TableTableSuite.TestReturnsNull` | Test property: empty/self-closing | 1/0/0/2 | 1/0/0/2 | Java fixture or test-system behavior |
+| 65 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestChineseWords` | Test property: true | 1/0/0/0 | 1/0/0/0 | Current 50-page baseline |
+| 66 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestComparators` | Test property: true | 26/0/0/0 | 26/0/0/0 | Current 50-page baseline |
+| 67 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestCustomComparators` | Test property: true | 1/2/0/0 | 1/2/0/0 | Current 50-page baseline |
+| 68 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestCustomConverter` | Test property: true | 13/0/0/0 | 13/0/0/0 | Current 50-page baseline |
+| 69 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestDetailedDiff` | Test property: true | 22/0/0/0 | 22/0/0/0 | Current 50-page baseline |
+| 70 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestExceptionCount` | Test property: empty/self-closing | 6/0/0/0 | 6/0/0/0 | Candidate direct Perl interoperability |
+| 71 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestExceptionIsDisplayed` | Test property: true | 19/0/0/0 | 19/0/0/0 | Current 50-page baseline |
+| 72 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestExceptionIsDisplayed.DisableExceptionTesting` | legacy wiki Test header | 2/0/0/0 | 2/0/0/0 | Candidate direct Perl interoperability |
+| 73 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestExceptionIsDisplayed.ParameterConversionExceptions` | legacy wiki Test header | 3/14/0/0 | 3/14/0/0 | Java fixture or test-system behavior |
+| 74 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestExceptionIsDisplayed.SlimExceptionResult` | legacy wiki Test header | 0/0/0/126 | 0/0/0/126 | Java fixture or test-system behavior |
+| 75 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestHtmlContent` | Test property: empty/self-closing | 5/0/0/0 | 5/0/0/0 | Candidate direct Perl interoperability |
+| 76 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestIgnoreAll` | cross-reference/support page (no local Test marker observed) | 4/0/0/1 | 4/0/0/1 | Applicable: intentional ignore marker |
+| 77 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestIgnoreInScriptTable` | cross-reference/support page (no local Test marker observed) | 4/0/0/1 | 4/0/0/1 | Applicable: intentional ignore marker |
+| 78 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestOrderedQueryWithDuplicateRows` | Test property: true | 14/0/0/0 | 14/0/0/0 | Current 50-page baseline |
+| 79 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestPageWithInclude` | Test property: true | 1/0/0/0 | 1/0/0/0 | Current 50-page baseline |
+| 80 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestScriptTable` | Test property: true | 2/0/0/0 | 2/0/0/0 | Current 50-page baseline |
+| 81 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestScriptTableDisplayParameterValue` | Test property: true | 3/0/0/0 | 3/0/0/0 | Current 50-page baseline |
+| 82 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestSequentialArgumentProcessing` | Test property: true | 8/0/0/0 | 8/0/0/0 | Current 50-page baseline |
+| 83 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestSubsetQuery` | Test property: true | 11/0/0/0 | 11/0/0/0 | Current 50-page baseline |
+| 84 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestSystemSlimSuite.JavaSlimServer.CallStaticJavaMethod` | legacy wiki Test header | 0/0/0/7 | 0/0/0/7 | Java fixture or test-system behavior |
+| 85 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestSystemSlimSuite.ManualStartofSlimService` | legacy wiki Test header | 2/2/0/0 | 2/2/0/0 | Controlled harness configuration needed |
+| 86 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestSystemSlimSuite.TimeoutInSlimTestSystem` | Test property: true | 4/0/0/0 | 4/0/0/0 | Current 50-page baseline |
+| 87 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestTryingParameterizationIsntTooGreedy` | Test property: true | 1/0/0/0 | 1/0/0/0 | Current 50-page baseline |
+| 88 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestTwoIdenticalTablesOnPageDontConflict` | Test property: true | 1/0/0/0 | 1/0/0/0 | Current 50-page baseline |
+| 89 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.VariablesUsedInSubSubpage` | Test property: empty/self-closing | 22/0/0/0 | 22/0/0/0 | Candidate direct Perl interoperability |
+| 90 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestSystemSlimSuite.ErrorSituationsDuringSlimServerStartup.A_TimeoutAsSlimHeaderNotReceived` | Test property: empty/self-closing | 2/2/0/0 | 2/2/0/0 | Controlled harness configuration needed |
+| 91 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestSystemSlimSuite.ErrorSituationsDuringSlimServerStartup.B_TimeoutAsSlimServerDiesBeforeConnecting` | Test property: true | 2/1/0/0 | 2/1/0/0 | Current 50-page baseline |
+| 92 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestSystemSlimSuite.ErrorSituationsDuringSlimServerStartup.C_TimeoutAsNoServerAtGivenSocket` | Test property: true | 3/1/0/0 | 3/1/0/0 | Current 50-page baseline |
+| 93 | `FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestSystemSlimSuite.TextBeforeSlimHeaderIsIgnored` | legacy wiki Test header | 2/0/0/0 | 2/0/0/0 | Candidate direct Perl interoperability |
