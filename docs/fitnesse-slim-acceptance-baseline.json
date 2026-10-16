@@ -1,4 +1,55 @@
 {
+   "acceptanceRunner" : {
+      "command" : "bin/test-fitnesse",
+      "ciCommandSequence" : [
+         "bin/test-dev",
+         "bin/test-fitnesse"
+      ],
+      "baselineConformantPages" : 45,
+      "pages" : 50,
+      "latestRun" : {
+         "existingDeveloperServices" : {
+            "status" : "PASS",
+            "pagesExecuted" : 50,
+            "externalPerlConfirmed" : 50,
+            "conformant" : 45,
+            "rawCounts" : {
+               "right" : 373,
+               "wrong" : 7,
+               "ignored" : 2,
+               "exceptions" : 0
+            },
+            "regressions" : 0,
+            "serverCrashes" : 0
+         },
+         "freshServicesAndWiki" : {
+            "status" : "PASS",
+            "fitNessePort" : 18080,
+            "perlSlimPort" : 18099,
+            "pagesExecuted" : 50,
+            "externalPerlConfirmed" : 50,
+            "conformant" : 45,
+            "regressions" : 0,
+            "serverCrashes" : 0,
+            "ownedProcessesStopped" : true
+         }
+      },
+      "regressionTests" : {
+         "file" : "t/fitnesse-acceptance-runner.t",
+         "assertions" : 29,
+         "status" : "PASS"
+      },
+      "perlTests" : {
+         "command" : "bin/test-dev",
+         "files" : 42,
+         "tests" : 455,
+         "knownTodoFailures" : 4,
+         "status" : "PASS"
+      },
+      "reportFile" : ".runtime/fitnesse-acceptance-results.json",
+      "requiresExternalPerlEvidence" : true,
+      "generatedMySuiteCleanupBeforeEveryPage" : true
+   },
    "acceptancePhaseCommits" : [
       {
          "hash" : "98cbce6c366b3ba400e93bcffdb92f25f4c753f4",

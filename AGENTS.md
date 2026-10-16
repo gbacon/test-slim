@@ -151,6 +151,14 @@ Do not modify upstream acceptance pages to manufacture passing results.
 
 Record the acceptance-test baseline before implementing additional features.
 
+For a reproducible, baseline-checked run of all 50 upstream SLiM acceptance pages, use:
+
+```sh
+bin/test-fitnesse
+```
+
+The runner starts FitNesse and the Perl SLiM listener only when their configured ports are free, verifies FitNesse HTTP readiness and the SLiM protocol greeting, and checks each page's XML execution log for the external Perl connection. It clears generated `MySuite` pages before each page request, compares conformance against `docs/fitnesse-slim-acceptance-baseline.json`, permits the five documented non-conformant pages, and fails on a missing/unexecuted page, a regression, or an unverified Perl connection. It writes detailed per-page output to ignored `.runtime/fitnesse-acceptance-results.json`. Runner settings can be overridden with `TEST_SLIM_FITNESSE_URL`, `TEST_SLIM_HOST`, `TEST_SLIM_PORT`, `TEST_SLIM_PAGE_TIMEOUT`, `TEST_SLIM_TOTAL_TIMEOUT`, `FITNESSE_JAR`, `FITNESSE_HOME`, and `FITNESSE_WIKI_ROOT`. Processes started by the runner are stopped when it exits; pre-existing services are left running.
+
 Do not merely transliterate Java code to Perl. Use a native Perl style, not verbose, architecture astronautics, FooFactoryFactoryFactory nonsense that is typical to Java cargo culting. Do not write Python or FORTRAN in Perl either. Look for opportunities to exploit Perl's strengths in the design. Write like a Perl expert who is not trying to show off.
 
 Always look for opportunities to refactor in ways that incrementally improve the design:

@@ -2,11 +2,14 @@ name: test
 
 on:
   push:
+    branches:
+      - '**'
   pull_request:
 
 jobs:
-  perl-test:
+  test:
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
     steps:
@@ -21,7 +24,7 @@ jobs:
             -t test-slim-ci \
             .
 
-      - name: Run developer tests in container
+      - name: Run Perl and FitNesse acceptance tests in container
         run: |
           docker run --rm \
             -e LANG=C.UTF-8 \
@@ -29,4 +32,4 @@ jobs:
             -v "$PWD":/workspaces/test-slim \
             -w /workspaces/test-slim \
             test-slim-ci \
-            bin/test-dev
+            bash -lc 'bin/test-dev && bin/test-fitnesse'
