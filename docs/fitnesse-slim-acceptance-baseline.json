@@ -3366,7 +3366,7 @@
          "wrong" : 0
       },
       {
-         "attempt" : 7,
+         "attempt" : 8,
          "conformance" : {
             "dependencies" : [
                "PageDriver nested-page execution",
@@ -3380,9 +3380,9 @@
                "right" : 5,
                "wrong" : 1
             },
-            "reason" : "The nested page runs, but FitNesse output reports Could not find class MyUseCase/MyFixture. The custom alias/rendering setup from the outer suite is not available to this root-level HTTP test page.",
+            "reason" : "Two direct runs each produced 5 right, 1 wrong, 0 ignored, 0 exceptions. The sole wrong outer assertion expects table class=\"myUseCase\" in the nested response, but that markup is absent. SetUp registers the alias and rendering plugin in its configured context; Perl PageDriver requests the generated page from the main server, where those registrations are unavailable. FitNesse reports Could not find class MyUseCase and MyFixture. This is a configured-context harness limitation, not a Perl SLiM protocol or fixture defect.",
             "status" : "harness_limited",
-            "verification" : "Full 50-page XML inventory rerun after Map result conversion; response came through the external Perl SLiM service."
+            "verification" : "Two direct HTTP XML page runs reproduced the same failed assertion and counts; full bin/test-fitnesse inventory confirmed the 45/50 baseline and external Perl connection."
          },
          "connection" : "Connection to running SlimService: 127.0.0.1:8099",
          "evidence" : "Full 50-page page-level run with generated MySuite data cleared before each request; FitNesse execution log confirmed the external Perl SlimService.",
@@ -3396,7 +3396,9 @@
                "The instance scriptTableActor does not exist",
                "Could not find class MyFixture"
             ],
-            "wrongAssertionMessages" : []
+            "wrongAssertionMessages" : [
+               "Expected nested response to contain table class=\"myUseCase\"; actual response did not contain it."
+            ]
          },
          "http" : 200,
          "ignored" : 0,
@@ -3409,7 +3411,7 @@
          },
          "responseBytes" : 73774,
          "right" : 5,
-         "rootCause" : "The nested page runs, but FitNesse output reports Could not find class MyUseCase/MyFixture. The custom alias/rendering setup from the outer suite is not available to this root-level HTTP test page.",
+         "rootCause" : "Two direct runs each produced 5 right, 1 wrong, 0 ignored, 0 exceptions. The sole wrong outer assertion expects table class=\"myUseCase\" in the nested response, but that markup is absent. SetUp registers the alias and rendering plugin in its configured context; Perl PageDriver requests the generated page from the main server, where those registrations are unavailable. FitNesse reports Could not find class MyUseCase and MyFixture. This is a configured-context harness limitation, not a Perl SLiM protocol or fixture defect.",
          "status" : "completed",
          "testSystem" : "slim:fitnesse.slim.SlimService",
          "testSystemConfirmed" : "fitnesse.slim.SlimService",
