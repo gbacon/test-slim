@@ -12,7 +12,6 @@ my $builder = Module::Build->new(
         'HTML::TreeBuilder' => 0,
         'Module::Build'     => '>= 0.20',
         'Test::More'        => 0,
-        'Text::CharWidth'   => 0,
     },
     add_to_cleanup      => [ 'test-slim-*' ],
     create_makefile_pl  => 'traditional',
