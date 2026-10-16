@@ -6,6 +6,12 @@ use overload ();
 use Scalar::Util qw(blessed);
 use Test::Slim::MapResult;
 
+sub _java_is_blank {
+  my ($value) = @_;
+  return 1 unless defined $value;
+  return $value =~ /\A[\x{0009}-\x{000D}\x{001C}-\x{0020}\x{1680}\x{2000}-\x{2006}\x{2008}-\x{200A}\x{2028}\x{2029}\x{205F}\x{3000}]*\z/;
+}
+
 sub new {
   my ($class) = @_;
   my $self = bless {}, $class;
@@ -25,6 +31,9 @@ sub reset {
     long => bless({}, 'Test::Slim::ConverterRegistry::PrimitiveLong'),
     'java.lang.Double' => bless({}, 'Test::Slim::ConverterRegistry::Double'),
     double => bless({}, 'Test::Slim::ConverterRegistry::PrimitiveDouble'),
+    'java.lang.Character' => bless({}, 'Test::Slim::ConverterRegistry::Character'),
+    char => bless({}, 'Test::Slim::ConverterRegistry::PrimitiveCharacter'),
+    'java.util.Date' => bless({}, 'Test::Slim::ConverterRegistry::Date'),
     'void' => bless({}, 'Test::Slim::ConverterRegistry::Void'),
     'java.util.List' => Test::Slim::ConverterRegistry::List->new($self),
     'java.util.Collection' => Test::Slim::ConverterRegistry::List->new($self),
@@ -224,6 +233,95 @@ use strict;
 use warnings;
 our @ISA = ('Test::Slim::ConverterRegistry::Double');
 sub from_string { $_[0]->SUPER::from_string($_[1]) // 0 }
+
+package Test::Slim::ConverterRegistry::Character;
+use strict;
+use warnings;
+use Encode qw(decode FB_CROAK);
+sub from_string {
+  my ($self, $value) = @_;
+  return undef if Test::Slim::ConverterRegistry::_java_is_blank($value);
+  my $text = utf8::is_utf8($value) ? $value : decode('UTF-8', $value, FB_CROAK);
+  my $codepoint = ord substr($text, 0, 1);
+  return $codepoint if $codepoint <= 0xFFFF;
+  return 0xD800 + (($codepoint - 0x10000) >> 10);
+}
+sub to_string {
+  my ($self, $value) = @_;
+  return undef unless defined $value;
+  die 'message:<<Character result must be a UTF-16 code unit.>>'
+    unless !ref($value) && $value =~ /\A[0-9]+\z/ && $value <= 0xFFFF;
+  return '?' if $value >= 0xD800 && $value <= 0xDFFF;
+  return chr($value);
+}
+
+package Test::Slim::ConverterRegistry::PrimitiveCharacter;
+use strict;
+use warnings;
+our @ISA = ('Test::Slim::ConverterRegistry::Character');
+sub from_string { $_[0]->SUPER::from_string($_[1]) // 0 }
+
+package Test::Slim::ConverterRegistry::Date;
+use strict;
+use warnings;
+use Time::Local qw(timelocal);
+
+my @MONTHS = qw(Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec);
+my %MONTH_INDEX = map { lc($MONTHS[$_]) => $_ } 0 .. $#MONTHS;
+my %FULL_MONTH_INDEX = map {
+  lc((qw(January February March April May June July August September October November December))[$_]) => $_
+} 0 .. 11;
+
+sub _days_in_month {
+  my ($month, $year) = @_;
+  return 31 if $month == 0 || $month == 2 || $month == 4 || $month == 6
+    || $month == 7 || $month == 9 || $month == 11;
+  return 30 if $month == 3 || $month == 5 || $month == 8 || $month == 10;
+  return ($year % 4 == 0 && ($year % 100 != 0 || $year % 400 == 0)) ? 29 : 28;
+}
+
+sub from_string {
+  my ($self, $value) = @_;
+  return undef if Test::Slim::ConverterRegistry::_java_is_blank($value);
+  $value =~ s/\A[\x{0009}-\x{000D}\x{001C}-\x{0020}\x{1680}\x{2000}-\x{2006}\x{2008}-\x{200A}\x{2028}\x{2029}\x{205F}\x{3000}]+//;
+  my ($day, $month_name, $year) = $value =~ /\A([0-9]+)-([A-Za-z]+)-([0-9]+)/;
+  my $month = defined($month_name)
+    ? ($MONTH_INDEX{lc $month_name} // $FULL_MONTH_INDEX{lc $month_name})
+    : undef;
+  die "message:<<Can't convert $value to date.>>"
+    unless defined($day) && defined($month) && defined($year)
+      && $year >= 1583 && $year <= 9999 && $day <= 1_000_000;
+
+  # SimpleDateFormat is lenient: roll day zero and overflow into adjacent months.
+  while ($day < 1) {
+    $month--;
+    if ($month < 0) { $month = 11; $year-- }
+    $day += _days_in_month($month, $year);
+  }
+  while ($day > _days_in_month($month, $year)) {
+    $day -= _days_in_month($month, $year);
+    $month++;
+    if ($month > 11) { $month = 0; $year++ }
+  }
+  die "message:<<Can't convert $value to date.>>" if $year < 1583 || $year > 9999;
+
+  my $seconds = eval { timelocal(0, 0, 0, $day, $month, $year) };
+  die "message:<<Can't convert $value to date.>>" if $@;
+  return $seconds * 1000;
+}
+
+sub to_string {
+  my ($self, $milliseconds) = @_;
+  return undef unless defined $milliseconds;
+  die 'message:<<Date result must be epoch milliseconds.>>'
+    if ref($milliseconds) || $milliseconds !~ /\A-?[0-9]+\z/;
+  my $seconds = int($milliseconds / 1000);
+  $seconds-- if $milliseconds < 0 && $milliseconds % 1000;
+  my ($day, $month, $year) = (localtime($seconds))[3, 4, 5];
+  die 'message:<<Date result is outside the supported localtime range.>>'
+    unless defined($year) && $year + 1900 >= 1583 && $year + 1900 <= 9999;
+  return sprintf('%02d-%s-%04d', $day, $MONTHS[$month], $year + 1900);
+}
 
 package Test::Slim::ConverterRegistry::Void;
 use strict;
