@@ -64,9 +64,9 @@ No baseline page changed its conformance classification. In particular, all five
 
 | Page | Native and individual result | Existing explanation |
 | --- | --- | --- |
-| `CustomTableRenderingAddedByPluginTest` | 5 right, 1 wrong | Nested PageDriver request does not inherit plugin/test context. |
-| `IgnoredTestsShouldColorGray` | 5 right, 2 wrong | Two obsolete HTML rendering expectations against FitNesse v20251025. Stop/ignore behavior itself is exercised. |
-| `TestCustomComparators` | 1 right, 2 wrong | Nested request does not inherit the configured custom comparator. |
+| `CustomTableRenderingAddedByPluginTest` | 5 right, 1 wrong | Java reference passes 6/0. Perl PageDriver's nested HTTP request does not inherit the plugin/test context. |
+| `IgnoredTestsShouldColorGray` | 5 right, 2 wrong | Java reference passes 7/0. Perl's nested HTTP request lacks the active FitNesse scenario context; the expected ignore markup is valid in v20251025. Stop/ignore protocol behavior itself is exercised. |
+| `TestCustomComparators` | 1 right, 2 wrong | Java reference passes 3/0. Nested request does not inherit the configured custom comparator. |
 | startup page B | 2 right, 1 wrong | Shared `manually.start.test.runner` configuration bypasses intended invalid child-runner startup. |
 | startup page C | 3 right, 1 wrong | The expected-unused socket is occupied by the already running external Perl service. |
 

@@ -1101,7 +1101,7 @@
       },
       "page": "FitNesse.SuiteAcceptanceTests.SuiteSlimTests.IgnoredTestsShouldColorGray",
       "recommendedClassification": "existing 50-page Perl baseline: harness_limited",
-      "rootCause": "Two direct runs each produced 5 right, 2 wrong, 0 ignored, 0 exceptions. StopTest, skipped execution, and ignored-status checks pass. The two wrong outer regex checks expect class=\"ignore\">Not Executed and should be ignored< and class=\"ignore\">Not Executed and should be ignored as well<. FitNesse v20251025 renders rows with class=\"slimRowColor3\" or class=\"slimRowColor5\", and places class=\"ignore\" on the trailing <span>Test not run</span>. This is an obsolete HTML expectation, not a Perl SLiM or ResponseExaminer defect. Update the upstream checks to assert the ignore-result markup and status.",
+      "rootCause": "Perl reports 5 right, 2 wrong, 0 ignored, 0 exceptions; a matched Java v20251025 run reports 7 right, 0 wrong. The two wrong outer checks expect class=\"ignore\">Not Executed and should be ignored< and class=\"ignore\">Not Executed and should be ignored as well<. Java's nested response contains the expected scenario cells; Perl's HTTP-based nested request lacks the active FitNesse scenario context and shows ordinary unexecuted script rows with the not-run span. This is a PageDriver context-fidelity limitation, not an obsolete renderer expectation or Perl ignore-marker defect.",
       "scopeCategory": "Current 50-page baseline",
       "scopeClassification": "Existing 50-page Perl baseline; see baseline conformance/root-cause fields."
     },
@@ -2808,7 +2808,7 @@
       },
       "page": "FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestCustomComparators",
       "recommendedClassification": "existing 50-page Perl baseline: harness_limited",
-      "rootCause": "The HTTP-based Perl PageDriver runs the generated nested TestPage on the main FitNesse server instead of the FitnesseFixtureContext configured by the upstream SetUp constructor. Its CustomComparatorRegistry therefore has no glob comparator, so both checks compare actual 'test' with literal expected 'glob:t*t'. The fixture and SLiM response are correct.",
+      "rootCause": "Perl reports 1 right and 2 wrong; Java on the pinned JAR reports 3 right and 0 wrong. Both Perl failures are outer checks for the nested response text and its 2/0 count: the nested page renders actual test with expected [glob:t*t]. The Java execution log confirms the glob comparator was loaded. The HTTP-based Perl PageDriver request does not run in the active FitNesse context established by SetUp; fixture and SLiM values are correct.",
       "scopeCategory": "Current 50-page baseline",
       "scopeClassification": "Existing 50-page Perl baseline; see baseline conformance/root-cause fields."
     },
