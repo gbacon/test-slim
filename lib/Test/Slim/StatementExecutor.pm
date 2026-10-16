@@ -5,6 +5,7 @@ use strict;
 use warnings;
 
 use HTML::TreeBuilder;
+use Scalar::Util qw(reftype);
 use Test::Slim::Statement;
 use Test::Slim::SlimHelperLibrary;
 use Test::Slim::MapResult;
@@ -235,12 +236,13 @@ sub call {
 sub call_and_assign {
   my($self,$symbol,@args) = @_;
   my $result = $self->_call(@args);
-  $self->set_symbol($symbol, $result);
+  $self->set_symbol($symbol, $result) unless $self->{call_failed};
   return defined($result) ? $result : "null";
 }
 
 sub _call {
   my($self,$instance,$method,@args) = @_;
+  $self->{call_failed} = 0;
 
   my $requested_method = $method;
   $method = $self->slim_to_perl_method($method);
@@ -261,6 +263,11 @@ sub _call {
       }
     }
   }
+  my $method_obj = $obj;
+  unless ($has_instance && $obj->can($method)) {
+    my $sut = $has_instance ? $self->_system_under_test($obj) : undef;
+    $method_obj = $sut if $sut && $sut->can($method);
+  }
   unless ($has_instance) {
     for my $lib_id (reverse @{ $self->{library} }) {
       my $lib = $lib_id->{object};
@@ -268,6 +275,7 @@ sub _call {
       next unless $lib && ref $lib;
       if ($lib->can($method)) {
         $obj = $lib;
+        $method_obj = $lib;
         last;
       }
     }
@@ -276,13 +284,13 @@ sub _call {
       unless $obj;
   }
 
-  unless ($obj->can($method)) {
+  unless ($method_obj && $method_obj->can($method)) {
     for my $lib_id (reverse @{ $self->{library} }) {
       my $lib = $lib_id->{object};
       warn "trying [$method] in library [$lib_id->{id}]";
       next unless $lib && ref $lib;
       if ($lib->can($method)) {
-        $obj = $lib;
+        $method_obj = $lib;
         last;
       }
     }
@@ -292,7 +300,7 @@ sub _call {
   my $class = ref $obj;
   return $Test::Slim::Statement::EXCEPTION_TAG
            . "message:<<NO_METHOD_IN_CLASS $method\[$n] $class>>"
-    unless $obj->can($method);
+    unless $method_obj && $method_obj->can($method);
 
   my $result;
   eval {
@@ -302,13 +310,13 @@ sub _call {
       @call_args = $self->replace_symbols(@call_args);
     }
     @call_args = $self->replace_tables_with_hashes(@call_args);
-    my $signature = $obj->can('slim_method_signature')
-      ? $obj->slim_method_signature($method)
+    my $signature = $method_obj->can('slim_method_signature')
+      ? $method_obj->slim_method_signature($method)
       : undef;
     @call_args = $self->{converters}->convert_arguments(
       $signature, $requested_method, @call_args
     ) if $signature;
-    $result = $obj->$method(@call_args);
+    $result = $method_obj->$method(@call_args);
     ($result) = $self->{converters}->convert_result($signature, $result)
       if $signature;
     $result = Test::Slim::MapResult->convert($result)
@@ -319,6 +327,7 @@ sub _call {
     return $result;
   }
 
+  $self->{call_failed} = 1;
   $self->exception_result($@)
 }
 
@@ -331,6 +340,15 @@ sub exception_result {
 
   return $Test::Slim::Statement::EXCEPTION_TAG . $error
     if $error =~ /^message:<<.*>>$/s;
+
+  if ($error =~ /^[\w.\$]*IgnoreScriptTest[\w.\$]*:/) {
+    $self->{stop_requested} = 'ignore_script';
+    return $Test::Slim::Statement::EXCEPTION_TAG . 'IGNORE_SCRIPT_TEST:';
+  }
+  if ($error =~ /^[\w.\$]*IgnoreAllTests[\w.\$]*:/) {
+    $self->{stop_requested} = 'ignore_all';
+    return $Test::Slim::Statement::EXCEPTION_TAG . 'IGNORE_ALL_TESTS:';
+  }
 
   if ($error =~ /([\w.\$]*StopTest\w*Exception):\s*(.*)/s) {
     $self->{stop_requested} = 'test';
@@ -355,5 +373,14 @@ sub exception_result {
 
 sub stop_requested { $_[0]->{stop_requested} }
 sub reset_stop_requested { $_[0]->{stop_requested} = undef }
+
+sub _system_under_test {
+  my($self,$fixture) = @_;
+  return unless ref($fixture) && (reftype($fixture) || '') eq 'HASH';
+  my $sut = exists $fixture->{system_under_test}
+    ? $fixture->{system_under_test}
+    : $fixture->{systemUnderTest};
+  return ref($sut) ? $sut : undef;
+}
 
 1;

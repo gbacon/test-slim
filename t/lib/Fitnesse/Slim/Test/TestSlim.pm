@@ -91,6 +91,7 @@ sub throw_normal { die "java.lang.Exception: This is my exception\n" }
 sub throw_stopping { die "fitnesse.slim.test.StopTestException: This is a stop test exception\n" }
 sub throw_ignore_all_stopping { die "fitnesse.slim.SlimIgnoreAllTestsException: This is an ignore all script test exception\n" }
 sub throw_ignore_script_stopping { die "fitnesse.slim.SlimIgnoreScriptTestException: This is an ignore script test exception\n" }
+sub throw_normal_mentioning_ignore { die "java.lang.Exception: IgnoreAllTests is only mentioned here\n" }
 sub throw_exception_with_message { die "java.lang.Exception: message:<<Test message>>\n" }
 sub throw_stop_test_exception_with_message { die "fitnesse.slim.test.StopTestException: message:<<Stop Test>>\n" }
 
