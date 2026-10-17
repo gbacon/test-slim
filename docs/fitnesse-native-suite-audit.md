@@ -20,7 +20,7 @@ The 93 selected paths break down as follows:
 | Referenced/support pages without a local Test marker | 3 |
 | **Total** | **93** |
 
-The wiki contains 50 explicit Test=true markers, 37 empty Test markers, and 10 legacy wiki Test headers. Pruning removes seven property-marked pages from native traversal: the two explicit-Test pages listed below and five empty-Test pages. Thus 80 property-marked pages, 10 legacy-header pages, and 3 referenced pages execute.
+The wiki contains 50 explicit Test=true markers, 37 empty Test markers, and 10 legacy wiki Test headers. Pruning removes seven property-marked pages from native traversal: the two explicit-Test pages listed below and five empty-Test pages. Their exact full paths are also stored as `reconciliation.prunedTestPages` in the JSON audit, and the reproducible coverage generator checks that list against the pinned JAR. Thus 80 property-marked pages, 10 legacy-header pages, and 3 referenced pages execute.
 
 The 50-page individual inventory has 48 pages in common with the native run. Its two pages absent from native selection are:
 
@@ -29,7 +29,7 @@ The 50-page individual inventory has 48 pages in common with the native run. Its
 
 Both have `<Test>true</Test>`, but their parent `HowtoEnforceA_TimelimitPerTestCommand` has `<Prune/>`. They pass in the individual Perl baseline. Their omission is native suite pruning, not missing inventory data.
 
-The 45 native-only pages comprise 32 empty Test properties, 10 legacy Test headers, and 3 cross-reference/support pages. Their exact paths and markers are recorded in the JSON inventory. The `bin/test-fitnesse` drift check added in this increment keeps its documented scope explicit: it verifies that the existing 50 pages still have Test=true and that no additional explicit Test=true page has silently appeared. It does not claim to reproduce native selection of empty markers, legacy headers, pruned branches, or cross references.
+The 45 native-only pages comprise 32 empty Test properties, 10 legacy Test headers, and 3 cross-reference/support pages. Their exact paths and markers are recorded in the JSON inventory. The generated [`fitnesse-acceptance-coverage.json`](fitnesse-acceptance-coverage.json) enumerates every page with a wiki content record in the subtree (including legacy `.wiki` files), its inventory membership, property marker, and reason when FitNesse did not produce a native result row. The `bin/test-fitnesse` drift check keeps its documented 50-page scope explicit; the separate `bin/report-fitnesse-coverage` command checks both committed page sets, the pinned wiki pages, and all seven audited prune exclusions.
 
 ## Controlled executions and backend evidence
 

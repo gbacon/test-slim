@@ -163,6 +163,8 @@ my $root_text = do { local $/; <$root_content> };
 close $root_content;
 like($root_text,qr/!define SLIM_PORT \{1\}/,'pipe configuration selects FitNesse port 1');
 like($root_text,qr/\Q$runner\E/,'pipe configuration names the repository Perl executable');
+unlike($root_text,qr/!define\s+TEST_SYSTEM\b/,
+  'pipe transport setup does not make every generated wiki page a Slim test');
 is(pipe_query($runner), '&COMMAND_PATTERN=%25m&TEST_RUNNER=' . do { my $encoded = $runner; $encoded =~ s/([^A-Za-z0-9_.~-])/sprintf('%%%02X',ord($1))/ge; $encoded } . '&SLIM_PORT=1',
   'pipe URL query encodes the command pattern and runner path');
 

@@ -60,7 +60,7 @@ sub configure_pipe_wiki {
   my($wiki_root,$runner) = @_;
   $runner = abs_path($runner) or die "resolve Perl runner path: $!";
   open my $fh, '>>', "$wiki_root/content.txt" or die "open FitNesse root content: $!";
-  print {$fh} "\n!define TEST_SYSTEM {slim}\n!define TEST_RUNNER {$runner}\n",
+  print {$fh} "\n!define TEST_RUNNER {$runner}\n",
     "!define COMMAND_PATTERN {%m}\n!define SLIM_PORT {1}\n";
   close $fh or die "close FitNesse root content: $!";
   return $runner;

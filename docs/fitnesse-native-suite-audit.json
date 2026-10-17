@@ -3882,6 +3882,15 @@
       "legacy wiki": 10
     },
     "nativeSelectedAndExecutedCount": 93,
+    "prunedTestPages": [
+      "FitNesse.SuiteAcceptanceTests.SuiteSlimTests.BaseLineDecisionTable.TestFailuresAreMarked.TestPage",
+      "FitNesse.SuiteAcceptanceTests.SuiteSlimTests.IgnoredTestsShouldColorGray.TestPage",
+      "FitNesse.SuiteAcceptanceTests.SuiteSlimTests.ScenarioLibraryTestSuite.ScenarioLibraryShouldIncludeVariables",
+      "FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TableTableSuite.SymbolAssignmentAndReferenceOfTheSameInOneTable",
+      "FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestDetailedDiff.TestPage",
+      "FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestSystemSlimSuite.HowtoEnforceA_TimelimitPerTestCommand.NotWorking_SettingSlimTimeout",
+      "FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestSystemSlimSuite.HowtoEnforceA_TimelimitPerTestCommand.PartiallyWorking_SettingSlimFlags"
+    ],
     "unionCount": 95
   },
   "runnerGateAfterAudit": {

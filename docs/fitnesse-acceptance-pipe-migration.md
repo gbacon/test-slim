@@ -35,16 +35,17 @@ Both modes select and execute all 50 pages and verify the Perl backend for all 5
 
 ## Native suite baseline differences
 
-Both modes select and execute exactly the same 93 pages. Pipe execution logs positively attribute three FitNesse-managed Perl child sessions. TCP logs and the listener trace verified 724 requests and 724 responses. The native per-page assertion tuples differ only on these four pages:
+Both modes select and execute exactly the same 93 pages. Pipe execution logs positively attribute three FitNesse-managed Perl child sessions. TCP logs and the listener trace verified 724 requests and 724 responses. Initially, `ScenarioLibraryTestSuite.ScenariosOnlyInSlimTests` differed because `configure_pipe_wiki` added `!define TEST_SYSTEM {slim}` to the temporary wiki root. That made generated `MySuite.TestPage` a Slim test even though the upstream page checks behavior outside its local test-system context. The acceptance suite already defines Slim where it needs it. Pipe configuration now adds only the runner, command pattern, and port defaults, leaving `TEST_SYSTEM` local to each page. This restored the scenario assertion without changing the fixture or upstream page. The pipe baseline was reviewed from 1/1 to 2/0 for this page; no other page changed. The remaining native per-page transport-specific tuples are:
 
 | Page | TCP (R/W/I/E) | Pipe (R/W/I/E) | Cause |
 |---|---:|---:|---|
-| `ScenarioLibraryTestSuite.ScenariosOnlyInSlimTests` | 2/0/0/0 | 1/1/0/0 | Nested HTTP PageDriver context: generated `TestPage` HTML contains sibling `ScenarioLibrary` content inspected by the nested assertion. The fixture call completes normally. |
 | `TestSystemSlimSuite.ErrorSituationsDuringSlimServerStartup.A_TimeoutAsSlimHeaderNotReceived` | 2/2/0/0 | 4/0/0/0 | Pipe child startup sends the SLiM header; TCP's intentionally broken external startup condition differs. |
 | `TestSystemSlimSuite.ErrorSituationsDuringSlimServerStartup.C_TimeoutAsNoServerAtGivenSocket` | 3/1/0/0 | 4/0/0/0 | Pipe mode leaves the target socket unoccupied; TCP's external-service configuration does not. |
 | `TestSystemSlimSuite.ManualStartofSlimService` | 2/2/0/0 | 4/0/0/0 | Pipe launches the configured child, while this page tests a manually started external service. |
 
-`TestExceptionIsDisplayed.ParameterConversionExceptions` is now identical on both transports at 3/14/0/0; its earlier discrepancy resulted from rejecting `-v`. All other native page results match. The shared 93-page inventory is unchanged. Pipe per-page totals are 542/42/5/315; the FitNesse suite's own final-count summary is 74/7/1/11. TCP remains 538/46/5/315, with suite final counts 72/9/1/11. Exact pipe overrides and explanations are in `transportExpectations.pipe` in `docs/fitnesse-slim-native-suite-baseline.json`; the original TCP page expectations remain unchanged.
+`TestExceptionIsDisplayed.ParameterConversionExceptions` is identical on both transports at 3/14/0/0; its earlier discrepancy resulted from rejecting `-v`. All other native page results match their reviewed expectations. The shared 93-page inventory is unchanged. Pipe per-page totals are now 543/41/5/315; the FitNesse suite's own final-count summary is 75/6/1/11. TCP remains 538/46/5/315, with suite final counts 72/9/1/11. Exact pipe expectations and explanations are in `transportExpectations.pipe` in `docs/fitnesse-slim-native-suite-baseline.json`; TCP expectations remain unchanged.
+
+The generated `docs/fitnesse-acceptance-coverage.md` and JSON manifest reconcile the 50 isolated entries with the 93 native-suite entries. The four-way report in `.runtime/fitnesse-acceptance-matrix.md` compares all per-page results without overwriting the transport-specific result artifacts.
 
 These are two explicit exact baselines, not a relaxed comparison. Every page remains selected and must produce a result, every tuple is compared, and missing/extra pages, child launch errors, test-system exceptions, timeouts, failed attribution, or unreviewed count changes fail the runner. `SLIM:remote_debug` labels are accepted only when the actual command names `bin/perl-slim` with port `1` and child exit status zero.
 

@@ -1416,18 +1416,9 @@
    ],
    "transportExpectations" : {
       "pipe" : {
-         "assertionTotals" : { "right" : 542, "wrong" : 42, "ignored" : 5, "exceptions" : 315 },
-         "suiteFinalCounts" : { "right" : 74, "wrong" : 7, "ignores" : 1, "exceptions" : 11 },
+         "assertionTotals" : { "right" : 543, "wrong" : 41, "ignored" : 5, "exceptions" : 315 },
+         "suiteFinalCounts" : { "right" : 75, "wrong" : 6, "ignores" : 1, "exceptions" : 11 },
          "pages" : {
-            "FitNesse.SuiteAcceptanceTests.SuiteSlimTests.ScenarioLibraryTestSuite.ScenariosOnlyInSlimTests" : {
-               "counts" : { "right" : 1, "wrong" : 1, "ignored" : 0, "exceptions" : 0 },
-               "classification" : {
-                  "assessment" : "Known nested HTTP PageDriver context difference; the Perl fixture returns normally.",
-                  "recommended" : "pipe transport: known harness limitation",
-                  "rootCause" : "Generated TestPage HTML includes the ScenarioLibrary sibling content inspected by the nested assertion.",
-                  "scopeCategory" : "Nested FitNesse request context"
-               }
-            },
             "FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestSystemSlimSuite.ErrorSituationsDuringSlimServerStartup.A_TimeoutAsSlimHeaderNotReceived" : {
                "counts" : { "right" : 4, "wrong" : 0, "ignored" : 0, "exceptions" : 0 },
                "classification" : {
