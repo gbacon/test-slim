@@ -101,10 +101,16 @@ sub create {
     }
     else {
       $class = $self->resolve_class($class);
+      my @constructor_args =
+        $self->replace_tables_with_hashes($self->replace_symbols(@$args));
+      my $signature = $class->can('slim_constructor_signature')
+        ? $class->slim_constructor_signature
+        : undef;
+      @constructor_args = $self->{converters}->convert_arguments(
+        $signature, "$class constructor", @constructor_args
+      ) if $signature;
       $object = $self->_timed(sub {
-        $class->new(
-          $self->replace_tables_with_hashes($self->replace_symbols(@$args))
-        );
+        $class->new(@constructor_args);
       });
     }
 
