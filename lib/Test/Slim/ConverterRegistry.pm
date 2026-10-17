@@ -291,19 +291,98 @@ sub from_string { $_[0]->SUPER::from_string($_[1]) // 0 }
 package Test::Slim::ConverterRegistry::Double;
 use strict;
 use warnings;
+use POSIX ();
+use Scalar::Util qw(looks_like_number);
+
+sub _valid_literal {
+  my ($value) = @_;
+  return $value =~ /\A[+-]?(?:NaN|Infinity)\z/
+    || $value =~ /\A[+-]?(?:(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)(?:[eE][+-]?[0-9]+)?|0[xX](?:[0-9a-fA-F]+(?:\.[0-9a-fA-F]*)?|\.[0-9a-fA-F]+)[pP][+-]?[0-9]+)[fFdD]?\z/;
+}
+
+sub _parse_literal {
+  my ($value) = @_;
+  return POSIX::nan(0) if $value =~ /\A[+-]?NaN\z/;
+  return ($value =~ /\A-/ ? -1 : 1) * POSIX::HUGE_VAL()
+    if $value =~ /\A[+-]?Infinity\z/;
+
+  $value =~ s/[fFdD]\z//;
+  my $locale = POSIX::setlocale(POSIX::LC_NUMERIC(), 'C');
+  my ($number, $remainder) = POSIX::strtod($value);
+  POSIX::setlocale(POSIX::LC_NUMERIC(), $locale) if defined $locale;
+  die unless defined($remainder) && $remainder == 0;
+  return $number;
+}
+
 sub from_string {
   my ($self, $value) = @_;
-  return undef unless defined $value && $value !~ /\A\s*\z/;
-  die "message:<<Can't convert $value to double.>>"
-    unless $value =~ /\A[+-]?(?:(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)(?:[eE][+-]?[0-9]+)?)\z/;
-  return 0 + $value;
+  return undef if Test::Slim::ConverterRegistry::_java_is_blank($value);
+  my $original = $value;
+  $value =~ s/\A[\x00-\x20]+|[\x00-\x20]+\z//g;
+  die "message:<<Can't convert $original to double.>>"
+    unless _valid_literal($value);
+  my $number = eval { _parse_literal($value) };
+  die "message:<<Can't convert $original to double.>>" if $@;
+  return $number;
 }
+
 sub to_string {
   my ($self, $value) = @_;
   return undef unless defined $value;
-  my $string = "$value";
-  $string .= '.0' unless $string =~ /[.eE]/;
-  return $string;
+  die 'message:<<Double result must be a numeric scalar.>>' if ref $value;
+  if (looks_like_number($value)) {
+    return 'NaN' if POSIX::isnan($value);
+    return POSIX::signbit($value) ? '-Infinity' : 'Infinity'
+      if POSIX::isinf($value);
+    return POSIX::signbit($value) ? '-0.0' : '0.0' if $value == 0;
+    return _format_finite($value);
+  }
+  return $self->to_string($self->from_string($value));
+}
+
+sub _format_finite {
+  my ($number) = @_;
+  my $negative = POSIX::signbit($number);
+  my $absolute = abs($number);
+  my $scientific = $absolute >= 10_000_000 || $absolute < 0.001;
+  my $first_digits = $scientific ? 2 : 1;
+  my ($digits, $exponent);
+
+  my $locale = POSIX::setlocale(POSIX::LC_NUMERIC(), 'C');
+  for my $significant_digits ($first_digits .. 17) {
+    my $candidate = sprintf('%.*e', $significant_digits - 1, $absolute);
+    my ($back, $remaining) = POSIX::strtod($candidate);
+    next unless defined($remaining) && $remaining == 0;
+    next unless pack('d', $back) eq pack('d', $absolute);
+    my ($leading_digit, $fraction, $decimal_exponent) =
+      $candidate =~ /\A([0-9])(?:\.([0-9]+))?e([+-]?[0-9]+)\z/i;
+    $digits = $leading_digit . ($fraction // '');
+    $exponent = 0 + $decimal_exponent;
+    last;
+  }
+  POSIX::setlocale(POSIX::LC_NUMERIC(), $locale) if defined $locale;
+
+  die 'Could not format finite Double as a round-trippable decimal'
+    unless defined $digits;
+  my $formatted;
+  if ($scientific) {
+    my $fraction = substr($digits, 1);
+    $fraction = '0' unless length $fraction;
+    $formatted = substr($digits, 0, 1) . '.' . $fraction . 'E' . $exponent;
+  }
+  elsif ($exponent >= 0) {
+    my $point = $exponent + 1;
+    if ($point >= length $digits) {
+      $formatted = $digits . ('0' x ($point - length $digits)) . '.0';
+    }
+    else {
+      $formatted = substr($digits, 0, $point) . '.' . substr($digits, $point);
+    }
+  }
+  else {
+    $formatted = '0.' . ('0' x (-$exponent - 1)) . $digits;
+  }
+  return ($negative ? '-' : '') . $formatted;
 }
 
 package Test::Slim::ConverterRegistry::PrimitiveDouble;
