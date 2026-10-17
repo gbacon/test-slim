@@ -174,6 +174,7 @@ sub replace_tables_with_hashes {
 
 sub replace_table_with_hash {
   my($self,$arg) = @_;
+  return $arg unless defined($arg) && !ref($arg);
 
   my $hash = eval {
     my $p = HTML::TreeBuilder->new_from_content($arg);
@@ -248,8 +249,9 @@ sub call {
 
 sub call_and_assign {
   my($self,$symbol,@args) = @_;
-  my $result = $self->_call(@args);
-  $self->set_symbol($symbol, $result) unless $self->{call_failed};
+  my ($result, $raw_result) = $self->_call(@args);
+  $self->set_symbol($symbol, ref($raw_result) ? $raw_result : $result)
+    unless $self->{call_failed};
   return defined($result) ? $result : "null";
 }
 
@@ -313,7 +315,7 @@ sub _call {
            . "message:<<NO_METHOD_IN_CLASS $method\[$n] $class>>"
     unless $method_obj && $method_obj->can($method);
 
-  my $result;
+  my ($result, $raw_result, $retain_raw_result);
   eval {
     my @call_args = @args;
     unless ($self->{fixture_symbol_pattern}
@@ -328,6 +330,9 @@ sub _call {
       $signature, $requested_method, @call_args
     ) if $signature;
     $result = $self->_timed(sub { $method_obj->$method(@call_args) });
+    $raw_result = $result;
+    $retain_raw_result = $signature
+      && $self->{converters}->is_typed_sequence($signature->{return});
     ($result) = $self->{converters}->convert_result($signature, $result)
       if $signature;
     $result = Test::Slim::MapResult->convert($result)
@@ -335,7 +340,9 @@ sub _call {
   };
   unless ($@) {
     $result =~ s/\s+$// if defined($result) && !ref($result);
-    return $result;
+    return wantarray
+      ? ($result, $retain_raw_result ? $raw_result : undef)
+      : $result;
   }
 
   $self->{call_failed} = 1;

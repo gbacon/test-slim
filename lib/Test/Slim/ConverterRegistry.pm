@@ -61,10 +61,33 @@ sub get_converter {
   my ($self, $type) = @_;
   return unless defined $type;
   return $self->{converters}{$type} if exists $self->{converters}{$type};
+  $type =~ s/\s+//g;
   return $self->{converters}{'java.util.List'}
     if $type =~ /\Ajava\.util\.(?:ArrayList|LinkedList|Collection)\z/;
   return $self->{converters}{'java.lang.String'} if $type eq 'String';
   return $self->{converters}{'java.util.List'} if $type eq 'List';
+  my %aliases = (
+    Boolean => 'java.lang.Boolean',
+    Character => 'java.lang.Character',
+    Date => 'java.util.Date',
+    Double => 'java.lang.Double',
+    Integer => 'java.lang.Integer',
+    Long => 'java.lang.Long',
+  );
+  return $self->{converters}{$aliases{$type}} if exists $aliases{$type};
+
+  if ($type =~ /\A(.+)\[\]\z/ && $1 !~ /[\[\]<>]/) {
+    my $component = $self->get_converter($1) or return;
+    return Test::Slim::ConverterRegistry::TypedSequence->new(
+      $self, $component
+    );
+  }
+  if ($type =~ /\A(?:java\.util\.)?(?:List|Collection)<([^<>]+)>\z/) {
+    my $component = $self->get_converter($1) or return;
+    return Test::Slim::ConverterRegistry::TypedSequence->new(
+      $self, $component
+    );
+  }
   return;
 }
 
@@ -126,6 +149,61 @@ sub convert_result {
   $converter ||= $self->converter_for_runtime_value($value);
   return ($value, 0) unless $converter;
   return ($converter->to_string($value), 1);
+}
+
+sub is_typed_sequence {
+  my ($self, $type) = @_;
+  my $converter = $self->get_converter($type);
+  return $converter && $converter->isa('Test::Slim::ConverterRegistry::TypedSequence');
+}
+
+package Test::Slim::ConverterRegistry::TypedSequence;
+use strict;
+use warnings;
+
+sub new {
+  my ($class, $registry, $component_converter) = @_;
+  return bless {
+    registry => $registry,
+    component_converter => $component_converter,
+  }, $class;
+}
+
+sub from_string {
+  my ($self, $arg) = @_;
+  return undef if Test::Slim::ConverterRegistry::_java_is_blank($arg);
+
+  $arg =~ s/\A\[//;
+  $arg =~ s/\]\z//;
+  my @items = $arg =~ /\A\s*\z/ ? () : split /,/, $arg;
+  my $converter = $self->{component_converter};
+  return [ map {
+    s/\A[\x00-\x20]+|[\x00-\x20]+\z//g;
+    $converter->from_string($_);
+  } @items ];
+}
+
+sub to_string {
+  my ($self, $sequence) = @_;
+  return undef unless defined $sequence;
+  die 'typed array or collection result must be an array reference'
+    unless ref($sequence) eq 'ARRAY';
+
+  my $component = $self->{component_converter};
+  my @items;
+  for my $value (@$sequence) {
+    if (!defined $value) {
+      push @items, 'null';
+    }
+    elsif (ref $value) {
+      push @items, $self->{registry}->element_to_string($value);
+    }
+    else {
+      my $string = $component->to_string($value);
+      push @items, defined($string) ? $string : 'null';
+    }
+  }
+  return '[' . join(', ', @items) . ']';
 }
 
 package Test::Slim::ConverterRegistry::String;
