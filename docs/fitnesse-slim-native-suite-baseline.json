@@ -1414,6 +1414,50 @@
          "page" : "FitNesse.SuiteAcceptanceTests.SuiteSlimTests.VariablesUsedInSubSubpage"
       }
    ],
+   "transportExpectations" : {
+      "pipe" : {
+         "assertionTotals" : { "right" : 542, "wrong" : 42, "ignored" : 5, "exceptions" : 315 },
+         "suiteFinalCounts" : { "right" : 74, "wrong" : 7, "ignores" : 1, "exceptions" : 11 },
+         "pages" : {
+            "FitNesse.SuiteAcceptanceTests.SuiteSlimTests.ScenarioLibraryTestSuite.ScenariosOnlyInSlimTests" : {
+               "counts" : { "right" : 1, "wrong" : 1, "ignored" : 0, "exceptions" : 0 },
+               "classification" : {
+                  "assessment" : "Known nested HTTP PageDriver context difference; the Perl fixture returns normally.",
+                  "recommended" : "pipe transport: known harness limitation",
+                  "rootCause" : "Generated TestPage HTML includes the ScenarioLibrary sibling content inspected by the nested assertion.",
+                  "scopeCategory" : "Nested FitNesse request context"
+               }
+            },
+            "FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestSystemSlimSuite.ErrorSituationsDuringSlimServerStartup.A_TimeoutAsSlimHeaderNotReceived" : {
+               "counts" : { "right" : 4, "wrong" : 0, "ignored" : 0, "exceptions" : 0 },
+               "classification" : {
+                  "assessment" : "The pipe child supplies the SLiM header that this page's deliberately broken startup setup expects to be absent.",
+                  "recommended" : "pipe transport: explicit startup-mode expectation",
+                  "rootCause" : "FitNesse-managed child startup differs from an externally managed TCP SLiM service.",
+                  "scopeCategory" : "Transport-specific test-system behavior"
+               }
+            },
+            "FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestSystemSlimSuite.ErrorSituationsDuringSlimServerStartup.C_TimeoutAsNoServerAtGivenSocket" : {
+               "counts" : { "right" : 4, "wrong" : 0, "ignored" : 0, "exceptions" : 0 },
+               "classification" : {
+                  "assessment" : "Pipe mode has no listener at the test's target socket, establishing its intended no-server condition.",
+                  "recommended" : "pipe transport: explicit no-listener expectation",
+                  "rootCause" : "Pipe mode launches a child and does not occupy the external TCP socket used by this page.",
+                  "scopeCategory" : "Transport-specific test-system behavior"
+               }
+            },
+            "FitNesse.SuiteAcceptanceTests.SuiteSlimTests.TestSystemSlimSuite.ManualStartofSlimService" : {
+               "counts" : { "right" : 4, "wrong" : 0, "ignored" : 0, "exceptions" : 0 },
+               "classification" : {
+                  "assessment" : "The page's external manual-start condition does not describe FitNesse-managed child execution.",
+                  "recommended" : "pipe transport: explicit child-runner expectation",
+                  "rootCause" : "Pipe mode supplies a runner command instead of connecting to the page's manually started external service.",
+                  "scopeCategory" : "Transport-specific test-system behavior"
+               }
+            }
+         }
+      }
+   },
    "expectedSuiteFinalCounts" : {
       "exceptions" : 11,
       "ignores" : 1,

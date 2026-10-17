@@ -65,6 +65,22 @@ sub main {
   die "baseline suite page mismatch" unless $baseline->{suitePage} eq 'FitNesse.SuiteAcceptanceTests.SuiteSlimTests';
   die "native baseline page count does not match its inventory metadata"
     unless @{$baseline->{expectedPages}} == $baseline->{expectedPageCount};
+  my $transport_baseline = $baseline->{transportExpectations}{$transport} || {};
+  my %transport_pages = %{$transport_baseline->{pages} || {}};
+  my %known_pages = map { $_->{page} => 1 } @{$baseline->{expectedPages}};
+  die "transport baseline names unknown page: $_\n"
+    for grep { !$known_pages{$_} } keys %transport_pages;
+  my @expected_pages = map {
+    my %entry = %$_;
+    if (my $specific = $transport_pages{$entry{page}}) {
+      $entry{counts} = $specific->{counts};
+      $entry{classification} = $specific->{classification}
+        if $specific->{classification};
+    }
+    \%entry;
+  } @{$baseline->{expectedPages}};
+  my $expected_final_counts = $transport_baseline->{suiteFinalCounts}
+    || $baseline->{expectedSuiteFinalCounts};
 
   my $jar = $ENV{FITNESSE_JAR} || '/opt/fitnesse/fitnesse.jar';
   die "FitNesse jar not found at $jar" unless -f $jar;
@@ -145,8 +161,8 @@ sub main {
     unless $observed->{version} eq $baseline->{fitNesseVersion};
 
   my $comparison = compare_suite_results(
-    $baseline->{expectedPages},$observed->{results},
-    $baseline->{expectedSuiteFinalCounts},$observed->{finalCounts},
+    \@expected_pages,$observed->{results},
+    $expected_final_counts,$observed->{finalCounts},
   );
   my $log_check = verify_suite_execution_logs(
     $observed->{executionLogs},$host,$slim_port,
@@ -164,7 +180,7 @@ sub main {
     $totals{$_} += $result->{counts}{$_} for qw(right wrong ignored exceptions);
   }
   $totals{$_} ||= 0 for qw(right wrong ignored exceptions);
-  my %expected_by_page = map { $_->{page} => $_ } @{$baseline->{expectedPages}};
+  my %expected_by_page = map { $_->{page} => $_ } @expected_pages;
   my %page_report = map {
     $_ => {
       counts => $observed->{results}{$_}{counts},
@@ -180,9 +196,10 @@ sub main {
     exactPageAndCountMatch => $comparison->{failed} ? JSON::PP::false : JSON::PP::true,
     comparison => $comparison,
     assertionTotals => \%totals,
-    baselineAssertionTotals => $baseline->{assertionTotals},
+    baselineAssertionTotals => $transport_baseline->{assertionTotals}
+      || $baseline->{assertionTotals},
     fitNesseFinalCounts => $observed->{finalCounts},
-    expectedSuiteFinalCounts => $baseline->{expectedSuiteFinalCounts},
+    expectedSuiteFinalCounts => $expected_final_counts,
     executionOrder => $observed->{executionOrder},
     executionLogs => $observed->{executionLogs},
     backendAttribution => $transport eq 'tcp'

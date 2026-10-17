@@ -99,6 +99,11 @@ my $pipe_attributed = verify_suite_execution_logs([
     exitCode => '0', exceptions => [] },
 ], '127.0.0.1',1,\@labels,'pipe','/repo/bin/perl-slim');
 ok(!$pipe_attributed->{failed},'pipe execution log confirms the Perl child command and successful exit');
+my $flagged_pipe = verify_suite_execution_logs([
+  { testSystem => 'SLIM:/repo/bin/perl-slim', command => '/repo/bin/perl-slim -v -s 1 1',
+    exitCode => '0', exceptions => [] },
+], '127.0.0.1',1,\@labels,'pipe','/repo/bin/perl-slim');
+ok(!$flagged_pipe->{failed},'supported FitNesse SLIM_FLAGS retain positive child attribution');
 my $remote_debug_pipe = verify_suite_execution_logs([
   { testSystem => 'SLIM:remote_debug:/repo/bin/perl-slim', command => '/repo/bin/perl-slim 1',
     exitCode => '0', exceptions => [] },

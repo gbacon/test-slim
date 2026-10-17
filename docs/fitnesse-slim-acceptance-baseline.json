@@ -7872,6 +7872,23 @@
       },
       "upstreamReference" : "/tmp/fitnesse-src/src/fitnesse/slim/test/TestSlim.java#concatenateThreeArgs"
    },
+   "transportExpectations" : {
+      "pipe" : {
+         "assertionTotals" : { "right" : 373, "wrong" : 6, "ignored" : 2, "exceptions" : 1 },
+         "pages" : {
+            "TestSystemSlimSuite.ErrorSituationsDuringSlimServerStartup.C_TimeoutAsNoServerAtGivenSocket" : {
+               "rawCounts" : { "right" : 4, "wrong" : 0, "ignored" : 0, "exceptions" : 0 },
+               "status" : "conformant",
+               "reason" : "Pipe mode intentionally has no external SLiM listener on the page's target socket, so its no-server condition is established. The TCP gate separately retains the external-listener environment result."
+            },
+            "TestSystemSlimSuite.HowtoEnforceA_TimelimitPerTestCommand.PartiallyWorking_SettingSlimFlags" : {
+               "rawCounts" : { "right" : 8, "wrong" : 0, "ignored" : 0, "exceptions" : 1 },
+               "status" : "nonconformant",
+               "reason" : "FitNesse forwards -v -s 1 to the Perl child. The one-second statement timeout is observed once and execution continues; the separate TCP listener does not receive child flags."
+            }
+         }
+      }
+   },
    "unitBaseline" : {
       "command" : "bin/test-dev",
       "files" : 39,

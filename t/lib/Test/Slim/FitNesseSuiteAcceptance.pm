@@ -9,6 +9,7 @@ use File::Path qw(make_path);
 use File::Spec;
 use Cwd qw(abs_path);
 use IO::Uncompress::Unzip qw($UnzipError);
+use Test::Slim::FitNesseAcceptance qw(perl_pipe_command_matches);
 
 our @EXPORT_OK = qw(
   compare_suite_results
@@ -204,15 +205,18 @@ sub verify_suite_execution_logs {
     my $log = $logs->[$index];
     my $label = $log->{testSystem} // '';
     my $expected_command = $transport && $transport eq 'pipe'
-      ? "$runner 1" : "Connection to running SlimService: $host:$port";
+      ? undef : "Connection to running SlimService: $host:$port";
     my $is_expected_system = $transport && $transport eq 'pipe'
       ? defined($runner) && (lc($label) eq lc("slim:$runner")
           || lc($label) eq lc("slim:remote_debug:$runner"))
       : $accepted{$label};
     push @errors, "unexpected test-system label in execution log $index: $label"
       unless $is_expected_system;
+    my $command_matches = $transport && $transport eq 'pipe'
+      ? perl_pipe_command_matches($log->{command},$runner)
+      : defined($log->{command}) && $log->{command} eq $expected_command;
     push @errors, "SLiM execution log $index did not select the expected Perl command"
-      unless defined($log->{command}) && $log->{command} eq $expected_command;
+      unless $command_matches;
     push @errors, "unexpected pipe test-system label in execution log $index: $label"
       if $transport && $transport eq 'pipe' && !$is_expected_system;
     push @errors, "SLiM execution log $index exited with " . ($log->{exitCode} // 'no status')
@@ -220,7 +224,7 @@ sub verify_suite_execution_logs {
     push @errors, "SLiM execution log $index contains a test-system exception"
       if @{$log->{exceptions} || []};
     push @verified, $label if $is_expected_system
-      && defined($log->{command}) && $log->{command} eq $expected_command
+      && $command_matches
       && defined($log->{exitCode}) && $log->{exitCode} eq '0'
       && !@{$log->{exceptions} || []};
   }

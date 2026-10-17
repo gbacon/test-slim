@@ -10,6 +10,7 @@ use Test::Slim::FitNesseAcceptance qw(
   compare_inventory
   missing_wiki_pages
   parse_page_result
+  perl_pipe_command_matches
   probe_slim
   preserve_exit_status
   true_property_pages_in_wiki
@@ -95,6 +96,14 @@ $pipe_xml =~ s{<command>.*?</command>}{<command>/repo/bin/perl-slim 1</command>}
 my $pipe_result = parse_page_result($pipe_xml,200,'127.0.0.1',8099,'pipe','/repo/bin/perl-slim');
 ok($pipe_result->{perlExecutionConfirmed}, 'pipe execution log confirms the Perl child command');
 ok(!$pipe_result->{externalPerlConfirmed}, 'a child process is not mislabeled as an external listener');
+my $flagged_pipe_xml = $pipe_xml;
+$flagged_pipe_xml =~ s{<command>.*?</command>}{<command>/repo/bin/perl-slim -v -s 1 1</command>}s;
+ok(parse_page_result($flagged_pipe_xml,200,'127.0.0.1',8099,'pipe','/repo/bin/perl-slim')
+    ->{perlExecutionConfirmed}, 'FitNesse -v -s flags retain Perl child attribution');
+ok(perl_pipe_command_matches('/repo/bin/perl-slim -s 1 -v 1','/repo/bin/perl-slim'),
+  'command verifier accepts supported options before the port');
+ok(!perl_pipe_command_matches('/repo/bin/perl-slim -x 1','/repo/bin/perl-slim'),
+  'command verifier rejects unknown flags');
 
 my @count_baseline = ({ page => 'P', rawCounts => { right => 2, wrong => 1, ignored => 0, exceptions => 0 } });
 my $same_counts = compare_page_counts(\@count_baseline,

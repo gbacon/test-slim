@@ -17,6 +17,7 @@ our @EXPORT_OK = qw(
   compare_inventory
   missing_wiki_pages
   parse_page_result
+  perl_pipe_command_matches
   probe_slim
   preserve_exit_status
   true_property_pages_in_wiki
@@ -76,7 +77,7 @@ sub parse_page_result {
 
   my $perl_confirmed = $transport eq 'pipe'
     ? defined($system) && defined($perl_runner) && lc($system) eq lc("slim:$perl_runner")
-      && defined($command) && $command eq "$perl_runner 1"
+      && perl_pipe_command_matches($command,$perl_runner)
       && defined($exit_code) && $exit_code eq '0'
     : defined($system) && lc($system) eq lc('slim:fitnesse.slim.SlimService')
       && defined($command) && $command eq "Connection to running SlimService: $host:$port"
@@ -93,12 +94,38 @@ sub parse_page_result {
   };
 }
 
+sub perl_pipe_command_matches {
+  my($command,$runner) = @_;
+  return unless defined($command) && defined($runner);
+  my @arguments = split /\s+/, $command;
+  return unless shift(@arguments) eq $runner;
+  return unless pop(@arguments) eq '1';
+
+  my %seen;
+  while (@arguments) {
+    my $flag = shift @arguments;
+    return if $seen{$flag}++;
+    if ($flag eq '-v') {
+      next;
+    }
+    elsif ($flag eq '-s') {
+      return unless @arguments && shift(@arguments) =~ /\A[1-9][0-9]*\z/;
+    }
+    else {
+      return;
+    }
+  }
+  return 1;
+}
+
 sub compare_page_counts {
-  my($baseline,$observed) = @_;
+  my($baseline,$observed,$transport) = @_;
   my(@changes,@missing);
   for my $entry (@$baseline) {
     my $page = $entry->{page};
-    my $counts = $entry->{rawCounts} || $entry->{conformance}{rawCounts};
+    my $specific = $transport && $entry->{transportExpectations}{$transport};
+    my $counts = $specific && $specific->{rawCounts}
+      || $entry->{rawCounts} || $entry->{conformance}{rawCounts};
     unless ($counts) {
       push @changes, { page => $page, error => 'baseline assertion counts missing' };
       next;
@@ -122,7 +149,7 @@ sub compare_page_counts {
 }
 
 sub compare_inventory {
-  my($baseline,$observed) = @_;
+  my($baseline,$observed,$transport) = @_;
   my(@missing,@unexecuted,@regressions,@newly_conformant,@known_failures,@service_failures);
   my %expected = map { $_->{page} => $_ } @$baseline;
 
@@ -148,7 +175,10 @@ sub compare_inventory {
       next;
     }
 
-    my $expected_conformant = $expected{$page}{conformance}{status} eq 'conformant';
+    my $specific = $transport && $expected{$page}{transportExpectations}{$transport};
+    my $expected_status = $specific && $specific->{status}
+      || $expected{$page}{conformance}{status};
+    my $expected_conformant = $expected_status eq 'conformant';
     my $is_conformant = $result->{conformance} eq 'conformant';
     push @regressions, $page if $expected_conformant && !$is_conformant;
     push @newly_conformant, $page if !$expected_conformant && $is_conformant;
@@ -231,7 +261,7 @@ sub probe_slim {
     last if $line =~ /\n/;
   }
   close $socket;
-  my $ready = $line eq "Slim -- V0.4\n";
+  my $ready = $line eq "Slim -- V0.5\n";
   return {
     reachable => 1,
     ready => $ready ? 1 : 0,

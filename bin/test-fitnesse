@@ -64,6 +64,14 @@ sub main {
   my $baseline = decode_json($baseline_text);
   close $baseline_fh;
   my $pages = $baseline->{pages};
+  my $transport_pages = $baseline->{transportExpectations}{$transport}{pages} || {};
+  my %known_pages = map { $_->{page} => 1 } @$pages;
+  die "transport baseline names unknown page: $_\n"
+    for grep { !$known_pages{$_} } keys %$transport_pages;
+  for my $entry (@$pages) {
+    my $specific = $transport_pages->{$entry->{page}} or next;
+    $entry->{transportExpectations}{$transport} = $specific;
+  }
   die "baseline must contain exactly 50 pages" unless @$pages == 50;
   my $baseline_passes = grep { $_->{conformance}{status} eq 'conformant' } @$pages;
   die "baseline must contain 45 conformant pages (found $baseline_passes)"
@@ -165,8 +173,8 @@ sub main {
       result_label($result);
   }
 
-  my $comparison = compare_inventory($pages,\%observed);
-  my $tuple_comparison = compare_page_counts($pages,\%observed);
+  my $comparison = compare_inventory($pages,\%observed,$transport);
+  my $tuple_comparison = compare_page_counts($pages,\%observed,$transport);
   push @service_errors, map {
     $_->{error} ? "baseline count metadata missing for $_->{page}"
       : "count deviation for $_->{page} $_->{count}: expected $_->{expected}, actual $_->{actual}"
@@ -195,6 +203,7 @@ sub main {
     || @$missing_wiki || @unexpected_wiki_pages || @service_errors;
   my $report = {
     transport => $transport,
+    transportSpecificExpectations => scalar(keys %$transport_pages),
     pages => scalar(@$pages), executed => $executed, perlExecutionVerified => $perl_verified,
     conformant => $conformant,
     rawCounts => { right => $right, wrong => $wrong, ignored => $ignored, exceptions => $exceptions },
@@ -244,7 +253,7 @@ sub ensure_slim {
   my $probe = probe_slim($host,$port,0.5);
   return if $probe->{ready};
   if ($probe->{reachable}) {
-    die "port $port is occupied but did not return the SLiM V0.4 greeting: $probe->{error}";
+    die "port $port is occupied but did not return the SLiM V0.5 greeting: $probe->{error}";
   }
 
   start_owned_process('perl', '-Ilib', '-It/lib', "$ROOT/bin/perl-slim", $port,
