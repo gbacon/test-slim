@@ -17,9 +17,10 @@ my @children;
 END { stop_child($_) for @children }
 
 sub start_child {
+  my @arguments = @_ ? @_ : ('1');
   my $error = gensym;
   my $pid = open3(my $input, my $output, $error,
-    $^X, '-Ilib', '-It/lib', 'bin/perl-slim', '1');
+    $^X, '-Ilib', '-It/lib', 'bin/perl-slim', @arguments);
   binmode $_ for ($input, $output, $error);
   my $child = { pid => $pid, input => $input, output => $output, error => $error,
     error_open => 1, diagnostics => '' };
@@ -343,5 +344,29 @@ send_frame($broken_output,Test::Slim::List->new([[ok => import => 'fitnesse.slim
 close $broken_output->{input};
 stop_child($broken_output);
 isnt($broken_output->{status} >> 8,0,'broken protocol output pipe fails the child without SIGPIPE termination');
+
+my $flag_child = start_child('-v','-s','1','1');
+is(read_line($flag_child->{output},$flag_child),"Slim -- V0.5\n",
+  'FitNesse -v -s 1 port command form starts a pipe child');
+my $flag_response = request($flag_child,[
+  [i => import => 'fitnesse.slim.test'],
+  [m => make => sleeper => 'fitnesse.slim.test.Sleep'],
+  [set => call => sleeper => 'setTimer' => 2000],
+  [timeout => call => sleeper => 'doSleep'],
+]);
+is($flag_response->[0][1],'OK','flagged pipe child executes setup instructions');
+is($flag_response->[3][1],'__EXCEPTION__:message:<<TIMED_OUT 1>>',
+  '-s applies the Java-compatible timeout response to an overlong fixture method');
+like($flag_child->{diagnostics},qr/SLiM request:/,
+  '-v writes verbose diagnostics to stderr, outside the protocol stream');
+my $after_timeout = request($flag_child,[
+  [set => call => sleeper => 'setTimer' => 10],
+  [wake => call => sleeper => 'doSleep'],
+]);
+is_deeply($after_timeout,[[set => 'null'],[wake => 'WakeUp 10']],
+  'a timed-out call does not poison later statements or batches');
+send_frame($flag_child,'bye');
+stop_child($flag_child);
+is($flag_child->{status} >> 8,0,'flagged pipe child exits cleanly after bye');
 
 done_testing;

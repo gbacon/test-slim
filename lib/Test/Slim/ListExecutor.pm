@@ -7,8 +7,8 @@ use Test::Slim::Statement;
 use Test::Slim::StatementExecutor;
 
 sub new {
-  my($class) = @_;
-  my $executor = Test::Slim::StatementExecutor->new;
+  my($class,%options) = @_;
+  my $executor = Test::Slim::StatementExecutor->new(%options);
   bless { EXECUTOR => $executor } => $class;
 }
 

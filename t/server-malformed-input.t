@@ -29,7 +29,7 @@ sub connect_client {
     if ($socket) {
       $socket->autoflush(1);
       my $greeting = read_line($socket,2);
-      return $socket if defined($greeting) && $greeting eq "Slim -- V0.4\n";
+      return $socket if defined($greeting) && $greeting eq "Slim -- V0.5\n";
       close $socket;
     }
     select undef,undef,undef,0.05;

@@ -56,6 +56,8 @@ java -jar /opt/fitnesse/fitnesse.jar -p 8080
 
 The container normally starts FitNesse automatically. Do not launch a duplicate server.
 
+`bin/perl-slim` accepts FitNesse's `-v` verbose flag and `-s <seconds>` per-statement timeout option before its port. Port `1` selects v0.5 stdin/stdout pipes; other valid ports start the TCP listener. Both transports send `Slim -- V0.5` for the pinned FitNesse release.
+
 ## Engineering requirements
 
 - Add a failing regression test before fixing an observed defect.
@@ -155,7 +157,7 @@ Do not modify upstream acceptance pages to manufacture passing results.
 
 Record the acceptance-test baseline before implementing additional features.
 
-The individual and native acceptance runners accept `--transport pipe|tcp`; pipe is their selected default, and TCP remains available as an explicitly selected external listener mode. For example:
+The individual and native acceptance runners accept `--transport pipe|tcp`; pipe is their selected default, and TCP remains available as an explicitly selected external listener mode. Reviewed startup-page expectations are transport-specific where a managed child and external socket listener establish different test preconditions. For example:
 
 ```sh
 bin/test-fitnesse --transport tcp
@@ -164,7 +166,7 @@ bin/test-fitnesse-suite --transport tcp
 bin/test-fitnesse-suite --transport pipe
 ```
 
-The isolated TCP commands currently reproduce the committed 50-page and 93-page baselines. Pipe mode positively launches Perl children but currently reports the documented baseline deviations and the unsupported `SLIM_FLAGS` child arguments in [`docs/fitnesse-acceptance-pipe-migration.md`](docs/fitnesse-acceptance-pipe-migration.md). Do not weaken or regenerate either baseline to hide them.
+Both transports are regression gates: pipe mode positively attributes the FitNesse-managed Perl child, while TCP verifies the external listener and balanced request trace. Known pipe-specific results are recorded separately in the machine-readable baselines and explained in [`docs/fitnesse-acceptance-pipe-migration.md`](docs/fitnesse-acceptance-pipe-migration.md). Never regenerate either baseline from an unreviewed run.
 
 This 50-page individual-page inventory is not the same selection as the complete native `FitNesse.SuiteAcceptanceTests.SuiteSlimTests?suite` responder. The native responder uses suite traversal, Test properties, pruning, legacy wiki headers, and referenced pages; suite context can also affect nested-page results. Do not infer its backend from displayed command labels. Attribute the backend from execution logs plus process or connection evidence. The v20251025 audit and exact page reconciliation are in [`docs/fitnesse-native-suite-audit.md`](docs/fitnesse-native-suite-audit.md) and `docs/fitnesse-native-suite-audit.json`. Keep the existing 50-page gate until a separately scoped native inventory has established page applicability, expected outcomes, backend, and reproducibility.
 

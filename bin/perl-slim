@@ -5,9 +5,31 @@ use warnings;
 
 use Test::Slim::Server;
 
-sub usage { "Usage: $0 port (1 uses stdin/stdout pipes)\n" }
+sub usage { "Usage: $0 [-v] [-s statementTimeout] port (1 uses stdin/stdout pipes)\n" }
 
-die usage unless @ARGV == 1;
-my $port = shift;
+my($verbose,$statement_timeout,$port);
+while (@ARGV) {
+  my $argument = shift @ARGV;
+  if ($argument eq '-v') {
+    $verbose = 1;
+  }
+  elsif ($argument eq '-s') {
+    die usage if defined($statement_timeout)
+      || !@ARGV || $ARGV[0] !~ /\A[1-9][0-9]{0,8}\z/
+      || $ARGV[0] > 2_147_483_647;
+    $statement_timeout = 0 + shift @ARGV;
+  }
+  elsif ($argument =~ /\A-/ || defined $port) {
+    die usage;
+  }
+  else {
+    $port = $argument;
+  }
+}
 
-Test::Slim::Server->new->run($port);
+die usage unless defined($port) && $port =~ /\A[0-9]+\z/;
+
+Test::Slim::Server->new(
+  verbose => $verbose,
+  statement_timeout => $statement_timeout,
+)->run($port);

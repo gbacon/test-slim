@@ -36,7 +36,7 @@ while ($greeting !~ /\n\z/) {
   die 'server closed before greeting' unless defined($read) && $read > 0;
   $greeting .= $part;
 }
-is($greeting, "Slim -- V0.4\n", 'server sends its unframed greeting');
+is($greeting, "Slim -- V0.5\n", 'server sends its unframed greeting');
 my $header = '';
 while (length($header) < 7) {
   my $read = sysread $client_socket, my $part, 7 - length($header);

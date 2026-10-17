@@ -50,7 +50,7 @@ my $socket = IO::Socket::INET->new(
 );
 ok($socket, "outer SLiM connection opens") or BAIL_OUT("start the external Perl SLiM server first");
 $socket->autoflush(1);
-is(read_line($socket), "Slim -- V0.4\n", "outer SLiM session receives its greeting");
+is(read_line($socket), "Slim -- V0.5\n", "outer SLiM session receives its greeting");
 
 my $page = "TestSlimPageDriverNested$$";
 my $content = join "\n",

@@ -6,6 +6,7 @@ use warnings;
 
 use HTML::TreeBuilder;
 use Scalar::Util qw(reftype);
+use Time::HiRes qw(alarm);
 use Test::Slim::Statement;
 use Test::Slim::SlimHelperLibrary;
 use Test::Slim::MapResult;
@@ -14,7 +15,7 @@ use Test::Slim::ConverterRegistry;
 my $FIXTURE_HANDLES_SYMBOLS = "SLIM_AGENT_FIXTURE_HANDLES_SYMBOLS";
 
 sub new {
-  my($class) = @_;
+  my($class,%options) = @_;
   my $self = bless {
     imports  => [],
     instance => {},
@@ -23,6 +24,7 @@ sub new {
     fixture_symbol_pattern => undef,
     stop_requested => undef,
     converters => Test::Slim::ConverterRegistry->new,
+    statement_timeout => $options{statement_timeout},
   } => $class;
 
   $self->{instance}{__slim_helper_library} =
@@ -99,9 +101,11 @@ sub create {
     }
     else {
       $class = $self->resolve_class($class);
-      $object = $class->new(
-        $self->replace_tables_with_hashes($self->replace_symbols(@$args))
-      );
+      $object = $self->_timed(sub {
+        $class->new(
+          $self->replace_tables_with_hashes($self->replace_symbols(@$args))
+        );
+      });
     }
 
     if ($is_library) {
@@ -317,7 +321,7 @@ sub _call {
     @call_args = $self->{converters}->convert_arguments(
       $signature, $requested_method, @call_args
     ) if $signature;
-    $result = $method_obj->$method(@call_args);
+    $result = $self->_timed(sub { $method_obj->$method(@call_args) });
     ($result) = $self->{converters}->convert_result($signature, $result)
       if $signature;
     $result = Test::Slim::MapResult->convert($result)
@@ -370,6 +374,26 @@ sub exception_result {
   }
 
   $Test::Slim::Statement::EXCEPTION_TAG . "message:<<$error>>"
+}
+
+sub _timed {
+  my($self,$code) = @_;
+  my $timeout = $self->{statement_timeout};
+  return $code->() unless defined $timeout;
+
+  my $previous = alarm 0;
+  local $SIG{ALRM} = sub { die "message:<<TIMED_OUT $timeout>>\n" };
+  my($result,$ok,$error);
+  $ok = eval {
+    alarm $timeout;
+    $result = $code->();
+    1;
+  };
+  $error = $@ unless $ok;
+  alarm 0;
+  alarm $previous if $previous;
+  die $error unless $ok;
+  return $result;
 }
 
 sub stop_requested { $_[0]->{stop_requested} }

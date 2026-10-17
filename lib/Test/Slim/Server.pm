@@ -24,7 +24,9 @@ sub new {
       && (length($max_frame) < 10
         || length($max_frame) == 10 && $max_frame le '1073741824');
   $self->{MAX_FRAME_BYTES} = 0 + $max_frame;
-  $self->{EXEC} = Test::Slim::ListExecutor->new;
+  $self->{verbose} = $options{verbose} ? 1 : 0;
+  $self->{statement_timeout} = $options{statement_timeout};
+  $self->{EXEC} = $self->_new_executor;
 
   $self;
 }
@@ -103,7 +105,7 @@ sub _read_message {
 sub process {
   my($self,$fh) = @_;
 
-  $self->_process_session($fh,$fh,'V0.4',1);
+  $self->_process_session($fh,$fh,'V0.5',1);
 }
 
 sub process_pipe {
@@ -119,7 +121,7 @@ sub _process_session {
   my $ok;
   my $error;
   {
-    local $self->{EXEC} = Test::Slim::ListExecutor->new;
+    local $self->{EXEC} = $self->_new_executor;
     $ok = eval { $self->_process($input,$output,$version,$diagnostic_output); 1 };
     $error = $@;
   }
@@ -127,6 +129,13 @@ sub _process_session {
   close $input if $close_input && defined fileno($input);
   die $error unless $ok;
   return;
+}
+
+sub _new_executor {
+  my($self) = @_;
+  Test::Slim::ListExecutor->new(
+    statement_timeout => $self->{statement_timeout},
+  );
 }
 
 sub _process {
@@ -146,11 +155,16 @@ sub _process {
       my @instructions = Test::Slim::List->new(
         $command, limits => { frame_bytes => $self->{MAX_FRAME_BYTES} }
       )->list;
+      if ($self->{verbose}) {
+        my $request = Test::Slim::List->new(\@instructions)->serialize;
+        warn "$0: SLiM request: $request\n";
+      }
       my @results = defined($diagnostic_output)
         ? $self->_execute_with_tunneling($diagnostic_output, @instructions)
         : $self->execute(@instructions);
 
       my $response = Test::Slim::List->new(\@results)->serialize;
+      warn "$0: SLiM response: $response\n" if $self->{verbose};
       my $octets = encode "UTF-8", $response;
       die "resource limit: response frame exceeds configured maximum"
         if length($octets) > $self->{MAX_FRAME_BYTES};
