@@ -16,6 +16,9 @@
     }
   },
   "postStartCommand": "bash .devcontainer/start-fitnesse",
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
   "customizations": {
     "vscode": {
       "extensions": [
