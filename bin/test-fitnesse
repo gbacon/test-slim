@@ -9,27 +9,28 @@ use File::Temp qw(tempdir);
 use FindBin qw($Bin);
 use Getopt::Long qw(GetOptions);
 use HTTP::Tiny;
-use IO::Socket::INET;
 use JSON::PP qw(decode_json);
-use POSIX qw(WNOHANG setpgid);
-use Time::HiRes qw(sleep time);
+use Time::HiRes qw(time);
 use lib "$Bin/../t/lib";
 use Test::Slim::FitNesseAcceptance qw(
   bounded_request
   compare_page_counts
   compare_inventory
+  free_port
   missing_wiki_pages
   parse_page_result
   probe_slim
   preserve_exit_status
+  start_owned_process
+  owned_process_exited
+  stop_owned_processes
   true_property_pages_in_wiki
+  wait_until
 );
 use Test::Slim::FitNesseSuiteAcceptance qw(configure_pipe_wiki extract_wiki_from_jar);
 
 $| = 1;
 my $ROOT = abs_path("$Bin/..");
-my @OWNED;
-my %REAPED;
 my $LOG_DIR = "$ROOT/.runtime";
 my $TEMP_ROOT;
 
@@ -102,7 +103,7 @@ sub main {
     ensure_slim($slim_host,$slim_port);
   }
   start_fitnesse($transport,$jar,$fitnesse_url,$fitnesse_port,$slim_host,$slim_port,
-    "$LOG_DIR/fitnesse.log");
+    "$LOG_DIR/fitnesse-$transport.log");
 
   my $suite_wiki = "$wiki_root/FitNesse/SuiteAcceptanceTests/SuiteSlimTests";
   my $missing_wiki = missing_wiki_pages($suite_wiki,$pages);
@@ -217,7 +218,7 @@ sub main {
     pageResults => \%observed,
     tupleComparison => $tuple_comparison,
   };
-  my $report_file = "$LOG_DIR/fitnesse-acceptance-results.json";
+  my $report_file = "$LOG_DIR/fitnesse-acceptance-results-$transport.json";
   open my $report_fh, '>', $report_file or die "write $report_file: $!";
   print {$report_fh} JSON::PP->new->pretty->canonical->encode($report);
   close $report_fh or die "close $report_file: $!";
@@ -257,22 +258,13 @@ sub ensure_slim {
   }
 
   start_owned_process('perl', '-Ilib', '-It/lib', "$ROOT/bin/perl-slim", $port,
-    { log_file => "$LOG_DIR/perl-slim.log", cwd => $ROOT });
+    { log_file => "$LOG_DIR/perl-slim-$port.log", cwd => $ROOT });
   wait_until("Perl SLiM at $host:$port", 15, sub {
     my $ready = probe_slim($host,$port,0.5);
     die "listener exited before readiness" if owned_process_exited();
     return $ready->{ready};
   });
   print "Started Perl SLiM on $host:$port\n";
-}
-
-sub free_port {
-  my($host) = @_;
-  my $socket = IO::Socket::INET->new(LocalAddr => $host, LocalPort => 0,
-    Proto => 'tcp', Listen => 1, ReuseAddr => 1) or die "allocate local port: $!";
-  my $port = $socket->sockport;
-  close $socket;
-  return $port;
 }
 
 sub start_fitnesse {
@@ -301,74 +293,11 @@ sub fitnesse_probe {
   return { ready => $ready ? 1 : 0, reachable => $response->{status} != 599 };
 }
 
-sub wait_until {
-  my($description,$seconds,$check) = @_;
-  my $until = time + $seconds;
-  while (time < $until) {
-    return if $check->();
-    sleep 0.2;
-  }
-  die "$description failed to become ready within ${seconds}s";
-}
-
 sub remaining_request_timeout {
   my($started_at,$total_timeout,$page_timeout) = @_;
   my $remaining = $total_timeout - (time - $started_at);
   return 0 if $remaining <= 0;
   return $remaining < $page_timeout ? $remaining : $page_timeout;
-}
-
-sub start_owned_process {
-  my($program,@args) = @_;
-  my %options = @args && ref($args[-1]) eq 'HASH' ? %{pop @args} : ();
-  my $pid = fork();
-  die "fork $program: $!" unless defined $pid;
-  if (!$pid) {
-    setpgid(0,0) == 0 or die "set process group for $program: $!";
-    chdir($options{cwd}) if $options{cwd};
-    open STDIN, '<', '/dev/null' or die "open /dev/null: $!";
-    open STDOUT, '>>', $options{log_file} or die "open $options{log_file}: $!";
-    open STDERR, '>&', STDOUT or die "redirect stderr: $!";
-    exec {$program} $program, @args;
-    die "exec $program: $!";
-  }
-  push @OWNED, $pid;
-  return $pid;
-}
-
-sub owned_process_exited {
-  for my $pid (@OWNED) {
-    next if $REAPED{$pid};
-    my $result = waitpid($pid,WNOHANG);
-    if ($result == $pid || $result == -1) {
-      $REAPED{$pid} = 1;
-      return 1;
-    }
-  }
-  return 0;
-}
-
-sub stop_owned_processes {
-  for my $pid (reverse @OWNED) {
-    next if $REAPED{$pid};
-    my $alive = 1;
-    kill 'TERM', -$pid or kill 'TERM', $pid;
-    my $until = time + 5;
-    while (time < $until) {
-      my $result = waitpid($pid,WNOHANG);
-      if ($result == $pid || $result == -1) {
-        $REAPED{$pid} = 1;
-        $alive = 0;
-        last;
-      }
-      sleep 0.1;
-    }
-    if ($alive) {
-      kill 'KILL', -$pid or kill 'KILL', $pid;
-      waitpid($pid,0);
-      $REAPED{$pid} = 1;
-    }
-  }
 }
 
 sub slim_is_alive {

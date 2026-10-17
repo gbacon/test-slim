@@ -8,12 +8,17 @@ use Test::Slim::FitNesseAcceptance qw(
   bounded_request
   compare_page_counts
   compare_inventory
+  free_port
   missing_wiki_pages
   parse_page_result
   perl_pipe_command_matches
   probe_slim
   preserve_exit_status
+  start_owned_process
+  owned_process_exited
+  stop_owned_processes
   true_property_pages_in_wiki
+  wait_until
 );
 
 sub baseline_page {
@@ -34,6 +39,18 @@ my @baseline = (
   baseline_page('PassingPage','conformant'),
   baseline_page('KnownFailure','harness_limited'),
 );
+
+my $allocated_port = free_port('127.0.0.1');
+ok($allocated_port > 0, 'shared acceptance helper allocates an ephemeral port');
+ok(!defined(wait_until('immediate fixture',1,sub { 1 })),
+  'shared readiness helper returns when its condition is satisfied');
+my($process_log_fh,$process_log) = tempfile();
+close $process_log_fh;
+my $owned = start_owned_process($^X,'-e','sleep 10',{log_file => $process_log});
+ok($owned > 0, 'shared process helper starts an owned process');
+ok(!owned_process_exited(), 'running owned process is not reported as exited');
+stop_owned_processes();
+is(waitpid($owned,1),-1, 'shared cleanup reaps the owned process');
 
 my $clean = compare_inventory(\@baseline, {
   PassingPage => successful_result(),

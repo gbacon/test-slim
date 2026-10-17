@@ -9,25 +9,109 @@ use File::Find qw(find);
 use File::Spec;
 use IO::Select;
 use IO::Socket::INET;
-use Time::HiRes qw(alarm time);
+use POSIX qw(WNOHANG setpgid);
+use Time::HiRes qw(alarm sleep time);
 
 our @EXPORT_OK = qw(
   bounded_request
   compare_page_counts
   compare_inventory
+  free_port
   missing_wiki_pages
   parse_page_result
   perl_pipe_command_matches
   probe_slim
   preserve_exit_status
+  start_owned_process
+  owned_process_exited
+  stop_owned_processes
   true_property_pages_in_wiki
+  wait_until
 );
+
+my (@OWNED_PROCESSES, %REAPED_PROCESSES);
 
 sub preserve_exit_status {
   my($cleanup) = @_;
   my $status = $?;
   $cleanup->();
   $? = $status;
+  return;
+}
+
+sub free_port {
+  my($host) = @_;
+  my $socket = IO::Socket::INET->new(LocalAddr => $host, LocalPort => 0,
+    Proto => 'tcp', Listen => 1, ReuseAddr => 1) or die "allocate local port: $!";
+  my $port = $socket->sockport;
+  close $socket;
+  return $port;
+}
+
+sub wait_until {
+  my($description,$seconds,$check) = @_;
+  my $deadline = time + $seconds;
+  while (time < $deadline) {
+    return if $check->();
+    sleep 0.2;
+  }
+  die "$description failed to become ready within ${seconds}s";
+}
+
+sub start_owned_process {
+  my($program,@args) = @_;
+  my %options = @args && ref($args[-1]) eq 'HASH' ? %{pop @args} : ();
+  die "start $program: log_file is required" unless $options{log_file};
+  my $pid = fork();
+  die "fork $program: $!" unless defined $pid;
+  if (!$pid) {
+    setpgid(0,0) == 0 or die "set process group for $program: $!";
+    chdir($options{cwd}) if $options{cwd};
+    open STDIN, '<', '/dev/null' or die "open /dev/null: $!";
+    open STDOUT, '>>', $options{log_file} or die "open $options{log_file}: $!";
+    open STDERR, '>&', STDOUT or die "redirect stderr: $!";
+    exec {$program} $program, @args;
+    die "exec $program: $!";
+  }
+  push @OWNED_PROCESSES, $pid;
+  return $pid;
+}
+
+sub owned_process_exited {
+  for my $pid (@OWNED_PROCESSES) {
+    next if $REAPED_PROCESSES{$pid};
+    my $result = waitpid($pid,WNOHANG);
+    if ($result == $pid || $result == -1) {
+      $REAPED_PROCESSES{$pid} = 1;
+      return 1;
+    }
+  }
+  return 0;
+}
+
+sub stop_owned_processes {
+  for my $pid (reverse @OWNED_PROCESSES) {
+    next if $REAPED_PROCESSES{$pid};
+    my $alive = 1;
+    kill 'TERM', -$pid or kill 'TERM', $pid;
+    my $deadline = time + 5;
+    while (time < $deadline) {
+      my $result = waitpid($pid,WNOHANG);
+      if ($result == $pid || $result == -1) {
+        $REAPED_PROCESSES{$pid} = 1;
+        $alive = 0;
+        last;
+      }
+      sleep 0.1;
+    }
+    if ($alive) {
+      kill 'KILL', -$pid or kill 'KILL', $pid;
+      waitpid($pid,0);
+      $REAPED_PROCESSES{$pid} = 1;
+    }
+  }
+  @OWNED_PROCESSES = ();
+  %REAPED_PROCESSES = ();
   return;
 }
 

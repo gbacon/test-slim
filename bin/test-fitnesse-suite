@@ -9,12 +9,13 @@ use File::Temp qw(tempdir);
 use FindBin qw($Bin);
 use Getopt::Long qw(GetOptions);
 use HTTP::Tiny;
-use IO::Socket::INET;
 use JSON::PP qw(decode_json);
-use POSIX qw(WNOHANG setpgid);
-use Time::HiRes qw(sleep time);
+use Time::HiRes qw(time);
 use lib "$Bin/../t/lib";
-use Test::Slim::FitNesseAcceptance qw(bounded_request preserve_exit_status probe_slim);
+use Test::Slim::FitNesseAcceptance qw(
+  bounded_request free_port owned_process_exited preserve_exit_status probe_slim
+  start_owned_process stop_owned_processes wait_until
+);
 use Test::Slim::FitNesseSuiteAcceptance qw(
   compare_suite_results
   configure_pipe_wiki
@@ -28,8 +29,6 @@ use Test::Slim::FitNesseSuiteAcceptance qw(
 $| = 1;
 my $ROOT = abs_path("$Bin/..");
 my $LOG_DIR = $ENV{TEST_SLIM_SUITE_LOG_DIR} || "$ROOT/.runtime";
-my @OWNED;
-my %REAPED;
 my $TEMP_ROOT;
 $SIG{INT} = sub { die "Interrupted\n" };
 $SIG{TERM} = sub { die "Terminated\n" };
@@ -109,8 +108,8 @@ sub main {
       grep { length } split /:/, ($ENV{PERL5LIB} // '');
   }
 
-  my $perl_log = "$LOG_DIR/fitnesse-native-suite-perl.log";
-  my $fitnesse_log = "$LOG_DIR/fitnesse-native-suite-fitnesse.log";
+  my $perl_log = "$LOG_DIR/fitnesse-native-suite-perl-$transport.log";
+  my $fitnesse_log = "$LOG_DIR/fitnesse-native-suite-fitnesse-$transport.log";
   unlink $perl_log, $fitnesse_log;
   my $perl = $ENV{TEST_SLIM_SUITE_PERL_EXECUTABLE} || 'perl';
   if ($transport eq 'tcp') {
@@ -149,7 +148,8 @@ sub main {
   );
   die "native suite request failed: $request_error" if $request_error;
   die 'FitNesse exited during native suite execution' if owned_process_exited();
-  open my $xml_fh, '>', "$LOG_DIR/fitnesse-native-suite-response.xml"
+  my $response_file = "$LOG_DIR/fitnesse-native-suite-response-$transport.xml";
+  open my $xml_fh, '>', $response_file
     or die "write suite XML response: $!";
   print {$xml_fh} $response->{content};
   close $xml_fh or die "close suite XML response: $!";
@@ -210,11 +210,11 @@ sub main {
     pageResults => \%page_report,
     interpretation => 'Exact baseline match means no observed native-suite regression; it is not a claim of complete Perl SLiM conformance.',
     generatedWikiExcluded => JSON::PP::true,
-    responseFile => "$LOG_DIR/fitnesse-native-suite-response.xml",
+    responseFile => $response_file,
   };
   $report->{failed} = $comparison->{failed} || $log_check->{failed} || $trace->{failed}
     ? JSON::PP::true : JSON::PP::false;
-  my $report_path = "$LOG_DIR/fitnesse-native-suite-results.json";
+  my $report_path = "$LOG_DIR/fitnesse-native-suite-results-$transport.json";
   write_json($report_path,$report);
 
   print "FitNesse native SLiM suite results\n";
@@ -245,78 +245,6 @@ sub main {
   print "Detailed results: $report_path\n";
   die 'native suite baseline or backend verification failed' if $report->{failed};
   return;
-}
-
-sub free_port {
-  my($host) = @_;
-  my $socket = IO::Socket::INET->new(LocalAddr => $host, LocalPort => 0,
-    Proto => 'tcp', Listen => 1, ReuseAddr => 1) or die "allocate local port: $!";
-  my $port = $socket->sockport;
-  close $socket;
-  return $port;
-}
-
-sub wait_until {
-  my($description,$seconds,$check) = @_;
-  my $deadline = time + $seconds;
-  while (time < $deadline) {
-    return if $check->();
-    sleep 0.2;
-  }
-  die "$description failed to become ready within ${seconds}s";
-}
-
-sub start_owned_process {
-  my($program,@args) = @_;
-  my %options = @args && ref($args[-1]) eq 'HASH' ? %{pop @args} : ();
-  my $pid = fork();
-  die "fork $program: $!" unless defined $pid;
-  if (!$pid) {
-    setpgid(0,0) == 0 or die "set process group for $program: $!";
-    chdir($options{cwd}) if $options{cwd};
-    open STDIN, '<', '/dev/null' or die "open /dev/null: $!";
-    open STDOUT, '>>', $options{log_file} or die "open $options{log_file}: $!";
-    open STDERR, '>&', STDOUT or die "redirect stderr: $!";
-    exec {$program} $program, @args;
-    die "exec $program: $!";
-  }
-  push @OWNED,$pid;
-  return $pid;
-}
-
-sub owned_process_exited {
-  for my $pid (@OWNED) {
-    next if $REAPED{$pid};
-    my $result = waitpid($pid,WNOHANG);
-    if ($result == $pid || $result == -1) {
-      $REAPED{$pid} = 1;
-      return 1;
-    }
-  }
-  return 0;
-}
-
-sub stop_owned_processes {
-  for my $pid (reverse @OWNED) {
-    next if $REAPED{$pid};
-    my $alive = 1;
-    kill 'TERM', -$pid or kill 'TERM', $pid;
-    my $deadline = time + 5;
-    while (time < $deadline) {
-      my $result = waitpid($pid,WNOHANG);
-      if ($result == $pid || $result == -1) {
-        $REAPED{$pid} = 1;
-        $alive = 0;
-        last;
-      }
-      sleep 0.1;
-    }
-    if ($alive) {
-      kill 'KILL', -$pid or kill 'KILL', $pid;
-      waitpid($pid,0);
-      $REAPED{$pid} = 1;
-    }
-  }
 }
 
 sub read_file {

@@ -46,7 +46,7 @@
          "knownTodoFailures" : 4,
          "status" : "PASS"
       },
-      "reportFile" : ".runtime/fitnesse-acceptance-results.json",
+      "reportFilePattern" : ".runtime/fitnesse-acceptance-results-{pipe,tcp}.json",
       "requiresExternalPerlEvidence" : true,
       "generatedMySuiteCleanupBeforeEveryPage" : true
    },
