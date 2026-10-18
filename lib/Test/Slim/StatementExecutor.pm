@@ -5,7 +5,7 @@ use strict;
 use warnings;
 
 use HTML::TreeBuilder;
-use Scalar::Util qw(reftype);
+use Scalar::Util qw(reftype refaddr);
 use Time::HiRes qw(alarm);
 use Test::Slim::Statement;
 use Test::Slim::SlimHelperLibrary;
@@ -97,11 +97,12 @@ sub _enum_types_for {
 
 sub create {
   my($self,$id,$class,$args) = @_;
+  my $is_library = $id =~ /^library/;
+  my ($registered, $had_instance, $previous_instance, $library_entry);
 
   eval {
     ($class) = $self->replace_symbols($class);
 
-    my $is_library = $id =~ /^library/;
     my $object;
     if (ref $class) {
       $object = $class;
@@ -132,17 +133,37 @@ sub create {
     }
 
     if ($is_library) {
-      push @{ $self->{library} }, { id => $id, object => $object };
+      $library_entry = { id => $id, object => $object };
+      push @{ $self->{library} }, $library_entry;
+      $registered = 1;
     }
     else {
+      $had_instance = exists $self->{instance}{$id};
+      $previous_instance = $self->{instance}{$id} if $had_instance;
       $self->{instance}{$id} = $object;
+      $registered = 1;
     }
     $object->set_statement_executor($self)
       if $object->can('set_statement_executor');
   };
   return "OK" unless $@;
 
-  $self->exception_result($@, 1);
+  my $error = $@;
+  if ($registered) {
+    if ($is_library) {
+      my $entry_id = refaddr($library_entry);
+      @{ $self->{library} } = grep { refaddr($_) != $entry_id }
+        @{ $self->{library} };
+    }
+    elsif ($had_instance) {
+      $self->{instance}{$id} = $previous_instance;
+    }
+    else {
+      delete $self->{instance}{$id};
+    }
+  }
+
+  $self->exception_result($error, 1);
 }
 
 sub construct_instance {
