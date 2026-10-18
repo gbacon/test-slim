@@ -27,6 +27,12 @@ authoritative source for their named topics.
 - [Standalone counter fixture](../examples/lib/Example/Counter.pm) and
   [FitNesse page](../examples/fitnesse/CounterTest.wiki) — the independent
   packaging example.
+- [Order-management acceptance suite](../examples/order-management/README.md)
+  — a business-readable suite running against the installed distribution,
+  with [business rules](../examples/order-management/BUSINESS-RULES.md),
+  [test-author guidance](../examples/order-management/TEST-AUTHORS.md),
+  [developer guidance](../examples/order-management/DEVELOPERS.md), and a
+  [usability audit](../examples/order-management/USABILITY-AUDIT.md).
 
 ## Architecture and development
 

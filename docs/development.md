@@ -42,6 +42,17 @@ bin/report-fitnesse-coverage
 bin/report-fitnesse-matrix
 ```
 
+The separate business-oriented installed-distribution example is checked by:
+
+```sh
+bin/test-example-order-management
+bin/test-example-order-management --transport tcp
+```
+
+It runs nine example pages, verifies their exact results, and performs
+wiki-only authoring exercises in an isolated temporary FitNesse root. The
+pipe run is part of CI; the TCP form is available for local transport checks.
+
 The isolated runner executes its deliberate 50-page inventory one page at
 a time. The native runner executes FitNesse's 93-page suite responder.
 Each runner validates exact per-page counts and confirms the selected

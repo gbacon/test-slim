@@ -107,6 +107,23 @@ pipe configuration above; the page should report two passing assertions.
 The fixture conversion contract and complete invocation example are in
 [`docs/fixture-conversion.md`](docs/fixture-conversion.md).
 
+## Business-oriented acceptance example
+
+[`examples/order-management/`](examples/order-management/README.md) contains a
+separate FitNesse suite for customer eligibility, pricing, inventory, and
+order submission. It uses decision, script, query, ordered-query, and scenario
+tables, and runs against a temporary installation of the packaged
+distribution:
+
+```sh
+bin/test-example-order-management
+bin/test-example-order-management --transport tcp
+```
+
+The runner includes wiki-only authoring exercises and verifies that the
+installed Perl service handled the tests. It is separate from the upstream
+50-page and 93-page regression inventories.
+
 ## Documentation
 
 Start at [`docs/index.md`](docs/index.md) for the documentation map. The

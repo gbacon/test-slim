@@ -282,7 +282,11 @@ sub verify_archive_contents {
       unless $entries{"$root/$module"};
   }
   die 'release archive contains FitNesse runtime state'
-    if grep { m{(?:\A|/)(?:\.runtime|FitNesseRoot)(?:/|\z)} } @$files;
+    if grep {
+      m{(?:\A|/)\.runtime(?:/|\z)}
+        || $_ eq "$root/FitNesseRoot"
+        || m{\A\Q$root\E/FitNesseRoot(?:/|\z)}
+    } @$files;
   return;
 }
 

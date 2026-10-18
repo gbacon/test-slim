@@ -105,3 +105,14 @@ Every production module and `bin/perl-slim` includes POD. The Markdown
 hierarchy is indexed in [`docs/index.md`](docs/index.md). `bin/check-docs`
 checks POD syntax and rendering plus local Markdown links; the POD tests
 also check production method coverage.
+
+The independent [order-management example](examples/order-management/README.md)
+demonstrates business-readable FitNesse tables over a pure Perl application.
+The domain stores records as hashes and line collections as arrays; fixture
+adapters translate them to decision, script, query, ordered-query, and
+scenario behavior. Wiki currency is parsed as decimal text into integer
+cents. `bin/test-example-order-management` builds and installs the
+distribution in a temporary prefix, copies the application outside the
+checkout, and runs the pinned FitNesse suite against that installed engine.
+Its authoring exercises are automated inspections, not evidence from
+nontechnical user research.

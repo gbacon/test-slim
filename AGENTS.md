@@ -54,6 +54,12 @@ archive from an isolated install prefix. It runs the installed executable
 from outside the checkout with a fixture copied outside the distribution
 and checks pipe, TCP, and FitNesse-managed pipe execution.
 
+The business-oriented installed-distribution example is available as
+`bin/test-example-order-management` (pipe default) or
+`bin/test-example-order-management --transport tcp`. It executes the example
+suite and disposable wiki-only authoring checks; see
+`examples/order-management/README.md`.
+
 Perl SLiM server:
 
 ```sh
