@@ -54,6 +54,38 @@ sub slim_constructor_signature {
 
 The constructor signature uses positional arguments. If metadata is absent, constructor arguments keep their previous untyped behavior.
 
+## Fixed-arity signatures
+
+When a signature contains a `parameters` array, that array declares the exact invocation arity as well as the argument types. The executor checks the count before conversion and before invoking the fixture. A rejected constructor is not run or registered; a rejected method does not run or fall through to the SUT or a library.
+
+```perl
+sub slim_enum_types {
+  return { Color => [qw(RED GREEN BLUE)] };
+}
+
+sub slim_constructor_signature {
+  return { parameters => ['Integer', 'java.util.List<String>'] };
+}
+
+sub slim_method_signature {
+  my ($self, $method) = @_;
+  return { parameters => [], return => 'String' }
+    if $method eq 'status';       # exactly zero arguments
+  return { parameters => ['Integer', 'Color'], return => 'String' }
+    if $method eq 'update';       # exactly two arguments
+  return { return => 'String' } if $method eq 'describe';
+}
+
+sub new { bless { number => $_[1], labels => $_[2] }, $_[0] }
+sub status { 'ready' }
+sub update { $_[0]{number} = $_[1]; $_[0]{color} = $_[2]; 'updated' }
+sub describe { join '/', @_[1 .. $#_] }
+```
+
+An explicitly empty `parameters => []` is a fixed zero-argument contract. A signature with no `parameters` key (including a return-only signature) declares no arity contract and retains dynamic Perl invocation behavior. A fixture with no signature metadata is also left untyped; the server does not infer argument counts from Perl prototypes or method bodies. Java overload selection is not emulated: a Perl method has one declared signature per dispatched name.
+
+On a typed mismatch, methods return a structured `NO_METHOD_IN_CLASS` SLiM exception naming the requested method and supplied count; constructors return `NO_CONSTRUCTOR` with the class and supplied count. These categories correspond to Java's arity-based method lookup and constructor rejection, though Java's constructor message is the class name followed by `[count]`. Matching-count conversion errors remain distinct and continue through the existing converter error path. Actor, SUT, and library lookup precedence is unchanged, and a selected target is not retried after an arity mismatch.
+
 ## Input and result format
 
 Sequence input uses Java's simple comma-separated syntax. Brackets are optional; values are split on commas and trimmed. There is no quoting or escaping for commas. A blank whole input converts to null. Explicit `[]` converts to an empty array or collection. Blank elements follow their component converter: for example, a blank boxed Integer becomes null, a blank `int` becomes zero, and a blank String remains empty. Invalid values raise the scalar converter error through the usual SLiM exception result.

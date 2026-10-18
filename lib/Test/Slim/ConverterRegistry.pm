@@ -57,6 +57,25 @@ sub remove_converter {
   return delete $self->{converters}{$type};
 }
 
+sub validate_arity {
+  my ($self, $signature, $method, $actual, $kind, $class) = @_;
+  return unless $signature && exists $signature->{parameters};
+
+  my $parameters = $signature->{parameters};
+  die "invalid parameter signature for $method\n"
+    unless ref($parameters) eq 'ARRAY';
+  my $expected = @$parameters;
+  return if $actual == $expected;
+
+  if ($kind eq 'constructor') {
+    die "message:<<NO_CONSTRUCTOR $class\[$actual\]. Expected $expected arguments.>>\n"
+      . "Tried to invoke: $method\n";
+  }
+
+  die "message:<<NO_METHOD_IN_CLASS No Method $method\[$actual\] in class $class. "
+    . "Expected $expected arguments.>>\nTried to invoke: $method\n";
+}
+
 sub validate_enum_types {
   my ($self, $types) = @_;
   return {} unless defined $types;

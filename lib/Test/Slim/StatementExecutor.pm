@@ -119,6 +119,10 @@ sub create {
           enum_types => $self->_enum_types_for($class),
         };
       }
+      $self->{converters}->validate_arity(
+        $signature, "$class constructor", scalar @constructor_args,
+        'constructor', $class
+      );
       @constructor_args = $self->{converters}->convert_arguments(
         $signature, "$class constructor", @constructor_args
       ) if $signature;
@@ -345,6 +349,10 @@ sub _call {
         enum_types => $self->_enum_types_for($method_obj),
       };
     }
+    $self->{converters}->validate_arity(
+      $signature, $requested_method, scalar @call_args,
+      'method', ref($method_obj)
+    );
     @call_args = $self->{converters}->convert_arguments(
       $signature, $requested_method, @call_args
     ) if $signature;
