@@ -1,5 +1,15 @@
 # Typed fixture conversion metadata
 
+The package includes a complete, independent fixture example at
+[`examples/lib/Example/Counter.pm`](../examples/lib/Example/Counter.pm) and
+its FitNesse page at
+[`examples/fitnesse/CounterTest.wiki`](../examples/fitnesse/CounterTest.wiki).
+The fixture is outside `t/lib` and can be loaded by an installed server via
+`PERL5LIB`. `bin/test-install` copies it to a temporary directory and
+verifies its constructor conversion, camelCase method mapping, typed
+argument conversion, and result conversion through both SLiM transports and
+FitNesse v20251025.
+
 `Test::Slim` does not use Perl reflection to guess Java parameter types. A fixture can declare the types that need conversion and the executor applies its per-session converter registry to method and constructor arguments and method results.
 
 ## Method arguments and results

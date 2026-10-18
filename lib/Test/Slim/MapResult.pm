@@ -64,3 +64,29 @@ sub _value_to_string {
 }
 
 1;
+
+=head1 NAME
+
+Test::Slim::MapResult - Convert fixture maps to FitNesse table markup
+
+=head1 DESCRIPTION
+
+FitNesse's Java map converter renders map results as HTML tables. This
+module provides the corresponding result conversion for Perl hash
+references. Keys are sorted for deterministic output. Scalar cell text is
+escaped, while recognized HTML and serialized list markup are preserved.
+Nested maps and arrays are formatted recursively. Unsupported reference
+types fail instead of being globally stringified.
+
+=head1 METHODS
+
+=head2 convert
+
+    my $html = Test::Slim::MapResult->convert(\%map);
+
+Return FitNesse-compatible table markup. An undefined map becomes the
+protocol string C<null>; an empty map becomes an empty table. A non-hash
+argument or an unsupported reference value throws an error for the caller
+to format as a SLiM exception.
+
+=cut

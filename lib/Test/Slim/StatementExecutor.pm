@@ -501,3 +501,138 @@ sub _system_under_test {
 }
 
 1;
+
+=head1 NAME
+
+Test::Slim::StatementExecutor - Own fixture and symbol state for a SLiM session
+
+=head1 DESCRIPTION
+
+The statement executor owns imported Perl package prefixes, actors,
+registered libraries, symbols, stop state, and a per-session
+L<Test::Slim::ConverterRegistry>. It resolves fixture classes and methods,
+constructs fixtures, substitutes symbols, applies declared conversions,
+dispatches calls, and formats results and exceptions.
+
+Method dispatch checks an actor first, then its declared system under test,
+then registered libraries newest-first. Fixture class imports prefer the
+most-specific imported package; later imports win among equally specific
+candidates. Failed construction restores executor-owned actor or library
+registration state. These rules preserve the current Perl fixture model and
+do not implement Java reflection or overload selection.
+
+=head1 METHODS
+
+=head2 new
+
+    my $executor = Test::Slim::StatementExecutor->new(%options);
+
+Create isolated session state. C<statement_timeout> optionally bounds each
+fixture invocation.
+
+=head2 add_import
+
+Register a FitNesse import prefix for later fixture class resolution.
+
+=head2 path_to_class and require
+
+C<path_to_class> maps a Perl package name to its module path. C<require>
+loads that module and wraps load errors as constructor-resolution errors.
+Both methods are internal class-loading helpers.
+
+=head2 slim_to_perl_class and slim_to_perl_method
+
+Translate FitNesse-style fixture class names and method names to Perl
+package and snake_case spellings. Method invocation checks the exact
+requested name before the translated spelling.
+
+=head2 resolve_class
+
+Resolve and load a fixture class using the imported package precedence.
+Return its Perl package name or throw a structured C<NO_CLASS> error.
+
+=head2 create
+
+    my $result = $executor->create($id, $class, \@arguments);
+
+Construct a fixture and register it as an actor or library according to
+its identifier. Declared constructor arity and conversions are validated
+before construction. A constructor or initialization failure returns a
+structured SLiM exception and does not leave a partial executor
+registration.
+
+=head2 instance
+
+Return an actor or explicitly named library object by identifier, or
+C<undef> when none is registered.
+
+=head2 construct_instance
+
+Construct and register an already-resolved class directly. This lower-level
+helper is retained for internal callers; normal SLiM C<make> instructions
+use C<create> so conversion, initialization, and registration rollback are
+applied.
+
+=head2 replace_symbols
+
+Resolve exact symbol references without stringifying their values, and
+interpolate embedded scalar references. Return the transformed values in
+argument order.
+
+=head2 replace_tables_with_hashes and replace_table_with_hash
+
+Convert FitNesse two-column HTML tables to Perl hashes where fixture
+arguments use table data. Non-table strings pass through unchanged.
+
+=head2 set_symbol
+
+Store a value in the session symbol table and update the special fixture
+symbol-handling pattern when its control symbol is assigned. Return the
+stored value.
+
+=head2 get_symbol
+
+Return the current value of a session symbol, or C<undef> if it is absent.
+
+=head2 add_converter
+
+Register a converter in this executor's registry.
+
+=head2 get_converter
+
+Resolve a converter in this executor's registry.
+
+=head2 reset_converters
+
+Restore built-in converters and discard custom registrations for this
+executor only.
+
+=head2 call
+
+Invoke a method through actor, SUT, and library resolution. Return the
+formatted result or a structured SLiM exception string.
+
+=head2 call_and_assign
+
+Invoke a method and store its result in a symbol. Typed sequence results
+retain their raw array reference in the symbol table while returning the
+declared display string.
+
+=head2 exception_result
+
+Convert fixture exceptions and FitNesse stop/ignore markers into protocol
+exception strings. Stop markers also set batch control state.
+
+=head2 stop_requested and reset_stop_requested
+
+Inspect or clear a FitNesse stop/ignore request raised by the most recent
+instruction. The list executor clears this state between batches.
+
+=head1 FIXTURE METADATA
+
+Fixtures may implement C<slim_constructor_signature>,
+C<slim_method_signature>, and C<slim_enum_types>. See
+C<docs/fixture-conversion.md> for executable declarations and conversion
+limits.
+
+=cut

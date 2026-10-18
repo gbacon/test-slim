@@ -33,3 +33,74 @@ Test::Slim::Server->new(
   verbose => $verbose,
   statement_timeout => $statement_timeout,
 )->run($port);
+
+__END__
+
+=head1 NAME
+
+perl-slim - Run the Perl FitNesse SLiM server
+
+=head1 SYNOPSIS
+
+    perl-slim [-v] [-s SECONDS] PORT
+
+=head1 DESCRIPTION
+
+Start the Test::Slim server. Port C<1> selects a single SLiM v0.5 session
+over the inherited stdin/stdout pipes, as used when FitNesse starts the
+server as a test-runner child. Other valid port numbers start the v0.5 TCP
+listener on that port.
+
+The executable must be able to load L<Test::Slim::Server> and its runtime
+dependency L<HTML::TreeBuilder>. External fixture modules must be on the
+Perl module search path inherited by the process, normally C<PERL5LIB>.
+
+=head1 OPTIONS
+
+=over 4
+
+=item B<-v>
+
+Write request and response diagnostics to stderr. In pipe mode, fixture
+stdout and stderr are captured and tunneled separately so that protocol
+frames remain on stdout.
+
+=item B<-s> I<SECONDS>
+
+Set an integer timeout for each fixture statement. The value must be
+positive and fit in a signed 32-bit integer. A timed-out invocation is
+returned as a SLiM exception.
+
+=item I<PORT>
+
+Select the transport. Port C<1> means pipes; other accepted decimal ports
+select TCP. Exactly one port is required.
+
+=back
+
+=head1 EXIT STATUS
+
+The pipe process exits zero after a clean C<bye> or clean EOF. Invalid
+arguments, startup failures, truncated messages, framing failures, and
+broken protocol output result in a nonzero exit. TCP serves clients in
+child processes; a malformed client is isolated from the listener.
+
+=head1 EXAMPLES
+
+FitNesse-managed pipe configuration:
+
+    !define TEST_SYSTEM {slim}
+    !define COMMAND_PATTERN {%m}
+    !define TEST_RUNNER {/absolute/path/to/perl-slim}
+    !define SLIM_PORT {1}
+
+Standalone TCP listener:
+
+    perl-slim 8099
+
+=head1 SEE ALSO
+
+L<Test::Slim>, L<Test::Slim::Server>,
+C<docs/slim-pipe-transport.md>, and C<docs/fixture-conversion.md>.
+
+=cut

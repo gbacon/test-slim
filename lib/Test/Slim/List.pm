@@ -156,3 +156,49 @@ sub serialize {
 }
 
 1;
+
+=head1 NAME
+
+Test::Slim::List - Parse and serialize SLiM list values
+
+=head1 DESCRIPTION
+
+This module handles the nested list representation used inside SLiM
+messages. Serialized string lengths count UTF-16 code units; the server is
+responsible for outer UTF-8 byte framing. Parsing validates the complete
+input, including nesting and configurable resource limits, and dies with a
+descriptive error for malformed data.
+
+=head1 METHODS
+
+=head2 new
+
+    my $list = Test::Slim::List->new($serialized, limits => \%limits);
+    my $list = Test::Slim::List->new(\@values);
+
+Construct a parser from serialized text or a serializer from an array
+reference. Optional limits override C<%DEFAULT_LIMITS>. The object is lazy:
+serialized input is parsed when C<list> is requested.
+
+=head2 list
+
+Return the list's values. Nested lists are array references and protocol
+nulls are represented by C<undef>. Malformed input throws an exception.
+
+=head2 serialize
+
+Return the serialized SLiM list string. Unicode length fields use UTF-16
+code units. References are recursively serialized as nested lists.
+
+=head2 length_string
+
+Format a six-digit-minimum decimal length prefix for an inner list item.
+Expanded lengths are permitted.
+
+=head1 LIMITS
+
+C<%DEFAULT_LIMITS> defines maximum nesting (128), decoded elements
+(1,000,000), item length (16,777,216 UTF-16 units), and frame bytes
+(67,108,864). These are server defensive defaults, not protocol limits.
+
+=cut

@@ -383,3 +383,76 @@ sub run_pipe {
 }
 
 1;
+
+=head1 NAME
+
+Test::Slim::Server - Serve FitNesse SLiM sessions over TCP or pipes
+
+=head1 DESCRIPTION
+
+The server owns transport framing and the per-session
+L<Test::Slim::ListExecutor>. TCP connections and the port-1 stdin/stdout
+transport share the same frame reader, SLiM deserializer, executor, and
+response serializer. Each accepted connection receives isolated fixture,
+library, and symbol state.
+
+Pipe protocol bytes are written through a dedicated stdout handle. Fixture
+stdout and stderr are captured separately and emitted as FitNesse v0.5
+diagnostic records on stderr. TCP diagnostics use the normal process
+diagnostic stream. Transport and resource errors close the affected session
+and are reported on stderr; they do not manufacture a response for an
+incomplete message.
+
+=head1 METHODS
+
+=head2 new
+
+    my $server = Test::Slim::Server->new(%options);
+
+Create a server. C<verbose> enables request/response diagnostics,
+C<statement_timeout> sets an optional per-invocation limit, and
+C<max_frame_bytes> overrides the outer frame limit. The frame limit may
+also be configured with C<TEST_SLIM_MAX_FRAME_BYTES> and defaults to 64
+MiB. Invalid limits throw an error during construction.
+
+=head2 run
+
+    $server->run($port);
+
+Run the selected transport. Port C<1> serves a single v0.5 pipe session
+over inherited standard input/output. Other valid ports create a TCP
+listener and serve clients. The method runs until the pipe session ends or
+the TCP listener is stopped.
+
+=head2 process
+
+Process one connected TCP session on a bidirectional filehandle. This
+method is primarily used by the listener and transport tests.
+
+=head2 process_pipe
+
+Process one pipe session using distinct input and protocol-output
+filehandles. An optional diagnostic-output handle receives v0.5 tunneling
+records.
+
+=head2 execute
+
+Execute decoded instruction array references in the current session. This
+is a small integration-test hook; transport sessions normally use the
+internal list executor directly.
+
+=head2 run_pipe
+
+Prepare the standard handles for a FitNesse-managed child and run one pipe
+session. Protocol bytes go to the preserved stdout descriptor; ordinary
+stdout is redirected away from it.
+
+=head1 PROTOCOL
+
+The outer frame prefix counts UTF-8 payload bytes. Inner SLiM string
+lengths count UTF-16 code units. The server advertises
+C<Slim -- V0.5\n>. A framed C<bye> ends a session. See
+C<docs/slim-protocol-malformed-input.md> and
+C<docs/slim-pipe-transport.md> for framing limits and transport policy.
+
+=cut

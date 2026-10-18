@@ -35,6 +35,16 @@ jobs:
             test-slim-ci \
             bash -lc 'bin/report-fitnesse-coverage && bin/test-dev && bin/test-fitnesse'
 
+      - name: Validate documentation and installed distribution
+        run: |
+          docker run --rm \
+            -e LANG=C.UTF-8 \
+            -e LC_ALL=C.UTF-8 \
+            -v "$PWD":/workspaces/test-slim \
+            -w /workspaces/test-slim \
+            test-slim-ci \
+            bash -lc 'bin/check-docs && prove -v t/pod.t t/pod-coverage.t && bin/test-install'
+
       - name: Run native FitNesse suite against Perl
         run: |
           docker run --rm \

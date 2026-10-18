@@ -1,110 +1,67 @@
 package Test::Slim;
 
-use warnings;
 use strict;
+use warnings;
+
+our $VERSION = '0.01';
+
+1;
 
 =head1 NAME
 
-Test::Slim - The great new Test::Slim!
+Test::Slim - Perl implementation of the FitNesse SLiM protocol
 
 =head1 VERSION
 
 Version 0.01
 
-=cut
+=head1 DESCRIPTION
 
-our $VERSION = '0.01';
+C<Test::Slim> implements the server side of FitNesse's Simple List
+Invocation Method (SLiM) protocol. This package provides the distribution
+version and documentation; it does not expose a constructor or exported
+function API.
 
+L<Test::Slim::Server> processes framed requests, executes fixture
+instructions, and writes responses. The C<perl-slim> executable is the
+normal way to start the server.
 
 =head1 SYNOPSIS
 
-Quick summary of what the module does.
+Start the v0.5 stdin/stdout transport as a FitNesse-managed child process:
 
-Perhaps a little code snippet.
+    perl-slim 1
 
-    use Test::Slim;
+Start a TCP listener on port 8099:
 
-    my $foo = Test::Slim->new();
-    ...
+    perl-slim 8099
 
-=head1 EXPORT
+For pipe transport, configure FitNesse with C<COMMAND_PATTERN=%m>,
+C<TEST_RUNNER> set to the installed executable, and C<SLIM_PORT=1>. For TCP,
+configure the FitNesse SLiM service to connect to the listener's host and
+port. See C<docs/slim-pipe-transport.md> and
+C<docs/fitnesse-cli-runner-configuration.md> for complete examples.
 
-A list of functions that can be exported.  You can delete this section
-if you don't export anything, such as for a purely object-oriented module.
+Fixture authors declare conversion metadata with C<slim_method_signature>
+and C<slim_constructor_signature>. See C<docs/fixture-conversion.md> for
+supported types and a runnable fixture example.
 
-=head1 SUBROUTINES/METHODS
+=head1 SUPPORT
 
-=head2 function1
-
-=cut
-
-sub function1 {
-}
-
-=head2 function2
-
-=cut
-
-sub function2 {
-}
+The project repository is at L<https://github.com/gbacon/test-slim>. Report
+bugs and compatibility findings through the project's issue tracker.
 
 =head1 AUTHOR
 
 Greg Bacon, C<< <gbacon at dbresearch.net> >>
 
-=head1 BUGS
-
-Please report any bugs or feature requests to C<bug-test-slim at rt.cpan.org>, or through
-the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=test-slim>.  I will be notified, and then you'll
-automatically be notified of progress on your bug as I make changes.
-
-
-
-
-=head1 SUPPORT
-
-You can find documentation for this module with the perldoc command.
-
-    perldoc Test::Slim
-
-
-You can also look for information at:
-
-=over 4
-
-=item * RT: CPAN's request tracker
-
-L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=test-slim>
-
-=item * AnnoCPAN: Annotated CPAN documentation
-
-L<http://annocpan.org/dist/test-slim>
-
-=item * CPAN Ratings
-
-L<http://cpanratings.perl.org/d/test-slim>
-
-=item * Search CPAN
-
-L<http://search.cpan.org/dist/test-slim/>
-
-=back
-
-
-=head1 ACKNOWLEDGEMENTS
-
-
-=head1 LICENSE AND COPYRIGHT
+=head1 COPYRIGHT AND LICENSE
 
 Copyright 2010 Greg Bacon.
 
 This program is free software; you can redistribute it and/or modify it
-under the terms of either: the GNU General Public License as published
-by the Free Software Foundation; or the Artistic License.
-
-See http://dev.perl.org/licenses/ for more information.
-
+under the terms of either the GNU General Public License as published by
+the Free Software Foundation or the Artistic License. See the included
+C<LICENSE> file.
 
 =cut
-
-1; # End of Test::Slim

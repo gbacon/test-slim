@@ -32,3 +32,40 @@ sub pop_fixture {
 }
 
 1;
+
+=head1 NAME
+
+Test::Slim::SlimHelperLibrary - Maintain FitNesse script-table fixture state
+
+=head1 DESCRIPTION
+
+Each statement executor creates a private helper-library instance. Its
+stack saves and restores the current C<scriptTableActor> reference used by
+FitNesse script tables. The stack belongs to one SLiM session and preserves
+object identity.
+
+=head1 METHODS
+
+=head2 new
+
+    my $library = Test::Slim::SlimHelperLibrary->new(\%instances);
+
+Create a helper bound to the executor's instance hash. The hash is retained
+by reference so fixture changes are visible to helper operations.
+
+=head2 get_fixture
+
+Return the current C<scriptTableActor>. If no actor is registered, throw
+the FitNesse-compatible C<NO_INSTANCE> error.
+
+=head2 push_fixture
+
+Save the current fixture reference on the helper's LIFO stack. Return no
+value.
+
+=head2 pop_fixture
+
+Restore the most recently saved fixture. An empty stack throws
+C<EmptyStackException> and leaves the instance hash unchanged.
+
+=cut

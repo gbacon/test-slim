@@ -107,3 +107,75 @@ sub malformed_instruction {
 }
 
 1;
+
+=head1 NAME
+
+Test::Slim::Statement - Validate and execute one SLiM instruction
+
+=head1 DESCRIPTION
+
+This internal adapter validates the SLiM instruction name and its
+protocol-level minimum argument count, then delegates to the corresponding
+method on L<Test::Slim::StatementExecutor>. Fixture signature arity and
+conversion are checked by the statement executor. Fixture failures are
+returned as structured C<__EXCEPTION__:> result values; malformed
+instructions use the protocol's C<MALFORMED_INSTRUCTION> category.
+
+=head1 METHODS
+
+=head2 new
+
+    my $statement = Test::Slim::Statement->new(@instruction_fields);
+
+Store one decoded instruction. The first fields are its identifier and
+operation; remaining values are operation arguments.
+
+=head2 execute
+
+    my $result = Test::Slim::Statement->execute($executor, @fields);
+
+Validate and execute one instruction using the supplied statement
+executor. Return a two-element array reference containing the instruction
+identifier and result.
+
+=head2 exec
+
+Execute the instruction stored by C<new>. Invalid operations or protocol
+arity return a malformed-instruction result. Fixture exceptions are
+converted to the standard SLiM exception representation.
+
+=head2 statement
+
+Return the stored instruction fields in order.
+
+=head1 INSTRUCTION METHODS
+
+=head2 do_import
+
+Register a fixture package prefix through the statement executor and
+return C<OK>, or an exception result if registration fails.
+
+=head2 do_make
+
+Construct and register an actor or library fixture using the executor's
+creation and failure-containment rules.
+
+=head2 do_call
+
+Invoke one fixture method and return its result or structured exception.
+
+=head2 do_callAndAssign
+
+Invoke a fixture method, assign its result to a SLiM symbol, and return the
+display value.
+
+=head2 do_assign
+
+Assign a decoded value to a symbol and return C<OK>.
+
+=head2 malformed_instruction
+
+Return a C<MALFORMED_INSTRUCTION> result. The diagnostic bounds the
+reported instruction text to avoid echoing unbounded protocol input.
+
+=cut

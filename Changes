@@ -1,5 +1,7 @@
-Revision history for test-slim
+Revision history for Test::Slim
 
-0.01    Date/time
-        First version, released on an unsuspecting world.
-
+0.01 (current distribution version; not a release announcement)
+    Package the existing Perl SLiM v0.5 implementation with Module::Build,
+    install the perl-slim executable, and add standalone fixture and
+    documentation verification examples. The distribution version remains
+    unchanged; release decisions are separate.

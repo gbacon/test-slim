@@ -1630,7 +1630,7 @@
          "result" : "PASS",
          "tests" : 288
       },
-      "protocolCompatibility" : "SetContextValue uses SLiM 0.4 assign to transfer query cells into symbols. The server now advertises V0.4; assign stores its value, returns OK, and preserves null.",
+      "protocolCompatibility" : "SetContextValue uses the SLiM assign instruction to transfer query cells into symbols. The pinned v20251025 session uses V0.5; assign stores its value, returns OK, and preserves null.",
       "upstreamReference" : "Installed FitNesse v20251025 classes fitnesse.fixtures.SplitFixture and fitnesse.fixtures.DuplicateRows; both expose a single-String constructor and query(). Their bytecode metadata and unchanged acceptance tables establish the constructors and query signatures."
    },
    "fixtureIncrementHistory" : [
@@ -1748,7 +1748,7 @@
             "result" : "PASS",
             "tests" : 288
          },
-         "protocolCompatibility" : "SetContextValue uses SLiM 0.4 assign to transfer query cells into symbols. The server now advertises V0.4; assign stores its value, returns OK, and preserves null.",
+         "protocolCompatibility" : "SetContextValue uses the SLiM assign instruction to transfer query cells into symbols. The pinned v20251025 session uses V0.5; assign stores its value, returns OK, and preserves null.",
          "upstreamReference" : "Installed FitNesse v20251025 classes fitnesse.fixtures.SplitFixture and fitnesse.fixtures.DuplicateRows; both expose a single-String constructor and query(). Their bytecode metadata and unchanged acceptance tables establish the constructors and query signatures."
       }
    ],

@@ -632,3 +632,99 @@ sub to_string {
 }
 
 1;
+
+=head1 NAME
+
+Test::Slim::ConverterRegistry - Convert declared fixture argument and result types
+
+=head1 DESCRIPTION
+
+The converter registry supplies the scalar and sequence conversions used
+by L<Test::Slim::StatementExecutor>. Each executor owns a registry, so
+custom converter changes are scoped to that executor. Fixtures select
+converters through C<slim_constructor_signature> and
+C<slim_method_signature>; undeclared arguments are not coerced.
+
+Built-in scalar types include String, Boolean, Integer, Long, Double,
+Character, Date, and void forms. One-dimensional typed arrays and generic
+List/Collection declarations compose those scalar converters. Fixture
+packages may declare enum domains through C<slim_enum_types>. Parsing and
+result-formatting errors are thrown for the statement executor to serialize
+as SLiM exceptions.
+
+=head1 METHODS
+
+=head2 new
+
+Create a registry initialized with the built-in converters.
+
+=head2 reset
+
+Restore the built-in converter set and remove custom registrations.
+
+=head2 add_converter
+
+    $registry->add_converter($type_name, $converter);
+
+Register an object implementing C<from_string> and C<to_string> under a
+type name. Invalid converter objects throw an error. Re-registering a name
+replaces its current converter.
+
+=head2 remove_converter
+
+Remove a custom or built-in converter by name and return the removed
+converter, or C<undef> if no converter was registered.
+
+=head2 get_converter
+
+Resolve a registered scalar, enum, array, or supported generic
+List/Collection converter. Return C<undef> when the type is unsupported.
+
+=head2 validate_arity
+
+Check an explicitly declared C<parameters> array against the supplied
+argument count. Missing parameter metadata imposes no arity constraint; an
+explicit empty array requires zero arguments. Mismatches throw structured
+constructor or method errors before fixture invocation.
+
+=head2 validate_enum_types
+
+Validate and copy a fixture's enum declaration hash. Type names cannot
+shadow registered converters; each value must be a list of unique,
+non-empty scalar names. Invalid declarations throw an error.
+
+=head2 convert_arguments
+
+Convert typed scalar arguments in place order and return the converted
+values. Existing references and undeclared positions are preserved.
+Conversion failures include the invocation context in their exception.
+
+=head2 convert_result
+
+Convert a declared result to its SLiM string representation and return the
+formatted value with a flag indicating whether conversion occurred.
+
+=head2 converter_for_runtime_value
+
+Return the suitable registered converter for a Perl runtime value, or
+C<undef> when no converter applies.
+
+=head2 element_to_string
+
+Format a nested sequence element. Scalars, supported arrays, maps, and
+objects with explicit string methods are handled; unsupported references
+throw an error instead of being stringified implicitly.
+
+=head2 is_typed_sequence
+
+Return true when a declared type resolves to the registry's typed
+array/List/Collection converter.
+
+=head1 CONVERTER CONTRACT
+
+Custom converters implement C<from_string($value)> and
+C<to_string($value)>. They may also implement C<set_registry($registry)> to
+access the owning registry. This is an executor-scoped fixture extension,
+not a wire-level SLiM type system.
+
+=cut

@@ -13,8 +13,12 @@ Do not rewrite the implementation merely to modernize its style.
 - `lib/Test/Slim/` — protocol implementation
 - `bin/perl-slim` — SLiM server entry point
 - `bin/test-dev` — established developer/CI test command
+- `bin/test-install` — build/install/archive smoke test with external fixture and FitNesse
+- `bin/check-docs` — POD syntax/rendering and Markdown local-link checks
 - `t/` — Perl unit and regression tests
 - `t/lib/` — test fixture implementations
+- `examples/` — standalone fixture and FitNesse example page
+- `docs/index.md` — documentation map
 - `.devcontainer/` — Codespaces and container configuration
 - `.github/workflows/` — CI
 - `FitNesseRoot/` — local FitNesse wiki data, Git-ignored
@@ -40,7 +44,15 @@ Unit and regression tests:
 
 ```sh
 bin/test-dev
+bin/check-docs
+prove -v t/pod.t t/pod-coverage.t
+bin/test-install
 ```
+
+`bin/test-install` requires the pinned FitNesse JAR and tests the release
+archive from an isolated install prefix. It runs the installed executable
+from outside the checkout with a fixture copied outside the distribution
+and checks pipe, TCP, and FitNesse-managed pipe execution.
 
 Perl SLiM server:
 
