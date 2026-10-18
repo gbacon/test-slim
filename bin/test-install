@@ -1,0 +1,467 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+
+use Cwd qw(abs_path getcwd);
+use Config qw(%Config);
+use Encode qw(encode decode FB_CROAK);
+use File::Copy qw(copy);
+use File::Find qw(find);
+use File::Path qw(make_path remove_tree);
+use File::Spec;
+use File::Temp qw(tempdir);
+use FindBin qw($Bin);
+use HTTP::Tiny;
+use IO::Select;
+use IO::Socket::INET;
+use IPC::Open3;
+use POSIX qw(WNOHANG);
+use Symbol qw(gensym);
+use Time::HiRes qw(sleep time);
+use lib "$Bin/../t/lib";
+use Test::Slim::FitNesseAcceptance qw(
+  free_port owned_process_exited preserve_exit_status start_owned_process
+  stop_owned_processes wait_until
+);
+use Test::Slim::FitNesseSuiteAcceptance qw(
+  configure_pipe_wiki extract_wiki_from_jar
+);
+
+$| = 1;
+my $ROOT = abs_path("$Bin/..") or die "resolve source root: $!";
+open my $version_fh, '<', "$ROOT/lib/Test/Slim.pm" or die "read version: $!";
+my $version_source = do { local $/; <$version_fh> };
+close $version_fh or die "close version source: $!";
+my ($VERSION) = $version_source =~ /our \$VERSION = '([^']+)'/;
+die 'could not read distribution version' unless defined $VERSION;
+my $TEMP;
+
+END {
+  preserve_exit_status(sub {
+    stop_owned_processes();
+    remove_tree($TEMP) if defined($TEMP) && -d $TEMP;
+  });
+}
+
+my $ok = eval { main(); 1 };
+unless ($ok) {
+  my $error = $@ || 'installed distribution test failed';
+  $error =~ s/\s+\z//;
+  print STDERR "test-install: $error\n";
+  exit 1;
+}
+exit 0;
+
+sub main {
+  $TEMP = tempdir('test-slim-install-XXXXXX', TMPDIR => 1, CLEANUP => 0);
+  my $stage = "$TEMP/stage";
+  my $archive_dir = "$TEMP/archive";
+  my $install_source = "$TEMP/install-source";
+  my $prefix = "$TEMP/prefix";
+  my $external = "$TEMP/external/lib";
+  my $run_dir = "$TEMP/outside-checkout";
+  make_path($stage, $archive_dir, $install_source, $prefix, $external, $run_dir);
+
+  my @manifest = read_manifest();
+  copy_distribution_sources($stage, @manifest);
+  run_command($stage, $^X, 'Build.PL');
+  run_command($stage, './Build', 'dist');
+  my $archive = "$stage/Test-Slim-$VERSION.tar.gz";
+  die "distribution archive was not created" unless -f $archive;
+  my @archive_files = archive_files($archive);
+  verify_archive_contents(\@archive_files);
+  copy($archive, "$archive_dir/Test-Slim-$VERSION.tar.gz")
+    or die "copy release archive: $!";
+  run_command($install_source, 'tar', '-xzf', "$archive_dir/Test-Slim-$VERSION.tar.gz");
+
+  my $source = "$install_source/Test-Slim-$VERSION";
+  my $fixture_source = "$source/examples/lib/Example/Counter.pm";
+  make_path("$external/Example");
+  copy($fixture_source, "$external/Example/Counter.pm")
+    or die "copy standalone fixture outside distribution: $!";
+  run_command($source, $^X, 'Build.PL', "--install_base=$prefix");
+  run_command($source, './Build');
+  run_command($source, './Build', 'install');
+
+  my $runner = "$prefix/bin/perl-slim";
+  my $installed_lib = "$prefix/lib/perl5";
+  die "installed executable missing or not executable: $runner"
+    unless -x $runner;
+  for my $documentation (
+    "$prefix/man/man1/perl-slim.1p", "$prefix/man/man3/Test::Slim.3pm",
+  ) {
+    die "installed manual page missing or empty: $documentation"
+      unless -s $documentation;
+  }
+  for my $module (production_modules()) {
+    (my $relative = $module) =~ s{\Alib/}{};
+    die "installed production module missing: $relative"
+      unless -f "$installed_lib/$relative";
+  }
+
+  local $ENV{PERL5LIB} = join ':', $installed_lib, $external;
+  delete $ENV{PERL5OPT};
+  unshift @INC, $installed_lib;
+  require Test::Slim::List;
+  my $list_path = abs_path($INC{'Test/Slim/List.pm'});
+  die "protocol test loaded Test::Slim::List from outside installation: $list_path"
+    unless $list_path eq abs_path("$installed_lib/Test/Slim/List.pm");
+  my $doc_path;
+  my $core_pod = File::Spec->catfile($Config{privlib}, 'pod', 'perl.pod');
+  if (-f $core_pod) {
+    open my $perldoc, '-|', 'perldoc', '-l', 'Test::Slim'
+      or die "run perldoc for installed Test::Slim: $!";
+    $doc_path = <$perldoc> // '';
+    close $perldoc or die 'perldoc could not locate installed Test::Slim';
+    chomp $doc_path;
+  }
+  else {
+    die 'perldoc is unavailable in CI; install the perl-doc package' if $ENV{CI};
+    $doc_path = "$installed_lib/Test/Slim.pm";
+    print "perldoc CLI unavailable (perl-doc is not installed); checking installed POD with pod2text\n";
+  }
+  die "perldoc selected documentation outside the install prefix: $doc_path"
+    unless $doc_path eq "$installed_lib/Test/Slim.pm";
+  open my $pod_text, '-|', 'pod2text', $doc_path
+    or die "render installed Test::Slim POD: $!";
+  my $rendered_pod = do { local $/; <$pod_text> };
+  close $pod_text or die 'pod2text failed on installed Test::Slim';
+  die 'installed Test::Slim POD rendered empty' unless $rendered_pod =~ /FitNesse/;
+  print "Installed module source: $list_path\n";
+  print "Installed perldoc source: $doc_path\n";
+  print "External fixture source: ", abs_path("$external/Example/Counter.pm"), "\n";
+
+  run_pipe_protocol($runner, $run_dir);
+  run_tcp_protocol($runner, $run_dir);
+  run_fitnesse_example($runner, $external, $source, $TEMP);
+  print "Installed distribution smoke test passed\n";
+  return;
+}
+
+sub read_manifest {
+  open my $fh, '<', "$ROOT/MANIFEST" or die "read MANIFEST: $!";
+  my @files = grep { length && !/^\s*#/ } map { chomp; $_ } <$fh>;
+  close $fh or die "close MANIFEST: $!";
+  die 'MANIFEST is empty' unless @files;
+  my %listed = map { $_ => 1 } @files;
+  for my $file (@files) {
+    die "unsafe MANIFEST path: $file"
+      if File::Spec->file_name_is_absolute($file) || $file =~ m{(?:\A|/)\.\.(?:/|\z)};
+    die "MANIFEST entry does not exist: $file" unless -f "$ROOT/$file";
+  }
+  for my $module (production_modules()) {
+    die "MANIFEST omits production module $module" unless $listed{$module};
+  }
+  return @files;
+}
+
+sub production_modules {
+  my @modules;
+  find({
+    wanted => sub {
+      return unless -f $_ && /\.pm\z/;
+      my $path = $File::Find::name;
+      $path =~ s{\A\Q$ROOT/\E}{};
+      push @modules, $path;
+    },
+    no_chdir => 1,
+  }, "$ROOT/lib");
+  return sort @modules;
+}
+
+sub copy_distribution_sources {
+  my ($destination, @files) = @_;
+  for my $file (@files) {
+    my $target = "$destination/$file";
+    my ($volume, $directories) = File::Spec->splitpath($target);
+    make_path($directories) if length $directories;
+    copy("$ROOT/$file", $target) or die "copy $file into build stage: $!";
+    my $mode = (stat "$ROOT/$file")[2] & 07777;
+    chmod $mode, $target or die "chmod $target: $!";
+  }
+  return;
+}
+
+sub run_command {
+  my ($directory, @command) = @_;
+  my $old = getcwd();
+  chdir $directory or die "chdir $directory: $!";
+  print '+ ', join(' ', @command), "\n";
+  system @command;
+  my $status = $?;
+  chdir $old or die "restore cwd $old: $!";
+  die "command failed (status $status): @command" if $status != 0;
+  return;
+}
+
+sub archive_files {
+  my ($archive) = @_;
+  open my $tar, '-|', 'tar', '-tzf', $archive
+    or die "list release archive: $!";
+  my @files = <$tar>;
+  chomp @files;
+  close $tar or die 'release archive listing failed';
+  return @files;
+}
+
+sub verify_archive_contents {
+  my ($files) = @_;
+  my %entries = map { $_ => 1 } @$files;
+  my $root = "Test-Slim-$VERSION";
+  for my $required (qw(
+    README LICENSE Build.PL MANIFEST.SKIP bin/perl-slim
+    examples/lib/Example/Counter.pm examples/fitnesse/CounterTest.wiki
+  )) {
+    die "release archive omitted $root/$required" unless $entries{"$root/$required"};
+  }
+  for my $module (production_modules()) {
+    die "release archive omitted production module $module"
+      unless $entries{"$root/$module"};
+  }
+  die 'release archive contains FitNesse runtime state'
+    if grep { m{(?:\A|/)(?:\.runtime|FitNesseRoot)(?:/|\z)} } @$files;
+  return;
+}
+
+sub run_pipe_protocol {
+  my ($runner, $cwd) = @_;
+  my $error = gensym;
+  my ($input, $output);
+  my $old_directory = getcwd();
+  chdir $cwd or die "chdir outside-checkout run directory: $!";
+  my $pid = open3($input, $output, $error, $runner, '1');
+  chdir $old_directory or die "restore working directory: $!";
+  binmode $input;
+  binmode $output;
+  binmode $error;
+  my $ok = eval {
+    my $greeting = read_exact($output, 13, 10);
+    die "unexpected pipe greeting: $greeting" unless $greeting eq "Slim -- V0.5\n";
+    print "Pipe child greeting: Slim -- V0.5\\n\n";
+    exercise_installed_fixture($input, $output);
+    write_all($input, frame('bye'));
+    close $input or die "close pipe child input: $!";
+    wait_for_child($pid, $output, 10);
+    1;
+  };
+  my $error_text = $@ unless $ok;
+  if (!$ok) {
+    kill 'TERM', $pid;
+    waitpid($pid, 0);
+  }
+  my $stderr = drain_available($error);
+  close $output;
+  close $error;
+  die $error_text unless $ok;
+  die "pipe child wrote unexpected stderr: $stderr" if length $stderr;
+  print "Installed pipe protocol fixture: 4 assertions verified; child exited 0\n";
+  return;
+}
+
+sub run_tcp_protocol {
+  my ($runner, $cwd) = @_;
+  my $port = free_port('127.0.0.1');
+  my $log = "$TEMP/installed-tcp-server.log";
+  start_owned_process($runner, $port, { log_file => $log, cwd => $cwd });
+  my $socket;
+  my $deadline = time + 15;
+  while (time < $deadline) {
+    die 'installed TCP listener exited before readiness' if owned_process_exited();
+    $socket = IO::Socket::INET->new(
+      PeerAddr => '127.0.0.1', PeerPort => $port, Proto => 'tcp', Timeout => 0.5,
+    );
+    last if $socket;
+    sleep 0.1;
+  }
+  die 'installed TCP listener did not start' unless $socket;
+  binmode $socket;
+  my $greeting = read_exact($socket, 13, 10);
+  die "unexpected TCP greeting: $greeting" unless $greeting eq "Slim -- V0.5\n";
+  print "TCP listener greeting: Slim -- V0.5\\n\n";
+  exercise_installed_fixture($socket, $socket);
+  write_all($socket, frame('bye'));
+  close $socket;
+  print "Installed TCP protocol fixture: 4 assertions verified\n";
+  return;
+}
+
+sub exercise_installed_fixture {
+  my ($input, $output) = @_;
+  my @first = (
+    ['1', 'import', 'Example'],
+    ['2', 'make', 'counter', 'Counter', '4'],
+    ['3', 'call', 'counter', 'addAmount', '3'],
+    ['4', 'call', 'counter', 'value'],
+  );
+  my $first = exchange($input, $output, \@first);
+  assert_results($first, [['1','OK'],['2','OK'],['3','7'],['4','7']], 'first batch');
+
+  my @second = (
+    ['5', 'callAndAssign', 'last_add', 'counter', 'addAmount', '2'],
+    ['6', 'call', 'counter', 'value'],
+    ['7', 'call', 'counter', 'addAmount', '$last_add'],
+    ['8', 'call', 'counter', 'value'],
+  );
+  my $second = exchange($input, $output, \@second);
+  assert_results($second, [['5','9'],['6','9'],['7','18'],['8','18']], 'second batch');
+  return;
+}
+
+sub exchange {
+  my ($input, $output, $instructions) = @_;
+  my $serialized = Test::Slim::List->new($instructions)->serialize;
+  write_all($input, frame(encode('UTF-8', $serialized)));
+  my $response = read_frame($output, 15);
+  my $decoded = decode('UTF-8', $response, FB_CROAK);
+  my @results = Test::Slim::List->new($decoded)->list;
+  return \@results;
+}
+
+sub assert_results {
+  my ($got, $expected, $label) = @_;
+  my $actual_wire = Test::Slim::List->new($got)->serialize;
+  my $expected_wire = Test::Slim::List->new($expected)->serialize;
+  die "$label mismatch: expected $expected_wire, got $actual_wire"
+    unless $actual_wire eq $expected_wire;
+  return;
+}
+
+sub frame {
+  my ($payload) = @_;
+  return sprintf('%06d:', length($payload)) . $payload;
+}
+
+sub write_all {
+  my ($fh, $bytes) = @_;
+  while (length $bytes) {
+    my $written = syswrite($fh, $bytes);
+    die "protocol write failed: $!" unless defined($written) && $written > 0;
+    substr($bytes, 0, $written, '');
+  }
+  return;
+}
+
+sub read_exact {
+  my ($fh, $length, $timeout) = @_;
+  my $result = '';
+  my $deadline = time + $timeout;
+  my $select = IO::Select->new($fh);
+  while (length($result) < $length) {
+    my $remaining = $deadline - time;
+    die 'timed out waiting for protocol bytes' if $remaining <= 0;
+    die 'timed out waiting for protocol bytes' unless $select->can_read($remaining);
+    my $read = sysread($fh, my $part, $length - length($result));
+    die "protocol read failed: $!" unless defined $read;
+    die 'unexpected EOF in protocol stream' if $read == 0;
+    $result .= $part;
+  }
+  return $result;
+}
+
+sub read_frame {
+  my ($fh, $timeout) = @_;
+  my $prefix = '';
+  while (length($prefix) <= 32) {
+    my $character = read_exact($fh, 1, $timeout);
+    last if $character eq ':';
+    $prefix .= $character;
+  }
+  die "invalid outer frame length '$prefix'" unless $prefix =~ /\A[0-9]{6,32}\z/;
+  return read_exact($fh, 0 + $prefix, $timeout);
+}
+
+sub wait_for_child {
+  my ($pid, $output, $timeout) = @_;
+  my $deadline = time + $timeout;
+  my $eof = 0;
+  while (time < $deadline) {
+    my $ready = !$eof && IO::Select->new($output)->can_read(0.1);
+    if ($ready) {
+      my $read = sysread($output, my $buffer, 1);
+      die "pipe child wrote unexpected protocol bytes after bye" if defined($read) && $read > 0;
+      $eof = 1 if defined($read) && $read == 0;
+    }
+    my $result = waitpid($pid, WNOHANG);
+    if ($result == $pid) {
+      die "pipe child exited with status $?" if $? != 0;
+      return;
+    }
+  }
+  die 'pipe child did not exit cleanly after bye';
+}
+
+sub drain_available {
+  my ($fh) = @_;
+  my $select = IO::Select->new($fh);
+  my $text = '';
+  while ($select->can_read(0.1)) {
+    my $read = sysread($fh, my $chunk, 8192);
+    last unless defined($read) && $read > 0;
+    $text .= $chunk;
+  }
+  return $text;
+}
+
+sub run_fitnesse_example {
+  my ($runner, $external, $archive_source, $temp) = @_;
+  my $jar = $ENV{FITNESSE_JAR} || '/opt/fitnesse/fitnesse.jar';
+  die "FitNesse v20251025 JAR is unavailable at $jar" unless -f $jar;
+  my $wiki = "$temp/wiki/FitNesseRoot";
+  extract_wiki_from_jar($jar, $wiki);
+  configure_pipe_wiki($wiki, $runner);
+  open my $root, '>>', "$wiki/content.txt" or die "open FitNesse root page: $!";
+  print {$root} "\n!define TEST_SYSTEM {slim}\n";
+  close $root or die "close FitNesse root page: $!";
+
+  my $page_dir = "$wiki/InstalledFixture/CounterTest";
+  make_path($page_dir);
+  open my $page, '>', "$page_dir/content.txt" or die "create FitNesse smoke page: $!";
+  open my $example, '<', "$archive_source/examples/fitnesse/CounterTest.wiki"
+    or die "read packaged FitNesse example: $!";
+  my $content = do { local $/; <$example> };
+  close $example or die "close packaged FitNesse example: $!";
+  $content =~ s{\Q/absolute/path/to/perl-slim\E}{$runner}g;
+  $content =~ s{\Q/absolute/path/to/examples/lib\E}{$external}g;
+  print {$page} $content or die "write FitNesse smoke page: $!";
+  close $page or die "close FitNesse smoke page: $!";
+
+  my $host = '127.0.0.1';
+  my $port = free_port($host);
+  my $url = "http://$host:$port";
+  my $log = "$temp/fitnesse-installed-smoke.log";
+  my $java = $ENV{JAVA} || 'java';
+  start_owned_process($java, '-Dslim.pool.size=1', '-jar', $jar,
+    '-p', $port, '-d', "$temp/wiki", '-r', 'FitNesseRoot',
+    { log_file => $log, cwd => $temp });
+  my $http = HTTP::Tiny->new(timeout => 15, agent => 'test-slim-installed-smoke/1.0');
+  my $deadline = time + 30;
+  my $ready = 0;
+  while (time < $deadline) {
+    die 'FitNesse exited before the installed fixture test' if owned_process_exited();
+    my $response = $http->get("$url/");
+    if ($response->{status} == 200 && $response->{content} =~ /<html\b/i) {
+      $ready = 1;
+      last;
+    }
+    sleep 0.2;
+  }
+  die 'FitNesse did not start for the installed fixture test' unless $ready;
+  my $response = $http->get("$url/InstalledFixture.CounterTest?test&format=xml");
+  die "FitNesse smoke page returned HTTP $response->{status}"
+    unless $response->{status} == 200;
+  require Test::Slim::FitNesseAcceptance;
+  my $result = Test::Slim::FitNesseAcceptance::parse_page_result(
+    $response->{content}, $response->{status}, $host, 1, 'pipe', $runner
+  );
+  die "installed Perl child was not confirmed: " . ($result->{command} // 'no command')
+    unless $result->{perlExecutionConfirmed};
+  my $counts = $result->{counts};
+  die sprintf('FitNesse installed fixture result was %d/%d/%d/%d, expected 2/0/0/0',
+    @$counts{qw(right wrong ignored exceptions)})
+    unless $counts->{right} == 2 && !$counts->{wrong}
+      && !$counts->{ignored} && !$counts->{exceptions};
+  print "FitNesse installed fixture: $counts->{right} right, $counts->{wrong} wrong; ",
+    "child command=$result->{command}; exit=$result->{exitCode}\n";
+  return;
+}

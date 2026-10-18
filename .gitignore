@@ -15,5 +15,8 @@ test-slim-*
 /tools
 MYMETA.json
 MYMETA.yml
+META.json
+META.yml
+Makefile.PL
 *.jar
 /.runtime/

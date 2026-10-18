@@ -1,6 +1,11 @@
-requires 'HTML::TreeBuilder';
-requires 'HTTP::Tiny' => '0.070';
+requires 'HTML::TreeBuilder' => '5.07';
+
+on configure => sub {
+  requires 'Module::Build' => '0.20';
+};
 
 test_requires 'Test::Exception';
-test_requires 'Test::Pod';
-test_requires 'Test::Pod::Coverage';
+test_requires 'Test::More' => '0.88';
+test_requires 'Test::Pod' => '1.22';
+test_requires 'Test::Pod::Coverage' => '1.08';
+test_requires 'HTTP::Tiny' => '0.070';
