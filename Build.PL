@@ -20,6 +20,7 @@ my $builder = Module::Build->new(
         'Test::Exception'     => '0',
         'Test::Pod'           => '1.22',
         'Test::Pod::Coverage' => '1.08',
+        'Pod::Text'           => '0',
         'HTTP::Tiny'          => '0.070',
     },
     script_files        => ['bin/perl-slim'],

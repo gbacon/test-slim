@@ -8,4 +8,5 @@ test_requires 'Test::Exception';
 test_requires 'Test::More' => '0.88';
 test_requires 'Test::Pod' => '1.22';
 test_requires 'Test::Pod::Coverage' => '1.08';
+test_requires 'Pod::Text';
 test_requires 'HTTP::Tiny' => '0.070';

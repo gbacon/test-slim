@@ -69,6 +69,7 @@ t/graceful-names.t
 t/hash-results.t
 t/ignore-semantics.t
 t/import-resolution-precedence.t
+t/installed-doc-render.t
 t/instance-creation.t
 t/lib/Eg/Division.pm
 t/lib/Fitnesse/Fixtures/DuplicateRows.pm
@@ -128,6 +129,7 @@ t/lib/Fitnesse/Slim/Test/ZeroArityConstructor.pm
 t/lib/Test/Slim/FitNesseAcceptance.pm
 t/lib/Test/Slim/FitNesseCoverage.pm
 t/lib/Test/Slim/FitNesseSuiteAcceptance.pm
+t/lib/Test/Slim/InstallDocumentation.pm
 t/lib/TestModule/ShouldNotFindTestSlimInHere/TestSlim.pm
 t/library-fixtures.t
 t/library-identity.t

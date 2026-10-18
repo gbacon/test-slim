@@ -4,7 +4,6 @@ use strict;
 use warnings;
 
 use Cwd qw(abs_path getcwd);
-use Config qw(%Config);
 use Encode qw(encode decode FB_CROAK);
 use File::Copy qw(copy);
 use File::Find qw(find);
@@ -27,6 +26,7 @@ use Test::Slim::FitNesseAcceptance qw(
 use Test::Slim::FitNesseSuiteAcceptance qw(
   configure_pipe_wiki extract_wiki_from_jar
 );
+use Test::Slim::InstallDocumentation qw(render_installed_pod);
 
 $| = 1;
 my $ROOT = abs_path("$Bin/..") or die "resolve source root: $!";
@@ -103,33 +103,24 @@ sub main {
   local $ENV{PERL5LIB} = join ':', $installed_lib, $external;
   delete $ENV{PERL5OPT};
   unshift @INC, $installed_lib;
+  require Test::Slim;
+  my $slim_path = abs_path($INC{'Test/Slim.pm'});
+  die "test loaded Test::Slim from outside installation: $slim_path"
+    unless $slim_path eq abs_path("$installed_lib/Test/Slim.pm");
   require Test::Slim::List;
   my $list_path = abs_path($INC{'Test/Slim/List.pm'});
   die "protocol test loaded Test::Slim::List from outside installation: $list_path"
     unless $list_path eq abs_path("$installed_lib/Test/Slim/List.pm");
-  my $doc_path;
-  my $core_pod = File::Spec->catfile($Config{privlib}, 'pod', 'perl.pod');
-  if (-f $core_pod) {
-    open my $perldoc, '-|', 'perldoc', '-l', 'Test::Slim'
-      or die "run perldoc for installed Test::Slim: $!";
-    $doc_path = <$perldoc> // '';
-    close $perldoc or die 'perldoc could not locate installed Test::Slim';
-    chomp $doc_path;
-  }
-  else {
-    die 'perldoc is unavailable in CI; install the perl-doc package' if $ENV{CI};
-    $doc_path = "$installed_lib/Test/Slim.pm";
-    print "perldoc CLI unavailable (perl-doc is not installed); checking installed POD with pod2text\n";
-  }
-  die "perldoc selected documentation outside the install prefix: $doc_path"
+  my $doc_path = abs_path($INC{'Test/Slim.pm'});
+  die "module loader resolved Test::Slim outside the install prefix: $doc_path"
     unless $doc_path eq "$installed_lib/Test/Slim.pm";
-  open my $pod_text, '-|', 'pod2text', $doc_path
-    or die "render installed Test::Slim POD: $!";
-  my $rendered_pod = do { local $/; <$pod_text> };
-  close $pod_text or die 'pod2text failed on installed Test::Slim';
-  die 'installed Test::Slim POD rendered empty' unless $rendered_pod =~ /FitNesse/;
-  print "Installed module source: $list_path\n";
-  print "Installed perldoc source: $doc_path\n";
+  my $rendered_pod = render_installed_pod($doc_path);
+  die 'installed Test::Slim POD rendered without expected content'
+    unless $rendered_pod =~ /FitNesse/;
+  verify_perldoc_render($doc_path, $rendered_pod);
+  print "Installed module source: $slim_path\n";
+  print "Installed protocol module source: $list_path\n";
+  print "Installed POD source: $doc_path\n";
   print "External fixture source: ", abs_path("$external/Example/Counter.pm"), "\n";
 
   run_pipe_protocol($runner, $run_dir);
@@ -137,6 +128,70 @@ sub main {
   run_fitnesse_example($runner, $external, $source, $TEMP);
   print "Installed distribution smoke test passed\n";
   return;
+}
+
+sub verify_perldoc_render {
+  my ($path, $expected_text) = @_;
+  if ($> == 0 || $< == 0) {
+    print "perldoc subprocess skipped for root: it drops privileges to nobody, "
+      . "which cannot traverse the private installation prefix; Pod::Text rendered the installed POD\n";
+    return;
+  }
+
+  my ($perldoc_dir) = grep { -x "$_/perldoc" } File::Spec->path;
+  my $perldoc = defined($perldoc_dir) ? "$perldoc_dir/perldoc" : undef;
+  unless ($perldoc) {
+    print "perldoc CLI is not on PATH; installed POD was parsed with Pod::Text\n";
+    return;
+  }
+
+  my ($version_status, $version_output, $version_error) =
+    capture_command($perldoc, '-F', '-V');
+  if ($version_status != 0) {
+    my $reason = $version_error || $version_output || "exit status $version_status";
+    $reason =~ s/\s+/ /g;
+    if ($reason =~ /install the perl-doc package/i) {
+      print "perldoc CLI unavailable ($reason); installed POD was parsed with Pod::Text\n";
+      return;
+    }
+    die "perldoc version probe failed (status $version_status): $reason";
+  }
+
+  # -F makes perldoc render the exact installed file rather than searching
+  # for a module name. This check runs only as a non-root user; root's
+  # perldoc would drop privileges and lose access to the private prefix.
+  my ($status, $rendered, $error) = capture_command($perldoc, '-F', '-T', $path);
+  die "perldoc could not render installed POD $path (status $status): $error"
+    if $status != 0;
+  die "perldoc output did not contain the installed module documentation from $path"
+    unless $rendered =~ /FitNesse/ && length($expected_text);
+  print "perldoc rendered installed POD without dropping privileges\n";
+  return;
+}
+
+sub capture_command {
+  my (@command) = @_;
+  my $error_fh = gensym;
+  my ($input, $output);
+  my $pid = eval { open3($input, $output, $error_fh, @command) };
+  die "start @command: $@" unless $pid;
+  close $input or die "close stdin for @command: $!";
+  my $select = IO::Select->new($output, $error_fh);
+  my ($output_text, $error_text) = ('', '');
+  my %stream = (fileno($output) => \$output_text, fileno($error_fh) => \$error_text);
+  while ($select->count) {
+    for my $fh ($select->can_read) {
+      my $read = sysread($fh, my $buffer, 8192);
+      die "read @command output: $!" unless defined $read;
+      if ($read == 0) {
+        $select->remove($fh);
+        next;
+      }
+      ${$stream{fileno($fh)}} .= $buffer;
+    }
+  }
+  waitpid($pid, 0);
+  return ($?, $output_text, $error_text);
 }
 
 sub read_manifest {
