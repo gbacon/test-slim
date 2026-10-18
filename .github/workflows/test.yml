@@ -14,9 +14,14 @@ jobs:
       - uses: actions/checkout@v5
 
       - name: Set up Perl 5.36
-        uses: perl-actions/setup-perl@v1
+        uses: shogo82148/actions-setup-perl@v1
         with:
           perl-version: '5.36'
+
+      - name: Verify Perl version
+        run: |
+          perl -v
+          perl -e 'die "Expected Perl 5.36\n" unless $^V =~ /^v5\.36\./'
 
       - name: Install distribution prerequisites
         run: cpanm --notest --installdeps .
