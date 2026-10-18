@@ -78,9 +78,14 @@ protocol feature; see [expression compatibility](docs/slim-symbol-expression-com
 ## Distribution and documentation
 
 `Build.PL` uses Module::Build. `HTML::TreeBuilder` is the sole non-core
-runtime dependency. Test and acceptance tooling dependencies are declared
-in both `Build.PL` and `cpanfile`; the Module::Build compatibility release
-path uses simple version requirements. `MANIFEST.SKIP` excludes local
+runtime dependency. The distribution declares Perl 5.36.0 as its minimum in
+`Build.PL` and `cpanfile`; the full local development and acceptance matrix
+has been verified on Perl 5.40.1, while CI targets the 5.36 release line
+with development tests and an installed pipe smoke test. The root
+`README.md` is included in the release archive. Test and acceptance tooling
+dependencies are declared in both `Build.PL` and `cpanfile`; the
+Module::Build compatibility release path uses simple version requirements.
+`MANIFEST.SKIP` excludes local
 FitNesse state, runtime output, downloaded archives, and workspace
 configuration. The standard manifest task generates `MANIFEST`.
 
