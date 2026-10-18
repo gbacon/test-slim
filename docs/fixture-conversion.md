@@ -64,6 +64,50 @@ At the SLiM wire boundary, the string `null` and the null token share the same s
 
 The implementation is a fixture metadata feature that composes existing scalar converters. It does not add a protocol type or emulate Java reflection, overload selection, nested generic type inspection, or Java collection classes.
 
+## Enum types
+
+Perl fixtures can declare enum-like domains explicitly. The declaration belongs to the fixture package and is consulted only when that fixture's constructor or method signature names the declared type:
+
+```perl
+package Example::Paint;
+
+sub slim_enum_types {
+  return {
+    Color => [qw(RED GREEN BLUE)],
+    'Example::Paint::Mode' => [qw(FAST SAFE)],
+  };
+}
+
+sub slim_constructor_signature {
+  return { parameters => ['Color'] };
+}
+
+sub slim_method_signature {
+  my ($self, $method) = @_;
+  return { parameters => ['Color'], return => 'Color' }
+    if $method eq 'repaint';
+  return {
+    parameters => ['Color[]', 'java.util.List<Color>', 'Collection<Color>'],
+    return => 'Color[]',
+  } if $method eq 'set_palette';
+  return { parameters => ['Example::Paint::Mode'], return => 'Example::Paint::Mode' }
+    if $method eq 'set_mode';
+}
+
+sub new { bless { color => $_[1], palette => [], mode => undef }, $_[0] }
+sub repaint { $_[0]{color} = $_[1] }
+sub set_palette { $_[0]{palette} = $_[1]; return $_[1] }
+sub set_mode { $_[0]{mode} = $_[1] }
+```
+
+`slim_enum_types` returns a hash from an explicit type name to an ordered array of unique, non-empty constant names. Simple and fully qualified names are supported; declarations cannot shadow standard or custom registered converter names. The executor creates converters from this metadata for the current fixture invocation instead of adding enum types to a global or session-wide registry. Two fixtures may therefore declare the same type name with different values.
+
+Exact names are preferred. If there is no exact match, matching follows Java `String.equalsIgnoreCase`: the first matching constant in declaration order is returned. Comparison uses locale-independent Unicode simple case mappings; it does not expand one character into multiple characters. Blank scalar input becomes null through FitNesse's converter base, while nonblank scalar input is not trimmed. The existing typed-sequence parser trims each item before applying its component converter. Unknown values produce a structured conversion error.
+
+Perl represents a declared enum value as its canonical string name. Declared results are checked against the fixture's enum domain and emitted using that canonical name, corresponding to Java's `Enum.name()` even if a Java enum overrides `toString()`. A null result stays null. Typed arrays and List/Collection metadata compose the same enum converter for each element, preserving order and duplicates. Invalid returned names and invalid sequence members are rejected; arbitrary references are never stringified as enums.
+
+This explicit metadata is not Java enum reflection. Perl does not discover Java classes, enum constants, overloads, or methods dynamically, and undeclared scalar strings keep their original untyped behavior.
+
 ## Double grammar and formatting
 
 The Double converter validates input before calling the platform parser. It accepts Java decimal forms with an optional decimal exponent and optional `f`, `F`, `d`, or `D` suffix; hexadecimal significands require a `p`/`P` binary exponent. The special spellings are case-sensitive `NaN` and `Infinity`, each with an optional sign. Java ASCII trim characters are removed around a number. Other malformed forms, including underscores, lowercase `nan`/`infinity`, and hexadecimal forms without a binary exponent, return `Can't convert <value> to double.`

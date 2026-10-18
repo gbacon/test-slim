@@ -57,8 +57,37 @@ sub remove_converter {
   return delete $self->{converters}{$type};
 }
 
+sub validate_enum_types {
+  my ($self, $types) = @_;
+  return {} unless defined $types;
+  die "enum declarations must be a hash reference\n" unless ref($types) eq 'HASH';
+
+  my %aliases = map { $_ => 1 } qw(
+    String Boolean Character Date Double Integer Long List Collection
+    ArrayList LinkedList java.util.ArrayList java.util.LinkedList
+  );
+  my %copy;
+  for my $type (sort keys %$types) {
+    die "invalid enum type name\n"
+      unless length($type) && $type !~ /\s/ && $type !~ /[\[\]<>]/;
+    die "enum type $type collides with a registered converter\n"
+      if exists $self->{converters}{$type} || $aliases{$type};
+    my $values = $types->{$type};
+    die "enum constants for $type must be an array reference\n"
+      unless ref($values) eq 'ARRAY';
+    my %seen;
+    for my $value (@$values) {
+      die "invalid enum constant for $type\n"
+        if !defined($value) || ref($value) || !length($value);
+      die "duplicate enum constant $value for $type\n" if $seen{$value}++;
+    }
+    $copy{$type} = [@$values];
+  }
+  return \%copy;
+}
+
 sub get_converter {
-  my ($self, $type) = @_;
+  my ($self, $type, $enum_types) = @_;
   return unless defined $type;
   return $self->{converters}{$type} if exists $self->{converters}{$type};
   $type =~ s/\s+//g;
@@ -76,14 +105,17 @@ sub get_converter {
   );
   return $self->{converters}{$aliases{$type}} if exists $aliases{$type};
 
+  return Test::Slim::ConverterRegistry::Enum->new($type, $enum_types->{$type})
+    if $enum_types && exists $enum_types->{$type};
+
   if ($type =~ /\A(.+)\[\]\z/ && $1 !~ /[\[\]<>]/) {
-    my $component = $self->get_converter($1) or return;
+    my $component = $self->get_converter($1, $enum_types) or return;
     return Test::Slim::ConverterRegistry::TypedSequence->new(
       $self, $component
     );
   }
   if ($type =~ /\A(?:java\.util\.)?(?:List|Collection)<([^<>]+)>\z/) {
-    my $component = $self->get_converter($1) or return;
+    my $component = $self->get_converter($1, $enum_types) or return;
     return Test::Slim::ConverterRegistry::TypedSequence->new(
       $self, $component
     );
@@ -117,11 +149,12 @@ sub element_to_string {
 sub convert_arguments {
   my ($self, $signature, $method, @args) = @_;
   my $types = $signature->{parameters} || [];
+  my $enum_types = $signature->{enum_types};
   for my $index (0 .. $#args) {
     next if !defined $args[$index] || ref $args[$index];
     my $type = $types->[$index];
     next unless defined $type;
-    my $converter = $self->get_converter($type);
+    my $converter = $self->get_converter($type, $enum_types);
     die "message:<<NO_CONVERTER_FOR_ARGUMENT_NUMBER $type.>>\nTried to invoke: $method\n"
       unless $converter;
     my $converted = eval { $converter->from_string($args[$index]) };
@@ -145,16 +178,91 @@ sub convert_result {
   return ($value, 0)
     if $type eq 'java.util.List' && ref($value) eq 'ARRAY';
 
-  my $converter = $self->get_converter($type);
+  my $converter = $self->get_converter($type, $signature->{enum_types});
   $converter ||= $self->converter_for_runtime_value($value);
   return ($value, 0) unless $converter;
   return ($converter->to_string($value), 1);
 }
 
 sub is_typed_sequence {
-  my ($self, $type) = @_;
-  my $converter = $self->get_converter($type);
+  my ($self, $type, $enum_types) = @_;
+  my $converter = $self->get_converter($type, $enum_types);
   return $converter && $converter->isa('Test::Slim::ConverterRegistry::TypedSequence');
+}
+
+package Test::Slim::ConverterRegistry::Enum;
+use strict;
+use warnings;
+use Unicode::UCD qw(charinfo);
+
+my %CASE_MAP;
+
+sub new {
+  my ($class, $type, $values) = @_;
+  return bless { type => $type, values => $values }, $class;
+}
+
+sub _simple_case {
+  my ($codepoint, $field) = @_;
+  return $codepoint if $codepoint > 0xFFFF;
+  return $CASE_MAP{$field}{$codepoint}
+    if exists $CASE_MAP{$field}{$codepoint};
+  my $info = charinfo($codepoint);
+  my $mapped = $info && $info->{$field}
+    ? hex($info->{$field})
+    : $codepoint;
+  return $CASE_MAP{$field}{$codepoint} = $mapped;
+}
+
+sub _equals_ignore_case {
+  my ($left, $right) = @_;
+  my @left = split //, $left;
+  my @right = split //, $right;
+  return 0 unless @left == @right;
+  for my $index (0 .. $#left) {
+    my ($a, $b) = (ord($left[$index]), ord($right[$index]));
+    next if $a == $b;
+    my ($upper_a, $upper_b) =
+      (_simple_case($a, 'upper'), _simple_case($b, 'upper'));
+    next if $upper_a == $upper_b;
+    return 0 unless _simple_case($upper_a, 'lower')
+      == _simple_case($upper_b, 'lower');
+  }
+  return 1;
+}
+
+sub _error {
+  my ($self, $value) = @_;
+  $value = 'reference value' if ref $value;
+  $value = '' unless defined $value;
+  die "message:<<Can't convert $value to enum value of type $self->{type}.>>\n";
+}
+
+sub from_string {
+  my ($self, $value) = @_;
+  return undef if Test::Slim::ConverterRegistry::_java_is_blank($value);
+  $self->_error($value) if ref $value;
+
+  for my $constant (@{$self->{values}}) {
+    return $constant if $constant eq $value;
+  }
+  for my $constant (@{$self->{values}}) {
+    return $constant if _equals_ignore_case($constant, $value);
+  }
+  $self->_error($value);
+}
+
+sub to_string {
+  my ($self, $value) = @_;
+  return undef unless defined $value;
+  $self->_error($value) if ref $value;
+  for my $constant (@{$self->{values}}) {
+    return $constant if $constant eq $value;
+  }
+  for my $constant (@{$self->{values}}) {
+    return $constant if _equals_ignore_case($constant, $value);
+  }
+  $self->_error($value);
 }
 
 package Test::Slim::ConverterRegistry::TypedSequence;

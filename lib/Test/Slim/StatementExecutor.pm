@@ -88,6 +88,13 @@ sub slim_to_perl_method {
   $name;
 }
 
+sub _enum_types_for {
+  my ($self, $fixture) = @_;
+  my $class = ref($fixture) || $fixture;
+  return {} unless $class->can('slim_enum_types');
+  return $self->{converters}->validate_enum_types($class->slim_enum_types);
+}
+
 sub create {
   my($self,$id,$class,$args) = @_;
 
@@ -106,6 +113,12 @@ sub create {
       my $signature = $class->can('slim_constructor_signature')
         ? $class->slim_constructor_signature
         : undef;
+      if ($signature) {
+        $signature = {
+          %$signature,
+          enum_types => $self->_enum_types_for($class),
+        };
+      }
       @constructor_args = $self->{converters}->convert_arguments(
         $signature, "$class constructor", @constructor_args
       ) if $signature;
@@ -326,13 +339,21 @@ sub _call {
     my $signature = $method_obj->can('slim_method_signature')
       ? $method_obj->slim_method_signature($method)
       : undef;
+    if ($signature) {
+      $signature = {
+        %$signature,
+        enum_types => $self->_enum_types_for($method_obj),
+      };
+    }
     @call_args = $self->{converters}->convert_arguments(
       $signature, $requested_method, @call_args
     ) if $signature;
     $result = $self->_timed(sub { $method_obj->$method(@call_args) });
     $raw_result = $result;
     $retain_raw_result = $signature
-      && $self->{converters}->is_typed_sequence($signature->{return});
+      && $self->{converters}->is_typed_sequence(
+        $signature->{return}, $signature->{enum_types}
+      );
     ($result) = $self->{converters}->convert_result($signature, $result)
       if $signature;
     $result = Test::Slim::MapResult->convert($result)
