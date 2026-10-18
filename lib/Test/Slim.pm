@@ -3,7 +3,7 @@ package Test::Slim;
 use strict;
 use warnings;
 
-our $VERSION = '0.01';
+our $VERSION = '1.00';
 
 1;
 
@@ -13,7 +13,7 @@ Test::Slim - Perl implementation of the FitNesse SLiM protocol
 
 =head1 VERSION
 
-Version 0.01
+Version 1.00
 
 =head1 DESCRIPTION
 
@@ -53,15 +53,16 @@ bugs and compatibility findings through the project's issue tracker.
 
 =head1 AUTHOR
 
-Greg Bacon, C<< <gbacon at dbresearch.net> >>
+Greg Bacon, C<< <gbacon@gbacon.com> >>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2010 Greg Bacon.
+Copyright 2010-2026 Greg Bacon.
 
 This program is free software; you can redistribute it and/or modify it
-under the terms of either the GNU General Public License as published by
-the Free Software Foundation or the Artistic License. See the included
-C<LICENSE> file.
+under the terms of either the GNU General Public License, version 1 or any
+later version, or the Artistic License 1.0. The test-only FitNesse fixture
+adaptations listed in C<THIRD-PARTY-NOTICES.md> are separately licensed under
+the Common Public License 1.0. See the included license files for details.
 
 =cut

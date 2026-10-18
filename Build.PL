@@ -25,7 +25,20 @@ my $builder = Module::Build->new(
     },
     script_files        => ['bin/perl-slim'],
     meta_add => {
+        # The distribution's own code uses the Perl 5 dual license. Test-only
+        # fixture adaptations also include material under FitNesse's CPL 1.0.
+        'meta-spec' => {
+            version => 2,
+            url => 'https://metacpan.org/pod/CPAN::Meta::Spec',
+        },
+        license => [ 'perl_5', 'open_source' ],
         resources => {
+            license => [
+                'https://github.com/gbacon/test-slim/blob/main/LICENSE',
+                'https://www.gnu.org/licenses/old-licenses/gpl-1.0.en.html',
+                'https://dev.perl.org/licenses/artistic.html',
+                'https://github.com/unclebob/fitnesse/blob/v20251025/LICENSE.txt',
+            ],
             repository => 'https://github.com/gbacon/test-slim',
         },
     },

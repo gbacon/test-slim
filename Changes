@@ -1,7 +1,11 @@
 Revision history for Test::Slim
 
-0.01 (current distribution version; not a release announcement)
-    Package the existing Perl SLiM v0.5 implementation with Module::Build,
-    install the perl-slim executable, and add standalone fixture and
-    documentation verification examples. The distribution version remains
-    unchanged; release decisions are separate.
+1.00 2026-10-18
+    First public release candidate. Provides a Perl SLiM v0.5 server with
+    FitNesse-managed pipe and TCP transports, Perl fixture construction and
+    method dispatch, symbols, and metadata-driven argument and result
+    conversion for supported scalar, enum, array, and collection types.
+    Includes FitNesse integration tests, independent installed-distribution
+    checks, and a business-oriented order-management example. Requires Perl
+    5.36.0 or later. This entry records release-candidate preparation; it is
+    not a publication date or release announcement.

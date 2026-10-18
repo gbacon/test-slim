@@ -124,4 +124,14 @@ Explicit all-interface listener for a trusted network:
 L<Test::Slim>, L<Test::Slim::Server>,
 C<docs/slim-pipe-transport.md>, and C<docs/fixture-conversion.md>.
 
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2010-2026 Greg Bacon.
+
+This program is free software; it may be redistributed and modified under
+the terms of either the GNU General Public License, version 1 or any later
+version, or the Artistic License 1.0. Test-only FitNesse fixture adaptations
+are separately licensed under the Common Public License 1.0. See the
+distribution's license files and C<THIRD-PARTY-NOTICES.md>.
+
 =cut

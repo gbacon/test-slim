@@ -1,10 +1,10 @@
-This program is free software; you can redistribute it and/or modify it
-under the terms of either the GNU General Public License as published by
-the Free Software Foundation or the Artistic License.
+Test::Slim's original implementation is offered under either the GNU General
+Public License, version 1 or (at your option) any later version, or the
+Artistic License 1.0. The recipient may choose either license. The complete
+license texts are in LICENSE.GPL-1.0-or-later and LICENSE.Artistic-1.0.
 
-Copyright 2010 Greg Bacon.
+Test-only fixture material adapted from FitNesse is separately identified in
+THIRD-PARTY-NOTICES.md and distributed under the Common Public License 1.0;
+its complete text is in LICENSE.CPL.
 
-The license grant is the same dual-license grant stated in the source
-distribution. The GNU General Public License is available at
-https://www.gnu.org/licenses/gpl.html and the Artistic License is available
-at https://dev.perl.org/licenses/artistic.html.
+Copyright 2010-2026 Greg Bacon.

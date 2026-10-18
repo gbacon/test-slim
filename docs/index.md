@@ -17,8 +17,11 @@ authoritative source for their named topics.
   verified FitNesse v20251025 command-line variable overrides.
 - [Pipe transport](slim-pipe-transport.md) — v0.5 child-process lifecycle,
   framing, and diagnostic tunneling.
-- [License terms](../LICENSE) — the preserved GNU General Public License
-  or Artistic License grant.
+- [License terms](../LICENSE) — choose either GPL version 1 or later, or
+  Artistic License 1.0 for Test::Slim's original code. The full texts are
+  [GPL](../LICENSE.GPL-1.0-or-later) and
+  [Artistic](../LICENSE.Artistic-1.0); scoped fixture notices and the
+  separate CPL text are in [THIRD-PARTY-NOTICES.md](../THIRD-PARTY-NOTICES.md).
 
 ## Fixture authoring
 

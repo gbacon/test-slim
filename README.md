@@ -1,11 +1,13 @@
 # Test::Slim
 
-Test::Slim is a Perl implementation of the server side of FitNesse's SLiM
-(Simple List Invocation Method) protocol. It lets FitNesse invoke fixtures
-written in Perl. The declared minimum is Perl 5.36.0. The full development
-and FitNesse acceptance suites are verified with Perl 5.40.1. A dedicated CI
-job targets the Perl 5.36 release line with development tests, a build and
-installation, and an installed SLiM pipe smoke test.
+Test::Slim enables FitNesse acceptance testing of applications written in
+Perl. It implements the server side of FitNesse's SLiM (Simple List Invocation
+Method) protocol and lets FitNesse invoke idiomatic Perl fixtures. The current
+distribution version is 1.00. The declared minimum is Perl 5.36.0. The full
+development and FitNesse acceptance suites are verified with Perl 5.40.1; a
+dedicated CI job tests configuration, build, installation, development tests,
+and the installed pipe service on Perl 5.36. FitNesse integration is tested
+against v20251025.
 This is not a claim of full compatibility with Java reflection, Java-only
 plugins, or every FitNesse integration.
 
@@ -16,7 +18,14 @@ the compatibility documents indexed below.
 
 ## Install
 
-Install declared dependencies, then build and install with Module::Build:
+After the distribution is available from CPAN, install it with:
+
+```sh
+cpanm Test::Slim
+```
+
+To install from a source checkout or release archive, install declared
+dependencies, then build with Module::Build:
 
 ```sh
 cpanm --installdeps .
@@ -134,5 +143,10 @@ conformance.
 
 ## License
 
-Copyright 2010 Greg Bacon. This distribution is available under either the
-GNU General Public License or the Artistic License; see `LICENSE`.
+Copyright 2010-2026 Greg Bacon. The recipient may choose to use, modify, and
+redistribute Test::Slim's original implementation under the GNU General Public
+License version 1 or any later version, or Artistic License 1.0. The complete
+texts are [GPL](LICENSE.GPL-1.0-or-later) and [Artistic](LICENSE.Artistic-1.0).
+Test-only FitNesse fixture adaptations have separate Common Public License
+terms; see [`LICENSE`](LICENSE) and
+[`THIRD-PARTY-NOTICES.md`](THIRD-PARTY-NOTICES.md).

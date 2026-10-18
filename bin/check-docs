@@ -22,7 +22,12 @@ for my $path ("$root/lib", "$root/bin") {
     no_chdir => 1,
   }, $path);
 }
-@markdown_files = ("$root/README.md", "$root/DESIGN.md", "$root/AGENTS.md");
+@markdown_files = (
+  "$root/README.md",
+  "$root/DESIGN.md",
+  "$root/AGENTS.md",
+  "$root/THIRD-PARTY-NOTICES.md",
+);
 find({
   wanted => sub {
     push @markdown_files, $File::Find::name if -f $_ && /\.md\z/;

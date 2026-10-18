@@ -269,13 +269,23 @@ sub verify_archive_contents {
   my %entries = map { $_ => 1 } @$files;
   my $root = "Test-Slim-$VERSION";
   for my $required (qw(
-    README.md LICENSE Build.PL MANIFEST.SKIP META.json META.yml bin/perl-slim
+    README.md Changes LICENSE LICENSE.GPL-1.0-or-later LICENSE.Artistic-1.0
+    LICENSE.CPL THIRD-PARTY-NOTICES.md
+    Build.PL MANIFEST.SKIP META.json META.yml MANIFEST bin/perl-slim
     examples/lib/Example/Counter.pm examples/fitnesse/CounterTest.wiki
   )) {
     die "release archive omitted $root/$required" unless $entries{"$root/$required"};
   }
-  die 'release archive contains obsolete root README'
-    if $entries{"$root/README"};
+  for my $obsolete (qw(README demo/PingFixture.pm .gitignore)) {
+    die "release archive contains obsolete or repository-only file $root/$obsolete"
+      if $entries{"$root/$obsolete"};
+  }
+  for my $file (@$files) {
+    die "release archive contains Git metadata: $file" if $file =~ m{\A\Q$root\E/\.git(?:/|\z)};
+    die "release archive contains transient build output: $file"
+      if $file =~ m{\A\Q$root\E/(?:Build|MYMETA\.(?:json|yml)|MANIFEST\.bak)(?:\z|/)};
+  }
+  verify_archive_metadata($archive, $root);
   verify_archive_perl_minimum($archive, $root);
   for my $module (production_modules()) {
     die "release archive omitted production module $module"
@@ -287,6 +297,67 @@ sub verify_archive_contents {
         || $_ eq "$root/FitNesseRoot"
         || m{\A\Q$root\E/FitNesseRoot(?:/|\z)}
     } @$files;
+  return;
+}
+
+sub verify_archive_metadata {
+  my ($archive, $root) = @_;
+  my $json_text = read_archive_member($archive, "$root/META.json");
+  my $meta = eval { decode_json($json_text) };
+  die "release archive has invalid META.json: $@" unless ref($meta) eq 'HASH';
+  die "release archive metadata version is not $VERSION"
+    unless ($meta->{version} // '') eq $VERSION;
+  die 'release archive metadata author is incorrect'
+    unless grep { $_ eq 'Greg Bacon <gbacon@gbacon.com>' } @{ $meta->{author} // [] };
+  my %licenses = map { $_ => 1 } @{ $meta->{license} // [] };
+  die 'release archive metadata omits the Perl 5 dual license'
+    unless $licenses{perl_5};
+  die 'release archive metadata omits the separately licensed open-source test fixtures'
+    unless $licenses{open_source};
+  my %license_urls = map { $_ => 1 } @{ $meta->{resources}{license} // [] };
+  die 'release archive metadata omits the package license choice notice'
+    unless $license_urls{'https://github.com/gbacon/test-slim/blob/main/LICENSE'};
+  die 'release archive metadata omits the GNU GPL v1 license reference'
+    unless $license_urls{'https://www.gnu.org/licenses/old-licenses/gpl-1.0.en.html'};
+  die 'release archive metadata omits the Artistic License 1.0 reference'
+    unless $license_urls{'https://dev.perl.org/licenses/artistic.html'};
+  die 'release archive metadata omits the FitNesse CPL license reference'
+    unless $license_urls{'https://github.com/unclebob/fitnesse/blob/v20251025/LICENSE.txt'};
+  my $yaml_text = read_archive_member($archive, "$root/META.yml");
+  my ($yaml_version) = $yaml_text =~ /^version:\s*['"]?([^'"\s]+)['"]?\s*$/m;
+  my ($yaml_license) = $yaml_text =~ /^license:\s*['"]?([^'"\s]+)['"]?\s*$/m;
+  die 'release archive META.yml version does not match Test::Slim'
+    unless defined($yaml_version) && $yaml_version eq $VERSION;
+  die 'release archive META.yml omits its open-source license declaration'
+    unless defined($yaml_license) && $yaml_license eq 'open_source';
+  die 'release archive META.yml does not link to the package license choice notice'
+    unless $yaml_text =~ m{^  license: https://github\.com/gbacon/test-slim/blob/main/LICENSE$}m;
+  my $license_notice = read_archive_member($archive, "$root/LICENSE");
+  $license_notice =~ s/\s+/ /g;
+  for my $term (
+    'GNU General Public License, version 1 or (at your option) any later version',
+    'Artistic License 1.0',
+    'LICENSE.GPL-1.0-or-later', 'LICENSE.Artistic-1.0', 'LICENSE.CPL',
+  ) {
+    die "release archive LICENSE does not explain '$term'"
+      unless index($license_notice, $term) >= 0;
+  }
+  my $gpl = read_archive_member($archive, "$root/LICENSE.GPL-1.0-or-later");
+  die 'release archive GPL text is not GNU GPL version 1'
+    unless $gpl =~ /GNU GENERAL PUBLIC LICENSE\s+Version 1,/;
+  die 'release archive GPL text omits the later-version option'
+    unless $gpl =~ /either version 1, or \(at your option\)\s+any later version/;
+  my $artistic = read_archive_member($archive, "$root/LICENSE.Artistic-1.0");
+  die 'release archive Artistic text is not Artistic License 1.0'
+    unless $artistic =~ /The "Artistic License"/;
+  die 'release archive Artistic text omits the license ending'
+    unless $artistic =~ /The End/;
+  my $cpl = read_archive_member($archive, "$root/LICENSE.CPL");
+  die 'release archive CPL text is not the Common Public License 1.0'
+    unless $cpl =~ /Common Public License\s+Version 1\.0/i;
+  die 'release archive CPL text omits its full terms'
+    unless $cpl =~ /7\. GENERAL/ && $cpl =~ /jury trial in\s+any resulting litigation\./;
+  print "Archive metadata: version $VERSION, canonical author, GPL v1-or-later, Artistic 1.0, and scoped CPL fixture licenses\n";
   return;
 }
 

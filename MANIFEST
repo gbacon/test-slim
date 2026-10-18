@@ -1,4 +1,3 @@
-.gitignore
 bin/check-docs
 bin/perl-slim
 bin/report-fitnesse-coverage
@@ -11,7 +10,6 @@ bin/test-install
 Build.PL
 Changes
 cpanfile
-demo/PingFixture.pm
 DESIGN.md
 docs/development.md
 docs/fitnesse-acceptance-coverage.json
@@ -83,6 +81,9 @@ lib/Test/Slim/SlimHelperLibrary.pm
 lib/Test/Slim/Statement.pm
 lib/Test/Slim/StatementExecutor.pm
 LICENSE
+LICENSE.Artistic-1.0
+LICENSE.CPL
+LICENSE.GPL-1.0-or-later
 MANIFEST
 MANIFEST.SKIP
 README.md
@@ -217,3 +218,7 @@ t/testslim-concatenate.t
 t/typed-constructor-conversion.t
 t/typed-invocation-arity.t
 t/typed-sequence-converters.t
+THIRD-PARTY-NOTICES.md
+Makefile.PL
+META.yml
+META.json

@@ -1,5 +1,9 @@
 package Fitnesse::Slim::Test::ShouldIBuyMilk;
 
+# Adapted from fitnesse.slim.test.ShouldIBuyMilk in FitNesse v20251025.
+# Copyright (C) 2003-2009 by Object Mentor, Inc. All rights reserved.
+# Released under CPL 1.0; see LICENSE.CPL and THIRD-PARTY-NOTICES.md.
+
 use strict;
 use warnings;
 
