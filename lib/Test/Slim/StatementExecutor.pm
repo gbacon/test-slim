@@ -84,8 +84,29 @@ sub resolve_class {
 
 sub slim_to_perl_method {
   my($self,$name) = @_;
-  $name =~ s/([A-Z])/_\l$1/g;
-  $name;
+  # Split acronym suffixes from a following title-cased word, then ordinary
+  # lower/digit-to-upper camelCase boundaries. A final one-letter boundary
+  # handles names such as makeATestPage without splitting IPv6.
+  $name =~ s/([A-Z]{2,})([A-Z][a-z])/$1_$2/g;
+  $name =~ s/([a-z0-9])([A-Z])/$1_$2/g;
+  $name =~ s/([A-Z])([A-Z][a-z]+)(?!\d)/$1_$2/g;
+  lc $name;
+}
+
+sub _method_for {
+  my ($self, $object, $requested) = @_;
+  return unless $object && ref $object;
+
+  my $translated = $self->slim_to_perl_method($requested);
+  my @candidates = ($requested);
+  push @candidates, $translated if $translated ne $requested;
+  for my $candidate (@candidates) {
+    return $candidate if $object->can($candidate);
+  }
+  # Perl's declared AUTOLOAD is an explicit dynamic-dispatch hook. Only use it
+  # after both concrete spellings have been checked.
+  return $requested if $object->can('AUTOLOAD');
+  return;
 }
 
 sub _enum_types_for {
@@ -298,10 +319,10 @@ sub _call {
   $self->{call_failed} = 0;
 
   my $requested_method = $method;
-  $method = $self->slim_to_perl_method($method);
+  my $translated_method = $self->slim_to_perl_method($method);
 
   # FitNesse routes this helper call through the reserved "null" actor.
-  if ($instance eq "null" && $method eq "clone_symbol" && @args == 1) {
+  if ($instance eq "null" && $translated_method eq "clone_symbol" && @args == 1) {
     return ($self->replace_symbols(@args))[0];
   }
 
@@ -316,18 +337,25 @@ sub _call {
       }
     }
   }
-  my $method_obj = $obj;
-  unless ($has_instance && $obj->can($method)) {
+  my $method_obj;
+  my $invoked_method = $has_instance
+    ? $self->_method_for($obj, $requested_method)
+    : undef;
+  $method_obj = $obj if $invoked_method;
+
+  unless ($method_obj) {
     my $sut = $has_instance ? $self->_system_under_test($obj) : undef;
-    $method_obj = $sut if $sut && $sut->can($method);
+    $invoked_method = $self->_method_for($sut, $requested_method);
+    $method_obj = $sut if $invoked_method;
   }
   unless ($has_instance) {
     for my $lib_id (reverse @{ $self->{library} }) {
       my $lib = $lib_id->{object};
       next unless $lib && ref $lib;
-      if ($lib->can($method)) {
+      if (my $candidate = $self->_method_for($lib, $requested_method)) {
         $obj = $lib;
         $method_obj = $lib;
+        $invoked_method = $candidate;
         last;
       }
     }
@@ -336,12 +364,13 @@ sub _call {
       unless $obj;
   }
 
-  unless ($method_obj && $method_obj->can($method)) {
+  unless ($method_obj && $invoked_method) {
     for my $lib_id (reverse @{ $self->{library} }) {
       my $lib = $lib_id->{object};
       next unless $lib && ref $lib;
-      if ($lib->can($method)) {
+      if (my $candidate = $self->_method_for($lib, $requested_method)) {
         $method_obj = $lib;
+        $invoked_method = $candidate;
         last;
       }
     }
@@ -350,8 +379,8 @@ sub _call {
   my $n = @args;
   my $class = ref $obj;
   return $Test::Slim::Statement::EXCEPTION_TAG
-           . "message:<<NO_METHOD_IN_CLASS $method\[$n] $class>>"
-    unless $method_obj && $method_obj->can($method);
+           . "message:<<NO_METHOD_IN_CLASS $requested_method\[$n] $class>>"
+    unless $method_obj && $invoked_method;
 
   my ($result, $raw_result, $retain_raw_result);
   eval {
@@ -362,7 +391,7 @@ sub _call {
     }
     @call_args = $self->replace_tables_with_hashes(@call_args);
     my $signature = $method_obj->can('slim_method_signature')
-      ? $method_obj->slim_method_signature($method)
+      ? $method_obj->slim_method_signature($invoked_method)
       : undef;
     if ($signature) {
       $signature = {
@@ -377,7 +406,7 @@ sub _call {
     @call_args = $self->{converters}->convert_arguments(
       $signature, $requested_method, @call_args
     ) if $signature;
-    $result = $self->_timed(sub { $method_obj->$method(@call_args) });
+    $result = $self->_timed(sub { $method_obj->$invoked_method(@call_args) });
     $raw_result = $result;
     $retain_raw_result = $signature
       && $self->{converters}->is_typed_sequence(

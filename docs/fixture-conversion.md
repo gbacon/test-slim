@@ -140,6 +140,40 @@ Perl represents a declared enum value as its canonical string name. Declared res
 
 This explicit metadata is not Java enum reflection. Perl does not discover Java classes, enum constants, overloads, or methods dynamically, and undeclared scalar strings keep their original untyped behavior.
 
+## Method names
+
+FitNesse v20251025 sends the method spelling unchanged and the Java reference uses exact, case-sensitive method lookup. Perl fixtures commonly use snake_case, so the executor supports one deterministic translation after checking for an exact method name:
+
+```text
+setValue             -> set_value
+getURL               -> get_url
+parseXMLDocument     -> parse_xml_document
+getHTTPResponseCode  -> get_http_response_code
+isIPv6Enabled        -> is_ipv6_enabled
+getUserID            -> get_user_id
+reset                -> reset
+already_snake_case   -> already_snake_case
+```
+
+The resolver splits acronym-to-word boundaries and lower/digit-to-uppercase boundaries. If a Perl fixture defines both `getURL` and `get_url`, an incoming `getURL` calls the exact `getURL`; a request spelled `get_url` calls the snake_case method. There is no case-insensitive or fuzzy scan. Actor lookup still precedes SUT lookup, which precedes newest-first library lookup. The selected Perl spelling is passed to `slim_method_signature`, so typed arguments, exact arity checks, and results remain attached to the invoked method.
+
+For example, this fixture receives a FitNesse call to `parseXMLDocument` and a typed `getHTTPResponseCode` call through the ordinary SLiM `call` instruction:
+
+```perl
+sub slim_method_signature {
+  my ($self, $method) = @_;
+  return { parameters => ['Integer'], return => 'Integer' }
+    if $method eq 'get_http_response_code';
+  return;
+}
+
+sub parse_xml_document { 'parsed' }
+sub get_http_response_code { $_[1] }
+sub make_a_test_page { 'created' }  # called as makeATestPage
+```
+
+A fixture that declares `AUTOLOAD` can handle names that have neither an exact nor translated concrete method. The executor invokes that explicit dynamic hook with the original SLiM spelling and keeps its normal error handling. Without `AUTOLOAD`, a missing method is reported using the original requested name. This is Perl dynamic dispatch support, not Java reflection or overload emulation.
+
 ## Double grammar and formatting
 
 The Double converter validates input before calling the platform parser. It accepts Java decimal forms with an optional decimal exponent and optional `f`, `F`, `d`, or `D` suffix; hexadecimal significands require a `p`/`P` binary exponent. The special spellings are case-sensitive `NaN` and `Infinity`, each with an optional sign. Java ASCII trim characters are removed around a number. Other malformed forms, including underscores, lowercase `nan`/`infinity`, and hexadecimal forms without a binary exponent, return `Can't convert <value> to double.`
