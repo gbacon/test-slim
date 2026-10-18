@@ -240,7 +240,7 @@ sub main {
 sub _run_authoring_audit {
   my ($http, $url, $transport, $runner, $host, $port, $app) = @_;
   my $wiki = "$TEMP/wiki/FitNesseRoot/OrderManagementSuite";
-  my @editable = qw(Pricing InventoryAvailability InventoryRecords OrdersForCustomer);
+  my @editable = qw(Pricing InventoryAvailability InventoryRecords OrdersForCustomer OrderLifecycle);
   my %original = map { $_ => _read("$wiki/$_/content.txt") } @editable;
   my $ok = eval {
     my $pricing = $original{Pricing};
@@ -281,6 +281,19 @@ sub _run_authoring_audit {
     _expect_page($http, $url, 'OrdersForCustomer', $transport, $runner, $host, $port,
       { right => 8, wrong => 0, ignored => 0, exceptions => 0 });
     print "Authoring exercise: selected another customer and added its expected order row in FitNesse only\n";
+
+    my $lifecycle = $original{OrderLifecycle};
+    $lifecycle =~ s/\|check\|status of order\|\$order\|submitted\|/|check|status of order|\$order|reserved|/
+      or die 'could not change the expected order status for the field-inspection exercise';
+    _write("$wiki/OrderLifecycle/content.txt", $lifecycle);
+    my $status_mismatch = _run_page($http, $url, 'OrderLifecycle', $transport, $runner, $host, $port);
+    _expect_result($status_mismatch,
+      { right => 10, wrong => 1, ignored => 0, exceptions => 0 },
+      'deliberately incorrect expected order status');
+    _write("$wiki/OrderLifecycle/content.txt", $original{OrderLifecycle});
+    _expect_page($http, $url, 'OrderLifecycle', $transport, $runner, $host, $port,
+      { right => 11, wrong => 0, ignored => 0, exceptions => 0 });
+    print "Authoring exercise: changing the expected order status produces one wrong field assertion; restoring it passes\n";
 
     my $workflow = "$wiki/AuditNewWorkflow";
     make_path($workflow);

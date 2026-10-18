@@ -110,9 +110,13 @@ The independent [order-management example](examples/order-management/README.md)
 demonstrates business-readable FitNesse tables over a pure Perl application.
 The domain stores records as hashes and line collections as arrays; fixture
 adapters translate them to decision, script, query, ordered-query, and
-scenario behavior. Wiki currency is parsed as decimal text into integer
-cents. `bin/test-example-order-management` builds and installs the
+scenario behavior. Query fixtures map hash records to named FitNesse columns;
+script checks use named business operations and symbols for order identifiers.
+The engine does not provide general hash-member expressions, and ordinary
+hash results are formatted rather than retained as raw record symbols. Wiki
+currency is parsed as decimal text into integer cents.
+`bin/test-example-order-management` builds and installs the
 distribution in a temporary prefix, copies the application outside the
 checkout, and runs the pinned FitNesse suite against that installed engine.
-Its authoring exercises are automated inspections, not evidence from
-nontechnical user research.
+Its authoring exercises include a field-level expected-value mismatch, but are
+automated inspections, not evidence from nontechnical user research.
