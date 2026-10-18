@@ -5,9 +5,11 @@ use warnings;
 
 use Test::Slim::Server;
 
-sub usage { "Usage: $0 [-v] [-s statementTimeout] port (1 uses stdin/stdout pipes)\n" }
+sub usage {
+  "Usage: $0 [-v] [-s seconds] [--bind-address IPv4] port (1 uses stdin/stdout pipes)\n"
+}
 
-my($verbose,$statement_timeout,$port);
+my($verbose,$statement_timeout,$bind_address,$bind_address_set,$port);
 while (@ARGV) {
   my $argument = shift @ARGV;
   if ($argument eq '-v') {
@@ -19,6 +21,11 @@ while (@ARGV) {
       || $ARGV[0] > 2_147_483_647;
     $statement_timeout = 0 + shift @ARGV;
   }
+  elsif ($argument eq '--bind-address') {
+    die usage if $bind_address_set || !@ARGV;
+    $bind_address = shift @ARGV;
+    $bind_address_set = 1;
+  }
   elsif ($argument =~ /\A-/ || defined $port) {
     die usage;
   }
@@ -28,10 +35,12 @@ while (@ARGV) {
 }
 
 die usage unless defined($port) && $port =~ /\A[0-9]+\z/;
+die usage if $bind_address_set && $port eq '1';
 
 Test::Slim::Server->new(
   verbose => $verbose,
   statement_timeout => $statement_timeout,
+  ($bind_address_set ? (bind_address => $bind_address) : ()),
 )->run($port);
 
 __END__
@@ -42,14 +51,15 @@ perl-slim - Run the Perl FitNesse SLiM server
 
 =head1 SYNOPSIS
 
-    perl-slim [-v] [-s SECONDS] PORT
+    perl-slim [-v] [-s SECONDS] [--bind-address IPv4] PORT
 
 =head1 DESCRIPTION
 
 Start the Test::Slim server. Port C<1> selects a single SLiM v0.5 session
 over the inherited stdin/stdout pipes, as used when FitNesse starts the
 server as a test-runner child. Other valid port numbers start the v0.5 TCP
-listener on that port.
+listener on that port. TCP listens on IPv4 loopback (C<127.0.0.1>) by
+default.
 
 The executable must be able to load L<Test::Slim::Server> and its runtime
 dependency L<HTML::TreeBuilder>. External fixture modules must be on the
@@ -70,6 +80,13 @@ frames remain on stdout.
 Set an integer timeout for each fixture statement. The value must be
 positive and fit in a signed 32-bit integer. A timed-out invocation is
 returned as a SLiM exception.
+
+=item B<--bind-address> I<IPv4>
+
+Bind the TCP listener to the specified numeric IPv4 address. The default is
+C<127.0.0.1>. A non-loopback address emits a warning because the listener is
+unauthenticated and permits clients to invoke Perl fixtures. Use it only on
+a trusted network. This option cannot be used with port C<1>.
 
 =item I<PORT>
 
@@ -97,6 +114,10 @@ FitNesse-managed pipe configuration:
 Standalone TCP listener:
 
     perl-slim 8099
+
+Explicit all-interface listener for a trusted network:
+
+    perl-slim --bind-address 0.0.0.0 8099
 
 =head1 SEE ALSO
 

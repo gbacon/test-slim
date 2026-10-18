@@ -128,6 +128,7 @@ sub main {
 
   run_pipe_protocol($runner, $run_dir);
   run_tcp_protocol($runner, $run_dir);
+  run_tcp_bind_option($runner, $run_dir, $TEMP);
   run_fitnesse_example($runner, $external, $source, $TEMP);
   print "Installed distribution smoke test passed\n";
   return;
@@ -401,6 +402,38 @@ sub run_tcp_protocol {
   write_all($socket, frame('bye'));
   close $socket;
   print "Installed TCP protocol fixture: 4 assertions verified\n";
+  return;
+}
+
+sub run_tcp_bind_option {
+  my ($runner, $cwd, $temp) = @_;
+  my $port = free_port('127.0.0.1');
+  my $log = "$temp/installed-tcp-bind-option.log";
+  start_owned_process($runner, '--bind-address', '0.0.0.0', $port,
+    { log_file => $log, cwd => $cwd });
+  my $socket;
+  my $deadline = time + 15;
+  while (time < $deadline) {
+    die 'installed explicitly bound TCP listener exited before readiness'
+      if owned_process_exited();
+    $socket = IO::Socket::INET->new(
+      PeerAddr => '127.0.0.1', PeerPort => $port, Proto => 'tcp', Timeout => 0.5,
+    );
+    last if $socket;
+    sleep 0.1;
+  }
+  die 'installed --bind-address listener did not start' unless $socket;
+  my $greeting = read_exact($socket, 13, 10);
+  die "unexpected explicitly bound TCP greeting: $greeting"
+    unless $greeting eq "Slim -- V0.5\n";
+  write_all($socket, frame('bye'));
+  close $socket;
+  open my $log_fh, '<', $log or die "read installed bind warning: $!";
+  my $log_text = do { local $/; <$log_fh> };
+  close $log_fh or die 'close installed bind warning log';
+  die 'installed remote bind did not emit the unauthenticated-listener warning'
+    unless $log_text =~ /0\.0\.0\.0.*unauthenticated.*trusted network/;
+  print "Installed CLI explicitly bound to 0.0.0.0; warning stayed on stderr\n";
   return;
 }
 

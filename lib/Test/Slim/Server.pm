@@ -8,6 +8,7 @@ use File::Temp qw/ tempfile /;
 use IO::Select;
 use IO::Socket::INET;
 use POSIX qw/ WNOHANG /;
+use Socket qw/ AF_INET inet_pton /;
 use Test::Slim::List;
 use Test::Slim::ListExecutor;
 
@@ -26,6 +27,12 @@ sub new {
   $self->{MAX_FRAME_BYTES} = 0 + $max_frame;
   $self->{verbose} = $options{verbose} ? 1 : 0;
   $self->{statement_timeout} = $options{statement_timeout};
+  $self->{bind_address} = exists($options{bind_address})
+    ? $options{bind_address} : '127.0.0.1';
+  $self->{bind_address_explicit} = exists($options{bind_address}) ? 1 : 0;
+  die 'invalid IPv4 bind address: ' . (defined($self->{bind_address}) ? $self->{bind_address} : '<undefined>')
+    unless defined($self->{bind_address}) && !ref($self->{bind_address})
+      && defined inet_pton(AF_INET, $self->{bind_address});
   $self->{EXEC} = $self->_new_executor;
 
   $self;
@@ -303,12 +310,13 @@ sub execute {
 sub run {
   my($self,$port) = @_;
 
-  return $self->run_pipe if defined($port) && $port eq '1';
+  if (defined($port) && $port eq '1') {
+    die 'bind_address cannot be used with pipe mode'
+      if $self->{bind_address_explicit};
+    return $self->run_pipe;
+  }
 
-  my $lsn = IO::Socket::INET->new(ReuseAddr => 1,
-                                  Listen    => 16,
-                                  LocalPort => $port)
-    or die "$0: create listen socket on port $port failed: $@\n";
+  my $lsn = $self->_listen_socket($port);
 
   local $SIG{CHLD} = sub {
     1 while waitpid(-1, WNOHANG) > 0;
@@ -353,6 +361,26 @@ sub run {
       }
     }
   }
+}
+
+sub _listen_socket {
+  my($self,$port) = @_;
+  my $address = $self->{bind_address};
+  my $packed = inet_pton(AF_INET, $address);
+  my @octets = unpack 'C4', $packed;
+  warn "$0: warning: TCP SLiM on $address is unauthenticated; use only on a trusted network\n"
+    if $self->{bind_address_explicit} && $octets[0] != 127;
+
+  my $listener = IO::Socket::INET->new(
+    ReuseAddr => 1,
+    Listen    => 16,
+    LocalAddr => $address,
+    LocalPort => $port,
+    Proto     => 'tcp',
+  );
+  die "$0: create listen socket on $address:$port failed: $!\n"
+    unless $listener;
+  return $listener;
 }
 
 sub run_pipe {
@@ -410,19 +438,26 @@ incomplete message.
     my $server = Test::Slim::Server->new(%options);
 
 Create a server. C<verbose> enables request/response diagnostics,
-C<statement_timeout> sets an optional per-invocation limit, and
-C<max_frame_bytes> overrides the outer frame limit. The frame limit may
-also be configured with C<TEST_SLIM_MAX_FRAME_BYTES> and defaults to 64
-MiB. Invalid limits throw an error during construction.
+C<statement_timeout> sets an optional per-invocation limit,
+C<max_frame_bytes> overrides the outer frame limit, and C<bind_address>
+selects the TCP listener's numeric IPv4 address. The bind address defaults
+to C<127.0.0.1>; explicitly configured non-loopback addresses produce an
+unauthenticated-listener warning when the TCP listener starts. Binding
+configuration cannot be used with pipe mode. The frame limit may also be
+configured with C<TEST_SLIM_MAX_FRAME_BYTES> and defaults to 64 MiB. Invalid
+limits and bind addresses throw an error during construction.
 
 =head2 run
 
     $server->run($port);
 
+    my $remote = Test::Slim::Server->new(bind_address => '0.0.0.0');
+    $remote->run(8099);
+
 Run the selected transport. Port C<1> serves a single v0.5 pipe session
-over inherited standard input/output. Other valid ports create a TCP
-listener and serve clients. The method runs until the pipe session ends or
-the TCP listener is stopped.
+over inherited standard input/output. Other valid ports create an IPv4 TCP
+listener at C<bind_address> (loopback by default) and serve clients. The
+method runs until the pipe session ends or the TCP listener is stopped.
 
 =head2 process
 

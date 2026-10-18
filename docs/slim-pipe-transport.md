@@ -18,6 +18,18 @@ Each pipe child owns one `ListExecutor` session. It reads and parses an entire f
 
 The frame size, decoded-list limits, and strict UTF-8 policy are identical to the TCP path. The pipe transport adds no separate parser, executor, listener, worker, or resource policy.
 
+## TCP listener binding
+
+Pipe mode is the normal FitNesse-managed transport. When TCP is selected, the
+listener binds to IPv4 loopback (`127.0.0.1`) by default. The executable
+accepts an explicit numeric IPv4 address, for example
+`perl-slim --bind-address 0.0.0.0 8099`; the same option is available as
+`Test::Slim::Server->new(bind_address => '0.0.0.0')`. Non-loopback binding
+prints a warning to stderr. The TCP listener has no client authentication,
+so remote access permits fixture execution and should be limited to a trusted
+network. Loopback binding does not prevent local processes from connecting.
+IPv6 binding is not supported.
+
 ## Diagnostic capture and forwarding
 
 For each instruction, `ListExecutor::execute_with` invokes a small callback after execution and before dispatching the next statement. The callback drains that instruction's captured stdout and stderr as independent tunnel messages. Each message is line-oriented: the first line gets `SOUT.:` or `SERR.:`; later lines get `SOUT :` or `SERR :`. A final partial line is terminated for FitNesse's line reader. An output message consisting only of one newline is omitted to match the pinned Java logger; blank lines within a nonempty multiline message are retained. The original UTF-8 bytes are preserved, including multibyte and supplementary characters.

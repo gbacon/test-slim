@@ -153,6 +153,7 @@ t/pod-coverage.t
 t/pod.t
 t/query-fixtures.t
 t/response-examiner.t
+t/server-bind-address.t
 t/server-concurrency.t
 t/server-frame.t
 t/server-malformed-input.t

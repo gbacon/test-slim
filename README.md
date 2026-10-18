@@ -64,19 +64,32 @@ FitNesse then launches `perl-slim 1`; stdin and stdout carry framed SLiM
 messages. Protocol bytes use stdout exclusively. Fixture output is tunneled
 through FitNesse's v0.5 diagnostic records on stderr.
 
-For the TCP v0.5 listener, start:
+For a separately managed TCP v0.5 listener, start:
 
 ```sh
 perl-slim 8099
 ```
 
-Configure FitNesse's SLiM host as `127.0.0.1` and its port as `8099` (or the
-selected listener port). TCP remains useful for a separately managed service
-and is covered by the project's regression suite.
+TCP binds to `127.0.0.1` by default. Configure FitNesse's SLiM host as
+`127.0.0.1` and its port as `8099` (or the selected listener port). To bind
+to a specific IPv4 address assigned to the host, use `--bind-address` before
+or after the port:
+
+```sh
+perl-slim --bind-address 192.0.2.10 8099
+```
+
+Use `--bind-address 0.0.0.0 8099` to listen on all IPv4 interfaces. TCP does
+not authenticate clients; access to the listener grants the ability to invoke
+Perl fixtures. Remote binding is intended only for trusted networks. Loopback
+binding limits network access but is not authentication or a sandbox; local
+processes can still connect and invoke fixtures. Pipe mode is the normal
+FitNesse-managed transport.
 
 The command accepts `-v` for diagnostics and `-s SECONDS` for a per-statement
-timeout before the port argument. Port `1` selects pipes; other valid ports
-select TCP.
+timeout before the port argument. Port `1` selects pipes and cannot be
+combined with `--bind-address`; other valid ports select TCP. The same
+`bind_address` option is available through `Test::Slim::Server->new`.
 
 ## External fixture example
 

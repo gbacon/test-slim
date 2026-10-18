@@ -42,6 +42,9 @@ forking TCP listener. Pipe protocol bytes use a preserved stdout descriptor.
 Fixture stdout and stderr are captured separately and forwarded to
 FitNesse using its v0.5 diagnostic records. See [pipe transport](docs/slim-pipe-transport.md)
 for process ownership, output forwarding, and tested FitNesse evidence.
+The TCP listener binds to IPv4 loopback by default; a numeric address can be
+selected explicitly for trusted-network deployments. It does not authenticate
+clients.
 
 Malformed frames or serialized batches close only the affected session;
 validly framed malformed instructions receive the standard SLiM exception
