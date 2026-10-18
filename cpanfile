@@ -1,3 +1,4 @@
+requires 'perl' => '5.36.0';
 requires 'HTML::TreeBuilder' => '5.07';
 
 on configure => sub {

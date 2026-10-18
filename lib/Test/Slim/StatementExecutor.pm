@@ -1,6 +1,6 @@
 package Test::Slim::StatementExecutor;
 
-use 5.10.0;
+use 5.36.0;
 use strict;
 use warnings;
 

@@ -2,8 +2,11 @@
 
 ## Prerequisites
 
-The implementation targets Perl 5.10 or newer and requires
-`HTML::TreeBuilder` at runtime. Development tests use the additional
+The declared minimum is Perl 5.36.0. The full development and FitNesse
+acceptance suites have been exercised locally with Perl 5.40.1. A dedicated
+CI job targets the Perl 5.36 release line with development tests, a build and
+installation, and an installed SLiM pipe smoke test.
+Runtime use requires `HTML::TreeBuilder`. Development tests use the additional
 requirements listed under test dependencies in `Build.PL` and `cpanfile`.
 FitNesse acceptance gates require the pinned FitNesse v20251025 JAR at
 `/opt/fitnesse/fitnesse.jar` or at the path in `FITNESSE_JAR`.

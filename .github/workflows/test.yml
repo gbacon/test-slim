@@ -7,6 +7,38 @@ on:
   pull_request:
 
 jobs:
+  minimum-perl:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up Perl 5.36
+        uses: perl-actions/setup-perl@v1
+        with:
+          perl-version: '5.36'
+
+      - name: Install distribution prerequisites
+        run: cpanm --notest --installdeps .
+
+      - name: Run development tests on Perl 5.36
+        run: bin/test-dev
+
+      - name: Build and install distribution on Perl 5.36
+        run: |
+          prefix="$RUNNER_TEMP/test-slim-perl-5.36"
+          perl Build.PL --install_base="$prefix"
+          ./Build
+          ./Build install
+
+      - name: Smoke-test installed Perl 5.36 pipe service
+        run: |
+          set -o pipefail
+          prefix="$RUNNER_TEMP/test-slim-perl-5.36"
+          printf '000003:bye' \
+            | PERL5LIB="$prefix/lib/perl5" "$prefix/bin/perl-slim" 1 \
+            | perl -0777 -ne 'exit($_ eq "Slim -- V0.5\n" ? 0 : 1)'
+
   test:
     runs-on: ubuntu-latest
     timeout-minutes: 45

@@ -7,7 +7,7 @@ authoritative source for their named topics.
 
 ## Install and use
 
-- [README](../README) — installation, pipe and TCP startup, external fixture
+- [README](../README.md) — installation, pipe and TCP startup, external fixture
   discovery, and the first FitNesse test.
 - [Test::Slim POD](../lib/Test/Slim.pm) — installed module purpose and
   executable overview.

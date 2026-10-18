@@ -2,8 +2,10 @@
 
 Test::Slim is a Perl implementation of the server side of FitNesse's SLiM
 (Simple List Invocation Method) protocol. It lets FitNesse invoke fixtures
-written in Perl. The implementation targets Perl 5.10 or newer and is
-acceptance-tested with FitNesse v20251025 in a Perl 5.40.1 environment.
+written in Perl. The declared minimum is Perl 5.36.0. The full development
+and FitNesse acceptance suites are verified with Perl 5.40.1. A dedicated CI
+job targets the Perl 5.36 release line with development tests, a build and
+installation, and an installed SLiM pipe smoke test.
 This is not a claim of full compatibility with Java reflection, Java-only
 plugins, or every FitNesse integration.
 

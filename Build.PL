@@ -12,7 +12,7 @@ my $builder = Module::Build->new(
         'Module::Build' => '0.20',
     },
     requires => {
-        'perl'              => '5.10.0',
+        'perl'              => '5.36.0',
         'HTML::TreeBuilder' => '5.07',
     },
     build_requires => {

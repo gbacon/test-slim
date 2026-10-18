@@ -45,7 +45,7 @@ lib/Test/Slim/StatementExecutor.pm
 LICENSE
 MANIFEST
 MANIFEST.SKIP
-README
+README.md
 t/00-load.t
 t/add-up-change.t
 t/assign-instruction.t
