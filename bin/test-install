@@ -4,6 +4,7 @@ use strict;
 use warnings;
 
 use Cwd qw(abs_path getcwd);
+use Config ();
 use Encode qw(encode decode FB_CROAK);
 use File::Copy qw(copy);
 use File::Find qw(find);
@@ -27,7 +28,9 @@ use Test::FitNesse::Slim::FitNesseAcceptance qw(
 use Test::FitNesse::Slim::FitNesseSuiteAcceptance qw(
   configure_pipe_wiki extract_wiki_from_jar
 );
-use Test::FitNesse::Slim::InstallDocumentation qw(render_installed_pod);
+use Test::FitNesse::Slim::InstallDocumentation qw(
+  installed_manpage_paths render_installed_pod
+);
 
 $| = 1;
 my $ROOT = abs_path("$Bin/..") or die "resolve source root: $!";
@@ -91,12 +94,7 @@ sub main {
   my $installed_lib = "$prefix/lib/perl5";
   die "installed executable missing or not executable: $runner"
     unless -x $runner;
-  for my $documentation (
-    "$prefix/man/man1/perl-slim.1p", "$prefix/man/man3/Test::FitNesse::Slim.3pm",
-  ) {
-    die "installed manual page missing or empty: $documentation"
-      unless -s $documentation;
-  }
+  verify_installed_manpages($prefix);
   for my $module (production_modules()) {
     (my $relative = $module) =~ s{\Alib/}{};
     die "installed production module missing: $relative"
@@ -131,6 +129,25 @@ sub main {
   run_tcp_bind_option($runner, $run_dir, $TEMP);
   run_fitnesse_example($runner, $external, $source, $TEMP);
   print "Installed distribution smoke test passed\n";
+  return;
+}
+
+sub verify_installed_manpages {
+  my ($prefix) = @_;
+  my ($paths, $disabled) = installed_manpage_paths($prefix, \%Config::Config);
+  for my $kind (sort keys %$paths) {
+    my $documentation = $paths->{$kind};
+    die "installed $kind manual page missing or empty: $documentation"
+      unless -s $documentation;
+    print "Installed Module::Build $kind manual page: $documentation\n";
+  }
+  for my $kind (@$disabled) {
+    my $source = $kind eq 'bindoc' ? 'man1dir' : 'man3dir';
+    my $configured = defined($Config::Config{$source})
+      ? $Config::Config{$source} : '<unset>';
+    print "Module::Build $kind manpage target disabled by Perl Config ($source=$configured); "
+      . "no $kind manual pages were generated, and installed POD is verified with Pod::Text\n";
+  }
   return;
 }
 
