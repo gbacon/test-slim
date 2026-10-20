@@ -31,6 +31,7 @@ use Test::FitNesse::Slim::FitNesseSuiteAcceptance qw(
 use Test::FitNesse::Slim::InstallDocumentation qw(
   installed_manpage_paths render_installed_pod
 );
+use Test::FitNesse::Slim::InstallPath qw(verify_installed_path);
 
 $| = 1;
 my $ROOT = abs_path("$Bin/..") or die "resolve source root: $!";
@@ -90,31 +91,36 @@ sub main {
   run_command($source, './Build');
   run_command($source, './Build', 'install');
 
-  my $runner = "$prefix/bin/perl-slim";
+  my $runner = verify_installed_path(
+    "$prefix/bin/perl-slim", "$prefix/bin/perl-slim", $prefix,
+    'installed perl-slim executable',
+  );
   my $installed_lib = "$prefix/lib/perl5";
   die "installed executable missing or not executable: $runner"
     unless -x $runner;
   verify_installed_manpages($prefix);
   for my $module (production_modules()) {
     (my $relative = $module) =~ s{\Alib/}{};
-    die "installed production module missing: $relative"
-      unless -f "$installed_lib/$relative";
+    my $path = "$installed_lib/$relative";
+    die "installed production module missing: $relative" unless -f $path;
   }
 
   local $ENV{PERL5LIB} = join ':', $installed_lib, $external;
   delete $ENV{PERL5OPT};
   unshift @INC, $installed_lib;
-  require Test::FitNesse::Slim;
-  my $slim_path = abs_path($INC{'Test/FitNesse/Slim.pm'});
-  die "test loaded Test::FitNesse::Slim from outside installation: $slim_path"
-    unless $slim_path eq abs_path("$installed_lib/Test/FitNesse/Slim.pm");
-  require Test::FitNesse::Slim::List;
-  my $list_path = abs_path($INC{'Test/FitNesse/Slim/List.pm'});
-  die "protocol test loaded Test::FitNesse::Slim::List from outside installation: $list_path"
-    unless $list_path eq abs_path("$installed_lib/Test/FitNesse/Slim/List.pm");
-  my $doc_path = abs_path($INC{'Test/FitNesse/Slim.pm'});
-  die "module loader resolved Test::FitNesse::Slim outside the install prefix: $doc_path"
-    unless $doc_path eq "$installed_lib/Test/FitNesse/Slim.pm";
+  my %module_paths;
+  for my $module (production_modules()) {
+    (my $relative = $module) =~ s{\Alib/}{};
+    (my $require_path = $relative) =~ s{\\}{/}g;
+    require $require_path;
+    $module_paths{$require_path} = verify_installed_path(
+      $INC{$require_path}, "$installed_lib/$relative", $prefix,
+      "loaded production module $require_path",
+    );
+  }
+  my $slim_path = $module_paths{'Test/FitNesse/Slim.pm'};
+  my $list_path = $module_paths{'Test/FitNesse/Slim/List.pm'};
+  my $doc_path = $slim_path;
   my $rendered_pod = render_installed_pod($doc_path);
   die 'installed Test::FitNesse::Slim POD rendered without expected content'
     unless $rendered_pod =~ /FitNesse/;

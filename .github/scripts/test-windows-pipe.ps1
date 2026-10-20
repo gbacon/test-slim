@@ -126,3 +126,7 @@ finally {
   }
   $process.Dispose()
 }
+
+# The workflow invokes this file with pwsh -File and checks its native exit
+# status. Reaching here means every protocol assertion and cleanup succeeded.
+exit 0

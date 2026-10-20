@@ -101,6 +101,12 @@ reports the disabled target while retaining installed-POD validation. On
 Windows, where `IO::Select` cannot poll ordinary process pipes, the manual
 portability workflow uses bounded .NET stream reads for its process-level
 pipe check instead of the Unix-oriented `t/pipe-transport.t` harness.
+Installation isolation checks compare resolved paths for both the loaded file
+and its expected location, then verify the expected file lies beneath the
+resolved install prefix. This accommodates filesystem aliases without
+accepting a similarly named sibling directory. The Windows workflow runs its
+PowerShell pipe check in a separate `pwsh -File` process so its numeric status
+cannot be confused with a stale `$LASTEXITCODE` in the caller.
 
 The distribution installs the production modules and `bin/perl-slim`.
 A custom `--install_base` prefix places modules under `PREFIX/lib/perl5`

@@ -42,11 +42,15 @@ jobs:
         shell: pwsh
         run: |
           $env:PERL5LIB = (Join-Path $PWD 'lib') + ';' + (Join-Path $PWD 'examples/lib')
-          & .github/scripts/test-windows-pipe.ps1 `
+          pwsh -NoProfile -File .github/scripts/test-windows-pipe.ps1 `
             -PerlPath (Get-Command perl).Source `
             -RunnerPath (Join-Path $PWD 'bin/perl-slim') `
             -Perl5Lib $env:PERL5LIB
-          if ($LASTEXITCODE -ne 0) { throw "Pipe process check failed: $LASTEXITCODE" }
+          $status = $LASTEXITCODE
+          if ($status -ne 0) { throw "Pipe process check failed: $status" }
+          & .github/scripts/test-windows-pipe-contract.ps1 `
+            -PerlPath (Get-Command perl).Source `
+            -PipeCheckPath (Join-Path $PWD '.github/scripts/test-windows-pipe.ps1')
 
       - name: Run focused Perl and TCP tests
         shell: pwsh
@@ -79,11 +83,12 @@ jobs:
           perl -MTest::FitNesse::Slim -e 'die "module loaded from wrong path" unless $INC{"Test/FitNesse/Slim.pm"} =~ /test-fitnesse-slim/'
           if ($LASTEXITCODE -ne 0) { throw "Installed module check failed: $LASTEXITCODE" }
           $runner = Join-Path $prefix 'bin/perl-slim'
-          & .github/scripts/test-windows-pipe.ps1 `
+          pwsh -NoProfile -File .github/scripts/test-windows-pipe.ps1 `
             -PerlPath (Get-Command perl).Source `
             -RunnerPath $runner `
             -Perl5Lib $env:PERL5LIB
-          if ($LASTEXITCODE -ne 0) { throw "Installed pipe process check failed: $LASTEXITCODE" }
+          $pipeStatus = $LASTEXITCODE
+          if ($pipeStatus -ne 0) { throw "Installed pipe process check failed: $pipeStatus" }
 
           $reservation = [System.Net.Sockets.TcpListener]::new([System.Net.IPAddress]::Loopback, 0)
           $reservation.Start()
