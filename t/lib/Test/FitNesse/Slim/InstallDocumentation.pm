@@ -16,11 +16,11 @@ sub installed_manpage_paths {
   my %spec = (
     bindoc => {
       config => [qw(installman1dir installsiteman1dir installvendorman1dir)],
-      source => 'man1dir', section => 'man1', stem => 'perl-slim', ext => 'man1ext',
+      section => 'man1', stem => 'perl-slim', ext => 'man1ext',
     },
     libdoc => {
       config => [qw(installman3dir installsiteman3dir installvendorman3dir)],
-      source => 'man3dir', section => 'man3', stem => 'Test::FitNesse::Slim', ext => 'man3ext',
+      section => 'man3', stem => 'Test::FitNesse::Slim', ext => 'man3ext',
     },
   );
 
@@ -30,9 +30,7 @@ sub installed_manpage_paths {
     my @configured = grep {
       defined($config->{$_}) && length($config->{$_}) && $config->{$_} ne 'none'
     } @{ $entry->{config} };
-    my $source_dir = $config->{ $entry->{source} };
-    if (!@configured || !defined($source_dir) || !length($source_dir)
-        || $source_dir eq 'none') {
+    if (!@configured) {
       push @disabled, $kind;
       next;
     }
