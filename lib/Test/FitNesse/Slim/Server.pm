@@ -372,7 +372,9 @@ sub _listen_socket {
     if $self->{bind_address_explicit} && $octets[0] != 127;
 
   my $listener = IO::Socket::INET->new(
-    ReuseAddr => 1,
+    # Winsock permits an SO_REUSEADDR socket to bind an occupied endpoint.
+    # Keep the existing Unix restart behavior without enabling that on Windows.
+    ReuseAddr => $^O eq 'MSWin32' ? 0 : 1,
     Listen    => 16,
     LocalAddr => $address,
     LocalPort => $port,

@@ -104,4 +104,8 @@ Perl emulates `fork()` with pseudo-processes. The
 warns that `TERM` may not be delivered while a pseudo-process blocks in I/O;
 the caller must avoid an unbounded wait in that situation. This test remains
 active on Linux and macOS. The Windows transport smoke covers one TCP client;
-concurrent TCP clients remain unvalidated there.
+concurrent TCP clients remain unvalidated there. The TCP listener retains
+`SO_REUSEADDR` on Linux and macOS but disables it on Windows, where Winsock
+allows a reuse-enabled socket to bind an occupied endpoint. This is not the
+stronger `SO_EXCLUSIVEADDRUSE` setting; it only avoids the permissive reuse
+option that caused the occupied-port regression.

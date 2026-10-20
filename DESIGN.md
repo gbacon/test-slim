@@ -113,7 +113,11 @@ directory. The Windows exploratory workflow skips the separate concurrent
 TCP test: its `fork`/`TERM`/blocking-`waitpid` cleanup assumes Unix process
 behavior that Strawberry Perl's pseudo-process emulation does not guarantee.
 Linux and macOS retain the full concurrency test; Windows smoke evidence covers
-only one TCP client.
+only one TCP client. The listener keeps `SO_REUSEADDR` on Unix platforms and
+sets it false on Windows because Winsock permits a reuse-enabled socket to
+bind an occupied endpoint. This restores the tested default bind-conflict
+behavior; it does not request `SO_EXCLUSIVEADDRUSE` or promise exclusive
+protection from later binds.
 
 The distribution installs the production modules and `bin/perl-slim`.
 A custom `--install_base` prefix places modules under `PREFIX/lib/perl5`
