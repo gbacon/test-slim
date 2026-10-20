@@ -109,7 +109,11 @@ commands. Installation isolation checks
 compare resolved paths for both the loaded file and its expected location,
 then verify the expected file lies beneath the resolved install prefix. This
 accommodates filesystem aliases without accepting a similarly named sibling
-directory.
+directory. The Windows exploratory workflow skips the separate concurrent
+TCP test: its `fork`/`TERM`/blocking-`waitpid` cleanup assumes Unix process
+behavior that Strawberry Perl's pseudo-process emulation does not guarantee.
+Linux and macOS retain the full concurrency test; Windows smoke evidence covers
+only one TCP client.
 
 The distribution installs the production modules and `bin/perl-slim`.
 A custom `--install_base` prefix places modules under `PREFIX/lib/perl5`

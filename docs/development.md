@@ -96,4 +96,12 @@ this Perl test for checkout and installed pipe/TCP smokes.
 PowerShell only orchestrates the workflow; protocol framing is tested in Perl.
 The installed-distribution check uses the installed runner and modules plus an
 external fixture; it does not establish that FitNesse itself launches Perl on
-Windows.
+Windows. The Windows workflow skips `t/server-concurrency.t` explicitly:
+that test starts its listener with `fork()`, redirects child output to
+`/dev/null`, then sends `TERM` and performs a blocking `waitpid`. Strawberry
+Perl emulates `fork()` with pseudo-processes. The
+[Perl 5.36 `perlfork` documentation](https://perldoc.perl.org/5.36.3/perlfork)
+warns that `TERM` may not be delivered while a pseudo-process blocks in I/O;
+the caller must avoid an unbounded wait in that situation. This test remains
+active on Linux and macOS. The Windows transport smoke covers one TCP client;
+concurrent TCP clients remain unvalidated there.

@@ -53,9 +53,12 @@ jobs:
 
       - name: Run focused Perl and TCP tests
         shell: pwsh
+        timeout-minutes: 5
         run: |
+          Write-Host 'SKIPPED: t/server-concurrency.t'
+          Write-Host 'Reason: concurrent TCP/fork behavior is not validated on Windows.'
           $failed = @()
-          foreach ($test in @('t/00-load.t', 't/list-serializer.t', 't/typed-sequence-converters.t', 't/server-concurrency.t', 't/server-bind-address.t')) {
+          foreach ($test in @('t/00-load.t', 't/list-serializer.t', 't/typed-sequence-converters.t', 't/server-bind-address.t')) {
             Write-Host "Running $test"
             prove --lib $test
             $status = $LASTEXITCODE
