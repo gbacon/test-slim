@@ -35,11 +35,14 @@ my ($enabled_paths, $enabled_disabled) = installed_manpage_paths('/prefix', {
   man1dir => '/usr/share/man/man1', man3dir => '/usr/share/man/man3',
   installman1dir => '/usr/share/man/man1', installman3dir => '/usr/share/man/man3',
   man1ext => '1p', man3ext => '3pm',
-});
+}, ['Test::FitNesse::Slim', 'Test::FitNesse::Slim::Server']);
 is_deeply($enabled_paths, {
-  bindoc => File::Spec->catfile('/prefix', 'man', 'man1', 'perl-slim.1p'),
-  libdoc => File::Spec->catfile('/prefix', 'man', 'man3', 'Test::FitNesse::Slim.3pm'),
-}, 'enabled Module::Build manpage targets map to install_base destinations');
+  bindoc => [File::Spec->catfile('/prefix', 'man', 'man1', 'perl-slim.1p')],
+  libdoc => [
+    File::Spec->catfile('/prefix', 'man', 'man3', 'Test::FitNesse::Slim.3pm'),
+    File::Spec->catfile('/prefix', 'man', 'man3', 'Test::FitNesse::Slim::Server.3pm'),
+  ],
+}, 'enabled Module::Build targets map executable and each module manual to install_base');
 is_deeply($enabled_disabled, [], 'enabled manpage targets are not reported disabled');
 
 my ($disabled_paths, $disabled_types) = installed_manpage_paths('/prefix', {
@@ -55,9 +58,9 @@ my ($partial_paths, $partial_disabled) = installed_manpage_paths('/prefix', {
   man1dir => '/usr/share/man/man1', man3dir => 'none',
   installman1dir => '/usr/share/man/man1', installman3dir => 'none',
   man1ext => '1p', man3ext => '',
-});
+}, ['Test::FitNesse::Slim']);
 is_deeply($partial_paths, {
-  bindoc => File::Spec->catfile('/prefix', 'man', 'man1', 'perl-slim.1p'),
+  bindoc => [File::Spec->catfile('/prefix', 'man', 'man1', 'perl-slim.1p')],
 },
   'each configured documentation destination remains strictly checked');
 is_deeply($partial_disabled, ['libdoc'], 'only the unavailable library-manual target is disabled');

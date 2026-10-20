@@ -9,7 +9,7 @@ use File::Spec;
 our @EXPORT_OK = qw(render_installed_pod installed_manpage_paths);
 
 sub installed_manpage_paths {
-  my ($prefix, $config) = @_;
+  my ($prefix, $config, $module_names) = @_;
   die 'installation prefix is required' unless defined $prefix;
   die 'Perl Config values are required' unless ref($config) eq 'HASH';
 
@@ -43,9 +43,12 @@ sub installed_manpage_paths {
 
     # Module::Build documents these install_base destinations as man/man1
     # and man/man3. This smoke test always configures --install_base.
-    $paths{$kind} = File::Spec->catfile(
-      $prefix, 'man', $entry->{section}, "$entry->{stem}.$extension",
-    );
+    my @names = $kind eq 'libdoc'
+      ? (ref($module_names) eq 'ARRAY' ? @$module_names : $entry->{stem})
+      : ($entry->{stem});
+    $paths{$kind} = [ map {
+      File::Spec->catfile($prefix, 'man', $entry->{section}, "$_.$extension")
+    } @names ];
   }
 
   return (\%paths, \@disabled);
@@ -83,11 +86,12 @@ reports missing, unreadable, unparsable, or empty documentation distinctly.
 
 =head1 FUNCTIONS
 
-=head2 installed_manpage_paths($prefix, \%Config)
+=head2 installed_manpage_paths($prefix, \%Config, \@module_names)
 
 Returns the Module::Build C<install_base> manual-page destinations enabled by
 the active Perl configuration and the documentation targets that are
-disabled. Module::Build may omit Unix manual generation when Perl was
+disabled. When C<@module_names> is supplied, returns a library-manual path
+for each module. Module::Build may omit Unix manual generation when Perl was
 configured without manpage directories; callers must still validate the
 installed POD separately.
 

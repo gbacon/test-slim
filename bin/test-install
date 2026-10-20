@@ -134,12 +134,22 @@ sub main {
 
 sub verify_installed_manpages {
   my ($prefix) = @_;
-  my ($paths, $disabled) = installed_manpage_paths($prefix, \%Config::Config);
+  my @module_names = map {
+    my $name = $_;
+    $name =~ s{\Alib/}{};
+    $name =~ s{\.pm\z}{};
+    $name =~ s{/}{::}g;
+    $name;
+  } production_modules();
+  my ($paths, $disabled) = installed_manpage_paths(
+    $prefix, \%Config::Config, \@module_names,
+  );
   for my $kind (sort keys %$paths) {
-    my $documentation = $paths->{$kind};
-    die "installed $kind manual page missing or empty: $documentation"
-      unless -s $documentation;
-    print "Installed Module::Build $kind manual page: $documentation\n";
+    for my $documentation (@{ $paths->{$kind} }) {
+      die "installed $kind manual page missing or empty: $documentation"
+        unless -s $documentation;
+      print "Installed Module::Build $kind manual page: $documentation\n";
+    }
   }
   for my $kind (@$disabled) {
     my $source = $kind eq 'bindoc' ? 'man1dir' : 'man3dir';
