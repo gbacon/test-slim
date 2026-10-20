@@ -85,9 +85,12 @@ macOS gates.
 Windows does not support Perl `select` polling on ordinary child-process
 pipes. The full `t/pipe-transport.t` integration test uses `IO::Select` to
 drain `IPC::Open3` pipes and remains part of Linux/macOS development testing.
-The Windows workflow replaces that pipe polling harness with
-`.github/scripts/test-windows-pipe.ps1`, which uses bounded .NET asynchronous
-stream reads to verify the actual Perl child's v0.5 greeting, framed typed
-fixture exchange, `bye`, stderr capture, and exit status. The workflow still
-runs the focused Perl unit and TCP tests separately; a test failure is not
-converted into a skip.
+For cross-platform transport smoke checks, `t/portable-transport-smoke.t` uses
+`IPC::Run` with a complete prebuilt pipe request and bounded execution, then
+uses `IO::Select` only for a single TCP socket session. It checks the v0.5
+greeting, exact framed fixture results, `bye`, child exit, and module paths.
+The manually dispatched Windows workflow also retains the previously verified
+PowerShell checkout-pipe probe until the Perl replacement has run on a native
+Windows runner. The portable installed-distribution check uses the installed
+runner and modules plus an external fixture; it does not establish that
+FitNesse itself launches Perl on Windows.

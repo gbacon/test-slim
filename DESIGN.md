@@ -98,15 +98,15 @@ configuration defines manpage targets; `install_base` places those targets
 under `PREFIX/man/man1` and `PREFIX/man/man3`. Perl builds configured with
 `man1dir=none` or `man3dir=none` do not generate those files, so the test
 reports the disabled target while retaining installed-POD validation. On
-Windows, where `IO::Select` cannot poll ordinary process pipes, the manual
-portability workflow uses bounded .NET stream reads for its process-level
-pipe check instead of the Unix-oriented `t/pipe-transport.t` harness.
-Installation isolation checks compare resolved paths for both the loaded file
-and its expected location, then verify the expected file lies beneath the
-resolved install prefix. This accommodates filesystem aliases without
-accepting a similarly named sibling directory. The Windows workflow runs its
-PowerShell pipe check in a separate `pwsh -File` process so its numeric status
-cannot be confused with a stale `$LASTEXITCODE` in the caller.
+Windows, where `IO::Select` cannot poll ordinary process pipes, the portable
+transport smoke test uses `IPC::Run` to supply a complete pipe request and
+capture bounded child output. It uses `IO::Select` only for TCP socket
+readiness. The manual Windows workflow retains its previously verified
+PowerShell pipe probe until the new Perl test has been observed on a native
+Windows runner. Installation isolation checks compare resolved paths for both
+the loaded file and its expected location, then verify the expected file lies
+beneath the resolved install prefix. This accommodates filesystem aliases
+without accepting a similarly named sibling directory.
 
 The distribution installs the production modules and `bin/perl-slim`.
 A custom `--install_base` prefix places modules under `PREFIX/lib/perl5`

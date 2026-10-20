@@ -195,6 +195,7 @@ t/perl-slim-cli.t
 t/pipe-transport.t
 t/pod-coverage.t
 t/pod.t
+t/portable-transport-smoke.t
 t/query-fixtures.t
 t/response-examiner.t
 t/server-bind-address.t

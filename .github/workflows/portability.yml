@@ -38,19 +38,20 @@ jobs:
           perl Build
           if ($LASTEXITCODE -ne 0) { throw "Build failed: $LASTEXITCODE" }
 
-      - name: Verify the real pipe child with Windows process APIs
+      - name: Verify checkout pipe and TCP sessions with Perl
         shell: pwsh
         run: |
-          $env:PERL5LIB = (Join-Path $PWD 'lib') + ';' + (Join-Path $PWD 'examples/lib')
+          perl -Ilib -Iexamples/lib t/portable-transport-smoke.t
+          $portableStatus = $LASTEXITCODE
+          if ($portableStatus -ne 0) { throw "Checkout transport smoke failed: $portableStatus" }
+          # Retain the previously observed checkout pipe probe until the native
+          # Perl replacement has succeeded on this runner.
           pwsh -NoProfile -File .github/scripts/test-windows-pipe.ps1 `
             -PerlPath (Get-Command perl).Source `
             -RunnerPath (Join-Path $PWD 'bin/perl-slim') `
-            -Perl5Lib $env:PERL5LIB
+            -Perl5Lib ((Join-Path $PWD 'lib') + ';' + (Join-Path $PWD 'examples/lib'))
           $status = $LASTEXITCODE
-          if ($status -ne 0) { throw "Pipe process check failed: $status" }
-          & .github/scripts/test-windows-pipe-contract.ps1 `
-            -PerlPath (Get-Command perl).Source `
-            -PipeCheckPath (Join-Path $PWD '.github/scripts/test-windows-pipe.ps1')
+          if ($status -ne 0) { throw "Existing checkout pipe probe failed: $status" }
 
       - name: Run focused Perl and TCP tests
         shell: pwsh
@@ -69,7 +70,7 @@ jobs:
           }
           if ($failed.Count -gt 0) { throw "Windows focused tests failed: $($failed -join ', ')" }
 
-      - name: Install and smoke-test the installed pipe executable
+      - name: Install and smoke-test both installed transports
         shell: pwsh
         run: |
           $prefix = Join-Path $env:RUNNER_TEMP 'test-fitnesse-slim'
@@ -79,57 +80,11 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw "Build failed: $LASTEXITCODE" }
           perl Build install
           if ($LASTEXITCODE -ne 0) { throw "Build install failed: $LASTEXITCODE" }
-          $env:PERL5LIB = (Join-Path $prefix 'lib/perl5') + ';' + (Join-Path $PWD 'examples/lib')
-          perl -MTest::FitNesse::Slim -e 'die "module loaded from wrong path" unless $INC{"Test/FitNesse/Slim.pm"} =~ /test-fitnesse-slim/'
-          if ($LASTEXITCODE -ne 0) { throw "Installed module check failed: $LASTEXITCODE" }
+          $modulePath = Join-Path $prefix 'lib/perl5'
+          $fixturePath = Join-Path $PWD 'examples/lib'
           $runner = Join-Path $prefix 'bin/perl-slim'
-          pwsh -NoProfile -File .github/scripts/test-windows-pipe.ps1 `
-            -PerlPath (Get-Command perl).Source `
-            -RunnerPath $runner `
-            -Perl5Lib $env:PERL5LIB
-          $pipeStatus = $LASTEXITCODE
-          if ($pipeStatus -ne 0) { throw "Installed pipe process check failed: $pipeStatus" }
-
-          $reservation = [System.Net.Sockets.TcpListener]::new([System.Net.IPAddress]::Loopback, 0)
-          $reservation.Start()
-          $port = ([System.Net.IPEndPoint]$reservation.LocalEndpoint).Port
-          $reservation.Stop()
-          $start = [System.Diagnostics.ProcessStartInfo]::new()
-          $start.FileName = (Get-Command perl).Source
-          $start.Arguments = '"' + $runner + '" ' + $port
-          $start.UseShellExecute = $false
-          $start.RedirectStandardOutput = $true
-          $start.RedirectStandardError = $true
-          $start.Environment['PERL5LIB'] = $env:PERL5LIB
-          $server = [System.Diagnostics.Process]::new()
-          $server.StartInfo = $start
-          try {
-            if (-not $server.Start()) { throw 'Installed TCP service did not start' }
-            $client = $null
-            $deadline = [DateTime]::UtcNow.AddSeconds(15)
-            while (-not $client -and [DateTime]::UtcNow -lt $deadline) {
-              $candidate = [System.Net.Sockets.TcpClient]::new()
-              try {
-                $candidate.Connect([System.Net.IPAddress]::Loopback, $port)
-                $client = $candidate
-              }
-              catch {
-                $candidate.Dispose()
-                Start-Sleep -Milliseconds 100
-              }
-            }
-            if (-not $client) { throw 'Installed TCP service did not accept a loopback client' }
-            $client.ReceiveTimeout = 15000
-            $stream = $client.GetStream()
-            $reader = [System.IO.StreamReader]::new($stream, [System.Text.Encoding]::ASCII, $false, 1024, $true)
-            if ($reader.ReadLine() -ne 'Slim -- V0.5') { throw 'Installed TCP service sent the wrong greeting' }
-            $bye = [System.Text.Encoding]::ASCII.GetBytes('000003:bye')
-            $stream.Write($bye, 0, $bye.Length)
-            $client.Close()
-            Write-Host 'Installed TCP service accepted a SLiM v0.5 loopback session'
-          }
-          finally {
-            if ($client) { $client.Dispose() }
-            if ($server -and -not $server.HasExited) { $server.Kill(); $server.WaitForExit(5000) | Out-Null }
-            if ($server) { $server.Dispose() }
-          }
+          perl "-I$modulePath" "-I$fixturePath" t/portable-transport-smoke.t `
+            --runner $runner --module-dir $modulePath --fixture-dir $fixturePath `
+            --install-prefix $prefix
+          $status = $LASTEXITCODE
+          if ($status -ne 0) { throw "Installed pipe/TCP smoke failed: $status" }

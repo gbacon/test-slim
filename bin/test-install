@@ -5,7 +5,6 @@ use warnings;
 
 use Cwd qw(abs_path getcwd);
 use Config ();
-use Encode qw(encode decode FB_CROAK);
 use File::Copy qw(copy);
 use File::Find qw(find);
 use File::Path qw(make_path remove_tree);
@@ -17,7 +16,6 @@ use IO::Select;
 use IO::Socket::INET;
 use IPC::Open3;
 use JSON::PP qw(decode_json);
-use POSIX qw(WNOHANG);
 use Symbol qw(gensym);
 use Time::HiRes qw(sleep time);
 use lib "$Bin/../t/lib";
@@ -105,7 +103,9 @@ sub main {
     die "installed production module missing: $relative" unless -f $path;
   }
 
-  local $ENV{PERL5LIB} = join ':', $installed_lib, $external;
+  my @runtime_libs = runtime_include_dirs($ROOT, $source);
+  local $ENV{PERL5LIB} = join $Config::Config{path_sep},
+    $installed_lib, $external, @runtime_libs;
   delete $ENV{PERL5OPT};
   unshift @INC, $installed_lib;
   my %module_paths;
@@ -130,8 +130,7 @@ sub main {
   print "Installed POD source: $doc_path\n";
   print "External fixture source: ", abs_path("$external/Example/Counter.pm"), "\n";
 
-  run_pipe_protocol($runner, $run_dir);
-  run_tcp_protocol($runner, $run_dir);
+  run_portable_transport_smoke($runner, $installed_lib, $external, $prefix, $run_dir);
   run_tcp_bind_option($runner, $run_dir, $TEMP);
   run_fitnesse_example($runner, $external, $source, $TEMP);
   print "Installed distribution smoke test passed\n";
@@ -460,66 +459,43 @@ sub read_archive_member {
   return $content;
 }
 
-sub run_pipe_protocol {
-  my ($runner, $cwd) = @_;
-  my $error = gensym;
-  my ($input, $output);
-  my $old_directory = getcwd();
-  chdir $cwd or die "chdir outside-checkout run directory: $!";
-  my $pid = open3($input, $output, $error, $runner, '1');
-  chdir $old_directory or die "restore working directory: $!";
-  binmode $input;
-  binmode $output;
-  binmode $error;
-  my $ok = eval {
-    my $greeting = read_exact($output, 13, 10);
-    die "unexpected pipe greeting: $greeting" unless $greeting eq "Slim -- V0.5\n";
-    print "Pipe child greeting: Slim -- V0.5\\n\n";
-    exercise_installed_fixture($input, $output);
-    write_all($input, frame('bye'));
-    close $input or die "close pipe child input: $!";
-    wait_for_child($pid, $output, 10);
-    1;
-  };
-  my $error_text = $@ unless $ok;
-  if (!$ok) {
-    kill 'TERM', $pid;
-    waitpid($pid, 0);
-  }
-  my $stderr = drain_available($error);
-  close $output;
-  close $error;
-  die $error_text unless $ok;
-  die "pipe child wrote unexpected stderr: $stderr" if length $stderr;
-  print "Installed pipe protocol fixture: 4 assertions verified; child exited 0\n";
+sub run_portable_transport_smoke {
+  my ($runner, $module_dir, $fixture_dir, $prefix, $cwd) = @_;
+  my $test = "$ROOT/t/portable-transport-smoke.t";
+  my @command = (
+    $^X, "-I$module_dir", "-I$fixture_dir", $test,
+    '--runner', $runner,
+    '--module-dir', $module_dir,
+    '--fixture-dir', $fixture_dir,
+    '--install-prefix', $prefix,
+  );
+  run_command($cwd, @command);
   return;
 }
 
-sub run_tcp_protocol {
-  my ($runner, $cwd) = @_;
-  my $port = free_port('127.0.0.1');
-  my $log = "$TEMP/installed-tcp-server.log";
-  start_owned_process($runner, $port, { log_file => $log, cwd => $cwd });
-  my $socket;
-  my $deadline = time + 15;
-  while (time < $deadline) {
-    die 'installed TCP listener exited before readiness' if owned_process_exited();
-    $socket = IO::Socket::INET->new(
-      PeerAddr => '127.0.0.1', PeerPort => $port, Proto => 'tcp', Timeout => 0.5,
-    );
-    last if $socket;
-    sleep 0.1;
+sub runtime_include_dirs {
+  my ($repository, $build_source) = @_;
+  my %seen;
+  my @paths;
+  for my $entry (@INC) {
+    next if ref($entry) || !-d $entry;
+    my $path = abs_path($entry) or next;
+    next if $path eq $repository || path_is_beneath($path, $build_source);
+    next if path_is_beneath($path, "$repository/lib");
+    next if path_is_beneath($path, "$repository/t/lib");
+    next if $seen{$path}++;
+    push @paths, $path;
   }
-  die 'installed TCP listener did not start' unless $socket;
-  binmode $socket;
-  my $greeting = read_exact($socket, 13, 10);
-  die "unexpected TCP greeting: $greeting" unless $greeting eq "Slim -- V0.5\n";
-  print "TCP listener greeting: Slim -- V0.5\\n\n";
-  exercise_installed_fixture($socket, $socket);
-  write_all($socket, frame('bye'));
-  close $socket;
-  print "Installed TCP protocol fixture: 4 assertions verified\n";
-  return;
+  return @paths;
+}
+
+sub path_is_beneath {
+  my ($path, $parent) = @_;
+  $parent = abs_path($parent) or return;
+  my $relative = File::Spec->abs2rel($path, $parent);
+  my @parts = File::Spec->splitdir($relative);
+  return !File::Spec->file_name_is_absolute($relative)
+    && @parts && $parts[0] ne File::Spec->updir;
 }
 
 sub run_tcp_bind_option {
@@ -554,47 +530,6 @@ sub run_tcp_bind_option {
   return;
 }
 
-sub exercise_installed_fixture {
-  my ($input, $output) = @_;
-  my @first = (
-    ['1', 'import', 'Example'],
-    ['2', 'make', 'counter', 'Counter', '4'],
-    ['3', 'call', 'counter', 'addAmount', '3'],
-    ['4', 'call', 'counter', 'value'],
-  );
-  my $first = exchange($input, $output, \@first);
-  assert_results($first, [['1','OK'],['2','OK'],['3','7'],['4','7']], 'first batch');
-
-  my @second = (
-    ['5', 'callAndAssign', 'last_add', 'counter', 'addAmount', '2'],
-    ['6', 'call', 'counter', 'value'],
-    ['7', 'call', 'counter', 'addAmount', '$last_add'],
-    ['8', 'call', 'counter', 'value'],
-  );
-  my $second = exchange($input, $output, \@second);
-  assert_results($second, [['5','9'],['6','9'],['7','18'],['8','18']], 'second batch');
-  return;
-}
-
-sub exchange {
-  my ($input, $output, $instructions) = @_;
-  my $serialized = Test::FitNesse::Slim::List->new($instructions)->serialize;
-  write_all($input, frame(encode('UTF-8', $serialized)));
-  my $response = read_frame($output, 15);
-  my $decoded = decode('UTF-8', $response, FB_CROAK);
-  my @results = Test::FitNesse::Slim::List->new($decoded)->list;
-  return \@results;
-}
-
-sub assert_results {
-  my ($got, $expected, $label) = @_;
-  my $actual_wire = Test::FitNesse::Slim::List->new($got)->serialize;
-  my $expected_wire = Test::FitNesse::Slim::List->new($expected)->serialize;
-  die "$label mismatch: expected $expected_wire, got $actual_wire"
-    unless $actual_wire eq $expected_wire;
-  return;
-}
-
 sub frame {
   my ($payload) = @_;
   return sprintf('%06d:', length($payload)) . $payload;
@@ -625,50 +560,6 @@ sub read_exact {
     $result .= $part;
   }
   return $result;
-}
-
-sub read_frame {
-  my ($fh, $timeout) = @_;
-  my $prefix = '';
-  while (length($prefix) <= 32) {
-    my $character = read_exact($fh, 1, $timeout);
-    last if $character eq ':';
-    $prefix .= $character;
-  }
-  die "invalid outer frame length '$prefix'" unless $prefix =~ /\A[0-9]{6,32}\z/;
-  return read_exact($fh, 0 + $prefix, $timeout);
-}
-
-sub wait_for_child {
-  my ($pid, $output, $timeout) = @_;
-  my $deadline = time + $timeout;
-  my $eof = 0;
-  while (time < $deadline) {
-    my $ready = !$eof && IO::Select->new($output)->can_read(0.1);
-    if ($ready) {
-      my $read = sysread($output, my $buffer, 1);
-      die "pipe child wrote unexpected protocol bytes after bye" if defined($read) && $read > 0;
-      $eof = 1 if defined($read) && $read == 0;
-    }
-    my $result = waitpid($pid, WNOHANG);
-    if ($result == $pid) {
-      die "pipe child exited with status $?" if $? != 0;
-      return;
-    }
-  }
-  die 'pipe child did not exit cleanly after bye';
-}
-
-sub drain_available {
-  my ($fh) = @_;
-  my $select = IO::Select->new($fh);
-  my $text = '';
-  while ($select->can_read(0.1)) {
-    my $read = sysread($fh, my $chunk, 8192);
-    last unless defined($read) && $read > 0;
-    $text .= $chunk;
-  }
-  return $text;
 }
 
 sub run_fitnesse_example {
