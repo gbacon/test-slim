@@ -219,6 +219,3 @@ t/typed-constructor-conversion.t
 t/typed-invocation-arity.t
 t/typed-sequence-converters.t
 THIRD-PARTY-NOTICES.md
-Makefile.PL
-META.yml
-META.json

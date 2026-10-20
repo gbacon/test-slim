@@ -79,7 +79,7 @@ for my $file (sort @markdown_files) {
 
 my $old_directory = getcwd();
 chdir $root or die "chdir $root: $!";
-my ($unlisted,$missing) = fullcheck();
+my ($missing,$unlisted) = fullcheck();
 chdir $old_directory or die "restore working directory: $!";
 push @errors, "file is not in MANIFEST: $_" for @$unlisted;
 push @errors, "MANIFEST entry is missing: $_" for @$missing;
