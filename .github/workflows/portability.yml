@@ -28,6 +28,12 @@ jobs:
         shell: pwsh
         run: cpanm --notest --installdeps .
 
+      - name: Verify IPC::Run subprocess API
+        shell: pwsh
+        run: |
+          perl -MIPC::Run -e 'print "IPC::Run $IPC::Run::VERSION ($INC{q(IPC/Run.pm)})\n"; IPC::Run->VERSION("20260322.0"); for my $method (qw(finished pump_nb kill_kill)) { die "IPC::Run $IPC::Run::VERSION lacks $method\n" unless IPC::Run->can($method) }'
+          if ($LASTEXITCODE -ne 0) { throw "IPC::Run 20260322.0 subprocess API preflight failed: $LASTEXITCODE" }
+
       - name: Load the new namespace and build the distribution
         shell: pwsh
         run: |
@@ -44,19 +50,10 @@ jobs:
           perl -Ilib -Iexamples/lib t/portable-transport-smoke.t
           $portableStatus = $LASTEXITCODE
           if ($portableStatus -ne 0) { throw "Checkout transport smoke failed: $portableStatus" }
-          # Retain the previously observed checkout pipe probe until the native
-          # Perl replacement has succeeded on this runner.
-          pwsh -NoProfile -File .github/scripts/test-windows-pipe.ps1 `
-            -PerlPath (Get-Command perl).Source `
-            -RunnerPath (Join-Path $PWD 'bin/perl-slim') `
-            -Perl5Lib ((Join-Path $PWD 'lib') + ';' + (Join-Path $PWD 'examples/lib'))
-          $status = $LASTEXITCODE
-          if ($status -ne 0) { throw "Existing checkout pipe probe failed: $status" }
 
       - name: Run focused Perl and TCP tests
         shell: pwsh
         run: |
-          Write-Host 'The Perl pipe test polls IPC::Open3 pipes with IO::Select, which Windows select does not support. The equivalent real-child wire check ran with bounded .NET asynchronous pipe reads in the previous step.'
           $failed = @()
           foreach ($test in @('t/00-load.t', 't/list-serializer.t', 't/typed-sequence-converters.t', 't/server-concurrency.t', 't/server-bind-address.t')) {
             Write-Host "Running $test"

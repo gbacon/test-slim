@@ -15,6 +15,12 @@ use Time::HiRes qw(sleep time);
 use lib "$Bin/lib";
 use Test::FitNesse::Slim::RunnerPath qw(validate_runner_file);
 
+IPC::Run->VERSION('20260322.0');
+for my $method (qw(finished pump_nb kill_kill)) {
+  die "IPC::Run $IPC::Run::VERSION does not provide required method $method\n"
+    unless IPC::Run->can($method);
+}
+
 my $root = abs_path("$Bin/..");
 my %option = (
   runner => "$root/bin/perl-slim",
@@ -239,10 +245,33 @@ sub tcp_exchange {
     1;
   };
   my $error = $@ unless $ok;
-  close $socket if $socket;
-  if ($harness && !$harness->finished) {
-    eval { $harness->kill_kill(grace => 1) };
-    $error .= "\nserver cleanup: $@" if $@;
+  my @cleanup_errors;
+  if ($socket) {
+    eval { close $socket or die "close TCP client: $!"; 1 }
+      or push @cleanup_errors, "close client socket: $@";
+  }
+  if ($harness) {
+    my $finished = eval { $harness->finished };
+    if ($@) {
+      push @cleanup_errors, "check listener state: $@";
+      $finished = 0;
+    }
+    if (!$finished) {
+      my $stopped = eval { $harness->kill_kill(grace => 1); 1 };
+      push @cleanup_errors, "stop listener: $@" unless $stopped;
+      if ($stopped) {
+        $finished = eval { $harness->finished };
+        push @cleanup_errors, "verify listener exit: $@" if $@;
+        push @cleanup_errors, 'listener did not stop after kill_kill'
+          if !$@ && !$finished;
+      }
+    }
+  }
+  if (@cleanup_errors) {
+    $error = '' unless defined $error;
+    $error .= "\n" if length $error;
+    $error .= join "\n", @cleanup_errors;
+    $result = undef;
   }
   return ($ok ? $result : undef, $error, $stdout, $stderr);
 }

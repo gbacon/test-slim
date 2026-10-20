@@ -89,8 +89,11 @@ For cross-platform transport smoke checks, `t/portable-transport-smoke.t` uses
 `IPC::Run` with a complete prebuilt pipe request and bounded execution, then
 uses `IO::Select` only for a single TCP socket session. It checks the v0.5
 greeting, exact framed fixture results, `bye`, child exit, and module paths.
-The manually dispatched Windows workflow also retains the previously verified
-PowerShell checkout-pipe probe until the Perl replacement has run on a native
-Windows runner. The portable installed-distribution check uses the installed
-runner and modules plus an external fixture; it does not establish that
-FitNesse itself launches Perl on Windows.
+The harness requires test-only `IPC::Run` 20260322.0 or later, which provides
+the process-state API used by the TCP cleanup path. The manually dispatched
+Windows workflow preflights the loaded version and required methods, then uses
+this Perl test for checkout and installed pipe/TCP smokes.
+PowerShell only orchestrates the workflow; protocol framing is tested in Perl.
+The installed-distribution check uses the installed runner and modules plus an
+external fixture; it does not establish that FitNesse itself launches Perl on
+Windows.

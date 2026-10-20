@@ -11,4 +11,4 @@ test_requires 'Test::Pod' => '1.22';
 test_requires 'Test::Pod::Coverage' => '1.08';
 test_requires 'Pod::Text';
 test_requires 'HTTP::Tiny' => '0.070';
-test_requires 'IPC::Run' => '0.98';
+test_requires 'IPC::Run' => '20260322.0';
