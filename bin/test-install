@@ -30,6 +30,7 @@ use Test::FitNesse::Slim::InstallDocumentation qw(
   installed_manpage_paths render_installed_pod
 );
 use Test::FitNesse::Slim::InstallPath qw(verify_installed_path);
+use Test::FitNesse::Slim::RunnerPath qw(validate_runner_file);
 
 $| = 1;
 my $ROOT = abs_path("$Bin/..") or die "resolve source root: $!";
@@ -93,9 +94,8 @@ sub main {
     "$prefix/bin/perl-slim", "$prefix/bin/perl-slim", $prefix,
     'installed perl-slim executable',
   );
+  validate_runner_file($runner);
   my $installed_lib = "$prefix/lib/perl5";
-  die "installed executable missing or not executable: $runner"
-    unless -x $runner;
   verify_installed_manpages($prefix);
   for my $module (production_modules()) {
     (my $relative = $module) =~ s{\Alib/}{};

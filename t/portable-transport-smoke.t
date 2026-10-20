@@ -12,6 +12,8 @@ use IO::Socket::INET;
 use IPC::Run qw(run start timeout binary);
 use Test::More;
 use Time::HiRes qw(sleep time);
+use lib "$Bin/lib";
+use Test::FitNesse::Slim::RunnerPath qw(validate_runner_file);
 
 my $root = abs_path("$Bin/..");
 my %option = (
@@ -30,11 +32,14 @@ GetOptionsFromArray(
 ) or die "invalid transport smoke-test options\n";
 die "unexpected transport smoke-test arguments: @ARGV\n" if @ARGV;
 
-for my $key (qw(runner module_dir fixture_dir)) {
+$option{runner} = File::Spec->rel2abs($option{runner});
+validate_runner_file($option{runner});
+$option{runner} = abs_path($option{runner})
+  or die "cannot resolve runner path\n";
+for my $key (qw(module_dir fixture_dir)) {
   $option{$key} = abs_path($option{$key})
     or die "cannot resolve $key path\n";
 }
-die 'the runner is not executable' unless -x $option{runner};
 die 'the module directory is missing' unless -d $option{module_dir};
 die 'the fixture directory is missing' unless -d $option{fixture_dir};
 die 'timeout must be between 1 and 120 seconds'

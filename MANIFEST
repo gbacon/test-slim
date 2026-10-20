@@ -173,6 +173,7 @@ t/lib/Test/FitNesse/Slim/FitNesseCoverage.pm
 t/lib/Test/FitNesse/Slim/FitNesseSuiteAcceptance.pm
 t/lib/Test/FitNesse/Slim/InstallDocumentation.pm
 t/lib/Test/FitNesse/Slim/InstallPath.pm
+t/lib/Test/FitNesse/Slim/RunnerPath.pm
 t/lib/TestModule/ShouldNotFindTestSlimInHere/TestSlim.pm
 t/library-fixtures.t
 t/library-identity.t
@@ -198,6 +199,7 @@ t/pod.t
 t/portable-transport-smoke.t
 t/query-fixtures.t
 t/response-examiner.t
+t/runner-path-validation.t
 t/server-bind-address.t
 t/server-concurrency.t
 t/server-frame.t
