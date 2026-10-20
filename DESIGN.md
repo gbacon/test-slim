@@ -102,10 +102,10 @@ Windows, where `IO::Select` cannot poll ordinary process pipes, the portable
 transport smoke test uses `IPC::Run` to supply a complete pipe request and
 capture bounded child output. It uses `IO::Select` only for TCP socket
 readiness. The test-only dependency is `IPC::Run` 20260322.0 or later, which
-provides `finished`; the manual Windows workflow checks the loaded version and
-required process methods before transport tests. It uses the Perl smoke test
-for checkout and installed pipe/TCP checks. PowerShell only orchestrates those
-commands. Installation isolation checks
+provides `finished`; the Windows job in the main workflow checks the loaded
+version and required process methods before transport tests. It uses the Perl
+smoke test for checkout and installed pipe/TCP checks. PowerShell only
+orchestrates those commands. Installation isolation checks
 compare resolved paths for both the loaded file and its expected location,
 then verify the expected file lies beneath the resolved install prefix. This
 accommodates filesystem aliases without accepting a similarly named sibling

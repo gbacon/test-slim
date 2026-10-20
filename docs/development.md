@@ -76,11 +76,20 @@ The exact 50-page and 93-page populations, their intersection, and the
 different evidence each mode provides are documented in
 [acceptance coverage](fitnesse-acceptance-coverage.md).
 
-The main workflow also runs the development and installed-distribution gates
-on macOS 15 with Perl 5.36. A separate, manually dispatched Windows workflow
-uses Strawberry Perl 5.36 for exploratory package and transport checks. Windows
-is not a declared supported platform; its results do not replace the Linux or
-macOS gates.
+The main GitHub Actions workflow runs these platform checks:
+
+| Platform | Coverage |
+|---|---|
+| Linux | Comprehensive development, documentation, installation, and FitNesse acceptance tests |
+| Linux Perl 5.36 | Minimum-version development tests, installation, and installed pipe smoke test |
+| macOS 15 | Native development tests and independent installation with pipe, TCP, and FitNesse smoke tests |
+| Windows Server 2025 / Strawberry Perl 5.36 | Focused tests, pipe/TCP smoke tests, and independent installation with both transports |
+
+The Windows job runs automatically with the main workflow on pushes and pull
+requests. Windows pipe and single-client TCP behavior are smoke-tested; the
+Windows concurrency test and full FitNesse acceptance matrix are not
+validated. These checks do not replace the comprehensive Linux acceptance
+gates or the native macOS checks.
 
 Windows does not support Perl `select` polling on ordinary child-process
 pipes. The full `t/pipe-transport.t` integration test uses `IO::Select` to
@@ -90,9 +99,9 @@ For cross-platform transport smoke checks, `t/portable-transport-smoke.t` uses
 uses `IO::Select` only for a single TCP socket session. It checks the v0.5
 greeting, exact framed fixture results, `bye`, child exit, and module paths.
 The harness requires test-only `IPC::Run` 20260322.0 or later, which provides
-the process-state API used by the TCP cleanup path. The manually dispatched
-Windows workflow preflights the loaded version and required methods, then uses
-this Perl test for checkout and installed pipe/TCP smokes.
+the process-state API used by the TCP cleanup path. The Windows job preflights
+the loaded version and required methods, then uses this Perl test for checkout
+and installed pipe/TCP smokes.
 PowerShell only orchestrates the workflow; protocol framing is tested in Perl.
 The installed-distribution check uses the installed runner and modules plus an
 external fixture; it does not establish that FitNesse itself launches Perl on
