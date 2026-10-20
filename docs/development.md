@@ -81,3 +81,13 @@ on macOS 15 with Perl 5.36. A separate, manually dispatched Windows workflow
 uses Strawberry Perl 5.36 for exploratory package and transport checks. Windows
 is not a declared supported platform; its results do not replace the Linux or
 macOS gates.
+
+Windows does not support Perl `select` polling on ordinary child-process
+pipes. The full `t/pipe-transport.t` integration test uses `IO::Select` to
+drain `IPC::Open3` pipes and remains part of Linux/macOS development testing.
+The Windows workflow replaces that pipe polling harness with
+`.github/scripts/test-windows-pipe.ps1`, which uses bounded .NET asynchronous
+stream reads to verify the actual Perl child's v0.5 greeting, framed typed
+fixture exchange, `bye`, stderr capture, and exit status. The workflow still
+runs the focused Perl unit and TCP tests separately; a test failure is not
+converted into a skip.

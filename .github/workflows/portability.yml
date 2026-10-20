@@ -38,11 +38,32 @@ jobs:
           perl Build
           if ($LASTEXITCODE -ne 0) { throw "Build failed: $LASTEXITCODE" }
 
-      - name: Run focused Perl and real transport tests
+      - name: Verify the real pipe child with Windows process APIs
         shell: pwsh
         run: |
-          prove --lib t/00-load.t t/list-serializer.t t/typed-sequence-converters.t t/pipe-transport.t t/server-concurrency.t t/server-bind-address.t
-          if ($LASTEXITCODE -ne 0) { throw "Focused tests failed: $LASTEXITCODE" }
+          $env:PERL5LIB = (Join-Path $PWD 'lib') + ';' + (Join-Path $PWD 'examples/lib')
+          & .github/scripts/test-windows-pipe.ps1 `
+            -PerlPath (Get-Command perl).Source `
+            -RunnerPath (Join-Path $PWD 'bin/perl-slim') `
+            -Perl5Lib $env:PERL5LIB
+          if ($LASTEXITCODE -ne 0) { throw "Pipe process check failed: $LASTEXITCODE" }
+
+      - name: Run focused Perl and TCP tests
+        shell: pwsh
+        run: |
+          Write-Host 'The Perl pipe test polls IPC::Open3 pipes with IO::Select, which Windows select does not support. The equivalent real-child wire check ran with bounded .NET asynchronous pipe reads in the previous step.'
+          $failed = @()
+          foreach ($test in @('t/00-load.t', 't/list-serializer.t', 't/typed-sequence-converters.t', 't/server-concurrency.t', 't/server-bind-address.t')) {
+            Write-Host "Running $test"
+            prove --lib $test
+            $status = $LASTEXITCODE
+            if ($status -ne 0) {
+              $failed += "$test (exit $status)"
+              Write-Host "FAILED: $test (exit $status)"
+            }
+            else { Write-Host "PASSED: $test" }
+          }
+          if ($failed.Count -gt 0) { throw "Windows focused tests failed: $($failed -join ', ')" }
 
       - name: Install and smoke-test the installed pipe executable
         shell: pwsh
@@ -54,34 +75,15 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw "Build failed: $LASTEXITCODE" }
           perl Build install
           if ($LASTEXITCODE -ne 0) { throw "Build install failed: $LASTEXITCODE" }
-          $env:PERL5LIB = Join-Path $prefix 'lib/perl5'
+          $env:PERL5LIB = (Join-Path $prefix 'lib/perl5') + ';' + (Join-Path $PWD 'examples/lib')
           perl -MTest::FitNesse::Slim -e 'die "module loaded from wrong path" unless $INC{"Test/FitNesse/Slim.pm"} =~ /test-fitnesse-slim/'
           if ($LASTEXITCODE -ne 0) { throw "Installed module check failed: $LASTEXITCODE" }
           $runner = Join-Path $prefix 'bin/perl-slim'
-          $pipeStart = [System.Diagnostics.ProcessStartInfo]::new()
-          $pipeStart.FileName = (Get-Command perl).Source
-          $pipeStart.Arguments = '"' + $runner + '" 1'
-          $pipeStart.UseShellExecute = $false
-          $pipeStart.RedirectStandardInput = $true
-          $pipeStart.RedirectStandardOutput = $true
-          $pipeStart.RedirectStandardError = $true
-          $pipeStart.Environment['PERL5LIB'] = $env:PERL5LIB
-          $pipeProcess = [System.Diagnostics.Process]::new()
-          $pipeProcess.StartInfo = $pipeStart
-          try {
-            if (-not $pipeProcess.Start()) { throw 'Installed pipe service did not start' }
-            $pipeProcess.StandardInput.Write('000003:bye')
-            $pipeProcess.StandardInput.Close()
-            if (-not $pipeProcess.WaitForExit(15000)) { throw 'Installed pipe service timed out' }
-            $pipeOutput = $pipeProcess.StandardOutput.ReadToEnd()
-            if ($pipeProcess.ExitCode -ne 0) { throw "Installed pipe service exited $($pipeProcess.ExitCode)" }
-            if ($pipeOutput -ne "Slim -- V0.5`n") { throw "Unexpected installed pipe output: $pipeOutput" }
-            Write-Host 'Installed pipe service completed a SLiM v0.5 session'
-          }
-          finally {
-            if ($pipeProcess -and -not $pipeProcess.HasExited) { $pipeProcess.Kill(); $pipeProcess.WaitForExit(5000) | Out-Null }
-            if ($pipeProcess) { $pipeProcess.Dispose() }
-          }
+          & .github/scripts/test-windows-pipe.ps1 `
+            -PerlPath (Get-Command perl).Source `
+            -RunnerPath $runner `
+            -Perl5Lib $env:PERL5LIB
+          if ($LASTEXITCODE -ne 0) { throw "Installed pipe process check failed: $LASTEXITCODE" }
 
           $reservation = [System.Net.Sockets.TcpListener]::new([System.Net.IPAddress]::Loopback, 0)
           $reservation.Start()

@@ -92,6 +92,16 @@ Module::Build compatibility release path uses simple version requirements.
 FitNesse state, runtime output, downloaded archives, and workspace
 configuration. The standard manifest task generates `MANIFEST`.
 
+The installation smoke test always parses and renders POD from the installed
+module. Module::Build manpage files are checked only when the active Perl
+configuration defines manpage targets; `install_base` places those targets
+under `PREFIX/man/man1` and `PREFIX/man/man3`. Perl builds configured with
+`man1dir=none` or `man3dir=none` do not generate those files, so the test
+reports the disabled target while retaining installed-POD validation. On
+Windows, where `IO::Select` cannot poll ordinary process pipes, the manual
+portability workflow uses bounded .NET stream reads for its process-level
+pipe check instead of the Unix-oriented `t/pipe-transport.t` harness.
+
 The distribution installs the production modules and `bin/perl-slim`.
 A custom `--install_base` prefix places modules under `PREFIX/lib/perl5`
 and the executable under `PREFIX/bin`; add the module path to `PERL5LIB`
