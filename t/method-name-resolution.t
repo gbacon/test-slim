@@ -4,18 +4,18 @@ use warnings;
 use lib 'lib', 't/lib';
 
 use Test::More;
-use Test::Slim::List;
-use Test::Slim::ListExecutor;
+use Test::FitNesse::Slim::List;
+use Test::FitNesse::Slim::ListExecutor;
 
 use Fitnesse::Slim::Test::MethodNameResolution;
 
 sub execute_wire {
   my ($executor, @instructions) = @_;
-  my $serialized = Test::Slim::List->new(\@instructions)->serialize;
-  return $executor->execute(Test::Slim::List->new($serialized)->list);
+  my $serialized = Test::FitNesse::Slim::List->new(\@instructions)->serialize;
+  return $executor->execute(Test::FitNesse::Slim::List->new($serialized)->list);
 }
 
-my $names = Test::Slim::ListExecutor->new;
+my $names = Test::FitNesse::Slim::ListExecutor->new;
 my @results = execute_wire($names,
   ['make', 'make', 'actor', 'Fitnesse::Slim::Test::MethodNameResolution'],
   ['url', 'call', 'actor', 'fetchURL'],
@@ -83,7 +83,7 @@ is_deeply(\@library, [
   ['library-only', 'library-only method'],
 ], 'acronym translation also applies to newest-first library fallback');
 
-my $autoload = Test::Slim::ListExecutor->new;
+my $autoload = Test::FitNesse::Slim::ListExecutor->new;
 my @dynamic = execute_wire($autoload,
   ['make', 'make', 'dynamic', 'Fitnesse::Slim::Test::MethodNameResolution::Autoload'],
   ['dynamic', 'call', 'dynamic', 'dynamicHTTPCall', '17'],

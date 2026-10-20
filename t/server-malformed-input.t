@@ -10,8 +10,8 @@ use IO::Socket::INET;
 use Socket qw(SHUT_WR);
 use lib 'lib', 't/lib';
 use Test::More;
-use Test::Slim::List;
-use Test::Slim::Server;
+use Test::FitNesse::Slim::List;
+use Test::FitNesse::Slim::Server;
 
 sub free_port {
   my $socket = IO::Socket::INET->new(LocalAddr => '127.0.0.1', LocalPort => 0,
@@ -107,12 +107,12 @@ sub frame {
 
 sub request {
   my($socket,$instructions,$fragmented) = @_;
-  my $text = Test::Slim::List->new($instructions)->serialize;
+  my $text = Test::FitNesse::Slim::List->new($instructions)->serialize;
   my $bytes = encode('UTF-8',$text);
   return unless send_bytes($socket,frame($bytes,$fragmented),$fragmented);
   my $reply = read_frame($socket,3);
   return unless defined $reply;
-  return [ Test::Slim::List->new($reply)->list ];
+  return [ Test::FitNesse::Slim::List->new($reply)->list ];
 }
 
 sub probe_listener {
@@ -134,7 +134,7 @@ if (!$pid) {
   $ENV{TEST_SLIM_MAX_FRAME_BYTES} = 2048;
   open STDOUT,'>','/dev/null' or die "redirect stdout: $!";
   open STDERR,'>','/dev/null' or die "redirect stderr: $!";
-  Test::Slim::Server->new->run($port);
+  Test::FitNesse::Slim::Server->new->run($port);
   exit 0;
 }
 
@@ -187,9 +187,9 @@ SKIP: {
     'clean boundary EOF ends one session without affecting the listener');
 
   my @cases = (
-    ['invalid frame prefix', 'not-a-frame' . frame(encode('UTF-8',Test::Slim::List->new([[i => import => 'fitnesse.slim.test']])->serialize))],
+    ['invalid frame prefix', 'not-a-frame' . frame(encode('UTF-8',Test::FitNesse::Slim::List->new([[i => import => 'fitnesse.slim.test']])->serialize))],
     ['declared length shorter than payload', sub {
-      my $payload = encode('UTF-8',Test::Slim::List->new([[short => import => 'fitnesse.slim.test']])->serialize);
+      my $payload = encode('UTF-8',Test::FitNesse::Slim::List->new([[short => import => 'fitnesse.slim.test']])->serialize);
       return sprintf('%06d:',$payload ? length($payload)-1 : 0) . $payload;
     }->()],
     ['truncated payload', '000020:[000001:000001:x:', 1],
@@ -210,7 +210,7 @@ SKIP: {
   }
 
   my $bad_payload = '[000002:'
-    . encoded_item(Test::Slim::List->new(
+    . encoded_item(Test::FitNesse::Slim::List->new(
         ['atomic','make','marker','Fitnesse::Slim::Test::ProtocolMarker',$marker_path]
       )->serialize)
     . '000010:abc]';

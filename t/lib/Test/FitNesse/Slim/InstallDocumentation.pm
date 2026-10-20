@@ -1,4 +1,4 @@
-package Test::Slim::InstallDocumentation;
+package Test::FitNesse::Slim::InstallDocumentation;
 
 use strict;
 use warnings;
@@ -30,7 +30,7 @@ __END__
 
 =head1 NAME
 
-Test::Slim::InstallDocumentation - Installed-distribution POD smoke-test helper
+Test::FitNesse::Slim::InstallDocumentation - Installed-distribution POD smoke-test helper
 
 =head1 DESCRIPTION
 

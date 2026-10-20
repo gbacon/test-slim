@@ -8,11 +8,11 @@ use lib 't/lib';
 use Test::More tests => 7;
 
 BEGIN {
-  use_ok "Test::Slim::StatementExecutor"
-    or BAIL_OUT "Cannot use Test::Slim::StatementExecutor!";
+  use_ok "Test::FitNesse::Slim::StatementExecutor"
+    or BAIL_OUT "Cannot use Test::FitNesse::Slim::StatementExecutor!";
 }
 
-my $executor = Test::Slim::StatementExecutor->new;
+my $executor = Test::FitNesse::Slim::StatementExecutor->new;
 $executor->add_import("fitnesse.fixtures");
 
 is($executor->create("setup", "SetUp", []), "OK", "create SetUp fixture");

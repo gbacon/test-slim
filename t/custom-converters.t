@@ -6,10 +6,10 @@ use warnings;
 use lib 'lib', 't/lib';
 
 use Test::More;
-use Test::Slim::StatementExecutor;
+use Test::FitNesse::Slim::StatementExecutor;
 use Fitnesse::Slim::Test::TestSlimWithConverter;
 
-my $executor = Test::Slim::StatementExecutor->new;
+my $executor = Test::FitNesse::Slim::StatementExecutor->new;
 my $fixture = Fitnesse::Slim::Test::TestSlimWithConverter->new;
 $executor->create('converter', $fixture, []);
 
@@ -35,7 +35,7 @@ $executor->set_symbol('items', [qw(a b c)]);
 is($executor->call('converter', 'same_list', '$items'), 'true',
   'an already converted symbol value bypasses string conversion');
 
-my $other = Test::Slim::StatementExecutor->new;
+my $other = Test::FitNesse::Slim::StatementExecutor->new;
 $other->create('converter', Fitnesse::Slim::Test::TestSlimWithConverter->new, []);
 is($other->call('converter', 'get_object'), '[a, b, c]',
   'converter registrations are isolated by executor');

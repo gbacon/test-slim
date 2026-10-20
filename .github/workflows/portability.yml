@@ -1,0 +1,128 @@
+name: Exploratory Windows portability
+
+on:
+  workflow_dispatch:
+
+jobs:
+  windows:
+    name: Strawberry Perl 5.36 exploratory checks
+    runs-on: windows-2025
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up Strawberry Perl 5.36
+        uses: shogo82148/actions-setup-perl@v1
+        with:
+          perl-version: '5.36'
+          distribution: strawberry
+          enable-modules-cache: false
+
+      - name: Verify Perl distribution
+        shell: pwsh
+        run: |
+          perl -v
+          perl -e 'die "Expected Perl 5.36\n" unless $^V =~ /^v5\.36\./'
+
+      - name: Install distribution prerequisites
+        shell: pwsh
+        run: cpanm --notest --installdeps .
+
+      - name: Load the new namespace and build the distribution
+        shell: pwsh
+        run: |
+          $env:PERL5LIB = (Join-Path $PWD 'lib')
+          perl -MTest::FitNesse::Slim -e 'die "wrong version" unless $Test::FitNesse::Slim::VERSION eq "1.00"'
+          perl Build.PL
+          if ($LASTEXITCODE -ne 0) { throw "Build.PL failed: $LASTEXITCODE" }
+          perl Build
+          if ($LASTEXITCODE -ne 0) { throw "Build failed: $LASTEXITCODE" }
+
+      - name: Run focused Perl and real transport tests
+        shell: pwsh
+        run: |
+          prove --lib t/00-load.t t/list-serializer.t t/typed-sequence-converters.t t/pipe-transport.t t/server-concurrency.t t/server-bind-address.t
+          if ($LASTEXITCODE -ne 0) { throw "Focused tests failed: $LASTEXITCODE" }
+
+      - name: Install and smoke-test the installed pipe executable
+        shell: pwsh
+        run: |
+          $prefix = Join-Path $env:RUNNER_TEMP 'test-fitnesse-slim'
+          perl Build.PL "--install_base=$prefix"
+          if ($LASTEXITCODE -ne 0) { throw "Build.PL install configuration failed: $LASTEXITCODE" }
+          perl Build
+          if ($LASTEXITCODE -ne 0) { throw "Build failed: $LASTEXITCODE" }
+          perl Build install
+          if ($LASTEXITCODE -ne 0) { throw "Build install failed: $LASTEXITCODE" }
+          $env:PERL5LIB = Join-Path $prefix 'lib/perl5'
+          perl -MTest::FitNesse::Slim -e 'die "module loaded from wrong path" unless $INC{"Test/FitNesse/Slim.pm"} =~ /test-fitnesse-slim/'
+          if ($LASTEXITCODE -ne 0) { throw "Installed module check failed: $LASTEXITCODE" }
+          $runner = Join-Path $prefix 'bin/perl-slim'
+          $pipeStart = [System.Diagnostics.ProcessStartInfo]::new()
+          $pipeStart.FileName = (Get-Command perl).Source
+          $pipeStart.Arguments = '"' + $runner + '" 1'
+          $pipeStart.UseShellExecute = $false
+          $pipeStart.RedirectStandardInput = $true
+          $pipeStart.RedirectStandardOutput = $true
+          $pipeStart.RedirectStandardError = $true
+          $pipeStart.Environment['PERL5LIB'] = $env:PERL5LIB
+          $pipeProcess = [System.Diagnostics.Process]::new()
+          $pipeProcess.StartInfo = $pipeStart
+          try {
+            if (-not $pipeProcess.Start()) { throw 'Installed pipe service did not start' }
+            $pipeProcess.StandardInput.Write('000003:bye')
+            $pipeProcess.StandardInput.Close()
+            if (-not $pipeProcess.WaitForExit(15000)) { throw 'Installed pipe service timed out' }
+            $pipeOutput = $pipeProcess.StandardOutput.ReadToEnd()
+            if ($pipeProcess.ExitCode -ne 0) { throw "Installed pipe service exited $($pipeProcess.ExitCode)" }
+            if ($pipeOutput -ne "Slim -- V0.5`n") { throw "Unexpected installed pipe output: $pipeOutput" }
+            Write-Host 'Installed pipe service completed a SLiM v0.5 session'
+          }
+          finally {
+            if ($pipeProcess -and -not $pipeProcess.HasExited) { $pipeProcess.Kill(); $pipeProcess.WaitForExit(5000) | Out-Null }
+            if ($pipeProcess) { $pipeProcess.Dispose() }
+          }
+
+          $reservation = [System.Net.Sockets.TcpListener]::new([System.Net.IPAddress]::Loopback, 0)
+          $reservation.Start()
+          $port = ([System.Net.IPEndPoint]$reservation.LocalEndpoint).Port
+          $reservation.Stop()
+          $start = [System.Diagnostics.ProcessStartInfo]::new()
+          $start.FileName = (Get-Command perl).Source
+          $start.Arguments = '"' + $runner + '" ' + $port
+          $start.UseShellExecute = $false
+          $start.RedirectStandardOutput = $true
+          $start.RedirectStandardError = $true
+          $start.Environment['PERL5LIB'] = $env:PERL5LIB
+          $server = [System.Diagnostics.Process]::new()
+          $server.StartInfo = $start
+          try {
+            if (-not $server.Start()) { throw 'Installed TCP service did not start' }
+            $client = $null
+            $deadline = [DateTime]::UtcNow.AddSeconds(15)
+            while (-not $client -and [DateTime]::UtcNow -lt $deadline) {
+              $candidate = [System.Net.Sockets.TcpClient]::new()
+              try {
+                $candidate.Connect([System.Net.IPAddress]::Loopback, $port)
+                $client = $candidate
+              }
+              catch {
+                $candidate.Dispose()
+                Start-Sleep -Milliseconds 100
+              }
+            }
+            if (-not $client) { throw 'Installed TCP service did not accept a loopback client' }
+            $client.ReceiveTimeout = 15000
+            $stream = $client.GetStream()
+            $reader = [System.IO.StreamReader]::new($stream, [System.Text.Encoding]::ASCII, $false, 1024, $true)
+            if ($reader.ReadLine() -ne 'Slim -- V0.5') { throw 'Installed TCP service sent the wrong greeting' }
+            $bye = [System.Text.Encoding]::ASCII.GetBytes('000003:bye')
+            $stream.Write($bye, 0, $bye.Length)
+            $client.Close()
+            Write-Host 'Installed TCP service accepted a SLiM v0.5 loopback session'
+          }
+          finally {
+            if ($client) { $client.Dispose() }
+            if ($server -and -not $server.HasExited) { $server.Kill(); $server.WaitForExit(5000) | Out-Null }
+            if ($server) { $server.Dispose() }
+          }

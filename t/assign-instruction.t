@@ -6,9 +6,9 @@ use warnings;
 use lib 'lib';
 
 use Test::More;
-use Test::Slim::ListExecutor;
+use Test::FitNesse::Slim::ListExecutor;
 
-my $list_executor = Test::Slim::ListExecutor->new;
+my $list_executor = Test::FitNesse::Slim::ListExecutor->new;
 my $value = 'table-cell-value';
 my @assigned = $list_executor->execute(['a1', 'assign', 'TABLE', $value]);
 is_deeply($assigned[0], ['a1', 'OK'], 'assign returns OK');

@@ -4,17 +4,17 @@ use warnings;
 use lib 'lib', 't/lib';
 
 use Test::More;
-use Test::Slim::List;
-use Test::Slim::ListExecutor;
+use Test::FitNesse::Slim::List;
+use Test::FitNesse::Slim::ListExecutor;
 
 sub execute_wire {
     my ($executor, @instructions) = @_;
-    my $wire = Test::Slim::List->new(\@instructions)->serialize;
-    my @decoded = Test::Slim::List->new($wire)->list;
+    my $wire = Test::FitNesse::Slim::List->new(\@instructions)->serialize;
+    my @decoded = Test::FitNesse::Slim::List->new($wire)->list;
     return $executor->execute(@decoded);
 }
 
-my $slim = Test::Slim::ListExecutor->new;
+my $slim = Test::FitNesse::Slim::ListExecutor->new;
 is_deeply(
     [execute_wire($slim,
         ['import-test', 'import', 'fitnesse.slim.test'],
@@ -28,19 +28,19 @@ my $fixture = $slim->executor->instance('tableTable_1');
 is(ref($fixture), 'Fitnesse::Slim::Test::DummyTableTableReturnsNull',
     'the imported upstream fixture name resolves to the matching Perl adapter');
 
-my $request = Test::Slim::List->new([
+my $request = Test::FitNesse::Slim::List->new([
     ['table-call', 'call', 'tableTable_1', 'doTable', [[]]],
 ]);
-my @instructions = Test::Slim::List->new($request->serialize)->list;
+my @instructions = Test::FitNesse::Slim::List->new($request->serialize)->list;
 my @response = $slim->execute(@instructions);
 is_deeply(\@response, [['table-call', 'null']],
     'a null table result follows ordinary statement execution');
-is(Test::Slim::List->new(\@response)->serialize,
+is(Test::FitNesse::Slim::List->new(\@response)->serialize,
     '[000001:000039:[000002:000010:table-call:000004:null:]:]',
     'the null table result uses the existing SLiM null wire representation');
 
-my $wire_values = Test::Slim::List->new([undef, '', []])->serialize;
-is_deeply([Test::Slim::List->new($wire_values)->list], ['null', '', []],
+my $wire_values = Test::FitNesse::Slim::List->new([undef, '', []])->serialize;
+is_deeply([Test::FitNesse::Slim::List->new($wire_values)->list], ['null', '', []],
     'null, empty string, and empty list retain distinct serialized values');
 
 my @again = execute_wire($slim,
@@ -54,7 +54,7 @@ my @missing = execute_wire($slim,
 like($missing[0][1], qr/^__EXCEPTION__:.*NO_METHOD_IN_CLASS/,
     'an absent fixture method remains distinct from a null return');
 
-my $other = Test::Slim::ListExecutor->new;
+my $other = Test::FitNesse::Slim::ListExecutor->new;
 my @other_result = execute_wire($other,
     ['import-test', 'import', 'fitnesse.slim.test'],
     ['make-table', 'make', 'table_2', 'DummyTableTableReturnsNull'],

@@ -8,11 +8,11 @@ second copy of those inventories.
 
 ## Runtime layers
 
-`Test::Slim::Server` owns transport framing and a SLiM session. `Test::Slim::List`
+`Test::FitNesse::Slim::Server` owns transport framing and a SLiM session. `Test::FitNesse::Slim::List`
 parses and serializes nested values. The outer frame counts UTF-8 bytes;
-inner string lengths count UTF-16 code units. `Test::Slim::ListExecutor`
-executes decoded instruction batches through `Test::Slim::Statement` and
-`Test::Slim::StatementExecutor`. A complete serialized request is decoded
+inner string lengths count UTF-16 code units. `Test::FitNesse::Slim::ListExecutor`
+executes decoded instruction batches through `Test::FitNesse::Slim::Statement` and
+`Test::FitNesse::Slim::StatementExecutor`. A complete serialized request is decoded
 before its first instruction executes.
 
 Each session has isolated actor instances, registered libraries, imported

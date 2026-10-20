@@ -7,9 +7,9 @@ use File::Temp qw(tempfile);
 use lib 'lib';
 
 use Test::More;
-use Test::Slim::Server;
+use Test::FitNesse::Slim::Server;
 
-my $server = Test::Slim::Server->new;
+my $server = Test::FitNesse::Slim::Server->new;
 
 sub read_framed_file {
   my ($wire) = @_;

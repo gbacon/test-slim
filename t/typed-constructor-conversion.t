@@ -4,16 +4,16 @@ use warnings;
 use lib 'lib', 't/lib';
 
 use Test::More;
-use Test::Slim::List;
-use Test::Slim::ListExecutor;
+use Test::FitNesse::Slim::List;
+use Test::FitNesse::Slim::ListExecutor;
 
 sub execute_wire {
   my ($executor, @instructions) = @_;
-  my $wire = Test::Slim::List->new(\@instructions)->serialize;
-  return $executor->execute(Test::Slim::List->new($wire)->list);
+  my $wire = Test::FitNesse::Slim::List->new(\@instructions)->serialize;
+  return $executor->execute(Test::FitNesse::Slim::List->new($wire)->list);
 }
 
-my $executor = Test::Slim::ListExecutor->new;
+my $executor = Test::FitNesse::Slim::ListExecutor->new;
 my @result = execute_wire($executor,
   ['make', 'make', 'typed', 'Fitnesse::Slim::Test::TypedConstructor',
     "\x{1F642}", '29-Feb-2024', ''],

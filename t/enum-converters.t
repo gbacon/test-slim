@@ -4,17 +4,17 @@ use warnings;
 use lib 'lib', 't/lib';
 
 use Test::More;
-use Test::Slim::List;
-use Test::Slim::ListExecutor;
-use Test::Slim::ConverterRegistry;
+use Test::FitNesse::Slim::List;
+use Test::FitNesse::Slim::ListExecutor;
+use Test::FitNesse::Slim::ConverterRegistry;
 
 sub execute_wire {
   my ($executor, @instructions) = @_;
-  my $wire = Test::Slim::List->new(\@instructions)->serialize;
-  return $executor->execute(Test::Slim::List->new($wire)->list);
+  my $wire = Test::FitNesse::Slim::List->new(\@instructions)->serialize;
+  return $executor->execute(Test::FitNesse::Slim::List->new($wire)->list);
 }
 
-my $registry = Test::Slim::ConverterRegistry->new;
+my $registry = Test::FitNesse::Slim::ConverterRegistry->new;
 ok(!$registry->get_converter('Color'),
   'enum types are unavailable without fixture declarations');
 my $declarations = { Color => [qw(RED red GREEN BLUE)] };
@@ -80,7 +80,7 @@ ok(!$bad_sequence, 'invalid enum sequence members are rejected');
 like($@, qr/Can't convert purple to enum value of type Color/,
   'sequence errors come from the same enum converter');
 
-my $executor = Test::Slim::ListExecutor->new;
+my $executor = Test::FitNesse::Slim::ListExecutor->new;
 my @made = execute_wire($executor,
   ['make-enum', 'make', 'color', 'Fitnesse::Slim::Test::EnumValues', 'gReEn'],
   ['get', 'call', 'color', 'getColor'],

@@ -1,4 +1,4 @@
-package Test::Slim::MapResult;
+package Test::FitNesse::Slim::MapResult;
 
 use strict;
 use warnings;
@@ -67,7 +67,7 @@ sub _value_to_string {
 
 =head1 NAME
 
-Test::Slim::MapResult - Convert fixture maps to FitNesse table markup
+Test::FitNesse::Slim::MapResult - Convert fixture maps to FitNesse table markup
 
 =head1 DESCRIPTION
 
@@ -82,7 +82,7 @@ types fail instead of being globally stringified.
 
 =head2 convert
 
-    my $html = Test::Slim::MapResult->convert(\%map);
+    my $html = Test::FitNesse::Slim::MapResult->convert(\%map);
 
 Return FitNesse-compatible table markup. An undefined map becomes the
 protocol string C<null>; an empty map becomes an empty table. A non-hash

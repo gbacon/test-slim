@@ -1,8 +1,8 @@
-# Test::Slim
+# Test::FitNesse::Slim
 
-Test::Slim enables FitNesse acceptance testing of applications written in
-Perl. It implements the server side of FitNesse's SLiM (Simple List Invocation
-Method) protocol and lets FitNesse invoke idiomatic Perl fixtures. The current
+Test::FitNesse::Slim enables FitNesse acceptance testing of applications
+written in Perl. It implements the server side of FitNesse's SLiM (Simple List
+Invocation Method) protocol and lets FitNesse invoke idiomatic Perl fixtures. The current
 distribution version is 1.00. The declared minimum is Perl 5.36.0. The full
 development and FitNesse acceptance suites are verified with Perl 5.40.1; a
 dedicated CI job tests configuration, build, installation, development tests,
@@ -21,7 +21,7 @@ the compatibility documents indexed below.
 After the distribution is available from CPAN, install it with:
 
 ```sh
-cpanm Test::Slim
+cpanm Test::FitNesse::Slim
 ```
 
 To install from a source checkout or release archive, install declared
@@ -46,7 +46,7 @@ export PERL5LIB="$HOME/perl5/lib/perl5${PERL5LIB:+:$PERL5LIB}"
 ```
 
 The runtime dependency is `HTML::TreeBuilder`. Build/test prerequisites are
-listed in `cpanfile` and `Build.PL`. `perldoc Test::Slim` describes the
+listed in `cpanfile` and `Build.PL`. `perldoc Test::FitNesse::Slim` describes the
 server entry point; the `docs/` directory contains the developer and
 compatibility reference.
 
@@ -98,7 +98,7 @@ FitNesse-managed transport.
 The command accepts `-v` for diagnostics and `-s SECONDS` for a per-statement
 timeout before the port argument. Port `1` selects pipes and cannot be
 combined with `--bind-address`; other valid ports select TCP. The same
-`bind_address` option is available through `Test::Slim::Server->new`.
+`bind_address` option is available through `Test::FitNesse::Slim::Server->new`.
 
 ## External fixture example
 
@@ -144,7 +144,7 @@ conformance.
 ## License
 
 Copyright 2010-2026 Greg Bacon. The recipient may choose to use, modify, and
-redistribute Test::Slim's original implementation under the GNU General Public
+redistribute Test::FitNesse::Slim's original implementation under the GNU General Public
 License version 1 or any later version, or Artistic License 1.0. The complete
 texts are [GPL](LICENSE.GPL-1.0-or-later) and [Artistic](LICENSE.Artistic-1.0).
 Test-only FitNesse fixture adaptations have separate Common Public License

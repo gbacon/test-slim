@@ -5,9 +5,9 @@ use warnings;
 use lib 't/lib';
 
 use Test::More tests => 17;
-use Test::Slim::ListExecutor;
+use Test::FitNesse::Slim::ListExecutor;
 
-my $list = Test::Slim::ListExecutor->new;
+my $list = Test::FitNesse::Slim::ListExecutor->new;
 
 my @ordinary = $list->execute(
   ['i', 'import', 'fitnesse.slim.test'],

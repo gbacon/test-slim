@@ -3,15 +3,15 @@ use warnings;
 use Test::More;
 use lib 'lib';
 
-use Test::Slim;
-use Test::Slim::ConverterRegistry;
-use Test::Slim::List;
-use Test::Slim::ListExecutor;
-use Test::Slim::MapResult;
-use Test::Slim::Server;
-use Test::Slim::SlimHelperLibrary;
-use Test::Slim::Statement;
-use Test::Slim::StatementExecutor;
+use Test::FitNesse::Slim;
+use Test::FitNesse::Slim::ConverterRegistry;
+use Test::FitNesse::Slim::List;
+use Test::FitNesse::Slim::ListExecutor;
+use Test::FitNesse::Slim::MapResult;
+use Test::FitNesse::Slim::Server;
+use Test::FitNesse::Slim::SlimHelperLibrary;
+use Test::FitNesse::Slim::Statement;
+use Test::FitNesse::Slim::StatementExecutor;
 
 # Ensure a recent version of Test::Pod::Coverage
 my $min_tpc = 1.08;

@@ -71,12 +71,12 @@ BEGIN {
 
 use Test::More tests => @tests + 3;
 
-BEGIN { use_ok("Test::Slim::List") || BAIL_OUT("Cannot use Test::Slim::List!") }
+BEGIN { use_ok("Test::FitNesse::Slim::List") || BAIL_OUT("Cannot use Test::FitNesse::Slim::List!") }
 
 for (@tests) {
   use bytes;
   my($test_name,$input,$expected) = @$_;
-  ok(Test::Slim::List->new($input)->serialize eq $expected, $test_name);
+  ok(Test::FitNesse::Slim::List->new($input)->serialize eq $expected, $test_name);
 }
 
 my $list = [
@@ -85,13 +85,13 @@ my $list = [
   "Æ_ØÅ",
 ];
 
-my $wire = Test::Slim::List->new($list)->serialize;
-my @round = Test::Slim::List->new($wire)->list;
+my $wire = Test::FitNesse::Slim::List->new($list)->serialize;
+my @round = Test::FitNesse::Slim::List->new($wire)->list;
 
 is_deeply(\@round, $list, "round-trip UTF-8 strings in serialized list");
 
 is(
-  Test::Slim::List::->new([id1 => undef])->serialize,
+  Test::FitNesse::Slim::List::->new([id1 => undef])->serialize,
   "[000002:000003:id1:000004:null:]",
   "undef serializes as slim null"
 );

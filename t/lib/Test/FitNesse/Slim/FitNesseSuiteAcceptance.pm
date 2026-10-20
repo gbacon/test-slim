@@ -1,4 +1,4 @@
-package Test::Slim::FitNesseSuiteAcceptance;
+package Test::FitNesse::Slim::FitNesseSuiteAcceptance;
 
 use strict;
 use warnings;
@@ -9,7 +9,7 @@ use File::Path qw(make_path);
 use File::Spec;
 use Cwd qw(abs_path);
 use IO::Uncompress::Unzip qw($UnzipError);
-use Test::Slim::FitNesseAcceptance qw(perl_pipe_command_matches);
+use Test::FitNesse::Slim::FitNesseAcceptance qw(perl_pipe_command_matches);
 
 our @EXPORT_OK = qw(
   compare_suite_results

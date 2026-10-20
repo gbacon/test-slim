@@ -6,9 +6,9 @@ use warnings;
 use lib 'lib', 't/lib';
 
 use Test::More;
-use Test::Slim::ListExecutor;
+use Test::FitNesse::Slim::ListExecutor;
 
-my $list = Test::Slim::ListExecutor->new;
+my $list = Test::FitNesse::Slim::ListExecutor->new;
 my @setup = $list->execute(
   ['i', 'import', 'fitnesse.slim.test'],
   ['m', 'make', 'actor', 'TestSlim'],

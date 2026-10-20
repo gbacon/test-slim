@@ -6,7 +6,7 @@ use warnings;
 
 use Test::More;
 
-use Test::Slim::StatementExecutor;
+use Test::FitNesse::Slim::StatementExecutor;
 
 my @shouldNotChange = (
   [ "some string", "not a table" ],
@@ -27,13 +27,13 @@ my @conversions = (
 
 sub shouldNotChange {
   my($string,$test_name) = @_;
-  my $exec = Test::Slim::StatementExecutor->new;
+  my $exec = Test::FitNesse::Slim::StatementExecutor->new;
   is($exec->replace_table_with_hash($string), $string, $test_name);
 }
 
 sub shouldChange {
   my($string,$expect) = @_;
-  my $exec = Test::Slim::StatementExecutor->new;
+  my $exec = Test::FitNesse::Slim::StatementExecutor->new;
   is_deeply($exec->replace_table_with_hash($string), $expect, "convert '$string'");
 }
 

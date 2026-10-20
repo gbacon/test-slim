@@ -8,23 +8,23 @@ use lib 't/lib';
 use Test::More tests => 8;
 
 BEGIN {
-  use_ok "Test::Slim::StatementExecutor"
-    or BAIL_OUT "Cannnot use Test::Slim::StatementExecutor!";
+  use_ok "Test::FitNesse::Slim::StatementExecutor"
+    or BAIL_OUT "Cannnot use Test::FitNesse::Slim::StatementExecutor!";
 
-  use_ok "Test::Slim::Statement"
-    or BAIL_OUT "Cannnot use Test::Slim::Statement!";
+  use_ok "Test::FitNesse::Slim::Statement"
+    or BAIL_OUT "Cannnot use Test::FitNesse::Slim::Statement!";
 }
 
-my $executor = Test::Slim::StatementExecutor::->new;
+my $executor = Test::FitNesse::Slim::StatementExecutor::->new;
 
 is_deeply(
-  Test::Slim::Statement::->execute($executor, "i1", "import", "fitnesse.slim.test"),
+  Test::FitNesse::Slim::Statement::->execute($executor, "i1", "import", "fitnesse.slim.test"),
   ["i1" => "OK"],
   "import test module"
 );
 
 is_deeply(
-  Test::Slim::Statement->execute($executor, "m1", "make", "test_slim", "test slim with arguments", "nil"),
+  Test::FitNesse::Slim::Statement->execute($executor, "m1", "make", "test_slim", "test slim with arguments", "nil"),
   ["m1" => "OK"],
   "make instance using graceful class name"
 );

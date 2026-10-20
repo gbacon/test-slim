@@ -2,7 +2,7 @@ package Fitnesse::Slim::Test::TestSlimWithConverter;
 
 use strict;
 use warnings;
-use Test::Slim::ConverterRegistry;
+use Test::FitNesse::Slim::ConverterRegistry;
 
 sub new { bless { executor => undef, standard_list_converter => undef }, shift }
 
@@ -62,12 +62,12 @@ sub from_string {
   my ($self, $arg) = @_;
   $arg =~ s/\A\{/[/;
   $arg =~ s/\}\z/]/;
-  return Test::Slim::ConverterRegistry::List::from_string($self, $arg);
+  return Test::FitNesse::Slim::ConverterRegistry::List::from_string($self, $arg);
 }
 
 sub to_string {
   my ($self, $list) = @_;
-  my $value = Test::Slim::ConverterRegistry::List::to_string($self, $list);
+  my $value = Test::FitNesse::Slim::ConverterRegistry::List::to_string($self, $list);
   return undef unless defined $value;
   $value =~ s/\[/\{/g;
   $value =~ s/\]/\}/g;

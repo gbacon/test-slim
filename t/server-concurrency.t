@@ -11,8 +11,8 @@ use Socket qw(SOCK_STREAM);
 use lib "lib", "t/lib";
 
 use Test::More;
-use Test::Slim::List;
-use Test::Slim::Server;
+use Test::FitNesse::Slim::List;
+use Test::FitNesse::Slim::Server;
 
 sub free_port {
   my $socket = IO::Socket::INET->new(
@@ -78,11 +78,11 @@ sub read_frame {
 
 sub send_statements {
   my($socket,$statements) = @_;
-  my $wire = Test::Slim::List->new($statements)->serialize;
+  my $wire = Test::FitNesse::Slim::List->new($statements)->serialize;
   print {$socket} sprintf("%06d:%s", length($wire), $wire);
   my $response = read_frame($socket, 2);
   return unless defined $response;
-  return [ Test::Slim::List->new($response)->list ];
+  return [ Test::FitNesse::Slim::List->new($response)->list ];
 }
 
 sub assert_results {
@@ -96,7 +96,7 @@ die "fork server: $!" unless defined $server_pid;
 if (!$server_pid) {
   open STDOUT, ">", "/dev/null" or die "redirect stdout: $!";
   open STDERR, ">", "/dev/null" or die "redirect stderr: $!";
-  Test::Slim::Server->new->run($port);
+  Test::FitNesse::Slim::Server->new->run($port);
   exit 0;
 }
 

@@ -13,11 +13,11 @@ use HTTP::Tiny;
 use IO::Socket::INET;
 use Time::HiRes qw(sleep time);
 use lib "$Bin/../t/lib";
-use Test::Slim::FitNesseAcceptance qw(
+use Test::FitNesse::Slim::FitNesseAcceptance qw(
   free_port owned_process_exited preserve_exit_status start_owned_process stop_owned_processes
   wait_until
 );
-use Test::Slim::FitNesseSuiteAcceptance qw(
+use Test::FitNesse::Slim::FitNesseSuiteAcceptance qw(
   configure_pipe_wiki extract_wiki_from_jar parse_suite_result
   verify_perl_trace verify_suite_execution_logs
 );
@@ -77,10 +77,10 @@ sub main {
   }
   _run($stage, $^X, 'Build.PL');
   _run($stage, './Build', 'dist');
-  my $archive = "$stage/Test-Slim-$version.tar.gz";
+  my $archive = "$stage/Test-FitNesse-Slim-$version.tar.gz";
   die "release archive missing: $archive" unless -f $archive;
   _run($install_source, 'tar', '-xzf', $archive);
-  my $distribution = "$install_source/Test-Slim-$version";
+  my $distribution = "$install_source/Test-FitNesse-Slim-$version";
   _run($distribution, $^X, 'Build.PL', "--install_base=$prefix");
   _run($distribution, './Build');
   _run($distribution, './Build', 'install');
@@ -95,10 +95,10 @@ sub main {
   delete $ENV{PERL5OPT};
   local $ENV{PATH} = join ':', dirname($^X), ($ENV{PATH} // '');
 
-  my $module_check = _capture($outside, $^X, '-MTest::Slim', '-e',
-    'print $INC{"Test/Slim.pm"}, "\n"');
-  die "installed Test::Slim did not load from prefix: $module_check"
-    unless abs_path($module_check) eq abs_path("$installed_lib/Test/Slim.pm");
+  my $module_check = _capture($outside, $^X, '-MTest::FitNesse::Slim', '-e',
+    'print $INC{"Test/FitNesse/Slim.pm"}, "\n"');
+  die "installed Test::FitNesse::Slim did not load from prefix: $module_check"
+    unless abs_path($module_check) eq abs_path("$installed_lib/Test/FitNesse/Slim.pm");
   my $fixture_check = _capture($outside, $^X, '-MOrderManagement::Fixtures::OrderWorkflow', '-e',
     'print $INC{"OrderManagement/Fixtures/OrderWorkflow.pm"}, "\n"');
   die "external order fixture did not load from extracted application: $fixture_check"
@@ -346,7 +346,7 @@ WIKI
 sub _run_page {
   my ($http, $url, $page, $transport, $runner, $host, $port) = @_;
   my $response = $http->get("$url/OrderManagementSuite.$page?test&format=xml");
-  my $result = Test::Slim::FitNesseAcceptance::parse_page_result(
+  my $result = Test::FitNesse::Slim::FitNesseAcceptance::parse_page_result(
     $response->{content}, $response->{status}, $host, $port, $transport,
     $transport eq 'pipe' ? $runner : undef,
   );
@@ -403,11 +403,11 @@ sub _manifest {
 }
 
 sub _distribution_version {
-  open my $fh, '<', "$ROOT/lib/Test/Slim.pm" or die "read distribution version: $!";
+  open my $fh, '<', "$ROOT/lib/Test/FitNesse/Slim.pm" or die "read distribution version: $!";
   my $source = do { local $/; <$fh> };
   close $fh or die "close distribution version: $!";
   my ($version) = $source =~ /our \$VERSION = '([^']+)'/;
-  die 'could not find Test::Slim version' unless $version;
+  die 'could not find Test::FitNesse::Slim version' unless $version;
   return $version;
 }
 

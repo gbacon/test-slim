@@ -1,4 +1,4 @@
-package Test::Slim::SlimHelperLibrary;
+package Test::FitNesse::Slim::SlimHelperLibrary;
 
 use strict;
 use warnings;
@@ -35,7 +35,7 @@ sub pop_fixture {
 
 =head1 NAME
 
-Test::Slim::SlimHelperLibrary - Maintain FitNesse script-table fixture state
+Test::FitNesse::Slim::SlimHelperLibrary - Maintain FitNesse script-table fixture state
 
 =head1 DESCRIPTION
 
@@ -48,7 +48,7 @@ object identity.
 
 =head2 new
 
-    my $library = Test::Slim::SlimHelperLibrary->new(\%instances);
+    my $library = Test::FitNesse::Slim::SlimHelperLibrary->new(\%instances);
 
 Create a helper bound to the executor's instance hash. The hash is retained
 by reference so fixture changes are visible to helper operations.

@@ -3,9 +3,9 @@
 ## Prerequisites
 
 The declared minimum is Perl 5.36.0. The full development and FitNesse
-acceptance suites have been exercised locally with Perl 5.40.1. A dedicated
-CI job targets the Perl 5.36 release line with development tests, a build and
-installation, and an installed SLiM pipe smoke test.
+acceptance suites have been exercised locally with Perl 5.40.1. CI targets
+the Perl 5.36 release line with development tests, a build and installation,
+and installed-service checks on Linux and macOS.
 Runtime use requires `HTML::TreeBuilder`. Development tests use the additional
 requirements listed under test dependencies in `Build.PL` and `cpanfile`.
 FitNesse acceptance gates require the pinned FitNesse v20251025 JAR at
@@ -75,3 +75,9 @@ actual workflow run.
 The exact 50-page and 93-page populations, their intersection, and the
 different evidence each mode provides are documented in
 [acceptance coverage](fitnesse-acceptance-coverage.md).
+
+The main workflow also runs the development and installed-distribution gates
+on macOS 15 with Perl 5.36. A separate, manually dispatched Windows workflow
+uses Strawberry Perl 5.36 for exploratory package and transport checks. Windows
+is not a declared supported platform; its results do not replace the Linux or
+macOS gates.

@@ -2,7 +2,7 @@
 
 ## Objective
 
-Complete and maintain `Test::Slim`, a Perl implementation of the FitNesse SLiM protocol.
+Complete and maintain `Test::FitNesse::Slim`, a Perl implementation of the FitNesse SLiM protocol.
 
 The primary behavioral specification is the FitNesse SLiM protocol and its upstream acceptance tests. Existing Perl tests establish regression requirements.
 
@@ -10,7 +10,7 @@ Do not rewrite the implementation merely to modernize its style.
 
 ## Repository layout
 
-- `lib/Test/Slim/` — protocol implementation
+- `lib/Test/FitNesse/Slim/` — protocol implementation
 - `bin/perl-slim` — SLiM server entry point
 - `bin/test-dev` — established developer/CI test command
 - `bin/test-install` — build/install/archive smoke test with external fixture and FitNesse

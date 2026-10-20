@@ -1,4 +1,4 @@
-package Test::Slim::Server;
+package Test::FitNesse::Slim::Server;
 
 use strict;
 use warnings;
@@ -9,8 +9,8 @@ use IO::Select;
 use IO::Socket::INET;
 use POSIX qw/ WNOHANG /;
 use Socket qw/ AF_INET inet_pton /;
-use Test::Slim::List;
-use Test::Slim::ListExecutor;
+use Test::FitNesse::Slim::List;
+use Test::FitNesse::Slim::ListExecutor;
 
 sub new {
   my($class,%options) = @_;
@@ -140,7 +140,7 @@ sub _process_session {
 
 sub _new_executor {
   my($self) = @_;
-  Test::Slim::ListExecutor->new(
+  Test::FitNesse::Slim::ListExecutor->new(
     statement_timeout => $self->{statement_timeout},
   );
 }
@@ -159,18 +159,18 @@ sub _process {
     }
     else {
       warn "command=[" . length($command) . " bytes]\n" unless $diagnostic_output;
-      my @instructions = Test::Slim::List->new(
+      my @instructions = Test::FitNesse::Slim::List->new(
         $command, limits => { frame_bytes => $self->{MAX_FRAME_BYTES} }
       )->list;
       if ($self->{verbose}) {
-        my $request = Test::Slim::List->new(\@instructions)->serialize;
+        my $request = Test::FitNesse::Slim::List->new(\@instructions)->serialize;
         warn "$0: SLiM request: $request\n";
       }
       my @results = defined($diagnostic_output)
         ? $self->_execute_with_tunneling($diagnostic_output, @instructions)
         : $self->execute(@instructions);
 
-      my $response = Test::Slim::List->new(\@results)->serialize;
+      my $response = Test::FitNesse::Slim::List->new(\@results)->serialize;
       warn "$0: SLiM response: $response\n" if $self->{verbose};
       my $octets = encode "UTF-8", $response;
       die "resource limit: response frame exceeds configured maximum"
@@ -414,12 +414,12 @@ sub run_pipe {
 
 =head1 NAME
 
-Test::Slim::Server - Serve FitNesse SLiM sessions over TCP or pipes
+Test::FitNesse::Slim::Server - Serve FitNesse SLiM sessions over TCP or pipes
 
 =head1 DESCRIPTION
 
 The server owns transport framing and the per-session
-L<Test::Slim::ListExecutor>. TCP connections and the port-1 stdin/stdout
+L<Test::FitNesse::Slim::ListExecutor>. TCP connections and the port-1 stdin/stdout
 transport share the same frame reader, SLiM deserializer, executor, and
 response serializer. Each accepted connection receives isolated fixture,
 library, and symbol state.
@@ -435,7 +435,7 @@ incomplete message.
 
 =head2 new
 
-    my $server = Test::Slim::Server->new(%options);
+    my $server = Test::FitNesse::Slim::Server->new(%options);
 
 Create a server. C<verbose> enables request/response diagnostics,
 C<statement_timeout> sets an optional per-invocation limit,
@@ -451,7 +451,7 @@ limits and bind addresses throw an error during construction.
 
     $server->run($port);
 
-    my $remote = Test::Slim::Server->new(bind_address => '0.0.0.0');
+    my $remote = Test::FitNesse::Slim::Server->new(bind_address => '0.0.0.0');
     $remote->run(8099);
 
 Run the selected transport. Port C<1> serves a single v0.5 pipe session

@@ -37,6 +37,17 @@ find({
 
 my @errors;
 for my $file (sort @pod_files) {
+  open my $source, '<', $file
+    or do { push @errors, "cannot read production source $file: $!"; next };
+  my $source_text = do { local $/; <$source> };
+  close $source or do { push @errors, "cannot close production source $file: $!"; next };
+  push @errors, "stale Test::Slim production namespace in $file"
+    if $source_text =~ /\bTest::Slim(?:::|\b)/;
+  push @errors, "stale Test/Slim production module path in $file"
+    if $source_text =~ m{Test/Slim(?:/|\.pm)};
+}
+
+for my $file (sort @pod_files) {
   print "POD $file\n";
   if (system('podchecker', $file) != 0) {
     push @errors, "POD syntax failed: $file";
@@ -51,7 +62,7 @@ for my $file (sort @pod_files) {
     or do { push @errors, "cannot read POD source: $file"; next };
   my $pod = do { local $/; <$source> };
   close $source;
-  while ($pod =~ /L<(Test::Slim(?:::\w+)*)>/g) {
+  while ($pod =~ /L<(Test::FitNesse::Slim(?:::\w+)*)>/g) {
     (my $module = $1) =~ s{::}{/}g;
     $module .= '.pm';
     push @errors, "unknown POD module reference in $file: $1"

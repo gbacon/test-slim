@@ -12,11 +12,11 @@ use HTTP::Tiny;
 use JSON::PP qw(decode_json);
 use Time::HiRes qw(time);
 use lib "$Bin/../t/lib";
-use Test::Slim::FitNesseAcceptance qw(
+use Test::FitNesse::Slim::FitNesseAcceptance qw(
   bounded_request free_port owned_process_exited preserve_exit_status probe_slim
   start_owned_process stop_owned_processes wait_until
 );
-use Test::Slim::FitNesseSuiteAcceptance qw(
+use Test::FitNesse::Slim::FitNesseSuiteAcceptance qw(
   compare_suite_results
   configure_pipe_wiki
   extract_wiki_from_jar

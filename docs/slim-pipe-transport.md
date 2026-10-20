@@ -12,7 +12,7 @@ The published guide specifies first-line prefixes `SOUT :` / `SERR :` and contin
 
 ## Perl implementation
 
-`Test::Slim::Server` shares one session loop for TCP and pipe transports. The loop receives separate input and protocol-output handles plus the greeting version. TCP passes the accepted socket in both directions and V0.5. `run(1)` branches to `run_pipe` before creating a listener. Pipe mode keeps a duplicate of the original stdout for protocol bytes and redirects otherwise-unscoped fixture stdout away from that descriptor. For each instruction batch, fixture fd 1 and fd 2 are redirected to separate disk-backed temporary files. Synchronous fixture output is read in bounded chunks and forwarded over the original diagnostic stderr before the next instruction is run. The protocol output still uses the shared exact-write routine.
+`Test::FitNesse::Slim::Server` shares one session loop for TCP and pipe transports. The loop receives separate input and protocol-output handles plus the greeting version. TCP passes the accepted socket in both directions and V0.5. `run(1)` branches to `run_pipe` before creating a listener. Pipe mode keeps a duplicate of the original stdout for protocol bytes and redirects otherwise-unscoped fixture stdout away from that descriptor. For each instruction batch, fixture fd 1 and fd 2 are redirected to separate disk-backed temporary files. Synchronous fixture output is read in bounded chunks and forwarded over the original diagnostic stderr before the next instruction is run. The protocol output still uses the shared exact-write routine.
 
 Each pipe child owns one `ListExecutor` session. It reads and parses an entire framed request before executing it, preserves fixture and symbol state between batches, serializes and writes each response frame, and then waits for the next message. A framed `bye` returns normally and the child exits 0. EOF at a message boundary also returns normally and exits 0. EOF within a prefix or payload, malformed framing, invalid UTF-8, resource-limit violations, or corrupt serialized lists cause a diagnostic on stderr and a nonzero child exit; no response is fabricated for an incomplete/corrupt message. A well-framed malformed instruction still produces the regular `MALFORMED_INSTRUCTION` result and the session can continue. Writes handle partial progress and `EINTR`; pipe mode ignores `SIGPIPE` so a broken output pipe becomes a contained write error and nonzero child exit.
 
@@ -24,7 +24,7 @@ Pipe mode is the normal FitNesse-managed transport. When TCP is selected, the
 listener binds to IPv4 loopback (`127.0.0.1`) by default. The executable
 accepts an explicit numeric IPv4 address, for example
 `perl-slim --bind-address 0.0.0.0 8099`; the same option is available as
-`Test::Slim::Server->new(bind_address => '0.0.0.0')`. Non-loopback binding
+`Test::FitNesse::Slim::Server->new(bind_address => '0.0.0.0')`. Non-loopback binding
 prints a warning to stderr. The TCP listener has no client authentication,
 so remote access permits fixture execution and should be limited to a trusted
 network. Loopback binding does not prevent local processes from connecting.

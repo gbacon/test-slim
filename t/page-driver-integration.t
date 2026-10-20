@@ -6,7 +6,7 @@ use warnings;
 use IO::Socket::INET;
 use lib "lib";
 use Test::More;
-use Test::Slim::List;
+use Test::FitNesse::Slim::List;
 
 plan skip_all => "set RUN_PAGE_DRIVER_INTEGRATION=1 with FitNesse and the Perl SLiM server running"
   unless $ENV{RUN_PAGE_DRIVER_INTEGRATION};
@@ -35,12 +35,12 @@ sub read_line {
 
 sub exchange {
   my($socket,$statements) = @_;
-  my $wire = Test::Slim::List->new($statements)->serialize;
+  my $wire = Test::FitNesse::Slim::List->new($statements)->serialize;
   print {$socket} sprintf("%06d:%s", length($wire), $wire) or die "write SLiM request: $!";
   my $header = read_exact($socket, 7) or die "read SLiM response length";
   $header =~ /^([0-9]{6}):$/ or die "invalid SLiM response header: $header";
   my $response = read_exact($socket, $1) or die "read SLiM response";
-  return [ Test::Slim::List->new($response)->list ];
+  return [ Test::FitNesse::Slim::List->new($response)->list ];
 }
 
 my $host = $ENV{TEST_SLIM_HOST} || "127.0.0.1";

@@ -4,14 +4,14 @@ use warnings;
 use lib 'lib', 't/lib';
 
 use Test::More;
-use Test::Slim::Statement;
-use Test::Slim::StatementExecutor;
+use Test::FitNesse::Slim::Statement;
+use Test::FitNesse::Slim::StatementExecutor;
 
 sub make_choice {
     my ($imports, $class) = @_;
-    my $executor = Test::Slim::StatementExecutor->new;
+    my $executor = Test::FitNesse::Slim::StatementExecutor->new;
     $executor->add_import($_) for @$imports;
-    my $made = Test::Slim::Statement->execute(
+    my $made = Test::FitNesse::Slim::Statement->execute(
         $executor, 'make', 'make', 'choice', $class
     );
     is($made->[1], 'OK', "construct $class from @$imports");

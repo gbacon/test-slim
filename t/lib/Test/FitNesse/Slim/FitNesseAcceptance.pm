@@ -1,4 +1,4 @@
-package Test::Slim::FitNesseAcceptance;
+package Test::FitNesse::Slim::FitNesseAcceptance;
 
 use strict;
 use warnings;

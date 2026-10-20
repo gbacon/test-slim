@@ -1,4 +1,4 @@
-package Test::Slim::Statement;
+package Test::FitNesse::Slim::Statement;
 
 use strict;
 use warnings;
@@ -19,7 +19,7 @@ sub new {
 
 sub execute {
   my($class,$executor,@statement) = @_;
-  Test::Slim::Statement->new(@statement)->exec($executor);
+  Test::FitNesse::Slim::Statement->new(@statement)->exec($executor);
 }
 
 sub exec {
@@ -37,7 +37,7 @@ sub exec {
   return $result if $@ eq "";
 
   my $list = join ", ", map qq["$_"], $id, $instr, @args;
-  [ $id => $Test::Slim::Statement::EXCEPTION_TAG
+  [ $id => $Test::FitNesse::Slim::Statement::EXCEPTION_TAG
              . "message:<<INVALID_STATEMENT: [$list]>>" ];
 }
 
@@ -102,7 +102,7 @@ sub malformed_instruction {
     $size += length($part) + 2;
   }
   my $statement = join ", ", @parts;
-  [ $id => $Test::Slim::Statement::EXCEPTION_TAG
+  [ $id => $Test::FitNesse::Slim::Statement::EXCEPTION_TAG
              . "message:<<MALFORMED_INSTRUCTION [$statement]>>" ];
 }
 
@@ -110,13 +110,13 @@ sub malformed_instruction {
 
 =head1 NAME
 
-Test::Slim::Statement - Validate and execute one SLiM instruction
+Test::FitNesse::Slim::Statement - Validate and execute one SLiM instruction
 
 =head1 DESCRIPTION
 
 This internal adapter validates the SLiM instruction name and its
 protocol-level minimum argument count, then delegates to the corresponding
-method on L<Test::Slim::StatementExecutor>. Fixture signature arity and
+method on L<Test::FitNesse::Slim::StatementExecutor>. Fixture signature arity and
 conversion are checked by the statement executor. Fixture failures are
 returned as structured C<__EXCEPTION__:> result values; malformed
 instructions use the protocol's C<MALFORMED_INSTRUCTION> category.
@@ -125,14 +125,14 @@ instructions use the protocol's C<MALFORMED_INSTRUCTION> category.
 
 =head2 new
 
-    my $statement = Test::Slim::Statement->new(@instruction_fields);
+    my $statement = Test::FitNesse::Slim::Statement->new(@instruction_fields);
 
 Store one decoded instruction. The first fields are its identifier and
 operation; remaining values are operation arguments.
 
 =head2 execute
 
-    my $result = Test::Slim::Statement->execute($executor, @fields);
+    my $result = Test::FitNesse::Slim::Statement->execute($executor, @fields);
 
 Validate and execute one instruction using the supplied statement
 executor. Return a two-element array reference containing the instruction

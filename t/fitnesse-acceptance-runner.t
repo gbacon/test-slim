@@ -4,7 +4,7 @@ use warnings;
 use File::Temp qw(tempdir tempfile);
 use Test::More;
 use lib 't/lib';
-use Test::Slim::FitNesseAcceptance qw(
+use Test::FitNesse::Slim::FitNesseAcceptance qw(
   bounded_request
   compare_page_counts
   compare_inventory
@@ -199,7 +199,7 @@ use strict;
 use warnings;
 use POSIX qw(:sys_wait_h);
 use lib 't/lib';
-use Test::Slim::FitNesseAcceptance qw(preserve_exit_status);
+use Test::FitNesse::Slim::FitNesseAcceptance qw(preserve_exit_status);
 my $pid = fork();
 die "fork cleanup child: $!" unless defined $pid;
 if (!$pid) { sleep 30; exit 0 }

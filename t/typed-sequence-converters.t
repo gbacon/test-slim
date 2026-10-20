@@ -4,17 +4,17 @@ use warnings;
 use lib 'lib', 't/lib';
 
 use Test::More;
-use Test::Slim::List;
-use Test::Slim::ListExecutor;
-use Test::Slim::ConverterRegistry;
+use Test::FitNesse::Slim::List;
+use Test::FitNesse::Slim::ListExecutor;
+use Test::FitNesse::Slim::ConverterRegistry;
 
 sub execute_wire {
   my ($executor, @instructions) = @_;
-  my $wire = Test::Slim::List->new(\@instructions)->serialize;
-  return $executor->execute(Test::Slim::List->new($wire)->list);
+  my $wire = Test::FitNesse::Slim::List->new(\@instructions)->serialize;
+  return $executor->execute(Test::FitNesse::Slim::List->new($wire)->list);
 }
 
-my $registry = Test::Slim::ConverterRegistry->new;
+my $registry = Test::FitNesse::Slim::ConverterRegistry->new;
 ok($registry->get_converter('Integer[]'), 'simple-name typed arrays resolve');
 ok($registry->get_converter('java.lang.Integer[]'), 'qualified typed arrays resolve');
 ok($registry->get_converter('java.util.List<Integer>'), 'generic Lists resolve');
@@ -25,7 +25,7 @@ ok(!$registry->get_converter('java.util.Set<java.lang.Integer>'),
 ok(!$registry->get_converter('java.util.List<java.util.List<java.lang.String>>'),
   'nested generic conversion remains explicitly unsupported');
 
-my $executor = Test::Slim::ListExecutor->new;
+my $executor = Test::FitNesse::Slim::ListExecutor->new;
 my @made = execute_wire($executor,
   ['make', 'make', 'seq', 'Fitnesse::Slim::Test::TypedSequences', '[1, 2, 3]', '[one, two]'],
 );

@@ -6,9 +6,9 @@ use warnings;
 use lib 't/lib';
 
 use Test::More tests => 5;
-use Test::Slim::ListExecutor;
+use Test::FitNesse::Slim::ListExecutor;
 
-my $list = Test::Slim::ListExecutor->new;
+my $list = Test::FitNesse::Slim::ListExecutor->new;
 my @observed;
 my @results = $list->execute_with(sub {
   my($statement,$result) = @_;

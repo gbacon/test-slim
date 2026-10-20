@@ -8,11 +8,11 @@ use lib 't/lib';
 use Test::More tests => 21;
 
 BEGIN {
-  use_ok "Test::Slim::StatementExecutor"
-    or BAIL_OUT "Cannot use Test::Slim::StatementExecutor!";
+  use_ok "Test::FitNesse::Slim::StatementExecutor"
+    or BAIL_OUT "Cannot use Test::FitNesse::Slim::StatementExecutor!";
 }
 
-my $single = Test::Slim::StatementExecutor->new;
+my $single = Test::FitNesse::Slim::StatementExecutor->new;
 $single->add_import("fitnesse.slim.test.library");
 is($single->create("actor", "LibraryFixture", []), "OK", "create empty library actor");
 is($single->create("library1", "EchoSupport", []), "OK", "create echo support library");
@@ -23,7 +23,7 @@ SKIP: {
   is($single->call("actor", "echo_support_called"), "true", "echo support records its own call");
 }
 
-my $multiple = Test::Slim::StatementExecutor->new;
+my $multiple = Test::FitNesse::Slim::StatementExecutor->new;
 $multiple->add_import("fitnesse.slim.test.library");
 is($multiple->create("actor", "LibraryFixture", []), "OK", "create empty actor for precedence case");
 is($multiple->create("library1", "EchoSupport", []), "OK", "create earlier echo support library");
@@ -34,7 +34,7 @@ is($multiple->call("actor", "echo"), "null", "shared method resolves to the late
 is($multiple->call("actor", "echo_support_called"), "false", "earlier library did not receive the call");
 is($multiple->call("actor", "special_echo_support_called"), "true", "later library recorded the call");
 
-my $instances = Test::Slim::StatementExecutor->new;
+my $instances = Test::FitNesse::Slim::StatementExecutor->new;
 $instances->add_import("fitnesse.slim.test.library");
 is($instances->create("actor", "LibraryFixture", []), "OK", "create actor for instance-local state");
 is($instances->create("library1", "EchoSupport", []), "OK", "create first echo support instance");

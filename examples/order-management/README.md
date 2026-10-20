@@ -3,7 +3,7 @@
 This suite shows a small business-readable FitNesse interface over a pure Perl
 order-management application. The domain modules and fixture adapters are
 packaged with this example, but the runner extracts them as an external
-application and runs them with an independently installed `Test::Slim`.
+application and runs them with an independently installed `Test::FitNesse::Slim`.
 
 Run the pinned FitNesse v20251025 suite from the repository root:
 

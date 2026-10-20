@@ -4,15 +4,15 @@ use warnings;
 use lib 'lib', 't/lib';
 
 use Test::More;
-use Test::Slim::List;
-use Test::Slim::ListExecutor;
+use Test::FitNesse::Slim::List;
+use Test::FitNesse::Slim::ListExecutor;
 use Fitnesse::Slim::Test::InvocationArity;
 use Fitnesse::Slim::Test::ZeroArityConstructor;
 
 sub execute_wire {
   my ($executor, @instructions) = @_;
-  my $wire = Test::Slim::List->new(\@instructions)->serialize;
-  return $executor->execute(Test::Slim::List->new($wire)->list);
+  my $wire = Test::FitNesse::Slim::List->new(\@instructions)->serialize;
+  return $executor->execute(Test::FitNesse::Slim::List->new($wire)->list);
 }
 
 $Fitnesse::Slim::Test::InvocationArity::CALLS = 0;
@@ -20,7 +20,7 @@ $Fitnesse::Slim::Test::InvocationArity::Sut::CALLS = 0;
 $Fitnesse::Slim::Test::InvocationArity::Library::CALLS = 0;
 $Fitnesse::Slim::Test::InvocationArity::CONSTRUCTIONS = 0;
 
-my $executor = Test::Slim::ListExecutor->new;
+my $executor = Test::FitNesse::Slim::ListExecutor->new;
 my @first = execute_wire($executor,
   ['make', 'make', 'actor', 'Fitnesse::Slim::Test::InvocationArity', '7'],
   ['ok', 'call', 'actor', 'typed', 'hello'],

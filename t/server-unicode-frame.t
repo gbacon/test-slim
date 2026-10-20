@@ -10,8 +10,8 @@ use Socket;
 use lib 'lib', 't/lib';
 
 use Test::More tests => 4;
-use Test::Slim::List;
-use Test::Slim::Server;
+use Test::FitNesse::Slim::List;
+use Test::FitNesse::Slim::Server;
 
 my ($server_socket, $client_socket);
 socketpair $server_socket, $client_socket, AF_UNIX, SOCK_STREAM, PF_UNSPEC
@@ -19,7 +19,7 @@ socketpair $server_socket, $client_socket, AF_UNIX, SOCK_STREAM, PF_UNSPEC
 $_->autoflush(1) for $server_socket, $client_socket;
 
 my $payload = "Köln \x{1F600}";
-my $command = Test::Slim::List->new([
+my $command = Test::FitNesse::Slim::List->new([
   ['i', 'import', 'fitnesse.slim.test'],
   ['m', 'make', 'actor', 'TestSlim'],
   ['c', 'call', 'actor', 'echoString', $payload],
@@ -28,7 +28,7 @@ my $command_bytes = encode('UTF-8', $command);
 print {$client_socket} sprintf('%06d:', length($command_bytes)), $command_bytes,
   '000003:bye';
 
-Test::Slim::Server->new->process($server_socket);
+Test::FitNesse::Slim::Server->new->process($server_socket);
 
 my $greeting = '';
 while ($greeting !~ /\n\z/) {
@@ -53,7 +53,7 @@ while (length($response_bytes) < $frame_bytes) {
 }
 is(length($response_bytes), 0 + $frame_bytes, 'Unicode response frame length counts UTF-8 bytes');
 my $response = decode('UTF-8', $response_bytes, 1);
-my @results = Test::Slim::List->new($response)->list;
+my @results = Test::FitNesse::Slim::List->new($response)->list;
 is_deeply(\@results, [['i', 'OK'], ['m', 'OK'], ['c', $payload]],
   'supplementary Unicode argument survives request and response serialization');
 

@@ -22,7 +22,7 @@
 ^\.env(?:\..*)?$
 ^.*(?:credentials|secrets?)(?:\..*)?$
 ^test-slim-.*
-^Test-Slim-.*\.tar\.gz$
+^Test-FitNesse-Slim-.*\.tar\.gz$
 ^.*\.tar\.gz$
 ^cover_db(?:/|$)
 ^blib(?:/|$)

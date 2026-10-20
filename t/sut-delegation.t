@@ -5,9 +5,9 @@ use warnings;
 use lib 't/lib';
 
 use Test::More;
-use Test::Slim::StatementExecutor;
+use Test::FitNesse::Slim::StatementExecutor;
 
-my $executor = Test::Slim::StatementExecutor->new;
+my $executor = Test::FitNesse::Slim::StatementExecutor->new;
 is($executor->create('actor', 'Fitnesse::Slim::Test::SystemUnderTestDriver', []), 'OK',
   'make actor with system under test');
 is($executor->create('library1', 'Fitnesse::Slim::Test::Library::SystemUnderTestFallback', []), 'OK',

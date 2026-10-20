@@ -1901,7 +1901,7 @@
          "Implement the separately classified target fixtures for ignored-test flow, DetailedDiff, and exception rendering."
       ],
       "status" : "response_examiner_implemented; three nested setup limitations remain",
-      "upstreamArchitecture" : "The Java fixtures use FitNesse in-process fixture context and helpers. The Perl equivalent must use HTTP and retain response body/source HTML in test-harness fixture state outside lib/Test/Slim.",
+      "upstreamArchitecture" : "The Java fixtures use FitNesse in-process fixture context and helpers. The Perl equivalent must use HTTP and retain response body/source HTML in test-harness fixture state outside lib/Test/FitNesse/Slim.",
       "verification" : {
          "acceptanceRerun" : "Historical result at the ResponseExaminer increment: 50/50 pages completed through external Perl SLiM; 183 right, 62 wrong, 0 ignored, 218 exceptions; 20 conformant pages. The current post-query-fixture inventory is in pageTotals.",
          "concurrencyRegression" : "t/server-concurrency.t PASS, 13 tests; pre-fix run failed when connection B did not receive a greeting while A remained open.",
@@ -1914,7 +1914,7 @@
       "affectedPages" : [
          "HashTableTests.ShouldReturnHashTable"
       ],
-      "behavior" : "Test::Slim::MapResult converts only plain hash-reference method results before SLiM list serialization. It emits stable sorted rows, escapes ordinary text, preserves valid HTML, maps undefined cells to null, recursively converts nested maps/lists, and requires explicit string conversion for object values so opaque references cannot leak as Perl addresses. It does not alter array/list results or symbol/object identity.",
+      "behavior" : "Test::FitNesse::Slim::MapResult converts only plain hash-reference method results before SLiM list serialization. It emits stable sorted rows, escapes ordinary text, preserves valid HTML, maps undefined cells to null, recursively converts nested maps/lists, and requires explicit string conversion for object values so opaque references cannot leak as Perl addresses. It does not alter array/list results or symbol/object identity.",
       "family" : "FitNesse-compatible hash/map result conversion",
       "fullInventory" : {
          "completedResponses" : 50,
@@ -2911,12 +2911,12 @@
          "file" : "t/hash-results.t",
          "preFix" : "Failed 7 assertions; the returned result was HASH(0x6401465af600)."
       },
-      "rootCause" : "StatementExecutor::call returned a plain Perl hash reference unchanged. Test::Slim::List only recursively serializes arrays; for a hashref it retained a raw reference value and serialized it as HASH(0x...), rather than FitNesse map HTML.",
+      "rootCause" : "StatementExecutor::call returned a plain Perl hash reference unchanged. Test::FitNesse::Slim::List only recursively serializes arrays; for a hashref it retained a raw reference value and serialized it as HASH(0x...), rather than FitNesse map HTML.",
       "upstreamReference" : "Installed FitNesse v20251025 HashFixture.hash() returns a sorted TreeMap copy. MethodExecutionResult converts Map values with MapConverter before SlimSerializer; MapConverter emits hash_table/hash_row/hash_key/hash_value HTML and applies FitNesse HTML escaping to ordinary values."
    },
    "historicalCrash" : {
       "cause" : "A valid nested SLiM statement had an empty-string argument. _take_utf16_units consumed the following colon for a requested length of zero; nested list parsing failed and returned the encoded statement as a scalar. ListExecutor then dereferenced it as an arrayref. The fix avoids consuming any characters for zero units.",
-      "message" : "Can't use string (\"[000006:000048:scriptTable_42_0/...\") as an ARRAY ref while \"strict refs\" in use at lib/Test/Slim/ListExecutor.pm line 19."
+      "message" : "Can't use string (\"[000006:000048:scriptTable_42_0/...\") as an ARRAY ref while \"strict refs\" in use at lib/Test/FitNesse/Slim/ListExecutor.pm line 19."
    },
    "implementationPlan" : [
       {

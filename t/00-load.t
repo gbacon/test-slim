@@ -3,8 +3,8 @@
 use Test::More tests => 1;
 
 BEGIN {
-    use_ok( 'Test::Slim' ) || print "Bail out!
+    use_ok( 'Test::FitNesse::Slim' ) || print "Bail out!
 ";
 }
 
-diag( "Testing Test::Slim $Test::Slim::VERSION, Perl $], $^X" );
+diag( "Testing Test::FitNesse::Slim $Test::FitNesse::Slim::VERSION, Perl $], $^X" );

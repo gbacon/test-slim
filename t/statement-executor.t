@@ -21,13 +21,13 @@ use Test::More tests => 8 + @cases;
 
 my $have_test_exception;
 BEGIN {
-  use_ok("Test::Slim::StatementExecutor")
-    || BAIL_OUT("Cannot use Test::Slim::StatementExecutor!");
+  use_ok("Test::FitNesse::Slim::StatementExecutor")
+    || BAIL_OUT("Cannot use Test::FitNesse::Slim::StatementExecutor!");
   eval "use Test::Exception";
   $have_test_exception = $@ ? 0 : 1;
 }
 
-my $executor = Test::Slim::StatementExecutor->new;
+my $executor = Test::FitNesse::Slim::StatementExecutor->new;
 
 is($executor->path_to_class("Foo::Bar::Baz"), "Foo/Bar/Baz.pm", "path_to_class");
 
@@ -42,13 +42,13 @@ SKIP: {
 for (@cases) {
   my($method,$arg,$expected) = @$_;
 
-  my $statement = Test::Slim::StatementExecutor->new;
+  my $statement = Test::FitNesse::Slim::StatementExecutor->new;
   is($statement->$method($arg), $expected, "$arg -> $expected");
 }
 
 {
   my $ID = "test_slim";
-  my $executor = Test::Slim::StatementExecutor::->new;
+  my $executor = Test::FitNesse::Slim::StatementExecutor::->new;
   $executor->add_import("fitnesse.slim.test");
 
   is $executor->create($ID, "TestSlim", []),

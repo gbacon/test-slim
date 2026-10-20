@@ -5,15 +5,15 @@ use warnings;
 use lib 't/lib';
 
 use Test::More;
-use Test::Slim::ListExecutor;
-use Test::Slim::StatementExecutor;
+use Test::FitNesse::Slim::ListExecutor;
+use Test::FitNesse::Slim::StatementExecutor;
 
 for my $case (
   [ script => 'throwIgnoreScriptStopping', '__EXCEPTION__:IGNORE_SCRIPT_TEST:' ],
   [ all    => 'throwIgnoreAllStopping',    '__EXCEPTION__:IGNORE_ALL_TESTS:' ],
 ) {
   my($scope, $method, $marker) = @$case;
-  my $list = Test::Slim::ListExecutor->new;
+  my $list = Test::FitNesse::Slim::ListExecutor->new;
   my @result = $list->execute(
     ['import', 'import', 'fitnesse.slim.test'],
     ['make', 'make', 'actor', 'TestSlim'],
@@ -27,14 +27,14 @@ for my $case (
   is_deeply(\@next, [['next', 'string']], "$scope ignore state resets at the next batch boundary");
 }
 
-my $executor = Test::Slim::StatementExecutor->new;
+my $executor = Test::FitNesse::Slim::StatementExecutor->new;
 is($executor->create('actor', 'Fitnesse::Slim::Test::TestSlim', []), 'OK',
   'create actor for ordinary exception check');
 my $ordinary = $executor->call('actor', 'throwNormalMentioningIgnore');
 is($ordinary, '__EXCEPTION__:java.lang.Exception: IgnoreAllTests is only mentioned here',
   'text resembling an ignore name does not trigger ignore handling');
 
-my $sut_list = Test::Slim::ListExecutor->new;
+my $sut_list = Test::FitNesse::Slim::ListExecutor->new;
 my @sut_ignore = $sut_list->execute(
   ['make', 'make', 'actor', 'Fitnesse::Slim::Test::SystemUnderTestDriver'],
   ['ignore', 'callAndAssign', 'ignored', 'actor', 'throwIgnoreAll'],
@@ -48,7 +48,7 @@ ok(!exists $sut_list->executor->{symbol}{ignored},
 my @sut_next = $sut_list->execute(['next', 'call', 'actor', 'sutOnly']);
 is_deeply(\@sut_next, [['next', 'sut']], 'the following SLiM batch can execute after an ignore marker');
 
-my $constructor_list = Test::Slim::ListExecutor->new;
+my $constructor_list = Test::FitNesse::Slim::ListExecutor->new;
 my @constructor = $constructor_list->execute(
   ['make', 'make', 'actor', 'Fitnesse::Slim::Test::IgnoreConstructor'],
   ['skipped', 'call', 'actor', 'anything'],

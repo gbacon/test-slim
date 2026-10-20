@@ -20,18 +20,18 @@ use POSIX qw(WNOHANG);
 use Symbol qw(gensym);
 use Time::HiRes qw(sleep time);
 use lib "$Bin/../t/lib";
-use Test::Slim::FitNesseAcceptance qw(
+use Test::FitNesse::Slim::FitNesseAcceptance qw(
   free_port owned_process_exited preserve_exit_status start_owned_process
   stop_owned_processes wait_until
 );
-use Test::Slim::FitNesseSuiteAcceptance qw(
+use Test::FitNesse::Slim::FitNesseSuiteAcceptance qw(
   configure_pipe_wiki extract_wiki_from_jar
 );
-use Test::Slim::InstallDocumentation qw(render_installed_pod);
+use Test::FitNesse::Slim::InstallDocumentation qw(render_installed_pod);
 
 $| = 1;
 my $ROOT = abs_path("$Bin/..") or die "resolve source root: $!";
-open my $version_fh, '<', "$ROOT/lib/Test/Slim.pm" or die "read version: $!";
+open my $version_fh, '<', "$ROOT/lib/Test/FitNesse/Slim.pm" or die "read version: $!";
 my $version_source = do { local $/; <$version_fh> };
 close $version_fh or die "close version source: $!";
 my ($VERSION) = $version_source =~ /our \$VERSION = '([^']+)'/;
@@ -70,15 +70,15 @@ sub main {
   copy_distribution_sources($stage, @manifest);
   run_command($stage, $^X, 'Build.PL');
   run_command($stage, './Build', 'dist');
-  my $archive = "$stage/Test-Slim-$VERSION.tar.gz";
+  my $archive = "$stage/Test-FitNesse-Slim-$VERSION.tar.gz";
   die "distribution archive was not created" unless -f $archive;
   my @archive_files = archive_files($archive);
   verify_archive_contents(\@archive_files, $archive);
-  copy($archive, "$archive_dir/Test-Slim-$VERSION.tar.gz")
+  copy($archive, "$archive_dir/Test-FitNesse-Slim-$VERSION.tar.gz")
     or die "copy release archive: $!";
-  run_command($install_source, 'tar', '-xzf', "$archive_dir/Test-Slim-$VERSION.tar.gz");
+  run_command($install_source, 'tar', '-xzf', "$archive_dir/Test-FitNesse-Slim-$VERSION.tar.gz");
 
-  my $source = "$install_source/Test-Slim-$VERSION";
+  my $source = "$install_source/Test-FitNesse-Slim-$VERSION";
   my $fixture_source = "$source/examples/lib/Example/Counter.pm";
   make_path("$external/Example");
   copy($fixture_source, "$external/Example/Counter.pm")
@@ -92,7 +92,7 @@ sub main {
   die "installed executable missing or not executable: $runner"
     unless -x $runner;
   for my $documentation (
-    "$prefix/man/man1/perl-slim.1p", "$prefix/man/man3/Test::Slim.3pm",
+    "$prefix/man/man1/perl-slim.1p", "$prefix/man/man3/Test::FitNesse::Slim.3pm",
   ) {
     die "installed manual page missing or empty: $documentation"
       unless -s $documentation;
@@ -106,19 +106,19 @@ sub main {
   local $ENV{PERL5LIB} = join ':', $installed_lib, $external;
   delete $ENV{PERL5OPT};
   unshift @INC, $installed_lib;
-  require Test::Slim;
-  my $slim_path = abs_path($INC{'Test/Slim.pm'});
-  die "test loaded Test::Slim from outside installation: $slim_path"
-    unless $slim_path eq abs_path("$installed_lib/Test/Slim.pm");
-  require Test::Slim::List;
-  my $list_path = abs_path($INC{'Test/Slim/List.pm'});
-  die "protocol test loaded Test::Slim::List from outside installation: $list_path"
-    unless $list_path eq abs_path("$installed_lib/Test/Slim/List.pm");
-  my $doc_path = abs_path($INC{'Test/Slim.pm'});
-  die "module loader resolved Test::Slim outside the install prefix: $doc_path"
-    unless $doc_path eq "$installed_lib/Test/Slim.pm";
+  require Test::FitNesse::Slim;
+  my $slim_path = abs_path($INC{'Test/FitNesse/Slim.pm'});
+  die "test loaded Test::FitNesse::Slim from outside installation: $slim_path"
+    unless $slim_path eq abs_path("$installed_lib/Test/FitNesse/Slim.pm");
+  require Test::FitNesse::Slim::List;
+  my $list_path = abs_path($INC{'Test/FitNesse/Slim/List.pm'});
+  die "protocol test loaded Test::FitNesse::Slim::List from outside installation: $list_path"
+    unless $list_path eq abs_path("$installed_lib/Test/FitNesse/Slim/List.pm");
+  my $doc_path = abs_path($INC{'Test/FitNesse/Slim.pm'});
+  die "module loader resolved Test::FitNesse::Slim outside the install prefix: $doc_path"
+    unless $doc_path eq "$installed_lib/Test/FitNesse/Slim.pm";
   my $rendered_pod = render_installed_pod($doc_path);
-  die 'installed Test::Slim POD rendered without expected content'
+  die 'installed Test::FitNesse::Slim POD rendered without expected content'
     unless $rendered_pod =~ /FitNesse/;
   verify_perldoc_render($doc_path, $rendered_pod);
   print "Installed module source: $slim_path\n";
@@ -267,7 +267,7 @@ sub archive_files {
 sub verify_archive_contents {
   my ($files, $archive) = @_;
   my %entries = map { $_ => 1 } @$files;
-  my $root = "Test-Slim-$VERSION";
+  my $root = "Test-FitNesse-Slim-$VERSION";
   for my $required (qw(
     README.md Changes LICENSE LICENSE.GPL-1.0-or-later LICENSE.Artistic-1.0
     LICENSE.CPL THIRD-PARTY-NOTICES.md
@@ -285,6 +285,11 @@ sub verify_archive_contents {
     die "release archive contains transient build output: $file"
       if $file =~ m{\A\Q$root\E/(?:Build|MYMETA\.(?:json|yml)|MANIFEST\.bak)(?:\z|/)};
   }
+  die 'release archive contains the old Test::Slim production namespace'
+    if grep { m{\A\Q$root\E/lib/Test/Slim(?:/.*|\.pm)\z} } @$files;
+  my @archived_modules = grep { m{\A\Q$root\E/lib/Test/FitNesse/Slim(?:/.*|\.pm)\z} } @$files;
+  die 'release archive does not contain exactly nine Test::FitNesse::Slim modules'
+    unless @archived_modules == 9;
   verify_archive_metadata($archive, $root);
   verify_archive_perl_minimum($archive, $root);
   for my $module (production_modules()) {
@@ -305,6 +310,8 @@ sub verify_archive_metadata {
   my $json_text = read_archive_member($archive, "$root/META.json");
   my $meta = eval { decode_json($json_text) };
   die "release archive has invalid META.json: $@" unless ref($meta) eq 'HASH';
+  die 'release archive metadata distribution name is not Test-FitNesse-Slim'
+    unless ($meta->{name} // '') eq 'Test-FitNesse-Slim';
   die "release archive metadata version is not $VERSION"
     unless ($meta->{version} // '') eq $VERSION;
   die 'release archive metadata author is incorrect'
@@ -324,9 +331,11 @@ sub verify_archive_metadata {
   die 'release archive metadata omits the FitNesse CPL license reference'
     unless $license_urls{'https://github.com/unclebob/fitnesse/blob/v20251025/LICENSE.txt'};
   my $yaml_text = read_archive_member($archive, "$root/META.yml");
+  die 'release archive META.yml distribution name is not Test-FitNesse-Slim'
+    unless $yaml_text =~ /^name:\s*Test-FitNesse-Slim\s*$/m;
   my ($yaml_version) = $yaml_text =~ /^version:\s*['"]?([^'"\s]+)['"]?\s*$/m;
   my ($yaml_license) = $yaml_text =~ /^license:\s*['"]?([^'"\s]+)['"]?\s*$/m;
-  die 'release archive META.yml version does not match Test::Slim'
+  die 'release archive META.yml version does not match Test::FitNesse::Slim'
     unless defined($yaml_version) && $yaml_version eq $VERSION;
   die 'release archive META.yml omits its open-source license declaration'
     unless defined($yaml_license) && $yaml_license eq 'open_source';
@@ -536,18 +545,18 @@ sub exercise_installed_fixture {
 
 sub exchange {
   my ($input, $output, $instructions) = @_;
-  my $serialized = Test::Slim::List->new($instructions)->serialize;
+  my $serialized = Test::FitNesse::Slim::List->new($instructions)->serialize;
   write_all($input, frame(encode('UTF-8', $serialized)));
   my $response = read_frame($output, 15);
   my $decoded = decode('UTF-8', $response, FB_CROAK);
-  my @results = Test::Slim::List->new($decoded)->list;
+  my @results = Test::FitNesse::Slim::List->new($decoded)->list;
   return \@results;
 }
 
 sub assert_results {
   my ($got, $expected, $label) = @_;
-  my $actual_wire = Test::Slim::List->new($got)->serialize;
-  my $expected_wire = Test::Slim::List->new($expected)->serialize;
+  my $actual_wire = Test::FitNesse::Slim::List->new($got)->serialize;
+  my $expected_wire = Test::FitNesse::Slim::List->new($expected)->serialize;
   die "$label mismatch: expected $expected_wire, got $actual_wire"
     unless $actual_wire eq $expected_wire;
   return;
@@ -676,8 +685,8 @@ sub run_fitnesse_example {
   my $response = $http->get("$url/InstalledFixture.CounterTest?test&format=xml");
   die "FitNesse smoke page returned HTTP $response->{status}"
     unless $response->{status} == 200;
-  require Test::Slim::FitNesseAcceptance;
-  my $result = Test::Slim::FitNesseAcceptance::parse_page_result(
+  require Test::FitNesse::Slim::FitNesseAcceptance;
+  my $result = Test::FitNesse::Slim::FitNesseAcceptance::parse_page_result(
     $response->{content}, $response->{status}, $host, 1, 'pipe', $runner
   );
   die "installed Perl child was not confirmed: " . ($result->{command} // 'no command')

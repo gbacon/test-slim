@@ -1,14 +1,14 @@
-package Test::Slim::ListExecutor;
+package Test::FitNesse::Slim::ListExecutor;
 
 use strict;
 use warnings;
 
-use Test::Slim::Statement;
-use Test::Slim::StatementExecutor;
+use Test::FitNesse::Slim::Statement;
+use Test::FitNesse::Slim::StatementExecutor;
 
 sub new {
   my($class,%options) = @_;
-  my $executor = Test::Slim::StatementExecutor->new(%options);
+  my $executor = Test::FitNesse::Slim::StatementExecutor->new(%options);
   bless { EXECUTOR => $executor } => $class;
 }
 
@@ -25,7 +25,7 @@ sub execute_with {
   my @results;
   for my $statement (@statements) {
     last if $executor->stop_requested;
-    my $result = Test::Slim::Statement->execute($executor, @$statement);
+    my $result = Test::FitNesse::Slim::Statement->execute($executor, @$statement);
     push @results, $result;
     $after_statement->($statement,$result) if $after_statement;
   }
@@ -37,11 +37,11 @@ sub execute_with {
 
 =head1 NAME
 
-Test::Slim::ListExecutor - Execute a decoded batch of SLiM instructions
+Test::FitNesse::Slim::ListExecutor - Execute a decoded batch of SLiM instructions
 
 =head1 DESCRIPTION
 
-The list executor owns one L<Test::Slim::StatementExecutor> for a protocol
+The list executor owns one L<Test::FitNesse::Slim::StatementExecutor> for a protocol
 session. It applies instructions in order, stops the current batch when a
 FitNesse stop marker is raised, and resets that marker before the next
 batch. It is an internal server component rather than a fixture API.
@@ -50,7 +50,7 @@ batch. It is an internal server component rather than a fixture API.
 
 =head2 new
 
-    my $executor = Test::Slim::ListExecutor->new(%options);
+    my $executor = Test::FitNesse::Slim::ListExecutor->new(%options);
 
 Create a session executor. C<statement_timeout> is forwarded to the
 statement executor and limits each fixture invocation when defined.
@@ -64,7 +64,7 @@ and integration tests to inspect session state.
 
 Execute decoded statement array references in order and return their
 result array references. Each instruction is handled independently by
-L<Test::Slim::Statement>.
+L<Test::FitNesse::Slim::Statement>.
 
 =head2 execute_with
 

@@ -9,11 +9,11 @@ use lib "t/lib";
 use Test::More tests => 43;
 
 BEGIN {
-  use_ok "Test::Slim::ListExecutor"
-    or BAIL_OUT "Cannot use Test::Slim::ListExecutor!";
+  use_ok "Test::FitNesse::Slim::ListExecutor"
+    or BAIL_OUT "Cannot use Test::FitNesse::Slim::ListExecutor!";
 
-  use_ok "Test::Slim::StatementExecutor"
-    or BAIL_OUT "Cannot use Test::Slim::StatementExecutor!";
+  use_ok "Test::FitNesse::Slim::StatementExecutor"
+    or BAIL_OUT "Cannot use Test::FitNesse::Slim::StatementExecutor!";
 }
 
 my $executor;
@@ -26,7 +26,7 @@ sub add_statement { push @statements, [ @_ ] }
 sub test(&) {
   my($block) = @_;
 
-  $executor = Test::Slim::ListExecutor->new;
+  $executor = Test::FitNesse::Slim::ListExecutor->new;
   @statements = ();
   $table = "<table><tr><td>name</td><td>bob</td></tr><tr><td>addr</td><td>here</td></tr></table>";
   add_statement "i1", "import", "fitnesse.slim.test";
@@ -43,12 +43,12 @@ sub get_result {
 
 sub has_slim_exception {
   my($result,undef,$test_name) = @_;
-  like($result, qr/^\Q$Test::Slim::Statement::EXCEPTION_TAG/, $test_name);
+  like($result, qr/^\Q$Test::FitNesse::Slim::Statement::EXCEPTION_TAG/, $test_name);
 }
 
 sub no_slim_exception {
   my($result,undef,$test_name) = @_;
-  unlike($result, qr/\Q$Test::Slim::Statement::EXCEPTION_TAG/, $test_name);
+  unlike($result, qr/\Q$Test::FitNesse::Slim::Statement::EXCEPTION_TAG/, $test_name);
 }
 
 sub expect_exception {
@@ -57,7 +57,7 @@ sub expect_exception {
   sub {
     my($result,undef,$test_name) = @_;
     like($result,
-         qr/\Q$Test::Slim::Statement::EXCEPTION_TAG\Emessage:<<$pattern/,
+         qr/\Q$Test::FitNesse::Slim::Statement::EXCEPTION_TAG\Emessage:<<$pattern/,
          $test_name);
   };
 }

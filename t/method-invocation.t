@@ -8,11 +8,11 @@ use lib 't/lib';
 use Test::More tests => 11;
 
 BEGIN {
-  use_ok "Test::Slim::StatementExecutor"
-    or BAIL_OUT "Cannnot use Test::Slim::StatementExecutor!";
+  use_ok "Test::FitNesse::Slim::StatementExecutor"
+    or BAIL_OUT "Cannnot use Test::FitNesse::Slim::StatementExecutor!";
 
-  use_ok "Test::Slim::Statement"
-    or BAIL_OUT "Cannnot use Test::Slim::Statement!";
+  use_ok "Test::FitNesse::Slim::Statement"
+    or BAIL_OUT "Cannnot use Test::FitNesse::Slim::Statement!";
 }
 
 my $executor;
@@ -21,7 +21,7 @@ my $test_slim;
 sub test(&) {
   my($block) = @_;
 
-  $executor = Test::Slim::StatementExecutor->new;
+  $executor = Test::FitNesse::Slim::StatementExecutor->new;
   $executor->create("test_slim", "Fitnesse::Slim::Test::TestSlim", []);
   $test_slim = $executor->instance("test_slim");
 
@@ -35,7 +35,7 @@ test {
 
 test {
   my $result = $executor->call("test_slim", "no_such_method");
-  like($result, qr/\Q$Test::Slim::Statement::EXCEPTION_TAG\E
+  like($result, qr/\Q$Test::FitNesse::Slim::Statement::EXCEPTION_TAG\E
                    message:<<NO_METHOD_IN_CLASS  \s+
                    no_such_method\[0]            \s+
                    Fitnesse::Slim::Test::TestSlim>>/x,
@@ -65,14 +65,14 @@ test {
 test {
   my $result = eval { $executor->call("test_slim", "one_arg", qw/ 1 2 /) };
   is($@, "", "executor call should trap exceptions");
-  like($result, qr/\Q$Test::Slim::Statement::EXCEPTION_TAG/,
+  like($result, qr/\Q$Test::FitNesse::Slim::Statement::EXCEPTION_TAG/,
     "exception in method should become SLiM exception");
 };
 
 test {
   my $result = $executor->call("no_such_instance", "no_such_method", "arg");
   like($result,
-       qr/\Q$Test::Slim::Statement::EXCEPTION_TAG\E
+       qr/\Q$Test::FitNesse::Slim::Statement::EXCEPTION_TAG\E
           message:<<NO_INSTANCE  \s+  no_such_instance\.no_such_method\.>>/x,
        "can't call a method on an instance that doesn't exist");
 };

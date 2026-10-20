@@ -1,4 +1,4 @@
-# Test::Slim documentation
+# Test::FitNesse::Slim documentation
 
 This index separates user instructions, fixture contracts, implementation
 design, compatibility limits, and recorded acceptance evidence. The
@@ -9,7 +9,7 @@ authoritative source for their named topics.
 
 - [README](../README.md) — installation, pipe and TCP startup, external fixture
   discovery, and the first FitNesse test.
-- [Test::Slim POD](../lib/Test/Slim.pm) — installed module purpose and
+- [Test::FitNesse::Slim POD](../lib/Test/FitNesse/Slim.pm) — installed module purpose and
   executable overview.
 - [perl-slim POD](../bin/perl-slim) — options, invocation, exit status, and
   FitNesse configuration.
@@ -18,7 +18,7 @@ authoritative source for their named topics.
 - [Pipe transport](slim-pipe-transport.md) — v0.5 child-process lifecycle,
   framing, and diagnostic tunneling.
 - [License terms](../LICENSE) — choose either GPL version 1 or later, or
-  Artistic License 1.0 for Test::Slim's original code. The full texts are
+  Artistic License 1.0 for Test::FitNesse::Slim's original code. The full texts are
   [GPL](../LICENSE.GPL-1.0-or-later) and
   [Artistic](../LICENSE.Artistic-1.0); scoped fixture notices and the
   separate CPL text are in [THIRD-PARTY-NOTICES.md](../THIRD-PARTY-NOTICES.md).

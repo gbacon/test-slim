@@ -7,12 +7,12 @@ use warnings;
 use lib 't/lib';
 
 use Test::More tests => 10;
-use Test::Slim::StatementExecutor;
-use Test::Slim::List;
+use Test::FitNesse::Slim::StatementExecutor;
+use Test::FitNesse::Slim::List;
 use Fitnesse::Fixtures::HashFixture;
 use Fitnesse::Slim::Test::TestSlim;
 
-my $executor = Test::Slim::StatementExecutor->new;
+my $executor = Test::FitNesse::Slim::StatementExecutor->new;
 $executor->add_import('Fitnesse::Fixtures');
 is($executor->create('hash_fixture', 'HashFixture', []), 'OK',
   'create the upstream hash fixture');
@@ -52,8 +52,8 @@ like($result, qr{<td class="hash_value">\[first, null, last\]</td>},
   'nested array values use collection-style text');
 like($result, qr{<td class="hash_value"><table class="hash_table">},
   'nested maps use the map converter recursively');
-my $wire = Test::Slim::List->new([$result])->serialize;
-my @decoded = Test::Slim::List->new($wire)->list;
+my $wire = Test::FitNesse::Slim::List->new([$result])->serialize;
+my @decoded = Test::FitNesse::Slim::List->new($wire)->list;
 is($decoded[0], $result, 'Unicode map output survives SLiM list serialization');
 
 my $actor = Fitnesse::Slim::Test::TestSlim->new(7);

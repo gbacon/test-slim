@@ -5,16 +5,16 @@ use lib 'lib', 't/lib';
 
 use Test::More;
 use Scalar::Util qw(refaddr);
-use Test::Slim::List;
-use Test::Slim::ListExecutor;
+use Test::FitNesse::Slim::List;
+use Test::FitNesse::Slim::ListExecutor;
 
 sub execute_wire {
   my ($executor, @instructions) = @_;
-  my $wire = Test::Slim::List->new(\@instructions)->serialize;
-  return $executor->execute(Test::Slim::List->new($wire)->list);
+  my $wire = Test::FitNesse::Slim::List->new(\@instructions)->serialize;
+  return $executor->execute(Test::FitNesse::Slim::List->new($wire)->list);
 }
 
-my $executor = Test::Slim::ListExecutor->new;
+my $executor = Test::FitNesse::Slim::ListExecutor->new;
 my @setup = execute_wire($executor,
   ['make-old', 'make', 'actor', 'Fitnesse::Slim::Test::CreationLifecycle', 'ok', 'actor', 'old'],
   ['keep-reference', 'callAndAssign', 'oldActor', 'actor', 'self'],
@@ -89,7 +89,7 @@ like($library[2][1], qr/^__EXCEPTION__:message:<<HookFailure:/,
 like($library[4][1], qr/^__EXCEPTION__:message:<<HookFailure:/,
   'failed new library reports initialization error');
 
-my $typed = Test::Slim::ListExecutor->new;
+my $typed = Test::FitNesse::Slim::ListExecutor->new;
 my $date_converter = $typed->executor->get_converter('java.util.Date');
 my $old_date = $date_converter->from_string('29-Feb-2024');
 my @typed_replacement = execute_wire($typed,

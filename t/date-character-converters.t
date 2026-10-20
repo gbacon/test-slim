@@ -8,10 +8,10 @@ use lib 'lib';
 use Encode qw(encode decode);
 use Test::More;
 use Time::Local qw(timelocal);
-use Test::Slim::List;
-use Test::Slim::ConverterRegistry;
+use Test::FitNesse::Slim::List;
+use Test::FitNesse::Slim::ConverterRegistry;
 
-my $registry = Test::Slim::ConverterRegistry->new;
+my $registry = Test::FitNesse::Slim::ConverterRegistry->new;
 my $character = $registry->get_converter('java.lang.Character');
 my $primitive_character = $registry->get_converter('char');
 my $date = $registry->get_converter('java.util.Date');
@@ -87,7 +87,7 @@ my ($character_result) = $registry->convert_result(
   { return => 'java.lang.Character' }, 0x03A9
 );
 is($character_result, "\x{03A9}", 'declared Character results are converted to text');
-is(Test::Slim::List->new([$character->to_string(0xD83D)])->serialize,
+is(Test::FitNesse::Slim::List->new([$character->to_string(0xD83D)])->serialize,
   '[000001:000001:?:]', 'surrogate Character result serializes as the Java UTF-8 replacement');
 my ($date_result) = $registry->convert_result(
   { return => 'java.util.Date' }, $date->from_string('03-Feb-2026')

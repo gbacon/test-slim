@@ -8,8 +8,8 @@ use File::Temp qw(tempdir);
 use IO::Compress::Zip qw($ZipError);
 use Test::More;
 use lib 't/lib';
-use Test::Slim::FitNesseAcceptance qw(probe_slim);
-use Test::Slim::FitNesseSuiteAcceptance qw(
+use Test::FitNesse::Slim::FitNesseAcceptance qw(probe_slim);
+use Test::FitNesse::Slim::FitNesseSuiteAcceptance qw(
   compare_suite_results
   configure_pipe_wiki
   extract_wiki_from_jar

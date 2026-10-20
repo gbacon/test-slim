@@ -5,7 +5,7 @@ use File::Path qw(make_path);
 use File::Temp qw(tempdir);
 use Test::More;
 use lib 't/lib';
-use Test::Slim::FitNesseCoverage qw(build_coverage_report render_coverage_markdown);
+use Test::FitNesse::Slim::FitNesseCoverage qw(build_coverage_report render_coverage_markdown);
 
 my $suite = 'FitNesse.SuiteAcceptanceTests.SuiteSlimTests';
 my $tmp = tempdir(CLEANUP => 1);

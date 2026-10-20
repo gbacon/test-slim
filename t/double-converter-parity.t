@@ -5,9 +5,9 @@ use lib 'lib', 't/lib';
 
 use Test::More;
 use POSIX ();
-use Test::Slim::ConverterRegistry;
-use Test::Slim::List;
-use Test::Slim::ListExecutor;
+use Test::FitNesse::Slim::ConverterRegistry;
+use Test::FitNesse::Slim::List;
+use Test::FitNesse::Slim::ListExecutor;
 
 sub bits {
   return unpack('H*', pack('d>', $_[0]));
@@ -15,11 +15,11 @@ sub bits {
 
 sub execute_wire {
   my ($executor, @instructions) = @_;
-  my $wire = Test::Slim::List->new(\@instructions)->serialize;
-  return $executor->execute(Test::Slim::List->new($wire)->list);
+  my $wire = Test::FitNesse::Slim::List->new(\@instructions)->serialize;
+  return $executor->execute(Test::FitNesse::Slim::List->new($wire)->list);
 }
 
-my $registry = Test::Slim::ConverterRegistry->new;
+my $registry = Test::FitNesse::Slim::ConverterRegistry->new;
 my $boxed = $registry->get_converter('java.lang.Double');
 my $primitive = $registry->get_converter('double');
 
@@ -82,7 +82,7 @@ for my $invalid ('nan', 'infinity', 'Infinityf', '1e', '0x1.0', '1_0', '0x1p0x')
     "$invalid has the Java-compatible conversion error");
 }
 
-my $executor = Test::Slim::ListExecutor->new;
+my $executor = Test::FitNesse::Slim::ListExecutor->new;
 my @constructed = execute_wire($executor,
   ['make-double', 'make', 'numbers', 'Fitnesse::Slim::Test::DoubleValues',
     '0x1.8p1', '-0'],

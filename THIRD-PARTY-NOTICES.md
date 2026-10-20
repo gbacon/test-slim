@@ -4,7 +4,7 @@
 
 These test-only Perl files are direct ports or adaptations of correspondingly
 named fixtures in the FitNesse v20251025 source tree. They are included for
-acceptance tests and are not installed as `Test::Slim` runtime modules. The
+acceptance tests and are not installed as `Test::FitNesse::Slim` runtime modules. The
 adapted fixture files are distributed under the FitNesse project's Common
 Public License Version 1.0 (CPL 1.0), whose complete text is in
 [`LICENSE.CPL`](LICENSE.CPL).
@@ -51,7 +51,7 @@ notice does not classify them as CPL-derived. This is a source-expression
 assessment; a broader legal determination of derivative-work status remains
 outside this audit.
 
-The `lib/Test/Slim/` implementation is independently written Perl based on
+The `lib/Test/FitNesse/Slim/` implementation is independently written Perl based on
 the SLiM protocol and observed FitNesse behavior; it is not a translation of
 FitNesse Java implementation code. The repository's Perl regression tests,
 acceptance harness, order-management example, and other test fixtures are

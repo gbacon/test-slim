@@ -17,6 +17,7 @@ jobs:
         uses: shogo82148/actions-setup-perl@v1
         with:
           perl-version: '5.36'
+          enable-modules-cache: false
 
       - name: Verify Perl version
         run: |
@@ -43,6 +44,48 @@ jobs:
           printf '000003:bye' \
             | PERL5LIB="$prefix/lib/perl5" "$prefix/bin/perl-slim" 1 \
             | perl -0777 -ne 'exit($_ eq "Slim -- V0.5\n" ? 0 : 1)'
+
+  macos:
+    name: macOS Perl 5.36 portability
+    runs-on: macos-15
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up Perl 5.36
+        uses: shogo82148/actions-setup-perl@v1
+        with:
+          perl-version: '5.36'
+          enable-modules-cache: false
+
+      - name: Verify Perl version
+        run: |
+          perl -v
+          perl -e 'die "Expected Perl 5.36\n" unless $^V =~ /^v5\.36\./'
+
+      - name: Install distribution prerequisites
+        run: cpanm --notest --installdeps .
+
+      - name: Run Perl development tests
+        run: bin/test-dev
+
+      - name: Set up Java for the installed FitNesse smoke test
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Install pinned FitNesse JAR
+        run: |
+          curl --fail --location --retry 3 \
+            https://github.com/unclebob/fitnesse/releases/download/v20251025/fitnesse-20251025-standalone.jar \
+            -o "$RUNNER_TEMP/fitnesse.jar"
+          echo '824596f90381a9637abd4d5b2aa0f4f03f2ef5e5716399c41b2ae8889d470d11  '"$RUNNER_TEMP/fitnesse.jar" | shasum -a 256 -c -
+
+      - name: Build, install, and smoke-test the installed distribution
+        env:
+          FITNESSE_JAR: ${{ runner.temp }}/fitnesse.jar
+        run: bin/test-install
 
   test:
     runs-on: ubuntu-latest

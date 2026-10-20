@@ -11,8 +11,8 @@ use lib "t/lib";
 use Test::More tests => 10;
 
 BEGIN {
-  use_ok "Test::Slim::Server"
-    or BAIL_OUT "cannot use Test::Slim::Server";
+  use_ok "Test::FitNesse::Slim::Server"
+    or BAIL_OUT "cannot use Test::FitNesse::Slim::Server";
 }
 
 my($slim,$fitnesse);
@@ -25,7 +25,7 @@ sub test (&) {
 
   $_->autoflush(1) for $slim, $fitnesse;
 
-  $server = Test::Slim::Server->new
+  $server = Test::FitNesse::Slim::Server->new
     or BAIL_OUT "failed to instantiate server";
 
   $block->();
@@ -56,7 +56,7 @@ test {
 
   my @replies = <$fitnesse>;
 
-  my $ok = Test::Slim::List->new([qw/ import_0_0 OK /])->serialize;
+  my $ok = Test::FitNesse::Slim::List->new([qw/ import_0_0 OK /])->serialize;
   my @expected = (
     "Slim -- V0.5\n",
     "000054:[000001:000037:[000002:000010:import_0_0:000002:OK:]:]",
@@ -78,7 +78,7 @@ test {
 
   is $replies[0], "Slim -- V0.5\n", "server greeting";
 
-  my @exception = Test::Slim::List->new(substr $replies[1], 7)->list;
+  my @exception = Test::FitNesse::Slim::List->new(substr $replies[1], 7)->list;
   is $exception[0][0], $tablename, "table name echoed";
   is $exception[0][1], '__EXCEPTION__:message:<<NO_CLASS MyFixture>>', $exception[0][1];
 
@@ -92,7 +92,7 @@ test {
     [ "m1", "make", "actor", "TestSlim" ],
     [ "c1", "call", "actor", "echo_string", "" ],
   ];
-  my $command = Test::Slim::List->new($instructions)->serialize;
+  my $command = Test::FitNesse::Slim::List->new($instructions)->serialize;
   print $fitnesse sprintf("%06d:%s", length($command), $command)
     . "000003:bye";
   $fitnesse->flush;
@@ -103,7 +103,7 @@ test {
   SKIP: {
     skip "server rejected command before returning a frame", 1 unless $processed;
     my @replies = <$fitnesse>;
-    my @results = Test::Slim::List->new(substr $replies[1], 7)->list;
+    my @results = Test::FitNesse::Slim::List->new(substr $replies[1], 7)->list;
     is_deeply \@results, [ [ "i1", "OK" ], [ "m1", "OK" ], [ "c1", "" ] ],
       "empty argument round-trips through the SLiM server";
   }

@@ -1,4 +1,4 @@
-package Test::Slim::List;
+package Test::FitNesse::Slim::List;
 
 use strict;
 use warnings;
@@ -159,7 +159,7 @@ sub serialize {
 
 =head1 NAME
 
-Test::Slim::List - Parse and serialize SLiM list values
+Test::FitNesse::Slim::List - Parse and serialize SLiM list values
 
 =head1 DESCRIPTION
 
@@ -173,8 +173,8 @@ descriptive error for malformed data.
 
 =head2 new
 
-    my $list = Test::Slim::List->new($serialized, limits => \%limits);
-    my $list = Test::Slim::List->new(\@values);
+    my $list = Test::FitNesse::Slim::List->new($serialized, limits => \%limits);
+    my $list = Test::FitNesse::Slim::List->new(\@values);
 
 Construct a parser from serialized text or a serializer from an array
 reference. Optional limits override C<%DEFAULT_LIMITS>. The object is lazy:

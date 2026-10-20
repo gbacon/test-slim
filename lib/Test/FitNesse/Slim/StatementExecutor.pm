@@ -1,4 +1,4 @@
-package Test::Slim::StatementExecutor;
+package Test::FitNesse::Slim::StatementExecutor;
 
 use 5.36.0;
 use strict;
@@ -7,10 +7,10 @@ use warnings;
 use HTML::TreeBuilder;
 use Scalar::Util qw(reftype refaddr);
 use Time::HiRes qw(alarm);
-use Test::Slim::Statement;
-use Test::Slim::SlimHelperLibrary;
-use Test::Slim::MapResult;
-use Test::Slim::ConverterRegistry;
+use Test::FitNesse::Slim::Statement;
+use Test::FitNesse::Slim::SlimHelperLibrary;
+use Test::FitNesse::Slim::MapResult;
+use Test::FitNesse::Slim::ConverterRegistry;
 
 my $FIXTURE_HANDLES_SYMBOLS = "SLIM_AGENT_FIXTURE_HANDLES_SYMBOLS";
 
@@ -23,12 +23,12 @@ sub new {
     symbol   => {},
     fixture_symbol_pattern => undef,
     stop_requested => undef,
-    converters => Test::Slim::ConverterRegistry->new,
+    converters => Test::FitNesse::Slim::ConverterRegistry->new,
     statement_timeout => $options{statement_timeout},
   } => $class;
 
   $self->{instance}{__slim_helper_library} =
-    Test::Slim::SlimHelperLibrary->new($self->{instance});
+    Test::FitNesse::Slim::SlimHelperLibrary->new($self->{instance});
   push @{ $self->{library} }, {
     id => "__slim_helper_library",
     object => $self->{instance}{__slim_helper_library},
@@ -359,7 +359,7 @@ sub _call {
         last;
       }
     }
-    return $Test::Slim::Statement::EXCEPTION_TAG
+    return $Test::FitNesse::Slim::Statement::EXCEPTION_TAG
              . "message:<<NO_INSTANCE $instance.$requested_method.>>"
       unless $obj;
   }
@@ -378,7 +378,7 @@ sub _call {
 
   my $n = @args;
   my $class = ref $obj;
-  return $Test::Slim::Statement::EXCEPTION_TAG
+  return $Test::FitNesse::Slim::Statement::EXCEPTION_TAG
            . "message:<<NO_METHOD_IN_CLASS $requested_method\[$n] $class>>"
     unless $method_obj && $invoked_method;
 
@@ -414,7 +414,7 @@ sub _call {
       );
     ($result) = $self->{converters}->convert_result($signature, $result)
       if $signature;
-    $result = Test::Slim::MapResult->convert($result)
+    $result = Test::FitNesse::Slim::MapResult->convert($result)
       if ref($result) eq "HASH";
   };
   unless ($@) {
@@ -432,40 +432,40 @@ sub exception_result {
   my($self,$error,$pretty_print) = @_;
   chomp $error;
 
-  return $Test::Slim::Statement::EXCEPTION_TAG . $error
+  return $Test::FitNesse::Slim::Statement::EXCEPTION_TAG . $error
     if $error =~ /^message:<<.*?>>\nTried to invoke: .*$/s;
 
-  return $Test::Slim::Statement::EXCEPTION_TAG . $error
+  return $Test::FitNesse::Slim::Statement::EXCEPTION_TAG . $error
     if $error =~ /^message:<<.*>>$/s;
 
   if ($error =~ /^[\w.\$]*IgnoreScriptTest[\w.\$]*:/) {
     $self->{stop_requested} = 'ignore_script';
-    return $Test::Slim::Statement::EXCEPTION_TAG . 'IGNORE_SCRIPT_TEST:';
+    return $Test::FitNesse::Slim::Statement::EXCEPTION_TAG . 'IGNORE_SCRIPT_TEST:';
   }
   if ($error =~ /^[\w.\$]*IgnoreAllTests[\w.\$]*:/) {
     $self->{stop_requested} = 'ignore_all';
-    return $Test::Slim::Statement::EXCEPTION_TAG . 'IGNORE_ALL_TESTS:';
+    return $Test::FitNesse::Slim::Statement::EXCEPTION_TAG . 'IGNORE_ALL_TESTS:';
   }
 
   if ($error =~ /([\w.\$]*StopTest\w*Exception):\s*(.*)/s) {
     $self->{stop_requested} = 'test';
-    return $Test::Slim::Statement::EXCEPTION_TAG
+    return $Test::FitNesse::Slim::Statement::EXCEPTION_TAG
       . "ABORT_SLIM_TEST:"
       . ($pretty_print ? "message:<<$1: $2>>" : "$1: $2");
   }
   if ($error =~ /([\w.\$]*StopSuite\w*Exception):\s*(.*)/s) {
     $self->{stop_requested} = 'suite';
-    return $Test::Slim::Statement::EXCEPTION_TAG
+    return $Test::FitNesse::Slim::Statement::EXCEPTION_TAG
       . "ABORT_SLIM_SUITE:"
       . ($pretty_print ? "message:<<$1: $2>>" : "$1: $2");
   }
 
   if ($error =~ /^((?:java|fitnesse)\.[\w.\$]+):\s*(.*)/s) {
-    return $Test::Slim::Statement::EXCEPTION_TAG
+    return $Test::FitNesse::Slim::Statement::EXCEPTION_TAG
       . ($pretty_print ? "message:<<$1: $2>>" : "$1: $2");
   }
 
-  $Test::Slim::Statement::EXCEPTION_TAG . "message:<<$error>>"
+  $Test::FitNesse::Slim::Statement::EXCEPTION_TAG . "message:<<$error>>"
 }
 
 sub _timed {
@@ -504,13 +504,13 @@ sub _system_under_test {
 
 =head1 NAME
 
-Test::Slim::StatementExecutor - Own fixture and symbol state for a SLiM session
+Test::FitNesse::Slim::StatementExecutor - Own fixture and symbol state for a SLiM session
 
 =head1 DESCRIPTION
 
 The statement executor owns imported Perl package prefixes, actors,
 registered libraries, symbols, stop state, and a per-session
-L<Test::Slim::ConverterRegistry>. It resolves fixture classes and methods,
+L<Test::FitNesse::Slim::ConverterRegistry>. It resolves fixture classes and methods,
 constructs fixtures, substitutes symbols, applies declared conversions,
 dispatches calls, and formats results and exceptions.
 
@@ -525,7 +525,7 @@ do not implement Java reflection or overload selection.
 
 =head2 new
 
-    my $executor = Test::Slim::StatementExecutor->new(%options);
+    my $executor = Test::FitNesse::Slim::StatementExecutor->new(%options);
 
 Create isolated session state. C<statement_timeout> optionally bounds each
 fixture invocation.

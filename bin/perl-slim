@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::Slim::Server;
+use Test::FitNesse::Slim::Server;
 
 sub usage {
   "Usage: $0 [-v] [-s seconds] [--bind-address IPv4] port (1 uses stdin/stdout pipes)\n"
@@ -37,7 +37,7 @@ while (@ARGV) {
 die usage unless defined($port) && $port =~ /\A[0-9]+\z/;
 die usage if $bind_address_set && $port eq '1';
 
-Test::Slim::Server->new(
+Test::FitNesse::Slim::Server->new(
   verbose => $verbose,
   statement_timeout => $statement_timeout,
   ($bind_address_set ? (bind_address => $bind_address) : ()),
@@ -55,13 +55,13 @@ perl-slim - Run the Perl FitNesse SLiM server
 
 =head1 DESCRIPTION
 
-Start the Test::Slim server. Port C<1> selects a single SLiM v0.5 session
+Start the Test::FitNesse::Slim server. Port C<1> selects a single SLiM v0.5 session
 over the inherited stdin/stdout pipes, as used when FitNesse starts the
 server as a test-runner child. Other valid port numbers start the v0.5 TCP
 listener on that port. TCP listens on IPv4 loopback (C<127.0.0.1>) by
 default.
 
-The executable must be able to load L<Test::Slim::Server> and its runtime
+The executable must be able to load L<Test::FitNesse::Slim::Server> and its runtime
 dependency L<HTML::TreeBuilder>. External fixture modules must be on the
 Perl module search path inherited by the process, normally C<PERL5LIB>.
 
@@ -121,7 +121,7 @@ Explicit all-interface listener for a trusted network:
 
 =head1 SEE ALSO
 
-L<Test::Slim>, L<Test::Slim::Server>,
+L<Test::FitNesse::Slim>, L<Test::FitNesse::Slim::Server>,
 C<docs/slim-pipe-transport.md>, and C<docs/fixture-conversion.md>.
 
 =head1 COPYRIGHT AND LICENSE

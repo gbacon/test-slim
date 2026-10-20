@@ -7,8 +7,8 @@ use File::Temp qw(tempdir);
 use FindBin qw($Bin);
 use JSON::PP qw(decode_json);
 use lib "$Bin/../t/lib";
-use Test::Slim::FitNesseSuiteAcceptance qw(extract_wiki_from_jar);
-use Test::Slim::FitNesseCoverage qw(build_coverage_report render_coverage_markdown);
+use Test::FitNesse::Slim::FitNesseSuiteAcceptance qw(extract_wiki_from_jar);
+use Test::FitNesse::Slim::FitNesseCoverage qw(build_coverage_report render_coverage_markdown);
 
 my $root = "$Bin/..";
 my $jar = $ENV{FITNESSE_JAR} || '/opt/fitnesse/fitnesse.jar';

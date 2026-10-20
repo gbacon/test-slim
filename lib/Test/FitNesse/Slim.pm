@@ -1,4 +1,4 @@
-package Test::Slim;
+package Test::FitNesse::Slim;
 
 use strict;
 use warnings;
@@ -9,7 +9,7 @@ our $VERSION = '1.00';
 
 =head1 NAME
 
-Test::Slim - Perl implementation of the FitNesse SLiM protocol
+Test::FitNesse::Slim - Perl implementation of the FitNesse SLiM protocol
 
 =head1 VERSION
 
@@ -17,12 +17,12 @@ Version 1.00
 
 =head1 DESCRIPTION
 
-C<Test::Slim> implements the server side of FitNesse's Simple List
+C<Test::FitNesse::Slim> implements the server side of FitNesse's Simple List
 Invocation Method (SLiM) protocol. This package provides the distribution
 version and documentation; it does not expose a constructor or exported
 function API.
 
-L<Test::Slim::Server> processes framed requests, executes fixture
+L<Test::FitNesse::Slim::Server> processes framed requests, executes fixture
 instructions, and writes responses. The C<perl-slim> executable is the
 normal way to start the server.
 

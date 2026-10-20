@@ -3,11 +3,11 @@ use warnings;
 use Module::Build;
 
 my $builder = Module::Build->new(
-    module_name         => 'Test::Slim',
+    module_name         => 'Test::FitNesse::Slim',
     dist_abstract       => 'Perl implementation of the FitNesse SLiM protocol',
     license             => 'perl',
     dist_author         => q{Greg Bacon <gbacon@gbacon.com>},
-    dist_version_from   => 'lib/Test/Slim.pm',
+    dist_version_from   => 'lib/Test/FitNesse/Slim.pm',
     configure_requires => {
         'Module::Build' => '0.20',
     },

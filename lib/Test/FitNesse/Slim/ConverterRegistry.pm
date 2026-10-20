@@ -1,10 +1,10 @@
-package Test::Slim::ConverterRegistry;
+package Test::FitNesse::Slim::ConverterRegistry;
 
 use strict;
 use warnings;
 use overload ();
 use Scalar::Util qw(blessed);
-use Test::Slim::MapResult;
+use Test::FitNesse::Slim::MapResult;
 
 sub _java_is_blank {
   my ($value) = @_;
@@ -22,21 +22,21 @@ sub new {
 sub reset {
   my ($self) = @_;
   $self->{converters} = {
-    'java.lang.String' => bless({}, 'Test::Slim::ConverterRegistry::String'),
-    'java.lang.Boolean' => bless({}, 'Test::Slim::ConverterRegistry::Boolean'),
-    'boolean' => bless({}, 'Test::Slim::ConverterRegistry::PrimitiveBoolean'),
-    'java.lang.Integer' => bless({}, 'Test::Slim::ConverterRegistry::Integer'),
-    int => bless({}, 'Test::Slim::ConverterRegistry::PrimitiveInteger'),
-    'java.lang.Long' => bless({}, 'Test::Slim::ConverterRegistry::Long'),
-    long => bless({}, 'Test::Slim::ConverterRegistry::PrimitiveLong'),
-    'java.lang.Double' => bless({}, 'Test::Slim::ConverterRegistry::Double'),
-    double => bless({}, 'Test::Slim::ConverterRegistry::PrimitiveDouble'),
-    'java.lang.Character' => bless({}, 'Test::Slim::ConverterRegistry::Character'),
-    char => bless({}, 'Test::Slim::ConverterRegistry::PrimitiveCharacter'),
-    'java.util.Date' => bless({}, 'Test::Slim::ConverterRegistry::Date'),
-    'void' => bless({}, 'Test::Slim::ConverterRegistry::Void'),
-    'java.util.List' => Test::Slim::ConverterRegistry::List->new($self),
-    'java.util.Collection' => Test::Slim::ConverterRegistry::List->new($self),
+    'java.lang.String' => bless({}, 'Test::FitNesse::Slim::ConverterRegistry::String'),
+    'java.lang.Boolean' => bless({}, 'Test::FitNesse::Slim::ConverterRegistry::Boolean'),
+    'boolean' => bless({}, 'Test::FitNesse::Slim::ConverterRegistry::PrimitiveBoolean'),
+    'java.lang.Integer' => bless({}, 'Test::FitNesse::Slim::ConverterRegistry::Integer'),
+    int => bless({}, 'Test::FitNesse::Slim::ConverterRegistry::PrimitiveInteger'),
+    'java.lang.Long' => bless({}, 'Test::FitNesse::Slim::ConverterRegistry::Long'),
+    long => bless({}, 'Test::FitNesse::Slim::ConverterRegistry::PrimitiveLong'),
+    'java.lang.Double' => bless({}, 'Test::FitNesse::Slim::ConverterRegistry::Double'),
+    double => bless({}, 'Test::FitNesse::Slim::ConverterRegistry::PrimitiveDouble'),
+    'java.lang.Character' => bless({}, 'Test::FitNesse::Slim::ConverterRegistry::Character'),
+    char => bless({}, 'Test::FitNesse::Slim::ConverterRegistry::PrimitiveCharacter'),
+    'java.util.Date' => bless({}, 'Test::FitNesse::Slim::ConverterRegistry::Date'),
+    'void' => bless({}, 'Test::FitNesse::Slim::ConverterRegistry::Void'),
+    'java.util.List' => Test::FitNesse::Slim::ConverterRegistry::List->new($self),
+    'java.util.Collection' => Test::FitNesse::Slim::ConverterRegistry::List->new($self),
   };
   return $self;
 }
@@ -124,18 +124,18 @@ sub get_converter {
   );
   return $self->{converters}{$aliases{$type}} if exists $aliases{$type};
 
-  return Test::Slim::ConverterRegistry::Enum->new($type, $enum_types->{$type})
+  return Test::FitNesse::Slim::ConverterRegistry::Enum->new($type, $enum_types->{$type})
     if $enum_types && exists $enum_types->{$type};
 
   if ($type =~ /\A(.+)\[\]\z/ && $1 !~ /[\[\]<>]/) {
     my $component = $self->get_converter($1, $enum_types) or return;
-    return Test::Slim::ConverterRegistry::TypedSequence->new(
+    return Test::FitNesse::Slim::ConverterRegistry::TypedSequence->new(
       $self, $component
     );
   }
   if ($type =~ /\A(?:java\.util\.)?(?:List|Collection)<([^<>]+)>\z/) {
     my $component = $self->get_converter($1, $enum_types) or return;
-    return Test::Slim::ConverterRegistry::TypedSequence->new(
+    return Test::FitNesse::Slim::ConverterRegistry::TypedSequence->new(
       $self, $component
     );
   }
@@ -157,7 +157,7 @@ sub element_to_string {
 
   my $converter = $self->converter_for_runtime_value($value);
   return $converter->to_string($value) if $converter;
-  return Test::Slim::MapResult->convert($value) if ref($value) eq 'HASH';
+  return Test::FitNesse::Slim::MapResult->convert($value) if ref($value) eq 'HASH';
   return $value->to_string if blessed($value) && $value->can('to_string');
   return $value->toString if blessed($value) && $value->can('toString');
   return "$value" if blessed($value) && overload::Method($value, '""');
@@ -206,10 +206,10 @@ sub convert_result {
 sub is_typed_sequence {
   my ($self, $type, $enum_types) = @_;
   my $converter = $self->get_converter($type, $enum_types);
-  return $converter && $converter->isa('Test::Slim::ConverterRegistry::TypedSequence');
+  return $converter && $converter->isa('Test::FitNesse::Slim::ConverterRegistry::TypedSequence');
 }
 
-package Test::Slim::ConverterRegistry::Enum;
+package Test::FitNesse::Slim::ConverterRegistry::Enum;
 use strict;
 use warnings;
 use Unicode::UCD qw(charinfo);
@@ -259,7 +259,7 @@ sub _error {
 
 sub from_string {
   my ($self, $value) = @_;
-  return undef if Test::Slim::ConverterRegistry::_java_is_blank($value);
+  return undef if Test::FitNesse::Slim::ConverterRegistry::_java_is_blank($value);
   $self->_error($value) if ref $value;
 
   for my $constant (@{$self->{values}}) {
@@ -284,7 +284,7 @@ sub to_string {
   $self->_error($value);
 }
 
-package Test::Slim::ConverterRegistry::TypedSequence;
+package Test::FitNesse::Slim::ConverterRegistry::TypedSequence;
 use strict;
 use warnings;
 
@@ -298,7 +298,7 @@ sub new {
 
 sub from_string {
   my ($self, $arg) = @_;
-  return undef if Test::Slim::ConverterRegistry::_java_is_blank($arg);
+  return undef if Test::FitNesse::Slim::ConverterRegistry::_java_is_blank($arg);
 
   $arg =~ s/\A\[//;
   $arg =~ s/\]\z//;
@@ -333,13 +333,13 @@ sub to_string {
   return '[' . join(', ', @items) . ']';
 }
 
-package Test::Slim::ConverterRegistry::String;
+package Test::FitNesse::Slim::ConverterRegistry::String;
 use strict;
 use warnings;
 sub from_string { $_[1] }
 sub to_string { $_[1] }
 
-package Test::Slim::ConverterRegistry::Boolean;
+package Test::FitNesse::Slim::ConverterRegistry::Boolean;
 use strict;
 use warnings;
 sub from_string {
@@ -352,10 +352,10 @@ sub to_string {
   return $_[1] ? 'true' : 'false';
 }
 
-package Test::Slim::ConverterRegistry::PrimitiveBoolean;
+package Test::FitNesse::Slim::ConverterRegistry::PrimitiveBoolean;
 use strict;
 use warnings;
-our @ISA = ('Test::Slim::ConverterRegistry::Boolean');
+our @ISA = ('Test::FitNesse::Slim::ConverterRegistry::Boolean');
 sub from_string {
   my ($self, $value) = @_;
   return $self->SUPER::from_string($value) // 0;
@@ -365,7 +365,7 @@ sub to_string {
   return $_[1] ? 'true' : 'false';
 }
 
-package Test::Slim::ConverterRegistry::Integer;
+package Test::FitNesse::Slim::ConverterRegistry::Integer;
 use strict;
 use warnings;
 sub from_string {
@@ -384,13 +384,13 @@ sub from_string {
 }
 sub to_string { defined $_[1] ? "$_[1]" : undef }
 
-package Test::Slim::ConverterRegistry::PrimitiveInteger;
+package Test::FitNesse::Slim::ConverterRegistry::PrimitiveInteger;
 use strict;
 use warnings;
-our @ISA = ('Test::Slim::ConverterRegistry::Integer');
+our @ISA = ('Test::FitNesse::Slim::ConverterRegistry::Integer');
 sub from_string { $_[0]->SUPER::from_string($_[1]) // 0 }
 
-package Test::Slim::ConverterRegistry::Long;
+package Test::FitNesse::Slim::ConverterRegistry::Long;
 use strict;
 use warnings;
 sub from_string {
@@ -409,13 +409,13 @@ sub from_string {
 }
 sub to_string { defined $_[1] ? "$_[1]" : undef }
 
-package Test::Slim::ConverterRegistry::PrimitiveLong;
+package Test::FitNesse::Slim::ConverterRegistry::PrimitiveLong;
 use strict;
 use warnings;
-our @ISA = ('Test::Slim::ConverterRegistry::Long');
+our @ISA = ('Test::FitNesse::Slim::ConverterRegistry::Long');
 sub from_string { $_[0]->SUPER::from_string($_[1]) // 0 }
 
-package Test::Slim::ConverterRegistry::Double;
+package Test::FitNesse::Slim::ConverterRegistry::Double;
 use strict;
 use warnings;
 use POSIX ();
@@ -443,7 +443,7 @@ sub _parse_literal {
 
 sub from_string {
   my ($self, $value) = @_;
-  return undef if Test::Slim::ConverterRegistry::_java_is_blank($value);
+  return undef if Test::FitNesse::Slim::ConverterRegistry::_java_is_blank($value);
   my $original = $value;
   $value =~ s/\A[\x00-\x20]+|[\x00-\x20]+\z//g;
   die "message:<<Can't convert $original to double.>>"
@@ -512,19 +512,19 @@ sub _format_finite {
   return ($negative ? '-' : '') . $formatted;
 }
 
-package Test::Slim::ConverterRegistry::PrimitiveDouble;
+package Test::FitNesse::Slim::ConverterRegistry::PrimitiveDouble;
 use strict;
 use warnings;
-our @ISA = ('Test::Slim::ConverterRegistry::Double');
+our @ISA = ('Test::FitNesse::Slim::ConverterRegistry::Double');
 sub from_string { $_[0]->SUPER::from_string($_[1]) // 0 }
 
-package Test::Slim::ConverterRegistry::Character;
+package Test::FitNesse::Slim::ConverterRegistry::Character;
 use strict;
 use warnings;
 use Encode qw(decode FB_CROAK);
 sub from_string {
   my ($self, $value) = @_;
-  return undef if Test::Slim::ConverterRegistry::_java_is_blank($value);
+  return undef if Test::FitNesse::Slim::ConverterRegistry::_java_is_blank($value);
   my $text = utf8::is_utf8($value) ? $value : decode('UTF-8', $value, FB_CROAK);
   my $codepoint = ord substr($text, 0, 1);
   return $codepoint if $codepoint <= 0xFFFF;
@@ -539,13 +539,13 @@ sub to_string {
   return chr($value);
 }
 
-package Test::Slim::ConverterRegistry::PrimitiveCharacter;
+package Test::FitNesse::Slim::ConverterRegistry::PrimitiveCharacter;
 use strict;
 use warnings;
-our @ISA = ('Test::Slim::ConverterRegistry::Character');
+our @ISA = ('Test::FitNesse::Slim::ConverterRegistry::Character');
 sub from_string { $_[0]->SUPER::from_string($_[1]) // 0 }
 
-package Test::Slim::ConverterRegistry::Date;
+package Test::FitNesse::Slim::ConverterRegistry::Date;
 use strict;
 use warnings;
 use Time::Local qw(timelocal);
@@ -566,7 +566,7 @@ sub _days_in_month {
 
 sub from_string {
   my ($self, $value) = @_;
-  return undef if Test::Slim::ConverterRegistry::_java_is_blank($value);
+  return undef if Test::FitNesse::Slim::ConverterRegistry::_java_is_blank($value);
   $value =~ s/\A[\x{0009}-\x{000D}\x{001C}-\x{0020}\x{1680}\x{2000}-\x{2006}\x{2008}-\x{200A}\x{2028}\x{2029}\x{205F}\x{3000}]+//;
   my ($day, $month_name, $year) = $value =~ /\A([0-9]+)-([A-Za-z]+)-([0-9]+)/;
   my $month = defined($month_name)
@@ -607,13 +607,13 @@ sub to_string {
   return sprintf('%02d-%s-%04d', $day, $MONTHS[$month], $year + 1900);
 }
 
-package Test::Slim::ConverterRegistry::Void;
+package Test::FitNesse::Slim::ConverterRegistry::Void;
 use strict;
 use warnings;
 sub from_string { undef }
 sub to_string { '/__VOID__/' }
 
-package Test::Slim::ConverterRegistry::List;
+package Test::FitNesse::Slim::ConverterRegistry::List;
 use strict;
 use warnings;
 sub new { bless { registry => $_[1] }, $_[0] }
@@ -635,12 +635,12 @@ sub to_string {
 
 =head1 NAME
 
-Test::Slim::ConverterRegistry - Convert declared fixture argument and result types
+Test::FitNesse::Slim::ConverterRegistry - Convert declared fixture argument and result types
 
 =head1 DESCRIPTION
 
 The converter registry supplies the scalar and sequence conversions used
-by L<Test::Slim::StatementExecutor>. Each executor owns a registry, so
+by L<Test::FitNesse::Slim::StatementExecutor>. Each executor owns a registry, so
 custom converter changes are scoped to that executor. Fixtures select
 converters through C<slim_constructor_signature> and
 C<slim_method_signature>; undeclared arguments are not coerced.

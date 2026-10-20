@@ -11,7 +11,7 @@ use IPC::Open3;
 use lib 'lib', 't/lib';
 use Symbol qw(gensym);
 use Test::More;
-use Test::Slim::List;
+use Test::FitNesse::Slim::List;
 
 my @children;
 END { stop_child($_) for @children }
@@ -119,9 +119,9 @@ sub send_frame {
 
 sub request {
   my($child,$instructions) = @_;
-  send_frame($child,Test::Slim::List->new($instructions)->serialize);
+  send_frame($child,Test::FitNesse::Slim::List->new($instructions)->serialize);
   my $wire = decode('UTF-8',read_frame($child->{output},$child),FB_CROAK);
-  return [Test::Slim::List->new($wire)->list];
+  return [Test::FitNesse::Slim::List->new($wire)->list];
 }
 
 sub tunnel_records {
@@ -310,7 +310,7 @@ my $marker_path = "/tmp/test-slim-pipe-atomic-$$";
 unlink $marker_path;
 my $bad_list = start_child();
 read_line($bad_list->{output},$bad_list);
-my $serialized = Test::Slim::List->new([
+my $serialized = Test::FitNesse::Slim::List->new([
   [i => import => 'fitnesse.slim.test'],
   [m => make => actor => 'PipeTransportFixture'],
   [mark => call => actor => 'writeMarker' => $marker_path],
@@ -340,7 +340,7 @@ is($bad_instruction->{status} >> 8,0,'malformed instruction does not poison sess
 my $broken_output = start_child();
 read_line($broken_output->{output},$broken_output);
 close $broken_output->{output};
-send_frame($broken_output,Test::Slim::List->new([[ok => import => 'fitnesse.slim.test']])->serialize);
+send_frame($broken_output,Test::FitNesse::Slim::List->new([[ok => import => 'fitnesse.slim.test']])->serialize);
 close $broken_output->{input};
 stop_child($broken_output);
 isnt($broken_output->{status} >> 8,0,'broken protocol output pipe fails the child without SIGPIPE termination');

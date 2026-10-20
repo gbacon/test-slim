@@ -10,7 +10,7 @@ verifies its constructor conversion, camelCase method mapping, typed
 argument conversion, and result conversion through both SLiM transports and
 FitNesse v20251025.
 
-`Test::Slim` does not use Perl reflection to guess Java parameter types. A fixture can declare the types that need conversion and the executor applies its per-session converter registry to method and constructor arguments and method results.
+`Test::FitNesse::Slim` does not use Perl reflection to guess Java parameter types. A fixture can declare the types that need conversion and the executor applies its per-session converter registry to method and constructor arguments and method results.
 
 ## Method arguments and results
 

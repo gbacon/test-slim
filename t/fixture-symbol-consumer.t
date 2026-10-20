@@ -4,8 +4,8 @@ use Test::More;
 
 use lib 'lib';
 
-use Test::Slim::StatementExecutor;
-use Test::Slim::Statement;
+use Test::FitNesse::Slim::StatementExecutor;
+use Test::FitNesse::Slim::Statement;
 
 {
     package TestSlim::SymbolConsumerFixture;
@@ -24,24 +24,24 @@ use Test::Slim::Statement;
     sub echo { return $_[1] }
 }
 
-my $executor = Test::Slim::StatementExecutor->new;
+my $executor = Test::FitNesse::Slim::StatementExecutor->new;
 $executor->set_symbol('X', 99);
 my $fixture = TestSlim::SymbolConsumerFixture->new;
 $executor->set_symbol('fixture', $fixture);
 
 is_deeply(
-    Test::Slim::Statement->execute($executor, 'make', 'make', 'table', '$fixture'),
+    Test::FitNesse::Slim::Statement->execute($executor, 'make', 'make', 'table', '$fixture'),
     ['make', 'OK'],
     'make injects the statement executor into consumer fixtures',
 );
 ok($fixture->{executor} == $executor, 'consumer receives the live executor object');
 is_deeply(
-    Test::Slim::Statement->execute($executor, 'table', 'call', 'table', 'doTable', [[ '$X' ]]),
+    Test::FitNesse::Slim::Statement->execute($executor, 'table', 'call', 'table', 'doTable', [[ '$X' ]]),
     ['table', [[ '$X' ]]],
     'consumer-managed table calls receive symbols without automatic substitution',
 );
 is_deeply(
-    Test::Slim::Statement->execute($executor, 'echo', 'call', 'table', 'echo', '$X'),
+    Test::FitNesse::Slim::Statement->execute($executor, 'echo', 'call', 'table', 'echo', '$X'),
     ['echo', 99],
     'automatic symbol substitution resumes when the fixture releases control',
 );

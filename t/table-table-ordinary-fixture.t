@@ -4,17 +4,17 @@ use warnings;
 use lib 'lib', 't/lib';
 
 use Test::More;
-use Test::Slim::List;
-use Test::Slim::ListExecutor;
+use Test::FitNesse::Slim::List;
+use Test::FitNesse::Slim::ListExecutor;
 
 sub execute_wire {
     my ($executor, @instructions) = @_;
-    my $wire = Test::Slim::List->new(\@instructions)->serialize;
-    my @decoded = Test::Slim::List->new($wire)->list;
+    my $wire = Test::FitNesse::Slim::List->new(\@instructions)->serialize;
+    my @decoded = Test::FitNesse::Slim::List->new($wire)->list;
     return $executor->execute(@decoded);
 }
 
-my $list = Test::Slim::ListExecutor->new;
+my $list = Test::FitNesse::Slim::ListExecutor->new;
 my @setup = execute_wire($list,
     ['import-test', 'import', 'fitnesse.slim.test'],
     ['make-actor', 'make', 'scriptTableActor', 'TestSlim'],
@@ -83,7 +83,7 @@ ok(
     'ordinary fixture leaves normal symbol handling enabled',
 );
 
-my $isolated = Test::Slim::ListExecutor->new;
+my $isolated = Test::FitNesse::Slim::ListExecutor->new;
 my @isolated_setup = execute_wire($isolated,
     ['import-test', 'import', 'fitnesse.slim.test'],
     ['make-table', 'make', 'tableTable_1', 'TableTableIncFirstCol'],
